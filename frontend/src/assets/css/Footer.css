@@ -1,0 +1,80 @@
+.casajobs-footer {
+  background-color: #111;
+  color: #fff;
+  padding: 60px 20px 30px;
+  font-family: 'Inter', sans-serif;
+}
+
+.casajobs-footer-wrapper {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 40px;
+}
+
+.casajobs-footer-section {
+  flex: 1;
+  min-width: 250px;
+}
+
+/* About */
+.casajobs-footer-about h2 {
+  color: #ff5a00;
+  font-size: 26px;
+  margin-bottom: 15px;
+}
+
+.casajobs-footer-about p {
+  color: #ccc;
+  line-height: 1.6;
+}
+
+/* Links */
+.casajobs-footer-links h3 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  color: #fff;
+}
+
+.casajobs-footer-links ul {
+  list-style: none;
+  padding: 0;
+}
+
+.casajobs-footer-links li {
+  margin-bottom: 10px;
+}
+
+.casajobs-footer-links a {
+  color: #ccc;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.casajobs-footer-links a:hover {
+  color: #ff5a00;
+}
+
+/* Contact */
+.casajobs-footer-contact h3 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  color: #fff;
+}
+
+.casajobs-footer-contact p {
+  color: #ccc;
+  margin-bottom: 8px;
+}
+
+/* Bottom */
+.casajobs-footer-bottom {
+  border-top: 1px solid #333;
+  margin-top: 40px;
+  padding-top: 20px;
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+}

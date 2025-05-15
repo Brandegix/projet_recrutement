@@ -1,0 +1,159 @@
+:root {
+  --primary-color: #FF5722;
+  --accent-color: #FF7043;
+  --bg-light: #FAFAFA;
+  --text-dark: #212121;
+  --text-light: #757575;
+  --border-color: #E0E0E0;
+}
+
+body {
+  background-color: var(--bg-light);
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-dark);
+}
+
+.tips-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+.tips-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.tips-header h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  letter-spacing: -1px;
+}
+
+.tips-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.tab-btn {
+  padding: 12px 24px;
+  border: 2px solid transparent;
+  background-color: white;
+  color: var(--text-dark);
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.tab-btn:hover {
+  background-color: var(--accent-color);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.tab-btn.active-tab {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.tips-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+}
+
+.tip-card {
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.tip-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+.tip-icon-container {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 15px;
+}
+
+.tip-card-header h3 {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.tip-card-header p {
+  color: var(--text-light);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.tip-card-body {
+  margin-top: 20px;
+  color: var(--text-dark);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.tip-card-body .tip-title {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 8px;
+  color: var(--primary-color);
+}
+
+.tip-card-body ul {
+  padding-left: 20px;
+  margin-top: 10px;
+}
+
+.tip-card-body ul li {
+  margin-bottom: 6px;
+  position: relative;
+}
+
+.tip-card-body ul li::before {
+  content: "•";
+  position: absolute;
+  left: -16px;
+  color: var(--accent-color);
+  font-size: 1.2rem;
+}
+
+.tip-card-footer {
+  margin-top: 25px;
+}
+
+.read-more-btn {
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+  color: white;
+  padding: 12px 18px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.read-more-btn:hover {
+  background: linear-gradient(90deg, #E64A19, #FF8A65);
+}

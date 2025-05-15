@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Job Offers</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+
+<header>
+    <h1>Welcome, Recruiter!</h1>
+    <nav>
+        <a href="/api/jobOffers/joboffers/create?recruiterId=1">Create New Offer</a> 
+    </nav>
+</header>
+
+<main>
+    <h2>Your Job Offers</h2>
+
+    <div th:if="${jobOffers.isEmpty()}">
+        <p>You haven't posted any job offers yet.</p>
+    </div>
+
+    <div th:each="offer : ${jobOffers}" class="job-offer-card">
+        <h3 th:text="${offer.title}">Job Title</h3>
+        <p><strong>Description:</strong> <span th:text="${offer.description}">Job description...</span></p>
+        <p><strong>Location:</strong> <span th:text="${offer.location}">Location</span></p>
+        <p><strong>Posted Date:</strong> <span th:text="${offer.postedDate}">Date</span></p>
+		<div>
+		       <a th:href="@{'/api/jobOffers/jobOffers/edit/' + ${offer.Id}}">✏️ Edit</a> |
+		       <a th:href="@{'/api/jobOffers/jobOffers/delete/' + ${offer.Id}}"
+		          onclick="return confirm('Are you sure you want to delete this offer?');">🗑️ Delete</a>
+		   </div>
+        <hr>
+    </div>
+</main>
+
+
+
+</body>
+</html>

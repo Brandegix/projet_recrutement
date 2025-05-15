@@ -1,0 +1,324 @@
+/* CandidateProfile.css */
+.profile-page {
+    background-color: #f8f9fa;
+    padding: 40px 0;
+    min-height: calc(100vh - 120px);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .profile-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  .profile-header {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 40px;
+    gap: 30px;
+  }
+  
+  .profile-picture {
+    position: relative;
+    flex-shrink: 0;
+  }
+  
+  .profile-img {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .upload-form {
+    margin-top: 15px;
+  }
+  
+  .upload-form input[type="file"] {
+    display: none;
+  }
+  
+  .upload-label {
+    display: inline-block;
+    background-color: #f0f2f5;
+    color: #555;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+    margin-right: 10px;
+  }
+  
+  .upload-label:hover {
+    background-color: #e0e3e7;
+  }
+  
+  .upload-btn {
+    background-color: #4a6cf7;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+  }
+  
+  .upload-btn:hover {
+    background-color: #3a5bd9;
+  }
+  
+  .profile-info {
+    flex-grow: 1;
+  }
+  
+  .profile-name {
+    font-size: 28px;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0 0 5px 0;
+  }
+  
+  .profile-title {
+    color: #4a6cf7;
+    font-weight: 500;
+    margin: 0 0 15px 0;
+    font-size: 16px;
+  }
+  
+  .edit-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #4a6cf7;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s;
+  }
+  
+  .edit-link:hover {
+    color: #3a5bd9;
+    text-decoration: underline;
+  }
+  
+  .section-title {
+    color: #4a6cf7;
+    font-size: 20px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .about-section {
+    margin-bottom: 40px;
+    line-height: 1.7;
+    color: #4a5568;
+  }
+  
+  .cards-container {
+    display: flex;
+    gap: 25px;
+    margin-bottom: 40px;
+  }
+  
+  .profile-card {
+    flex: 1;
+    padding: 25px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+  }
+  
+  .profile-card h4 {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: #4a6cf7;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .profile-detail {
+    margin-bottom: 12px;
+    font-size: 15px;
+    color: #4a5568;
+  }
+  
+  .profile-detail strong {
+    color: #2d3748;
+    font-weight: 500;
+  }
+  
+  .domains-section {
+    padding: 25px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    margin-bottom: 30px;
+  }
+  
+  .domains-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
+  }
+  
+  .domain-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .domain-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #4a6cf7;
+    cursor: pointer;
+  }
+  
+  .domain-item span {
+    font-size: 15px;
+    color: #4a5568;
+  }
+  
+  .domain-input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .domain-input {
+    flex-grow: 1;
+    padding: 10px 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+  }
+  
+  .domain-input:focus {
+    outline: none;
+    border-color: #4a6cf7;
+  }
+  
+  .add-domain-btn {
+    padding: 10px 20px;
+    background-color: #4a6cf7;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .add-domain-btn:hover {
+    background-color: #3a5bd9;
+  }
+  
+  .save-domains-btn {
+    padding: 12px 25px;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .save-domains-btn:hover {
+    background-color: #0d9f6e;
+  }
+  
+  .view-jobs-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #4a6cf7;
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s;
+  }
+  
+  .view-jobs-link:hover {
+    color: #3a5bd9;
+    text-decoration: underline;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .profile-header {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .cards-container {
+      flex-direction: column;
+    }
+    
+    .profile-container {
+      padding: 25px;
+    }
+  }
+
+  .profile-picture {
+    position: relative;
+    width: 150px;
+    height: 150px;
+  }
+  
+  .profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #ddd;
+  }
+  
+  .upload-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    border-radius: 50%;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .profile-picture:hover .upload-overlay {
+    opacity: 1;
+  }
+  
+  .hidden-file-input {
+    display: none;
+  }
+  

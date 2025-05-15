@@ -1,0 +1,160 @@
+/* CareerTips.css */
+
+/* Variables de couleurs */
+:root {
+    --primary: #4f46e5;       /* Indigo 600 */
+    --primary-light: #6366f1; /* Indigo 500 */
+    --secondary: #10b981;     /* Emerald 500 */
+    --dark: #1e293b;          /* Slate 800 */
+    --light: #f8fafc;         /* Slate 50 */
+    --gray: #e2e8f0;          /* Slate 200 */
+    --text: #334155;          /* Slate 700 */
+    --text-light: #64748b;    /* Slate 500 */
+  }
+  
+  /* Conteneur principal - plus spécifique */
+  .conseil-detail-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  /* Bouton Retour */
+  .conseil-detail-container .back-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 2rem;
+  }
+  
+  .conseil-detail-container .back-btn:hover {
+    background-color: var(--primary-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3), 0 2px 4px -1px rgba(79, 70, 229, 0.1);
+  }
+  
+  /* Titres - ciblés spécifiquement */
+  .conseil-detail-container h1 {
+    color: var(--dark);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-bottom: 0.5rem;
+  }
+  
+  .conseil-detail-container h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 2px;
+  }
+  
+  .conseil-detail-container h2,
+  .conseil-detail-container h3 {
+    color: var(--dark);
+    margin-top: 2rem;
+  }
+  
+  .conseil-detail-container h2 {
+    font-size: 1.5rem;
+  }
+  
+  .conseil-detail-container h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .conseil-detail-container h3::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: var(--primary);
+    border-radius: 50%;
+  }
+  
+  /* Description - ciblée spécifiquement */
+  .conseil-detail-container > p {
+    white-space: pre-line;
+    margin-bottom: 2rem;
+    line-height: 1.8;
+    color: var(--text);
+  }
+  
+  /* Listes - ciblées spécifiquement */
+  .conseil-detail-container ul {
+    padding-left: 1.5rem;
+    margin: 1rem 0;
+  }
+  
+  .conseil-detail-container li {
+    margin-bottom: 0.75rem;
+    position: relative;
+    padding-left: 1.5rem;
+    color: var(--text-light);
+  }
+  
+  .conseil-detail-container li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
+  /* Section des sous-conseils - ciblée spécifiquement */
+  .conseil-detail-container .sub-tip-section {
+    background: var(--light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-left: 4px solid var(--primary);
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .conseil-detail-container {
+      margin: 1rem;
+      padding: 1.5rem;
+    }
+    
+    .conseil-detail-container h1 {
+      font-size: 1.75rem;
+    }
+  }
+  
+  /* Animation */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .conseil-detail-container {
+    animation: fadeIn 0.4s ease-out;
+  }
+
+  .conseil-detail-container ul {
+    padding-left: 1.5rem;
+    margin: 1rem 0;
+    list-style-type: none; /* Ajoutez cette ligne */
+  }

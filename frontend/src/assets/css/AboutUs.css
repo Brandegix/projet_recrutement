@@ -1,0 +1,391 @@
+/* AboutUs.css (Sophistiqué) */
+
+/* Variables de couleurs sophistiquées */
+:root {
+    --primary: #000000; /* Violet plus moderne */
+    --primary-light: #afafaf;
+    --secondary: #000000; /* Bleu indigo profond */
+    --dark: #212529;
+    --light: #f8f9fa;
+    --accent: #FF7043; /* Corail vibrant */
+    --gray: #555;
+    --light-gray: #eee;
+    --font-primary: 'Nunito Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-secondary: 'Playfair Display', serif;
+}
+
+/* Reset et styles de base améliorés */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-primary);
+    line-height: 1.7;
+    color: var(--dark);
+    background-color: var(--light);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.combined-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem; /* Augmentation du padding */
+}
+
+/* Typographie raffinée */
+h1, h2, h3, h4, h5 {
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1.2rem;
+}
+
+h1 {
+    font-size: 3rem;
+    font-family: var(--font-secondary);
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: -0.05em;
+}
+
+h2 {
+    font-size: 2.2rem;
+    color: var(--secondary);
+    position: relative;
+    display: inline-block;
+    margin-bottom: 2.5rem;
+    font-family: var(--font-secondary);
+}
+
+h2::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 0;
+    width: 60px;
+    height: 5px;
+    background: var(--accent);
+    border-radius: 3px;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+h3 {
+    font-size: 1.7rem;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+p {
+    margin-bottom: 1.8rem;
+    color: var(--gray);
+    font-size: 1.05rem;
+}
+
+/* En-tête avec effet subtil */
+.about-header {
+    text-align: center;
+    margin-bottom: 4rem;
+    padding: 3rem 0;
+    background: rgba(var(--primary-rgb, 108, 99, 255), 0.03); /* Léger fond coloré */
+    border-radius: 15px;
+}
+
+.about-header p {
+    font-size: 1.3rem;
+    max-width: 750px;
+    margin: 0 auto;
+    color: var(--gray);
+}
+
+/* Sections avec ombres plus profondes et transitions */
+.about-section {
+    margin-bottom: 5rem;
+    padding: 3rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); /* Ombre plus profonde */
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease-in-out; /* Transition plus expressive */
+}
+
+.about-section:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.12);
+}
+
+/* Grille de valeurs avec micro-interaction */
+.values {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2.5rem;
+    margin-top: 2.5rem;
+}
+
+.value {
+    padding: 2rem;
+    background: var(--light-gray);
+    border-radius: 10px;
+    border-left: 5px solid var(--primary);
+    transition: all 0.3s ease-in-out;
+}
+
+.value:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 20px rgba(var(--primary-rgb, 108, 99, 255), 0.15);
+}
+
+/* Témoignages avec style de citation amélioré */
+.testimonials-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2.5rem;
+    margin-top: 2.5rem;
+}
+
+.testimonial {
+    padding: 2.5rem;
+    background: white;
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+}
+
+.testimonial::before {
+    content: '“'; /* Guillemet français */
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    font-size: 3rem;
+    color: rgba(var(--primary-rgb, 108, 99, 255), 0.1);
+    font-family: serif;
+    line-height: 1;
+}
+
+.testimonial p {
+    font-style: italic;
+    position: relative;
+    z-index: 1;
+    color: var(--gray);
+}
+
+.testimonial h5 {
+    color: var(--primary);
+    margin-top: 1.2rem;
+    margin-bottom: 0.2rem;
+    font-weight: 600;
+}
+
+.testimonial h6 {
+    color: var(--gray);
+    font-size: 0.9rem;
+    font-weight: normal;
+    margin-top: 0;
+}
+
+/* Équipe avec effet de profondeur au survol */
+.team {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2.5rem;
+    margin-top: 2.5rem;
+}
+
+.team-member {
+    text-align: center;
+    padding: 2rem;
+    border-radius: 10px;
+    background: var(--light);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.team-member:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.team-member img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 1.2rem;
+    border: 5px solid white;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+.team-member h4 {
+    color: var(--secondary);
+    margin-bottom: 0.6rem;
+    font-weight: 700;
+}
+
+.team-member p {
+    color: var(--gray);
+    font-size: 0.95rem;
+}
+
+/* Section Services Héro avec typographie accentuée */
+.services-hero {
+    text-align: center;
+    margin: 5rem 0 4rem;
+}
+
+.services-hero h1 {
+    font-size: 3.5rem;
+    letter-spacing: -0.08em;
+}
+
+/* Liste de services avec transitions */
+.services-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2.5rem;
+    margin: 4rem 0;
+}
+
+/* Cartes Flip avec ombres subtiles */
+.flip-card {
+    perspective: 1200px;
+    height: 320px;
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+.flip-card:hover .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 15px;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.flip-card-front {
+    background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+    color: white;
+}
+
+.flip-card-back {
+    background: white;
+    transform: rotateY(180deg);
+    text-align: center;
+}
+
+.flip-card-back ul {
+    list-style: none;
+    text-align: left;
+}
+
+.flip-card-back li {
+    margin-bottom: 1.2rem;
+    position: relative;
+    padding-left: 1.7rem;
+    color: var(--gray);
+}
+
+.flip-card-back li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: bold;
+}
+
+/* Section CTA avec dégradé plus doux et ombre de texte */
+.cta-section {
+    text-align: center;
+    padding: 4rem 3rem;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    color: black;
+    border-radius: 15px;
+    margin: 4rem 0;
+    box-shadow: 0 8px 20px rgba(var(--primary-rgb, 108, 99, 255), 0.2);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.cta-section h2 {
+    color: black;
+    font-size: 2.5rem;
+}
+
+.cta-section h2::after {
+    background: black;
+    height: 6px;
+}
+
+.cta-section p {
+    max-width: 700px;
+    margin: 0 auto 2.5rem;
+    font-size: 1.15rem;
+}
+
+/* Ajustements responsifs affinés */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+
+    .about-section {
+        padding: 2rem;
+        margin-bottom: 4rem;
+    }
+
+    .values, .testimonials-container, .team, .services-list {
+        grid-template-columns: 1fr;
+    }
+
+    .testimonial::before {
+        font-size: 2.5rem;
+        top: 10px;
+        left: 10px;
+    }
+
+    .flip-card {
+        height: auto; /* Ajuster la hauteur automatiquement sur les petits écrans */
+    }
+}
+
+/* Animations plus douces et avec délai */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.about-section, .services-hero, .flip-card {
+    animation: fadeIn 0.7s ease-out forwards;
+}
+
+.about-section:nth-child(2) { animation-delay: 0.15s; }
+.about-section:nth-child(3) { animation-delay: 0.2s; }
+.about-section:nth-child(4) { animation-delay: 0.25s; }
+.testimonials-container { animation-delay: 0.3s; }
+.team { animation-delay: 0.35s; }
+.services-hero { animation-delay: 0.4s; }
+.flip-card:nth-child(1) { animation-delay: 0.45s; }
+.flip-card:nth-child(2) { animation-delay: 0.5s; }
+.flip-card:nth-child(3) { animation-delay: 0.55s; }
+.cta-section { animation-delay: 0.6s; }

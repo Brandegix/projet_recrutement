@@ -1,0 +1,172 @@
+/* JobOfferForm.css */
+
+:root {
+    --primary-orange: #FF6B00;
+    --hover-orange: #FF8C33;
+    --dark-orange: #CC5500;
+    --black: #212121;
+    --gray-dark: #444444;
+    --gray-medium: #777777;
+    --gray-light: #DDDDDD;
+    --white: #FFFFFF;
+    --off-white: #F9F9F9;
+    --error: #D32F2F;
+  }
+  
+  .job-offer-form-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .form-header {
+    margin-bottom: 2rem;
+    text-align: center;
+    border-bottom: 2px solid var(--gray-light);
+    padding-bottom: 1.5rem;
+  }
+  
+  .form-header h1 {
+    color: var(--black);
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .form-header p {
+    color: var(--gray-medium);
+    font-size: 1rem;
+  }
+  
+  .job-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 1.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+    }
+  }
+  
+  .input-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .input-group.full-width {
+    width: 100%;
+  }
+  
+  .input-group label {
+    font-weight: 600;
+    color: var(--black);
+    font-size: 0.9rem;
+  }
+  
+  .input-group input,
+  .input-group select,
+  .input-group textarea {
+    padding: 0.75rem;
+    border: 1px solid var(--gray-light);
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border 0.2s ease;
+  }
+  
+  .input-group input:focus,
+  .input-group select:focus,
+  .input-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.2);
+  }
+  
+  .input-group textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+  
+  .logo-upload {
+    margin-top: 0.5rem;
+  }
+  
+  .file-input {
+    padding: 0.5rem 0;
+    cursor: pointer;
+    border: none;
+  }
+  
+  .helper-text {
+    font-size: 0.8rem;
+    color: var(--gray-medium);
+    margin-top: 0.25rem;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .submit-button,
+  .cancel-button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .submit-button {
+    background-color: var(--primary-orange);
+    color: var(--white);
+    border: none;
+  }
+  
+  .submit-button:hover {
+    background-color: var(--hover-orange);
+  }
+  
+  .submit-button:active {
+    background-color: var(--dark-orange);
+  }
+  
+  .cancel-button {
+    background-color: transparent;
+    color: var(--gray-dark);
+    border: 1px solid var(--gray-light);
+  }
+  
+  .cancel-button:hover {
+    background-color: var(--off-white);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .job-offer-form-container {
+      padding: 1.5rem;
+      margin: 1rem;
+    }
+    
+    .form-actions {
+      flex-direction: column;
+    }
+    
+    .submit-button,
+    .cancel-button {
+      width: 100%;
+    }
+  }

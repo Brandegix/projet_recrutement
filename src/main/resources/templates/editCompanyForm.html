@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Company Profile</title>
+    <link th:href="@{/css/style2.css}" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+	<h2>Edit Company profile</h2>
+<form th:action="@{/api/companies/companies/update}" method="post">
+    <input type="hidden" th:value="${recruiter.company.companyId}" name="companyId"/>
+	<input type="hidden" th:value="${recruiter.recruiterId}" name="recruiterId"/>
+
+    <div>
+        <label for="name">Company Name:</label>
+        <input type="text" id="name" th:value="${recruiter.company.name}" name="name" required/>
+    </div>
+    <div>
+        <label for="website">Website:</label>
+        <input type="text" id="website" th:value="${recruiter.company.website}" name="website" required/>
+    </div>
+    <div>
+        <label for="industry">Industry:</label>
+        <input type="text" id="industry" th:value="${recruiter.company.industry}" name="industry" required/>
+    </div>
+    <div>
+        <label for="address">Address:</label>
+        <input type="text" id="address" th:value="${recruiter.company.address}" name="address" required/>
+    </div>
+    <div>
+        <label for="registrationNumber">Registration Number:</label>
+        <input type="text" id="registrationNumber" th:value="${recruiter.company.registrationNumber}" name="registrationNumber" required/>
+    </div>
+    <button type="submit">Update Company Information</button>
+</form>
+</div>
+</body>
+</html>

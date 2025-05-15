@@ -1,0 +1,467 @@
+/* RecruiterProfile.css */
+
+/* Base styles */
+.recruiter-profile {
+    --primary-color: #fa5c01;
+    --secondary-color: #6c757d;
+    --light-bg: #f9f9f9;
+    --card-bg: #ffffff;
+    --text-color: #333333;
+    --border-color: #e0e0e0;
+    --success-color: #28a745;
+    
+    background-color: var(--light-bg);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-color);
+    line-height: 1.6;
+  }
+  
+  /* Layout container */
+  .recruiter-profile__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  
+  /* Profile card */
+  .recruiter-profile__card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  /* Header section */
+  .recruiter-profile__header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .recruiter-profile__picture {
+    position: relative;
+  }
+  
+  .recruiter-profile__img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary-color);
+  }
+  
+  .recruiter-profile__upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .recruiter-profile__file-input {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+  }
+  
+  .recruiter-profile__upload-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .recruiter-profile__upload-btn:hover {
+    background-color: #e04b00;
+  }
+  
+  .recruiter-profile__info {
+    flex: 1;
+    min-width: 250px;
+  }
+  
+  .recruiter-profile__name {
+    font-size: 1.8rem;
+    margin: 0 0 0.5rem;
+    color: var(--text-color);
+    font-weight: 700;
+  }
+  
+  .recruiter-profile__role {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin: 0 0 1rem;
+    font-size: 1.1rem;
+  }
+  
+  .recruiter-profile__edit-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+  }
+  
+  .recruiter-profile__edit-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+  }
+  
+  /* About section */
+  .recruiter-profile__about {
+    margin-bottom: 2.5rem;
+  }
+  
+  .recruiter-profile__section-title {
+    color: var(--primary-color);
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .recruiter-profile__description {
+    line-height: 1.7;
+    color: var(--text-color);
+  }
+  
+  /* Cards grid */
+  .recruiter-profile__cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  
+  .recruiter-profile__info-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .recruiter-profile__card-title {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .recruiter-profile__detail {
+    margin-bottom: 0.8rem;
+  }
+  
+  .recruiter-profile__detail strong {
+    color: var(--secondary-color);
+  }
+  
+  /* Domains section */
+  .recruiter-profile__domains-section {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .recruiter-profile__domains-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .recruiter-profile__domain-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  
+  .recruiter-profile__domain-checkbox {
+    accent-color: var(--primary-color);
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+  
+  .recruiter-profile__domain-name {
+    flex: 1;
+  }
+  
+  .recruiter-profile__add-domain {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .recruiter-profile__domain-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.7rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+  
+  .recruiter-profile__add-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.7rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.2s;
+  }
+  
+  .recruiter-profile__add-btn:hover {
+    background-color: #e04b00;
+  }
+  
+  .recruiter-profile__save-btn {
+    background-color: var(--success-color);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.2s;
+  }
+  
+  .recruiter-profile__save-btn:hover {
+    background-color: #218838;
+  }
+  
+  /* View offers link */
+  .recruiter-profile__offers-link {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+  }
+  
+  .recruiter-profile__offers-link:hover {
+    color: #e04b00;
+    text-decoration: underline;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .recruiter-profile__header {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .recruiter-profile__upload-form {
+      align-items: center;
+    }
+    
+    .recruiter-profile__info {
+      text-align: center;
+    }
+    
+    .recruiter-profile__edit-link {
+      justify-content: center;
+    }
+    
+    .recruiter-profile__add-domain {
+      flex-direction: column;
+    }
+    
+    .recruiter-profile__domain-input,
+    .recruiter-profile__add-btn {
+      width: 100%;
+    }
+  }
+
+
+  .charts-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 30px;
+    margin: 40px 0;
+    padding: 20px;
+  }
+  
+  .chart-container {
+    background: linear-gradient(145deg, #ffffff, #f8f9fa);
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 
+      0 8px 32px rgba(31, 38, 135, 0.05),
+      0 4px 16px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(8px);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .chart-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+      0 12px 40px rgba(31, 38, 135, 0.1),
+      0 6px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  .chart-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ff7001, #ff9e01);
+  }
+  
+  .chart-container h3 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 25px;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .chart-container h3::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ff7001;
+    margin-right: 10px;
+  }
+  
+  /* Bar Chart Styling */
+  .bar-chart .recharts-cartesian-grid-horizontal line,
+  .bar-chart .recharts-cartesian-grid-vertical line {
+    stroke: rgba(0, 0, 0, 0.05);
+  }
+  
+  .bar-chart .recharts-bar {
+    transition: all 0.3s ease;
+  }
+  
+  .bar-chart .recharts-bar-rect:hover {
+    filter: drop-shadow(0 0 8px rgba(255, 112, 1, 0.3));
+  }
+  
+  .bar-chart .recharts-tooltip {
+    background: rgba(255, 255, 255, 0.96) !important;
+    border: none !important;
+    border-radius: 10px !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+    padding: 10px 15px !important;
+    backdrop-filter: blur(12px);
+  }
+  
+  /* Pie Chart Styling */
+  .pie-chart .recharts-pie-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    fill: #4a5568;
+  }
+  
+  .pie-chart .recharts-sector {
+    transition: all 0.3s ease;
+    stroke-width: 0;
+  }
+  
+  .pie-chart .recharts-sector:hover {
+    filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.1));
+    opacity: 0.9;
+    stroke-width: 1px;
+    stroke: white;
+  }
+  
+  /* Legend Styling */
+  .recharts-legend-wrapper {
+    bottom: -10px !important;
+  }
+  
+  .recharts-default-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .recharts-legend-item {
+    display: flex !important;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .recharts-legend-item:hover {
+    transform: translateX(3px);
+  }
+  
+  .recharts-legend-item-text {
+    color: #4a5568 !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 0.8rem !important;
+  }
+  
+  /* Tooltip Customization */
+  .custom-tooltip {
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  
+  .tooltip-label {
+    color: #ff7001;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  
+  .tooltip-value {
+    font-weight: 500;
+    color: #2d3748;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .charts-section {
+      grid-template-columns: 1fr;
+    }
+    
+    .chart-container {
+      padding: 20px 15px;
+    }
+    
+    .chart-container h3 {
+      font-size: 1rem;
+    }
+  }

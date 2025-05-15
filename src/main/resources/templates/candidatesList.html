@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link th:href="@{/css/style1.css}" rel="stylesheet">  
+  <title>Candidate List</title>
+</head>
+<body>
+  <div class="container">
+    <h2>List of Candidates</h2>
+    
+    <!-- Check if the candidates list is not empty -->
+    <div th:if="${candidates != null and #lists.isEmpty(candidates) == false}">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+			<th>Skills</th>
+			<th>Phone number</th>
+			<th>Address</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Iterate over the list of candidates -->
+          <tr th:each="candidate : ${candidates}">
+            <td th:text="${candidate.name}"></td>
+            <td th:text="${candidate.email}"></td>
+			<td th:text="${candidate.skills}"></td>
+			<td th:text="${candidate.phoneNumber}"></td>
+			<td th:text="${candidate.address}"></td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- If no candidates are found, display a message -->
+    <div th:if="${candidates == null or #lists.isEmpty(candidates)}">
+      <p>No candidates found.</p>
+    </div>
+    
+  </div>
+</body>
+</html>

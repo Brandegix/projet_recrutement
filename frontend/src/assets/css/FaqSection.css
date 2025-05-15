@@ -1,0 +1,73 @@
+#faq {
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    padding: 80px 20px;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .section-title h2 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #2c3e50;
+  }
+  
+  .section-title p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 40px;
+  }
+  
+  .accordion {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .accordion-item {
+    background: #fff;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .accordion-title {
+    cursor: pointer;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .accordion-title:hover {
+    background-color: #f0f4ff;
+  }
+  
+  .accordion-title span {
+    font-size: 28px;
+    color: #007bff;
+  }
+  
+  .accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    padding: 0 30px;
+    background-color: #f9f9f9;
+  }
+  
+  .accordion-item.active .accordion-content {
+    padding: 20px 30px;
+    max-height: 300px;
+  }
+  
+  .accordion-content p {
+    margin: 0;
+    color: #444;
+    line-height: 1.6;
+  }
+  

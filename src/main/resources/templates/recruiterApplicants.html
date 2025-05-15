@@ -1,0 +1,11 @@
+<h2>Applicants</h2>
+<div th:if="${#lists.isEmpty(applicants)}">
+    <p>No applicants yet.</p>
+</div>
+<div th:each="candidate : ${applicants}">
+    <div class="candidate-info">
+        <p><strong>Name:</strong> <span th:text="${candidate.name}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${candidate.email}"></span></p>
+        <!-- etc -->
+    </div>
+</div>

@@ -1,0 +1,172 @@
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { FaUser, FaClock, FaMicrophone } from 'react-icons/fa';
+
+// ✅ Pages principales de l'application
+import StageRecherche from "./StageRecherche";
+import RecruteurAjout from "./components/RecruteurAjout.jsx";
+// ✅ Pages d'authentification dans le dossier ./components
+import LoginCandidat from "./components/LoginCandidat.jsx";
+import JobCards from "./components/JobCards.jsx";
+import LoginRecruteur from "./components/LoginRecruteur.jsx";
+import ChoixRole from "./components/ChoixRole.jsx"; // page pour choisir candidat ou recruteur
+import ChoixRole2 from "./components/ChoixRole2.jsx"; // page pour choisir candidat ou recruteur
+import RegisterCandidate from "./components/RegisterCandidate.jsx"; // page d'inscription pour les candidats
+import RegisterRecruiter from "./components/RegisterRecruiter.jsx"; // page d'inscription pour les recruteurs
+import CandidatePagefrom from "./components/CandidatePagefrom.jsx"; // page d'inscription pour les recruteurs
+import RecruteurPage from "./components/Recruteur/RecruteurPage.jsx"; 
+import OffresRecruteur from "./components/OffresRecruteur.jsx";
+import ConseilsPage from "./components/ConseilsPage.jsx";
+import Dashboard from "./components/Dashboard.jsx";
+import Dash from "./components/Dach.jsx";
+import RecruiterApplications from  "./components/Recruteur/RecruiterApplications.jsx";
+import CandidateProfile from "./components/Candidat/CandidateProfile.jsx";
+import DashboardCharts from './components/DashboardCharts';
+import DashboardHome  from './components/DashboardHome';
+import DashboardHomee  from './components/DashboardHomee';
+import ApplicationsByRecruiter  from './components/ApplicationsByRecruiter';
+import RecruiterProfile from "./components/Recruteur/RecruiterProfile.jsx";
+import Offres from "./components/Candidat/Offres.jsx";
+import JobCardss from "./components/Candidat/JobCardss.jsx";
+import CandidateApplications from "./components/Candidat/CandidateApplications.jsx";
+import RecruiterJobOffers from "./components/Recruteur/RecruiterJobOffers.jsx";
+import JobOfferForm from "./components/JobOfferForm.jsx";
+import ConseilDetail from './components/ConseilDetail';
+import EditRecruiterProfile from "./components/Recruteur/EditRecruiterProfile.jsx";
+import EditJobOfferForm from './components/EditJobOfferForm';
+import EditProfile from "./components/Candidat/EditProfile.jsx";
+import AdminLogin from './components/AdminLogin';
+import AdminDashboard from './components/AdminDashboard'; 
+import ManageCandidates  from './components/ManageCandidates'; 
+import ManageRecruiters from './components/ManageRecruiters';
+import ManageJobs from './components/ManageJobs';
+import EditJobOffer from './components/EditJobOffer';
+import EditCandidate from './components/EditCandidate';
+import EditRecruiter from './components/EditRecruiter';
+import Applications from './components/Applications';
+import Dashboard_admin from './components/Dashboard_admin';
+import Candidatesadmin from './components/Candidatesadmin';
+import AboutUs from './components/AboutUs';
+
+
+
+
+
+
+import ContactUs from './components/ContactUs';
+
+
+
+
+
+import VerifyOtp from './components/VerifyOtp';
+import ResetPassword from  './components/ResetPassword';
+import RequestResetCandidat from "./components/RequestResetCandidat";
+import VerifyOtpCandidat from "./components/VerifyOtpCandidat";
+import ResetPasswordCandidat from "./components/ResetPasswordCandidat";
+import RequestResetAdmin from "./components/RequestResetAdmin";
+import VerifyOtpAdmin from "./components/VerifyOtpAdmin";
+import ResetPasswordAdmin from "./components/ResetPasswordAdmin";
+import RequestResetRecruteur from "./components/RequestResetRecruteur"; // ✅ Import the component
+
+import RecruiterProfiless from "./components/RecruiterProfiless.jsx"; // Import the new component
+
+import CandidateProfileView from "./components/CandidateProfileView.jsx";
+import CandidateSearchFilter from "./components/CandidateSearchFilter";
+import Chat from './components/Chat';
+import ApplicationChat from './components/Recruteur/ApplicationChat.jsx';
+import CandidateApplicationChat from './components/Candidat/CandidateApplicationChat.jsx';
+
+
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        
+      <Route path="/ContactUs" element={<ContactUs />} />
+      <Route path="/verify-otp" element={<VerifyOtp />} />
+<Route path="/reset-password" element={<ResetPassword />} />
+<Route path="/candidate/request-reset" element={<RequestResetCandidat />} />
+        <Route path="/candidate/verify-otp" element={<VerifyOtpCandidat />} />
+        <Route path="/candidate/reset-password" element={<ResetPasswordCandidat />} />
+        <Route path="/admin/request-reset" element={<RequestResetAdmin />} />
+        <Route path="/admin/verify-otp" element={<VerifyOtpAdmin />} />
+        <Route path="/admin/reset-password" element={<ResetPasswordAdmin />} />
+        <Route path="/about-us" element={<AboutUs />} />
+
+        <Route path="/recruiter/request-reset" element={<RequestResetRecruteur />} /> {/* ✅ Add this new route */}
+
+        {/* Pages principales */}
+        <Route path="/" element={<StageRecherche />} />
+        <Route path="/AboutUs" element={<AboutUs />} />
+        <Route path="/Offres" element={<Offres />} />
+        <Route path="/conseil/:id" element={<ConseilDetail />} />
+        <Route path="/ApplicationsByRecruiter" element={<ApplicationsByRecruiter />} />
+        <Route path="/DashboardHome" element={<DashboardHome />} />
+        <Route path="/DashboardHomee" element={<DashboardHomee />} />
+        <Route path="/DashboardCharts" element={<DashboardCharts />} />
+        <Route path="/RecruiterApplications" element={<RecruiterApplications />} />
+        <Route path="/Dashboard" element={<Dashboard />} />
+        <Route path="/JobCards" element={<JobCards />} />
+        <Route path="/RecruteurPage" element={<RecruteurPage />} />
+        <Route path="/OffresRecruteur" element={<OffresRecruteur />} />
+        <Route path="/CandidatePagefrom" element={<CandidatePagefrom />} />
+        <Route path="/CandidatePagefrom" element={<CandidatePagefrom />} />
+        <Route path="/RecruteurAjout" element={<RecruteurAjout />} />
+        <Route path="/ConseilsPage" element={<ConseilsPage />} />
+        <Route path="/dashboard/:recruiterId" element={<Dash />} />
+
+        {/* Page Choix du rôle */}
+        <Route path="/edit-profile" element={<EditProfile />} />
+        {/* Page Choix du rôle */}
+        <Route path="/ChoixRole" element={<ChoixRole />} />
+        <Route path="/ChoixRole2" element={<ChoixRole2 />} />
+        
+        {/* Pages de connexion */}
+        <Route path="/login/candidat" element={<LoginCandidat />} />
+        <Route path="/LoginRecruteur" element={<LoginRecruteur />} />
+        
+        {/* Pages d'inscription */}
+        <Route path="/register/candidat" element={<RegisterCandidate />} />
+        <Route path="/register/recruteur" element={<RegisterRecruiter />} />
+        <Route path="/CandidatePagefrom" element={<CandidatePagefrom />} />
+        <Route path="/candidate-profile" element={<CandidateProfile />} />
+        <Route path="/RecruiterProfile" element={<RecruiterProfile />} />
+        <Route path="/JobCardss" element={<JobCardss />} />
+        <Route path="/applications" element={<CandidateApplications />} />
+
+        <Route path="/RecruiterJobOffers" element={<RecruiterJobOffers />} />
+        <Route path="/JobOfferForm" element={<JobOfferForm />} />
+        <Route path="/EditRecruiterProfile" element={<EditRecruiterProfile/>} />
+        <Route path="/edit-offer/:offerId" element={<EditJobOfferForm />} />
+        <Route path="/AdminLogin" element={<AdminLogin />} />
+        <Route path="/AdminDashboard" element={<AdminDashboard />} />
+        <Route path="/ManageCandidates" element={<ManageCandidates />} />
+        <Route path="/ManageRecruiters" element={<ManageRecruiters />} />
+        <Route path="/ManageJobs" element={<ManageJobs />} />
+        <Route path="/edit-recruiter/:id" element={<EditRecruiter />} />
+<Route path="/edit-candidate/:id" element={<EditCandidate />} />
+<Route path="/edit-job/:id" element={<EditJobOffer />} />
+<Route path="/applicationss" element={<Applications />} />
+<Route path="/Dashboard_admin" element={<Dashboard_admin />} />
+<Route path="/Candidatesadmin" element={<Candidatesadmin />} />
+
+
+<Route path="/recruiter/candidate/:id" element={<CandidateProfileView />} />
+<Route path="/recruiter/candidate-search" component={CandidateSearchFilter} />
+
+<Route path="/recruiter-profile" element={<RecruiterProfiless />} />
+<Route path="/chat" element={<Chat />} />
+<Route path="/ApplicationChat" element={<ApplicationChat />} />
+<Route path="/CandidateApplicationChat" element={<CandidateApplicationChat />} />
+
+CandidateApplications
+
+        
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Create Job Offer</title>
+    <link th:href="@{/css/style2.css}" rel="stylesheet" />
+</head>
+<body>
+	<div class="container">
+
+	<h2>Post a New Job Offer</h2>
+
+<form th:action="@{/api/jobOffers/jobOffers}" method="post" th:object="${jobOffer}">
+    <input type="hidden" name="recruiterId" th:value="${recruiterId}" />
+
+    <label>Title:</label>
+    <input type="text" th:field="*{title}" required />
+
+    <label>Description:</label>
+    <textarea th:field="*{description}" required></textarea>
+
+    <label>Location:</label>
+    <input type="text" th:field="*{location}" required />
+
+    <label>Salary:</label>
+    <input type="number" step="0.01" th:field="*{salary}" required />
+
+    <button type="submit">Post Job Offer</button>
+</form>
+</div>
+
+    </div>
+</body>
+</html>
+

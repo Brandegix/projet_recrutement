@@ -1,0 +1,474 @@
+/* Candidatesadmin.css - Version avec couleurs douces */
+
+:root {
+    --primary-color: #5d78ff;
+    --primary-light: #eef1ff;
+    --text-dark: #2d3748;
+    --text-medium: #4a5568;
+    --text-light: #718096;
+    --border-color: #e2e8f0;
+    --bg-color: #f8fafc;
+    --white: #ffffff;
+    --success-light: #f0fff4;
+    --success-dark: #38a169;
+    --warning-light: #fffaf0;
+    --warning-dark: #dd6b20;
+    --danger-light: #fff5f5;
+    --danger-dark: #e53e3e;
+    --info-light: #ebf8ff;
+    --info-dark: #3182ce;
+  }
+  
+  /* Structure de base */
+  .candidates-container {
+    padding: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    min-height: 100vh;
+  }
+  
+  /* En-tête */
+  .candidates-header h1 {
+    font-size: 1.8rem;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+  
+  .candidates-header p {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Barre de recherche */
+  .search-bar {
+    position: relative;
+    margin-bottom: 2rem;
+    max-width: 400px;
+  }
+  
+  .search-bar input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background-color: var(--white);
+  }
+  
+  .search-bar input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(93, 120, 255, 0.1);
+  }
+  
+  .search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+  }
+  
+  /* Tableau */
+  .table-container {
+    background-color: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+  }
+  
+  .candidates-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .candidates-table th,
+  .candidates-table td {
+    padding: 1rem 1.25rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .candidates-table th {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  
+  .candidates-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .candidates-table tr:hover {
+    background-color: rgba(93, 120, 255, 0.03);
+  }
+  
+  /* Cellules de candidat */
+  .candidate-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .initials {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  
+  .name {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.15rem;
+  }
+  
+  .email {
+    font-size: 0.85rem;
+    color: var(--text-light);
+  }
+  
+  /* Informations de contact */
+  .contact-info {
+    font-size: 0.9rem;
+    color: var(--text-medium);
+  }
+  
+  .contact-info div:first-child {
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+  }
+  
+  /* Compétences */
+  .skills {
+    font-size: 0.9rem;
+    color: var(--text-medium);
+    padding: 0.25rem 0.75rem;
+    background-color: var(--primary-light);
+    border-radius: 20px;
+    display: inline-block;
+  }
+  
+  /* Lien CV */
+  .cv-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    background-color: var(--primary-light);
+    transition: all 0.2s;
+    display: inline-block;
+  }
+  
+  .cv-link:hover {
+    background-color: rgba(93, 120, 255, 0.15);
+  }
+  
+  .no-cv {
+    color: var(--text-light);
+    font-style: italic;
+    font-size: 0.9rem;
+  }
+  
+  /* Bouton d'actions */
+  .actions-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-light);
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .actions-btn:hover {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+  }
+  
+  /* États */
+  .loading {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-light);
+  }
+  
+  .no-results {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-light);
+    font-style: italic;
+  }
+  
+  .error-message {
+    padding: 2rem;
+    text-align: center;
+    color: var(--danger-dark);
+    background-color: var(--danger-light);
+    border-radius: 8px;
+    margin: 1rem;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .candidates-container {
+      padding: 1rem;
+    }
+    
+    .candidates-table {
+      display: block;
+      overflow-x: auto;
+    }
+    
+    .candidates-table th,
+    .candidates-table td {
+      padding: 0.75rem;
+      font-size: 0.85rem;
+    }
+  }
+  /* ... (vos autres styles existants) ... */
+
+  .actions-cell button {
+    margin-right: 6px;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  
+  /* 🛠️ Make action buttons appear side by side */
+td:last-child {
+    display: flex;  /* ✅ Arrange buttons in a row */
+    gap: 10px;  /* ✅ Add spacing between buttons */
+    justify-content: center;  /* ✅ Center buttons */
+    align-items: center;  /* ✅ Align vertically */
+  }
+  
+  /* 📌 Button Styling */
+  td button {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+  }
+  
+  /* ✅ Button Colors */
+  .edit-btn {
+    background-color: #4CAF50; /* Green */
+    color: white;
+  }
+  
+  .edit-btn:hover {
+    background-color: #43A047;
+  }
+  
+  .delete-btn {
+    background-color: #f44336; /* Red */
+    color: white;
+  }
+  
+  .delete-btn:hover {
+    background-color: #e53935;
+  }
+  
+  .edit-btn {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .delete-btn {
+    background-color: #f44336;
+    color: white;
+  }
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal {
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+    
+  /* Candidatesadmin.css - Version moderne */
+
+/* ... (conservez vos styles existants) ... */
+
+/* Modal Backdrop */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  /* Modal Container */
+  .modal {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 500px;
+    padding: 2rem;
+    animation: slideUp 0.3s ease-out;
+    transform-origin: center;
+  }
+  
+  @keyframes slideUp {
+    from { 
+      transform: translateY(20px) scale(0.95);
+      opacity: 0;
+    }
+    to { 
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+  }
+  
+  .modal h3 {
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 0.5rem;
+  }
+  
+  /* Form Elements */
+  .modal label {
+    display: block;
+    margin: 1rem 0 0.5rem;
+    color: #4a5568;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .modal input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s;
+    background-color: #f8fafc;
+  }
+  
+  .modal input:focus {
+    outline: none;
+    border-color: #5d78ff;
+    box-shadow: 0 0 0 3px rgba(93, 120, 255, 0.1);
+    background-color: white;
+  }
+  
+  /* Modal Actions */
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+  }
+  
+  .modal-actions button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .modal-actions button:first-child {
+    background-color: #5d78ff;
+    color: white;
+    border: none;
+  }
+  
+  .modal-actions button:first-child:hover {
+    background-color: #4a66d6;
+    transform: translateY(-1px);
+  }
+  
+  .modal-actions button:last-child {
+   
+    border: 1px solid #e2e8f0;
+  }
+  
+  .modal-actions button:last-child:hover {
+    background-color: #f8fafc;
+    border-color: #d1d9f0;
+  }
+  
+  /* Responsive */
+  @media (max-width: 600px) {
+    .modal {
+      width: 95%;
+      padding: 1.5rem;
+    }
+    
+    .modal-actions {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .modal-actions button {
+      width: 100%;
+    }
+  }
+
+  /* Ajustement pour éviter que le navbar ne masque le contenu */
+.candidates-container {
+    padding-left: 300px; /* ou la hauteur exacte de ta navbar */
+  }

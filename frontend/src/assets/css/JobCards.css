@@ -1,0 +1,217 @@
+/* General Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f6f8;
+  color: #333;
+}
+
+/* Main wrapper */
+.job-search-page {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Grid of job cards */
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+/* Individual job card */
+.job-card {
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease;
+}
+
+.job-card:hover {
+  transform: translateY(-4px);
+}
+
+/* Header: logo and company info */
+.job-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.job-logo img {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  object-fit: cover;
+  margin-right: 16px;
+}
+
+.job-info h3 {
+  margin-bottom: 4px;
+  font-size: 18px;
+  color: #222;
+}
+
+.job-info p {
+  margin-bottom: 4px;
+  font-size: 14px;
+  color: #666;
+}
+
+.badge {
+  background-color: #4f46e5;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+/* Body: location, experience, description */
+.job-body {
+  padding: 16px;
+  flex-grow: 1;
+}
+
+.job-body p {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.skills span {
+  background-color: #e0e7ff;
+  color: #3730a3;
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 8px;
+}
+
+/* Footer: salaire + bouton */
+.job-footer {
+  padding: 16px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.job-footer strong {
+  font-size: 16px;
+  color: #111;
+}
+
+/* Buttons */
+.apply-btn,
+.applied-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.apply-btn {
+  background-color: #10b981;
+  color: white;
+}
+
+.apply-btn:hover {
+  background-color: #059669;
+}
+
+.applied-btn {
+  background-color: #9ca3af;
+  color: white;
+  cursor: default;
+}
+
+/* Empty state */
+.empty-message {
+  text-align: center;
+  color: #555;
+  font-size: 18px;
+  margin-top: 50px;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 30px;
+}
+
+.pagination button {
+  background-color: #e5e7eb;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.pagination button.active {
+  background-color: #4f46e5;
+  color: white;
+}
+
+.pagination button:hover:not(.active) {
+  background-color: #d1d5db;
+}
+.search-bar {
+  width: 100%;
+  max-width: 500px;
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  margin: 0 auto 30px auto;
+  display: block;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+.title-section {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  color: #222;
+  margin: 40px 0 20px 0;
+  position: relative;
+}
+
+.title-section::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 4px;
+  background: #007bff; /* Couleur principale */
+  margin: 12px auto 0 auto;
+  border-radius: 4px;
+}
+.job-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+  width: 100%; /* Ensures it's responsive */
+  box-sizing: border-box; /* Ensure padding is not causing overflow */
+}

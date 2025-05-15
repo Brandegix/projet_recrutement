@@ -1,0 +1,324 @@
+/* Dashboard.css - toutes les couleurs bleues remplacées par #ff4400, y compris les icônes */
+
+:root {
+    --sidebar-width: 250px;
+    --primary-color: #ff4400; /* orange vif */
+    --success-color: #34A853;
+    --danger-color: #EA4335;
+    --warning-color: #FBBC05;
+    --text-color: #333;
+    --text-light: #666;
+    --border-color: #e0e0e0;
+    --sidebar-bg: black;
+    --main-bg: #f5f7fa;
+    --card-bg: #ffffff;
+  }
+  .sidebar{
+
+    background-color: #333;
+
+  }
+  
+  .sidebar-nav li .icon {
+    color: #ff4400 !important; /* Force la couleur orange vif */
+  }
+  li .icon {
+    color: #ff4400 !important; /* Force la couleur orange vif */
+  }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  body {
+    background-color: var(--main-bg);
+  }
+  
+  .app-container {
+    display: flex;
+    min-height: 100vh;
+  }
+  .dashboard-link {
+    text-decoration: none; /* ✅ Removes default underline */
+    color: inherit; /* ✅ Keeps color uniform */
+    font-size: 0.95rem; /* ✅ Match the size of other links */
+    font-weight: normal; /* ✅ Prevent bold styling */
+  }
+  
+  .sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    color: white;
+    padding: 1.5rem 0;
+    position: fixed;
+    height: 100%;
+    z-index: 100;
+    overflow-y: auto;
+  }
+  
+  .sidebar-header {
+    padding: 0 1.5rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .sidebar-header h2 {
+    font-size: 1.25rem;
+    color: white;
+  }
+  
+  .sidebar-nav ul {
+    list-style: none;
+    padding-top: 1rem;
+  }
+  
+  .sidebar-nav li {
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .sidebar-nav li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .sidebar-nav li.active {
+    background-color: var(--primary-color);
+  }
+  
+  .sidebar-nav .icon {
+    margin-right: 0.75rem;
+    font-size: 1.1rem;
+    color: var(--primary-color); /* Icônes en orange vif */
+  }
+  
+  .sidebar-nav .dropdown-icon {
+    margin-left: auto;
+    font-size: 0.9rem;
+    color: var(--primary-color); /* Icônes en orange vif */
+  }
+  
+  .main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    padding: 1.5rem;
+    background-color: var(--main-bg);
+    min-height: 100vh;
+  }
+  
+  .main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .main-header h1 {
+    font-size: 1.5rem;
+    color: var(--text-color);
+  }
+  
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .user-profile span {
+    color: var(--text-light);
+  }
+  
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+  
+  .dashboard {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .subtitle {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  
+  .card {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+  
+  .total-candidates {
+    grid-row: span 2;
+  }
+  
+  .recent-apps {
+    grid-row: span 2;
+  }
+  
+  .card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .card-icon {
+    margin-right: 0.5rem;
+    color: var(--primary-color); /* Icônes en orange vif */
+    font-size: 1.1rem;
+  }
+  
+  .card-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-color);
+  }
+  
+  .card-description {
+    color: var(--text-light);
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+  }
+  
+  .big-number {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0.5rem 0;
+    color: var(--text-color);
+  }
+  
+  .percentage {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .positive {
+    color: var(--success-color);
+  }
+  
+  .negative {
+    color: var(--danger-color);
+  }
+  
+  .view-all, .view-calendar {
+    color: var(--primary-color);
+    font-size: 0.85rem;
+    margin-top: 1rem;
+    cursor: pointer;
+    display: inline-block;
+    transition: opacity 0.2s;
+  }
+  
+  .view-all:hover, .view-calendar:hover {
+    opacity: 0.8;
+  }
+  
+  .applicant {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .initials {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 0.75rem;
+    font-size: 0.9rem;
+    background-color: var(--primary-color);
+  }
+  
+  .name {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text-color);
+  }
+  
+  .position {
+    font-size: 0.8rem;
+    color: var(--text-light);
+  }
+  
+  .no-interviews {
+    color: var(--text-light);
+    font-style: italic;
+    text-align: center;
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+  }
+  
+  .loading {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-light);
+  }
+  
+  .error {
+    color: var(--danger-color);
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  @media (max-width: 1024px) {
+    .grid-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 100%;
+      position: relative;
+      height: auto;
+    }
+  
+    .main-content {
+      margin-left: 0;
+    }
+  
+    .grid-container {
+      grid-template-columns: 1fr;
+    }
+  
+    .total-candidates, .recent-apps {
+      grid-row: span 1;
+    }
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .dashboard {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+   .card-icon {
+    color: #ff4400 !important; /* Force la couleur orange vif */
+  }

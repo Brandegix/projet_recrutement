@@ -1,0 +1,19 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Create Job Offer</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet" />
+</head>
+<body>
+    <div class="container">
+		<h2>Company Created Successfully!</h2>
+		<p>Your company has been registered.</p>
+		<a th:href="@{/api/jobOffers/jobOffers/create(recruiterId=${recruiterId})}">
+		    <button>Post a Job Offer</button>
+		</a>
+
+    </div>
+</body>
+</html>

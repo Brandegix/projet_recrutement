@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Subscription</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <h2>Create a New Subscription</h2>
+
+    <form th:action="@{/subscriptions}" th:object="${subscription}" method="post">
+        <label>Recruiter ID:</label>
+        <input type="number" th:field="*{recruiterId}" required /><br>
+
+        <label>Plan Name:</label>
+        <input type="text" th:field="*{planName}" required /><br>
+
+        <label>Start Date:</label>
+        <input type="date" th:field="*{startDate}" required /><br>
+
+        <label>End Date:</label>
+        <input type="date" th:field="*{endDate}" required /><br>
+
+        <label>Is Active:</label>
+        <input type="checkbox" th:field="*{isActive}" /><br>
+
+        <button type="submit">Create Subscription</button>
+    </form>
+</div>
+</body>
+</html>

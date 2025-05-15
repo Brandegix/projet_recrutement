@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Subscriptions</title>
+    <link rel="stylesheet" th:href="@{/css/style1.css}">
+</head>
+<body>
+<div class="container">
+    <h2>All Subscriptions</h2>
+
+    <div th:if="${subscriptions != null and !#lists.isEmpty(subscriptions)}">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Recruiter ID</th>
+                    <th>Plan Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Active?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="sub : ${subscriptions}">
+                    <td th:text="${sub.subscriptionId}"></td>
+                    <td th:text="${sub.recruiterId}"></td>
+                    <td th:text="${sub.planName}"></td>
+                    <td th:text="${sub.startDate}"></td>
+                    <td th:text="${sub.endDate}"></td>
+                    <td th:text="${sub.isActive}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${subscriptions == null or #lists.isEmpty(subscriptions)}">
+        <p>No subscriptions found.</p>
+    </div>
+</div>
+</body>
+</html>

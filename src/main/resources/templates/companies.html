@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Company</title>
+    <link rel="stylesheet" th:href="@{/css/style2.css}">
+</head>
+<body>
+<div class="container">
+    <h2>Create Company profil</h2>
+
+    <form th:action="@{/api/companies/companies}" th:object="${company}" method="post">
+        <label>Company Name:</label>
+        <input type="text" th:field="*{name}" required />
+
+        <label>Registration Number (RC):</label>
+        <input type="text" th:field="*{registrationNumber}" required />
+
+        <label>Website:</label>
+        <input type="text" th:field="*{website}" required />
+
+        <label>Industry:</label>
+        <input type="text" th:field="*{industry}" required />
+
+        <label>Address:</label>
+        <input type="text" th:field="*{address}" required />
+
+        <!-- Recruiter ID -->
+        <input type="hidden" name="recruiterId" th:value="${recruiterId}" />
+
+        <button type="submit">Create Company</button>
+    </form>
+
+</div>
+</body>
+</html>

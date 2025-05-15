@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Applied Jobs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 30px;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Applied Job Offers</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Job Title</th>
+                    <th>Description</th>
+                    <th>Location</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Display the applied jobs -->
+                <tr th:each="jobOffer : ${appliedJobOffers}">
+                    <td th:text="${jobOffer.title}"></td>
+                    <td th:text="${jobOffer.description}"></td>
+                    <td th:text="${jobOffer.location}"></td>
+                </tr>
+                <!-- If no applied jobs, show a message -->
+                <tr th:if="${#lists.isEmpty(appliedJobOffers)}">
+                    <td colspan="3" style="text-align: center;">No applied jobs found.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Back button to the job offers list -->
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="/api/jobOffers" class="btn">Back to Job Offers</a>
+        </div>
+    </div>
+</body>
+</html>

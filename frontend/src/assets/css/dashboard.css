@@ -1,0 +1,73 @@
+/* Empêche le scroll horizontal global */
+html, body {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* Conteneur principal du dashboard */
+.dashboard-container {
+  padding: 20px;
+  max-width: 100vw;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Section des candidats récents */
+.recent-candidates {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  overflow-x: auto;
+}
+
+/* Titre */
+.recent-candidates h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+/* Table responsive */
+.recent-candidates table {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  display: block;
+  overflow-x: auto;
+}
+
+/* Colonnes */
+.recent-candidates table th,
+.recent-candidates table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap; /* Évite le retour à la ligne et réduit le risque de débordement */
+}
+
+/* Entête */
+.recent-candidates table th {
+  background-color: #f4f4f4;
+}
+
+/* Boutons */
+.recent-candidates table td button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin-right: 5px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.recent-candidates table td button:hover {
+  background-color: #0056b3;
+}
+
+.recent-candidates table td button:active {
+  background-color: #003f87;
+}

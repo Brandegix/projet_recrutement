@@ -1,0 +1,348 @@
+.recruiter-dashboard {
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f7f7f7;
+  min-height: calc(100vh - 120px); /* Adjust based on Navbar and Footer height */
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.dashboard-header h1 {
+  color: #333;
+  font-size: 2rem;
+  margin: 0;
+}
+
+.create-job-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  flex-wrap: nowrap; /* ✅ Prevents stacking */
+  white-space: nowrap; /* ✅ Keeps text in one line */
+  border-radius: 12px; /* ✅ Slightly larger corners */
+  padding: 20px 40px; /* ✅ Bigger button without affecting text */
+  font-size: 14px; /* ✅ Keeps text small */
+  font-weight: 600;
+  width: auto; /* ✅ Allows button to resize dynamically */
+  min-width: 300px; /* ✅ Ensures it's always wide enough */    height: 60px; /* ✅ Makes it taller */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3); /* ✅ More noticeable shadow */
+}
+
+.create-job-button .button-icon {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.create-job-button:hover {
+  background-color: #0056b3;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 5px;
+  border: 1px solid #c3e6cb;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 5px;
+  border: 1px solid #f5c6cb;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.loading-spinner {
+  border: 4px solid #f3f3f3; /* Light grey */
+  border-top: 4px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 2s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  color: #ccc;
+  margin-bottom: 1rem;
+}
+
+.empty-state h2 {
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  color: #777;
+  margin-bottom: 1.5rem;
+}
+
+.create-first-job-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.create-first-job-button:hover {
+  background-color: #1e7e34;
+}
+
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.job-offer-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.offer-header {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.offer-header h2 {
+  color: #333;
+  font-size: 1.5rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.offer-badges {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.badge {
+  background-color: #f0f0f0;
+  color: #555;
+  padding: 0.3rem 0.6rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+
+.badge-type {
+  background-color: #e9ecef;
+}
+
+.badge-location {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.offer-details {
+  margin-bottom: 1rem;
+}
+
+.offer-detail {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.detail-icon {
+  margin-right: 0.5rem;
+  font-size: 1rem;
+  color: #777;
+}
+
+.offer-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.action-button {
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: opacity 0.3s ease;
+}
+
+.action-button:hover {
+  opacity: 0.8;
+}
+
+.action-button.edit {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.action-button.delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.applications-section {
+  margin-top: 1rem;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+}
+
+.applications-section h3 {
+  color: #333;
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.application-count {
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.no-applications {
+  color: #777;
+  font-style: italic;
+}
+
+.application-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.application-item {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  padding: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.applicant-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.applicant-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.applicant-details h4 {
+  margin: 0 0 0.2rem 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.applicant-contact {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.contact-item {
+  margin-bottom: 0.2rem;
+}
+
+.cv-link {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.cv-link:hover {
+  text-decoration: underline;
+}
+
+.application-date {
+  font-size: 0.8rem;
+  color: #777;
+  margin-top: 0.5rem;
+}
+
+.application-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.application-actions .action-button.primary {
+  background-color: #007bff;
+  color: white;
+}

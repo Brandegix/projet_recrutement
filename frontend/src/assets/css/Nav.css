@@ -1,0 +1,91 @@
+/* Wrapper */
+.nav-wrapper {
+  background-color: #000;
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Logo section */
+.nav-left {
+  flex-shrink: 0;
+}
+
+.nav-logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.nav-logo-white {
+  color: #fff;
+}
+
+.nav-logo-orange {
+  color: #ff6f00;
+}
+
+/* Right section: links + logout */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Navigation links */
+.nav-links {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  gap: 1.5rem;
+}
+
+.nav-links li a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.nav-links li a:hover {
+  transform: scale(1.05);
+}
+
+/* User Info + Logout Button */
+.nav-userinfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-username {
+  font-size: 1rem;
+  color: #fff;
+}
+
+.nav-logout-btn {
+  background-color: #fa5c01;
+  border: none;
+  padding: 12px 20px;
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  max-width: 150px;
+  text-align: center;
+}
+
+.nav-logout-btn:hover {
+  background: #ff8f33;
+}

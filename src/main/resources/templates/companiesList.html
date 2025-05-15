@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Companies</title>
+    <link rel="stylesheet" th:href="@{/css/style1.css}">
+</head>
+<body>
+<div class="container">
+    <h2>All Companies</h2>
+
+    <div th:if="${companies != null and !#lists.isEmpty(companies)}">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Website</th>
+                    <th>Industry</th>
+                    <th>Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="company : ${companies}">
+                    <td th:text="${company.companyId}"></td>
+                    <td th:text="${company.name}"></td>
+                    <td th:text="${company.website}"></td>
+                    <td th:text="${company.industry}"></td>
+                    <td th:text="${company.address}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${companies == null or #lists.isEmpty(companies)}">
+        <p>No companies found.</p>
+    </div>
+</div>
+</body>
+</html>

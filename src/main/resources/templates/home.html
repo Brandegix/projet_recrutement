@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+ <link th:href="@{/css/style.css}" rel="stylesheet">  <title>Recruitment - Home</title>
+</head>
+<body>
+  <header>
+    <h1>Recruitment</h1>
+    <nav>
+      <a href="/api/jobOffers">Find Jobs</a>
+      <a href="/api/recruiters/recruiters/create">Create your Employer Profile</a>
+      <a href="/login">Login</a>
+    </nav>
+  </header>
+  <section class="hero">
+    <h2>Your Dream Job Awaits</h2>
+    <p>Browse thousands of job listings and find the perfect fit for you.</p>
+    <button onclick="window.location.href='candidateDashboard.html'">Find Jobs</button>
+  </section>
+  
+
+  <main>
+    <section class="search">
+      <h3>Find your dream job</h3>
+      <form>
+        <input type="text" placeholder="Job title or keyword" />
+        <input type="text" placeholder="Location" />
+        <button type="submit">Search</button>
+      </form>
+    </section>
+
+  
+      
+
+    <section class="profiles">
+      <h3>Anonymous Candidate Profiles</h3>
+      <div class="profile-cards">
+        <div class="profile-card">
+          <h4>Name:*********</h4>
+          <p><strong>Skills:</strong> JavaScript, HTML, CSS</p>
+          <p><strong>Seeking Jobs:</strong> Front-end Developer</p>
+          <button onclick="window.location.href='Subscription.html'">View full CV</button>
+        </div>
+        <div class="profile-card">
+          <h4>Name:*********</h4>
+          <p><strong>Skills:</strong> Python, SQL, Data Analysis</p>
+          <p><strong>Seeking Jobs:</strong> Data Scientist</p>
+          <button onclick="window.location.href='Subscription.html'">View full CV</button>
+        </div>
+        <div class="profile-card">
+          <h4>Name:*********</h4>
+          <p><strong>Skills:</strong> PHP, MySQL, Web Development</p>
+          <p><strong>Seeking Jobs:</strong> Full-stack Developer</p>
+          <button onclick="window.location.href='Subscription.html'">View full CV</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <h3>Employers, Hire Top Talent Today</h3>
+      <button onclick="window.location.href='signin.html'">Post Job Offer</button>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-links">
+      <a href="terms.html">Terms of Service</a> | 
+      <a href="privacy.html">Privacy Policy</a> | 
+      <a href="contact.html">Contact Us</a>
+    </div>
+    <div class="social-media">
+      <a href="#">Facebook</a> | 
+      <a href="#">Twitter</a> | 
+      <a href="#">LinkedIn</a>
+    </div>
+  </footer>
+
+</body>
+</html>
