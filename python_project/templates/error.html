@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erreur d'accès</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .error-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #dc3545;
+        }
+
+        .error-title {
+            color: #dc3545;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .error-message {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .error-details {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+
+        .role-info {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon">⚠️</div>
+        <h1 class="error-title">{{ error_title }}</h1>
+        <p class="error-message">{{ error_message }}</p>
+        {% if error_details %}
+        <div class="error-details">
+            <p>{{ error_details }}</p>
+        </div>
+        {% endif %}
+        {% if current_role %}
+        <p class="role-info">Rôle actuel : {{ current_role }}</p>
+        {% endif %}
+        <a href="/" class="back-button">Retour à l'accueil</a>
+    </div>
+</body>
+</html> 

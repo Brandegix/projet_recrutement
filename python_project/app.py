@@ -14,12 +14,42 @@ from flask import Flask, session, jsonify
 from flask_session import Session
 from models import db, Candidate, Recruiter, JobOffer, Application
 from flask_socketio import SocketIO
+from middleware import role_required, socket_role_required, auth_required, socket_auth_required, ROLES, handle_error
+
+
 
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SECRET_KEY'] = 'your_secret_key'
 socketio = SocketIO(app, cors_allowed_origins="*", manage_session=False)  # Initialize SocketIO, allow CO
 # Initialisation de l'application Flask
+
+
+
+
+# Configuration des erreurs
+@app.errorhandler(401)
+def unauthorized(error):
+    return handle_error(error)
+
+@app.errorhandler(403)
+def forbidden(error):
+    return handle_error(error)
+
+@app.errorhandler(404)
+def not_found(error):
+    return handle_error(error)
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    return handle_error(error)
+
+# Middleware pour logger les erreurs
+@app.after_request
+def after_request(response):
+    if response.status_code >= 400:
+        print(f"Erreur {response.status_code}: {response.get_data(as_text=True)}")
+    return response
 
 # Configuration de la clé secrète pour les sessions
 app.secret_key = 'mysupersecretkey'  # Clé secrète pour les sessions
@@ -163,9 +193,21 @@ class JobOffer(db.Model):
     recruiter_id = db.Column(db.Integer, nullable=False)
     logo = db.Column(db.String(255))
     is_active = db.Column(db.Boolean, default=False) # Added the is_active field
+    CountModification = db.Column(db.Integer, nullable=False, default=0)
+    views = db.Column(db.Integer, default=0)  # Ajout du champ views
 
 
+class SavedJob(db.Model):
+    __tablename__ = 'saved_jobs'
 
+    id = db.Column(db.Integer, primary_key=True)
+    candidate_id = db.Column(db.Integer, db.ForeignKey('candidates.id'), nullable=False)
+    job_offer_id = db.Column(db.Integer, db.ForeignKey('JobOffer.id'), nullable=False)
+    saved_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    # Optional: relationships to access related data easily
+    candidate = db.relationship('Candidate', backref=db.backref('saved_jobs', lazy='dynamic'))
+    job_offer = db.relationship('JobOffer', backref=db.backref('saved_by_candidates', lazy='dynamic'))
 
 
 # Admin table
@@ -199,7 +241,7 @@ class Application(db.Model):
         return f"<Application {self.id}>"
 
 
-class Message(db.Model):
+class Messages(db.Model):
     __tablename__ = 'messagest'  # Changed table name to 'messagest'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -259,7 +301,12 @@ def login_admin():
         admin = Admin.query.filter_by(email=data["email"]).first()  # ✅ Changed username → email
         
         if not admin or not admin.check_password(data["password"]):
-            return jsonify({"error": "Identifiants invalides"}), 401
+             return render_template('error_general.html',
+                error_code='401',
+                error_title="Identifiants invalides",
+                error_message="Les identifiants fournis sont incorrects.",
+                error_details="Veuillez vérifier votre email et votre mot de passe."
+            ), 401
 
         # Add session information for the admin
         session['user_id'] = admin.id
@@ -373,15 +420,36 @@ def delete_job(id):
     return jsonify({"message": "Offre d'emploi supprimée avec succès"})
 
 @app.route('/api/job_offers/<int:id>', methods=['GET'])
-def get_job(id):
-    job = JobOffer.query.get_or_404(id)
-    return jsonify({
-        "id": job.id,
-        "title": job.title,
-        "company": job.company,
-        "location": job.location,
-        "salary": job.salary
-    })
+def get_job_with_logo(id):
+    try:
+        # Join JobOffer with Recruiter on recruiter_id and filter by job id
+        result = db.session.query(JobOffer, Recruiter.profile_image).join(
+            Recruiter, JobOffer.recruiter_id == Recruiter.id, isouter=True
+        ).filter(JobOffer.id == id).first()
+
+        if not result:
+            return jsonify({"error": "Job offer not found"}), 404
+
+        job, profile_image = result
+        job.views += 1
+        db.session.commit()
+
+        return jsonify({
+            "id": job.id,
+            "title": job.title,
+            "company": job.company,
+            "location": job.location,
+            "experience": job.experience,
+            "description": job.description,
+            "skills": job.skills.split(",") if job.skills else [],
+            "salary": job.salary,
+            "type": job.type,
+            "recruiter_id": job.recruiter_id,
+            "logo": f"http://localhost:5000/uploads/profile_images/{profile_image}" if profile_image else None
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route('/recruiter/candidates', methods=['GET'])
 def get_candidates_for_recruiter():
@@ -585,7 +653,12 @@ def login_candidate():
         candidate = Candidate.query.filter_by(email=data["email"]).first()
         
         if not candidate or not candidate.check_password(data["password"]):
-            return jsonify({"error": "Identifiants invalides"}), 401
+            return render_template('error_general.html',
+                error_code='401',
+                error_title="Identifiants invalides",
+                error_message="Les identifiants fournis sont incorrects.",
+                error_details="Veuillez vérifier votre email et votre mot de passe."
+            ), 401
 
         # Ajout des informations de session
         session['user_id'] = candidate.id
@@ -601,7 +674,12 @@ def current_candidate():
     if session.get('user_type') == 'candidate' and 'user_id' in session:
         return jsonify({'current_id': session['user_id']}), 200
     else:
-        return jsonify({'error': 'Utilisateur non connecté ou non autorisé'}), 401
+        return render_template('error_general.html',
+            error_code='401',
+            error_title="Non authentifié",
+            error_message="Vous devez être connecté en tant que candidat pour accéder à cette page.",
+            error_details="Veuillez vous connecter avec un compte candidat pour continuer."
+        ), 401
 
 
 @app.route("/api/candidates/register", methods=["POST"])
@@ -834,7 +912,7 @@ def register_recruiter():
     
 
 
-
+from flask import render_template
  # candidates who applied to certain job offers posted by a recruiter
 @app.route('/api/recruiter/applications', methods=['GET'])
 def get_recruiter_applications():
@@ -843,13 +921,22 @@ def get_recruiter_applications():
     print("Recruiter ID from session:", recruiter_id)
 
     if not recruiter_id:
-        return jsonify({"error": "Recruiter ID is required"}), 400
+         return render_template('error_general.html',
+            error_code='401',
+            error_title="Non authentifié",
+            error_message="Vous devez être connecté pour accéder aux candidatures.",
+            error_details="Veuillez vous connecter en tant que recruteur pour continuer."
+        ), 401
     print("on a depasser le premier if")
     # Get all job offers posted by the recruiter
     job_offers = JobOffer.query.filter_by(recruiter_id=recruiter_id).all()
     if not job_offers:
-        return jsonify({"error": "No job offers found for this recruiter"}), 404
-
+         return render_template('error_general.html',
+            error_code='404',
+            error_title="Aucune offre trouvée",
+            error_message="Aucune offre d'emploi n'a été trouvée pour ce recruteur.",
+            error_details="Veuillez d'abord créer des offres d'emploi pour voir les candidatures."
+        ), 404
     job_offer_ids = [job_offer.id for job_offer in job_offers]
 
     # Fetch applications for these job offers
@@ -918,7 +1005,12 @@ def login_recruiter():
 
     # Si aucun des cas ci-dessus n'est valide
     print("[DEBUG] Identifiants invalides.")
-    return jsonify({'error': 'Identifiants invalides'}), 401
+    return render_template('error_general.html',
+                error_code='401',
+                error_title="Identifiants invalides",
+                error_message="Les identifiants fournis sont incorrects.",
+                error_details="Veuillez vérifier votre email et votre mot de passe."
+            ), 401
 
 #? Pour savoir le recruteur connecter
 @app.route('/api/current_recruiter', methods=['GET'])
@@ -1003,7 +1095,12 @@ def get_job_offers_statistics():
 
     # Check if the recruiter is logged in
     if not recruiter_id:
-        return jsonify({"error": "Not logged in"}), 401
+        return render_template('error_general.html',
+            error_code='401',
+            error_title="Non authentifié",
+            error_message="Vous devez être connecté pour accéder aux statistiques.",
+            error_details="Veuillez vous connecter en tant que recruteur pour continuer."
+        ), 401
     
     # Fetch the job offers for the recruiter
     offers = JobOffer.query.filter_by(recruiter_id=recruiter_id).all()
@@ -1239,7 +1336,12 @@ def get_recruiter_profile():
     
     # Check if the recruiter is logged in
     if not recruiter_id:
-        return jsonify({"error": "Not logged in"}), 401
+        return render_template('error_general.html',
+            error_code='401',
+            error_title="Non authentifié",
+            error_message="Vous devez être connecté pour accéder à votre profil.",
+            error_details="Veuillez vous connecter pour continuer."
+        ), 401
 
     # Assuming you have a Recruiter model with a method to fetch recruiter details
     recruiter = Recruiter.query.get(recruiter_id)
@@ -1254,8 +1356,12 @@ def get_recruiter_profile():
     print("selected_domainssssssssss :", selected_domains)
 
     if not recruiter:
-        return jsonify({"error": "Recruiter not found"}), 404
-
+        return render_template('error_general.html',
+            error_code='404',
+            error_title="Profil non trouvé",
+            error_message="Le profil du recruteur n'a pas été trouvé.",
+            error_details="Veuillez vérifier vos informations de connexion."
+        ), 404
     # Return the recruiter profile data
     return jsonify({
         'id': recruiter.id,
@@ -1361,12 +1467,21 @@ def get_candidate_profile():
 
     user_id = session.get('user_id')
     if not user_id:
-        return jsonify({"error": "Not logged in"}), 401
+        return render_template('error_general.html',
+            error_code='401',
+            error_title="Non authentifié",
+            error_message="Vous devez être connecté pour accéder à votre profil.",
+            error_details="Veuillez vous connecter pour continuer."
+        ), 401
 
     candidate = Candidate.query.get(user_id)
     if candidate is None:
-        return jsonify({"error": "Candidate not found"}), 404
-
+        return render_template('error_general.html',
+            error_code='404',
+            error_title="Profil non trouvé",
+            error_message="Le profil du candidat n'a pas été trouvé.",
+            error_details="Veuillez vérifier vos informations de connexion."
+        ), 404
     print("Raw candidate.skills:", candidate.skills)
 
     skills = []
@@ -1397,18 +1512,33 @@ def get_candidate_profile():
 def get_candidate_profiles12():
     user_id = session.get('user_id')
     if not user_id:
-        return jsonify({"error": "Not logged in"}), 401
+        return render_template('error_general.html',
+            error_code='401',
+            error_title="Non authentifié",
+            error_message="Vous devez être connecté pour accéder aux profils.",
+            error_details="Veuillez vous connecter pour continuer."
+        ), 401
 
     candidate = Candidate.query.get(user_id)
     if not candidate:
-        return jsonify({"error": "Candidate not found"}), 404
+        return render_template('error_general.html',
+            error_code='404',
+            error_title="Profil non trouvé",
+            error_message="Le profil du candidat n'a pas été trouvé.",
+            error_details="Veuillez vérifier vos informations de connexion."
+        ), 404
 
     skills = []
     if isinstance(candidate.skills, str):
         try:
             skills = json.loads(candidate.skills)
         except json.JSONDecodeError:
-            return jsonify({"error": "Failed to decode skills data"}), 500
+            return render_template('error_general.html',
+                error_code='500',
+                error_title="Erreur de données",
+                error_message="Impossible de décoder les compétences.",
+                error_details="Une erreur est survenue lors du traitement des compétences."
+            ), 500
     elif isinstance(candidate.skills, list):
         skills = candidate.skills
 
@@ -1509,6 +1639,71 @@ def get_recent_activities():
     return jsonify(activities)
 
 #!hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+#save a job offer
+
+@app.route('/api/save-job', methods=['POST'])
+def save_job():
+    data = request.json
+    candidate_id = session.get('user_id')
+    job_offer_id = data.get('job_offer_id')
+
+    # Check if already saved
+    existing = SavedJob.query.filter_by(candidate_id=candidate_id, job_offer_id=job_offer_id).first()
+    if existing:
+        return jsonify({"message": "Job already saved"}), 400
+
+    saved_job = SavedJob(candidate_id=candidate_id, job_offer_id=job_offer_id)
+    db.session.add(saved_job)
+    db.session.commit()
+    return jsonify({"message": "Job saved successfully"})
+
+
+
+@app.route('/api/unsave-job', methods=['POST'])
+def unsave_job():
+    data = request.json
+    candidate_id = session.get('user_id')
+    job_offer_id = data.get('job_offer_id')
+
+    # Find the existing saved job
+    existing = SavedJob.query.filter_by(candidate_id=candidate_id, job_offer_id=job_offer_id).first()
+    if existing:
+        db.session.delete(existing)  # delete the actual object from DB
+        db.session.commit()
+        return jsonify({"message": "Job unsaved successfully"})
+    
+    return jsonify({"message": "No saved job found"}), 404
+
+
+
+
+@app.route('/api/saved-jobs', methods=['GET'])
+def get_saved_jobs():
+    candidate_id = session.get('user_id')
+    if not candidate_id:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    # Query saved jobs for the candidate
+    saved_jobs = SavedJob.query.filter_by(candidate_id=candidate_id).all()
+
+    print(saved_jobs)
+    # Extract job offers from saved jobs
+    job_offers = []
+    for saved in saved_jobs:
+        job = JobOffer.query.get(saved.job_offer_id)
+        if job:
+            job_offers.append({
+                "id": job.id,
+                "title": job.title,
+                "company": job.company,
+                "location": job.location,
+                "type": job.type,
+                "salary": job.salary,
+                "description": job.description,
+                # Add other fields as needed
+            })
+
+    return jsonify(job_offers)
 
 @app.route('/api/recruiter-dashboard/graph')
 def recruiter_dashboard_graph():
@@ -1549,7 +1744,13 @@ def get_recruiter_id():
         recruiter_id = session.get('user_id')
         return jsonify({"recruiter_id": recruiter_id}), 200
     else:
-        return jsonify({"error": "Unauthorized"}), 401
+        return render_template('error_general.html',
+            error_code='401',
+            error_title="Non authentifié",
+            error_message="Vous devez être connecté en tant que recruteur.",
+            error_details="Veuillez vous connecter avec un compte recruteur pour continuer."
+        ), 401
+
 
 
 
@@ -1566,7 +1767,12 @@ def get_job_offers():
 
     # Check if the recruiter is logged in
     if not recruiter_id:
-        return jsonify({"error": "Not logged in"}), 401
+        return render_template('error_general.html',
+            error_code='401',
+            error_title="Non authentifié",
+            error_message="Vous devez être connecté pour accéder aux offres d'emploi.",
+            error_details="Veuillez vous connecter en tant que recruteur pour continuer."
+        ), 401
     
      # ✅ Fetch recruiter details from the database
     recruiter = Recruiter.query.filter_by(id=recruiter_id).first()
@@ -1603,12 +1809,22 @@ def delete_job_offer(offer_id):
     recruiter_id = session.get('user_id')
 
     if not recruiter_id:
-        return jsonify({"error": "Not logged in"}), 401
+        return render_template('error_general.html',
+            error_code='401',
+            error_title="Non authentifié",
+            error_message="Vous devez être connecté pour supprimer une offre d'emploi.",
+            error_details="Veuillez vous connecter en tant que recruteur pour continuer."
+        ), 401
 
     offer = JobOffer.query.filter_by(id=offer_id, recruiter_id=recruiter_id).first()
 
     if not offer:
-        return jsonify({"error": "Offre non trouvée ou non autorisée"}), 404
+        return render_template('error_general.html',
+            error_code='404',
+            error_title="Offre non trouvée",
+            error_message="L'offre d'emploi n'a pas été trouvée ou vous n'êtes pas autorisé à la supprimer.",
+            error_details="Veuillez vérifier l'identifiant de l'offre et vos droits d'accès."
+        ), 404
 
     try:
         db.session.delete(offer)
@@ -1616,18 +1832,40 @@ def delete_job_offer(offer_id):
         return jsonify({"message": "Offre supprimée avec succès"}), 200
     except Exception as e:
         print("Erreur suppression :", e)
-        return jsonify({"error": "Erreur lors de la suppression"}), 500
-
+        return render_template('error_general.html',
+            error_code='500',
+            error_title="Erreur de suppression",
+            error_message="Une erreur est survenue lors de la suppression de l'offre.",
+            error_details="Veuillez réessayer plus tard ou contacter le support."
+        ), 500
 @app.route('/api/recruiter/job_offers/<int:offer_id>', methods=['PUT'])
 def update_job_offer(offer_id):
     recruiter_id = session.get('user_id')
     if not recruiter_id:
-        return jsonify({"error": "Not logged in"}), 401
+        return render_template('error_general.html',
+            error_code='401',
+            error_title="Non authentifié",
+            error_message="Vous devez être connecté pour modifier une offre d'emploi.",
+            error_details="Veuillez vous connecter en tant que recruteur pour continuer."
+        ), 401
 
     offer = JobOffer.query.filter_by(id=offer_id, recruiter_id=recruiter_id).first()
     if not offer:
-        return jsonify({"error": "Offer not found or unauthorized"}), 404
+        return render_template('error_general.html',
+            error_code='404',
+            error_title="Offre non trouvée",
+            error_message="L'offre d'emploi n'a pas été trouvée ou vous n'êtes pas autorisé à la modifier.",
+            error_details="Veuillez vérifier l'identifiant de l'offre et vos droits d'accès."
+        ), 404
 
+    # 👉 Check if the offer has already been modified
+    if offer.CountModification >= 1:
+        return jsonify({
+            "error": "Modification limit reached",
+            "message": "Cette offre a déjà été modifiée une fois et ne peut plus être modifiée."
+        }), 403
+
+    # 👉 Apply changes
     data = request.get_json()
     offer.title = data.get('title', offer.title)
     offer.description = data.get('description', offer.description)
@@ -1638,19 +1876,31 @@ def update_job_offer(offer_id):
     offer.skills = data.get('skills', offer.skills)
     offer.type = data.get('type', offer.type)
 
-    db.session.commit()
-    return jsonify({"message": "Job offer updated successfully"})
+    # 👉 Increment modification count
+    offer.CountModification += 1
 
+    db.session.commit()
+
+    return jsonify({"message": "L'offre a été mise à jour avec succès."})
 
 @app.route('/api/recruiter/job_offers/<int:offer_id>', methods=['GET'])
 def get_job_offer(offer_id):
     recruiter_id = session.get('user_id')
     if not recruiter_id:
-        return jsonify({"error": "Not logged in"}), 401
-
+        return render_template('error_general.html',
+            error_code='401',
+            error_title="Non authentifié",
+            error_message="Vous devez être connecté pour accéder aux détails de l'offre.",
+            error_details="Veuillez vous connecter en tant que recruteur pour continuer."
+        ), 401
     offer = JobOffer.query.filter_by(id=offer_id, recruiter_id=recruiter_id).first()
     if not offer:
-        return jsonify({"error": "Offer not found or unauthorized"}), 404
+        return render_template('error_general.html',
+            error_code='404',
+            error_title="Offre non trouvée",
+            error_message="L'offre d'emploi n'a pas été trouvée ou vous n'êtes pas autorisé à y accéder.",
+            error_details="Veuillez vérifier l'identifiant de l'offre et vos droits d'accès."
+        ), 404
 
     return jsonify({
         "id": offer.id,
@@ -1693,20 +1943,150 @@ def get_job_offer(offer_id):
 
 #     return jsonify(graph_data)
 import pdb
-# Login recruiter
 
 
+
+# manar manar
+@app.route('/api/recruiter/job_offers/statisticsss', methods=['GET'])
+def get_job_offers_statistics12():
+    print("Session data:", session)  # Debug log
+    recruiter_id = session.get('user_id')
+    
+    if not recruiter_id:
+        print("No recruiter_id in session")  # Debug log
+        return jsonify({
+            'error': 'Non authentifié',
+            'message': 'Vous devez être connecté pour accéder aux statistiques.'
+        }), 401
+
+    try:
+        # Récupérer toutes les offres du recruteur
+        offers = JobOffer.query.filter_by(recruiter_id=recruiter_id).all()
+        print(f"Found {len(offers)} offers for recruiter {recruiter_id}")  # Debug log
+        
+        statistics = []
+        for offer in offers:
+            # Compter le nombre de candidatures pour cette offre
+            application_count = Application.query.filter_by(job_offer_id=offer.id).count()
+            
+            statistics.append({
+                'id': offer.id,
+                'title': offer.title,
+                'company': offer.company,
+                'created_at': offer.created_at.strftime('%d/%m/%Y') if offer.created_at else None,
+                'application_count': application_count,
+                'is_active': offer.is_active,
+                'views': offer.views or 0
+            })
+        
+        return jsonify(statistics)
+    except Exception as e:
+        print(f"Error in get_job_offers_statistics: {str(e)}")  # Debug log
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/recruiter/job_offers_statisticcs', methods=['GET'])
+def get_job_offers_statisticsssss():
+    print("Session data:", session)  # Debug log
+    recruiter_id = session.get('user_id')
+    
+    if not recruiter_id:
+        print("No recruiter_id in session")  # Debug log
+        return jsonify({
+            'error': 'Non authentifié',
+            'message': 'Vous devez être connecté pour accéder aux statistiques.'
+        }), 401
+
+    try:
+        # Récupérer toutes les offres du recruteur
+        offers = JobOffer.query.filter_by(recruiter_id=recruiter_id).all()
+        print(f"Found {len(offers)} offers for recruiter {recruiter_id}")  # Debug log
+        
+        statistics = []
+        for offer in offers:
+            # Compter le nombre de candidatures pour cette offre
+            application_count = Application.query.filter_by(job_offer_id=offer.id).count()
+            print(f"Offer {offer.id}: {application_count} applications")  # Debug log
+            
+            statistics.append({
+                'id': offer.id,
+                'title': offer.title,
+                'company': offer.company,
+                'application_count': application_count,
+                'is_active': bool(offer.is_active),
+                'created_at': datetime.now().strftime('%Y-%m-%d'),
+                'views': offer.views or 0
+            })
+        
+        print("Returning statistics:", statistics)  # Debug log
+        return jsonify(statistics)  # Retourne directement le tableau
+    except Exception as e:
+        print(f"Error in get_job_offers_statistics: {str(e)}")  # Debug log
+        return jsonify({
+            'error': 'Erreur serveur',
+            'message': f'Une erreur est survenue lors de la récupération des statistiques: {str(e)}'
+        }), 500
+@app.route('/api/recruiter/job_offers/<int:offer_id>/toggle', methods=['POST', 'OPTIONS'])
+def toggle_job_offer(offer_id):
+    # Handle CORS Preflight Request
+    print(offer_id)
+    if request.method == 'OPTIONS':
+        response = jsonify({'message': 'CORS preflight passed'})
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        return response, 200
+
+    recruiter_id = session.get('user_id')
+
+    if not recruiter_id:
+        return jsonify({
+            'success': False,
+            'message': "Vous devez être connecté pour modifier le statut de l'offre."
+        }), 401
+
+    try:
+        job_offer = JobOffer.query.filter_by(id=offer_id, recruiter_id=recruiter_id).first_or_404(description="Offre non trouvée ou accès refusé.")
+
+        # Toggle job offer status
+        job_offer.is_active = not job_offer.is_active
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'is_active': job_offer.is_active,
+            'message': 'Offre activée' if job_offer.is_active else 'Offre mise en pause'
+        })
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Erreur lors du toggle de l'offre: {str(e)}")  # Debugging log
+        return jsonify({
+            'success': False,
+            'message': "Une erreur s'est produite lors de la modification du statut de l'offre.",
+            'error': str(e)
+        }), 500
 
 @app.route('/api/recruiters/profile', methods=['GET'])
 def get_recruiter_profiles():
     # Vérifie que la session contient bien l'ID et le type de l'utilisateur
     recruiter_id = session.get('user_id')
     if not recruiter_id:
-        return jsonify({'error': 'Utilisateur non connecté'}), 401
+        return render_template('error_general.html',
+            error_code='401',
+            error_title="Non authentifié",
+            error_message="Vous devez être connecté pour accéder au profil.",
+            error_details="Veuillez vous connecter en tant que recruteur pour continuer."
+        ), 401
 
     recruiter = Recruiter.query.get(recruiter_id)
     if not recruiter:
-        return jsonify({'error': 'Recruteur non trouvé'}), 404
+        return render_template('error_general.html',
+            error_code='404',
+            error_title="Profil non trouvé",
+            error_message="Le profil du recruteur n'a pas été trouvé.",
+            error_details="Veuillez vérifier vos informations de connexion."
+        ), 404
 
     return jsonify({
         'id': recruiter.id,
@@ -1759,7 +2139,12 @@ def create_job_offer():
     # ✅ Example field: recruiter.is_subscribed (boolean)
 
     if not recruiter or not recruiter.subscription_active:
-     return jsonify({'error': 'Votre abonnement n\'est pas actif. Veuillez contacter l\'administrateur.'}), 403
+     return render_template('error_general.html',
+            error_code='403',
+            error_title="Abonnement inactif",
+            error_message="Votre abonnement n'est pas actif.",
+            error_details="Veuillez contacter l'administrateur pour activer votre abonnement."
+        ), 403
 
 
     company = recruiter.companyName  # ✅ Automatically set company name from recruiter
@@ -1791,7 +2176,12 @@ def create_job_offer():
         return jsonify({'message': 'Job offer created successfully'}), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        return render_template('error_general.html',
+            error_code='500',
+            error_title="Erreur de création",
+            error_message="Une erreur est survenue lors de la création de l'offre.",
+            error_details=str(e)
+        ), 500
 
 
 @app.route('/api/job_offersr', methods=['GET'])
@@ -1807,13 +2197,23 @@ def get_all_job_offersr():
 def add_job_offer():
     # Vérification de la session
     if 'user_id' not in session or session['user_type'] != 'recruiter':
-        return jsonify({"error": "Not logged in as recruiter"}), 401
+        return render_template('error_general.html',
+            error_code='401',
+            error_title="Non authentifié",
+            error_message="Vous devez être connecté en tant que recruteur pour ajouter une offre.",
+            error_details="Veuillez vous connecter avec un compte recruteur pour continuer."
+        ), 401
 
     data = request.json
     required_fields = ["title", "company", "location", "experience", "description", "skills", "salary", "type", "recruiter_id"]
     for field in required_fields:
         if field not in data:
-            return jsonify({"error": f"Champ manquant : {field}"}), 400
+            return render_template('error_general.html',
+                error_code='400',
+                error_title="Champ manquant",
+                error_message=f"Le champ {field} est requis.",
+                error_details="Veuillez remplir tous les champs obligatoires."
+            ), 400
 
     new_offer = JobOffer(
         title=data["title"],
@@ -1832,25 +2232,36 @@ def add_job_offer():
 
     return jsonify({"message": "Offre ajoutée avec succès !"}), 201
 
+
+
 @app.route("/api/je", methods=["GET"])
-def get_job_offerss():
+def get_job_offers_with_logos():
     try:
-        offers = JobOffer.query.all()
+        # ✅ Join JobOffer with Recruiter using recruiter_id and filter by is_active
+        offers = db.session.query(JobOffer, Recruiter.profile_image).join(
+    Recruiter, JobOffer.recruiter_id == Recruiter.id, isouter=True  # <-- left outer join
+).all()
+
+
         offers_list = [{
-            "id": offer.id,
-            "title": offer.title,
-            "company": offer.company,
-            "location": offer.location,
-            "experience": offer.experience,
-            "description": offer.description,
-            "skills": offer.skills.split(",") if offer.skills else [],
-            "salary": offer.salary,
-            "type": offer.type,
-            "recruiter_id": offer.recruiter_id
+            "id": offer.JobOffer.id,
+            "title": offer.JobOffer.title,
+            "company": offer.JobOffer.company,
+            "location": offer.JobOffer.location,
+            "experience": offer.JobOffer.experience,
+            "description": offer.JobOffer.description,
+            "skills": offer.JobOffer.skills.split(",") if offer.JobOffer.skills else [],
+            "salary": offer.JobOffer.salary,
+            "type": offer.JobOffer.type,
+            "recruiter_id": offer.JobOffer.recruiter_id,
+
+            "logo": f"http://localhost:5000/uploads/profile_images/{offer.profile_image}" if offer.profile_image else None
         } for offer in offers]
+
         return jsonify(offers_list)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 # @app.route("/api/delete_job_offer/<int:offer_id>", methods=["DELETE"])
 # def delete_job_offer(offer_id):
 #     # Vérification de la session
@@ -2466,58 +2877,119 @@ def reset_admin_password():
 
 
 
-
 @app.route('/api/notify-recruiter/<int:job_offer_id>', methods=['POST'])
-def notify_recruiter(job_offer_id):  # ✅ Match parameter name exactly
+def notify_recruiter(job_offer_id):
     try:
-
         candidate_id = session.get('user_id')
+        data = request.get_json()
+
+        # Extract additional info from the request body
+        experience = data.get('experience', 'Non précisé')
+        domain = data.get('domain', 'Non précisé')
+        motivation_letter = data.get('motivationLetter', 'Non fournie')
+
         print("Session data:", session)
         print(f"Checking application for candidate_id={candidate_id}, job_offer_id={job_offer_id}")
 
-        # Get the application info
         application = Application.query.filter_by(job_offer_id=job_offer_id, candidate_id=candidate_id).first()
-
         if not application:
             return jsonify({"message": "Application not found."}), 404
 
         candidate = Candidate.query.get(application.candidate_id)
         job_offer = JobOffer.query.get(application.job_offer_id)
         recruiter = Recruiter.query.get(job_offer.recruiter_id)
-        print("Recruiter data:", recruiter)
-        print("Recruiter data:", candidate)
-        print("Recruiter data:", job_offer)
 
-        cv_path = f"uploads/{candidate.cv_filename}"  # or whatever field you use
+        cv_path = f"uploads/{candidate.cv_filename}"
 
+        # Email content with new fields
+        subject = f"Nouvelle candidature pour le poste: {job_offer.title}"
+        html_body = f"""
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {{
+      font-family: 'Arial', sans-serif;
+      background-color: #ffffff;
+      color: #222;
+      padding: 20px;
+    }}
+    .header {{
+      background-color: #E67E22; /* Orange branding */
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      border-radius: 8px 8px 0 0;
+    }}
+    .content {{
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }}
+    .footer {{
+      margin-top: 30px;
+      font-size: 14px;
+      color: #555;
+      text-align: center;
+      border-top: 2px solid #E67E22;
+      padding-top: 15px;
+    }}
+    .info {{
+      margin-bottom: 15px;
+      padding: 10px;
+      background: #fff;
+      border-left: 5px solid #E67E22;
+      border-radius: 6px;
+    }}
+    .info strong {{
+      display: block;
+      font-size: 16px;
+      color: #222;
+    }}
+  </style>
+</head>
+<body>
+  <div class="header">CasaJobs - Nouvelle Candidature</div>
+  
+  <div class="content">
+    <p>Bonjour,</p>
+    <p>Un nouveau candidat a postulé à votre offre <strong>{job_offer.title}</strong>.</p>
+    <p>Référence N°: <strong>{application.id}</strong></p>
 
-        # Compose the email
-        subject = f"New Application for {job_offer.title}"
-        body = f"""
-        Hello,
+    <div class="info"><strong>Nom:</strong> {candidate.name}</div>
+    <div class="info"><strong>Email:</strong> {candidate.email}</div>
+    <div class="info"><strong>Téléphone:</strong> {candidate.phoneNumber}</div>
+    <div class="info"><strong>Expérience:</strong> {experience}</div>
+    <div class="info"><strong>Domaine d'activité:</strong> {domain}</div>
+    <div class="info"><strong>Lettre de motivation:</strong><br /> {motivation_letter}</div>
 
-        A new candidate has applied for your job offer: {job_offer.title}.
+    <p>Le CV du candidat est en pièce jointe.</p>
+  </div>
 
-        Candidate details:
-        - Name: {candidate.name}
-        - Email: {candidate.email}
-        - Phone: {candidate.phoneNumber}
+  <div class="footer">
+    &copy; 2025 CasaJobs | Recrutement simplifié
+  </div>
+</body>
+</html>
+"""
 
-        Regards,
-        Your Job Application Platform
-        """
-        recruiter_email = recruiter.email
-        msg = Message(subject=subject, recipients=[recruiter_email], body=body)
-        # 📎 Attach the CV file
+        msg = Message(subject=subject, recipients=[recruiter.email], html=html_body)
+
+        # Attach CV
         with open(cv_path, 'rb') as cv_file:
             msg.attach(filename=candidate.cv_filename, content_type='application/pdf', data=cv_file.read())
 
         mail.send(msg)
 
         return jsonify({"message": "Recruiter notified successfully."}), 200
+
     except Exception as e:
         print(f"Error sending email: {e}")
         return jsonify({"message": "Failed to send email."}), 500
+
 
 #  Sockets setup
 
@@ -2587,6 +3059,16 @@ def handle_join_chat(data):
     }, room=room)
 
 
+import threading
+
+def send_email_async(msg):
+    with app.app_context():
+        try:
+            mail.send(msg)
+            print(f"Email sent to {msg.recipients}")
+        except Exception as e:
+            print(f"Error sending email: {e}")
+
 @socketio.on('send_message')
 def handle_send_message(data):
     if 'user_id' not in session:
@@ -2606,32 +3088,30 @@ def handle_send_message(data):
         emit('error', {'message': 'You are not in a chat room.'})
         return
 
-    # Extract the application_id from the room name (room name format: chat_app_{application_id})
+    # Extract application_id from room name (format: chat_app_{application_id})
     try:
-        application_id = int(room.split('_')[2])  # Assuming 'chat_app_{application_id}'
-    except IndexError:
-        emit('error', {'message': 'Invalid room name format'})
-        return
-    except ValueError:
-        emit('error', {'message': 'Invalid application_id format in room name'})
+        application_id = int(room.split('_')[2])
+    except (IndexError, ValueError):
+        emit('error', {'message': 'Invalid room name format or application_id'})
         return
 
+    # Get sender name
     if user_type == 'candidate':
         user = Candidate.query.get(user_id)
         sender_name = user.name if user else 'Unknown Candidate'
-    elif user_type == 'recruiter' or user_type == 'admin':
+    elif user_type in ['recruiter', 'admin']:
         user = Recruiter.query.get(user_id)
         sender_name = user.name if user else 'Unknown Recruiter'
     else:
         sender_name = 'Unknown'
 
-    # Insert message into the database
-    new_message = Message(
-        application_id=application_id,  # Use the correct application_id from room name
-        sender_id=user_id,              # ID of the user sending the message
-        sender_type=user_type,          # Type of the user (candidate, recruiter, admin)
-        message=message,                # The actual message content
-        timestamp=datetime.now()        # The current timestamp of when the message is sent
+    # Store message in database
+    new_message = Messages(
+        application_id=application_id,
+        sender_id=user_id,
+        sender_type=user_type,
+        message=message,
+        timestamp=datetime.now()
     )
 
     try:
@@ -2641,7 +3121,9 @@ def handle_send_message(data):
         db.session.rollback()
         print(f"Error storing message: {e}")
         emit('error', {'message': 'Error storing message.'})
+        return
 
+    # Emit real-time message
     emit('receive_message', {
         'user': sender_name,
         'message': message,
@@ -2651,6 +3133,83 @@ def handle_send_message(data):
 
     print(f"Message sent from {user_type} {user_id} to room {room}: {message}")
 
+    # ──────── Emit notification + Email ────────
+    application = Application.query.get(application_id)
+    if not application:
+        return
+
+    # Identify recipient
+    if user_type == 'candidate':
+        receiver_id = application.job_offer.recruiter_id
+        receiver_type = 'recruiter'
+    elif user_type in ['recruiter', 'admin']:
+        receiver_id = application.candidate_id
+        receiver_type = 'candidate'
+    else:
+        emit('error', {'message': 'Invalid user type.'})
+        return
+
+    # Compose recipient socket room
+    notify_room = f'notify_{receiver_type}_{receiver_id}'
+
+    # Send notification via socket
+    emit('notification', {
+        'from': user_type,
+        'from_id': user_id,
+        'application_id': application_id,
+        'message': f'New message from {sender_name}'
+    }, room=notify_room)
+
+    # Send email notification
+    if receiver_type == 'recruiter':
+        recipient_user = Recruiter.query.get(receiver_id)
+    else:
+        recipient_user = Candidate.query.get(receiver_id)
+
+    recipient_email = recipient_user.email if recipient_user else None
+    application_title = application.job_offer.title if application and application.job_offer else "Job Application"
+
+    if recipient_email:
+        try:
+            email_body = f"""
+            Hello {recipient_user.name},
+
+            You have received a new message from {sender_name} regarding the application: {application_title}.
+
+           
+
+            Please log in to your account to reply.
+
+            Best regards,
+            CasaJobs Team
+            """
+
+            msg = Message(
+                subject=f"New Message from {sender_name}",
+                sender="your_email@gmail.com",
+                recipients=[recipient_email],
+                body=email_body
+            )
+            threading.Thread(target=send_email_async, args=(msg,)).start()
+            print(f"Email sent to {recipient_email}")
+        except Exception as e:
+            print(f"Error sending email: {e}")
+
+
+
+@socketio.on('subscribe_notifications')
+def handle_subscribe_notifications(data):
+    user_id = data.get('user_id')
+    user_type = data.get('user_type')
+
+    if not user_id or not user_type:
+        emit('error', {'message': 'Missing user_id or user_type'})
+        return
+
+    notify_room = f'notify_{user_type}_{user_id}'
+    join_room(notify_room)
+    print(f"{user_type} {user_id} subscribed to notifications room: {notify_room}")
+
 @app.route('/api/application/<int:application_id>/recruiter-started', methods=['GET'])
 def has_recruiter_started(application_id):
     application = Application.query.get(application_id)
@@ -2658,7 +3217,7 @@ def has_recruiter_started(application_id):
         return jsonify({'error': 'Application not found'}), 404
 
     # Check if recruiter sent any message
-    message_exists = Message.query.filter_by(
+    message_exists = Messages.query.filter_by(
         application_id=application_id,
         sender_type='recruiter'
     ).first()
@@ -2676,7 +3235,7 @@ def handle_fetch_messages(data):
         return
 
     # Fetch messages for the given application_id
-    messages = Message.query.filter_by(application_id=application_id).all()
+    messages = Messages.query.filter_by(application_id=application_id).all()
     
     # Format the messages before sending them back to the frontend
     formatted_messages = [
@@ -2703,7 +3262,7 @@ def get_messages():
     if not application_id:
         return jsonify({"error": "Application ID is required"}), 400
 
-    messages = Message.query.filter_by(application_id=application_id).order_by(Message.timestamp.asc()).all()
+    messages = Messages.query.filter_by(application_id=application_id).order_by(Messages.timestamp.asc()).all()
     return jsonify([msg.to_dict() for msg in messages])
 
 #@socketio.on('send_message')
