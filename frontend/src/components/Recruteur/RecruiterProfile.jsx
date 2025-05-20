@@ -46,7 +46,7 @@ function RecruiterProfile() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/recruiter/profile", {
+    fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/profile`, {
       method: "GET",
       credentials: "include",
     })
@@ -128,8 +128,8 @@ function RecruiterProfile() {
               <img
                 src={
                   profile.profile_image
-                    ? `http://localhost:5000/uploads/profile_images/${profile.profile_image}`
-                    : candidatImage
+                  ? `${process.env.REACT_APP_API_URL}/uploads/profile_images/${profile.profile_image}`
+                  : candidatImage
                 }
                 alt="Recruiter Profile"
                 className="profile-img"
@@ -151,15 +151,15 @@ function RecruiterProfile() {
 
             <div className="profile-info">
               <h2 className="profile-name">{profile.companyName || "Entreprise Anonyme"}</h2>
-              <p className="profile-title">Recruteur</p>
+              <p className="profile-title">Profil de l'entreprise</p>
               <Link to="/EditRecruiterProfile" className="edit-link">
-                ✏ Modifier le profil
+                Modifier le profil
               </Link>
             </div>
           </div>
   
             <div className="about-section">
-              <h3 className="section-title">🏢 À propos de l'entreprise</h3>
+              <h3 className="section-title"> À propos de l'entreprise</h3>
               <p>
                 {profile.description || "Vous n'avez pas encore ajouté de description d'entreprise. Cliquez sur 'Modifier le profil' pour en ajouter une."}
               </p>
@@ -167,7 +167,7 @@ function RecruiterProfile() {
   
             <div className="cards-container">
               <div className="profile-card">
-                <h4>📋 Informations de contact</h4>
+                <h4> Informations de contact</h4>
                 <div className="profile-detail"><strong>Email: </strong>{profile.email}</div>
                 <div className="profile-detail"><strong>Téléphone: </strong>{profile.phoneNumber || "Non renseigné"}</div>
                 <div className="profile-detail"><strong>Adresse: </strong>{profile.address || "Non renseignée"}</div>
@@ -176,7 +176,7 @@ function RecruiterProfile() {
               </div>
   
               <div className="profile-card">
-                <h4>📊 Statistiques</h4>
+                <h4 > Statistiques</h4>
                 <div className="profile-detail"><strong>Offres publiées: </strong>{jobStats?.jobCount ?? "Chargement..."}</div>
                 <div className="profile-detail"><strong>Candidats embauchés: </strong>5</div>
                 <div className="profile-detail"><strong>Délai moyen de recrutement: </strong>10 jours</div>
@@ -184,7 +184,7 @@ function RecruiterProfile() {
             </div>
   
             <div className="domains-section">
-              <h4 className="section-title">🛠 Domaines d'activité</h4>
+              <h4 className="section-title"> Domaines d'activité</h4>
               <div className="domains-list">
                 {domains.length > 0 ? (
                   domains.map((domain, i) => (
@@ -216,18 +216,18 @@ function RecruiterProfile() {
                   placeholder="Ajouter un nouveau domaine"
                 />
                 <button onClick={handleAddDomain} className="add-domain-btn">
-                  ➕ Ajouter
+                   Ajouter
                 </button>
               </div>
   
               <button onClick={handleSaveDomains} className="save-domains-btn">
-                💾 Sauvegarder les domaines
+                 Sauvegarder les domaines
               </button>
             </div>
             
             <div style={{ textAlign: "center", marginTop: "20px" }}>
               <Link to="/RecruiterJobOffers" className="view-jobs-link">
-                📂 Voir mes offres d'emploi
+                 Voir mes offres d'emploi
               </Link>
             </div>
           </div>

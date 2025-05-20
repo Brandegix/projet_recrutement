@@ -208,7 +208,6 @@ const Candidatesadmin = () => {
                   <th>Nom</th>
                   <th>Email</th>
                   <th>Téléphone</th>
-                  <th>Compétences</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -218,9 +217,9 @@ const Candidatesadmin = () => {
                     <td>{candidate.name}</td>
                     <td>{candidate.email}</td>
                     <td>{candidate.phoneNumber}</td>
-                    <td>{candidate.skills}</td>
+                    
+
                     <td>
-                      <button onClick={() => handleEditClick(candidate)}>Modifier</button>
                       <button onClick={() => handleDelete(candidate.id)}>Supprimer</button>
                     </td>
                   </tr>

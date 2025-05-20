@@ -36,8 +36,7 @@ const FaqSection = () => {
       <div className="container">
         <div className="row text-center">
           <div className="section-title">
-            <h2>Vous avez des questions ?</h2>
-            <p>Consultez notre FAQ pour en savoir plus sur l\'utilisation de Casajob.</p>
+            <h2>Consultez notre FAQ pour en savoir plus sur l'utilisation de Casajob.</h2>
           </div>
         </div>
 

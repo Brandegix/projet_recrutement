@@ -9,7 +9,7 @@ import axios from 'axios';
 import Navbar from './components/Navbara';
 import JobCards from  './components/JobCards';
 import DashboardHomee  from './components/DashboardHomee';
-
+import CVsExamples from './components/CVsExamples';
 const StageRecherche = () => {
   const [offres, setOffres] = useState([]);
   const [selectedPoste, setSelectedPoste] = useState('');
@@ -29,7 +29,9 @@ useEffect(() => {
     });
 }, []);
 
-
+useEffect(() => {
+  window.scrollTo(0, 0);
+}, []);
 
   // Recherche filtrée
   const handleSearch = async () => {
@@ -68,8 +70,8 @@ useEffect(() => {
         <div className="container">
           <div className="welcome-hero-txt">
             <h2>
-              <span className="description">Casajobs.ma</span> – Trouvez le job qui
-              vous ressemble, en un clic.
+              <span className="description">Casajobs.ma</span><h1>  Trouvez le job qui
+              vous ressemble, en un clic.</h1>
             </h2>
             <p className="parag">
               Parce qu’un bon emploi peut changer une vie, Casajobs.ma vous
@@ -86,8 +88,11 @@ useEffect(() => {
           </div>
         </div>
       </section>
-      <JobCards />
-  
+      <JobCards/>
+      <section id="cv-examples" className="cv-examples-section">
+  <CVsExamples />
+</section>
+
 
       {/* FAQ & Carte */}
       <FaqSection />

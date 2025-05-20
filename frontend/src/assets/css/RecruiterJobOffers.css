@@ -296,7 +296,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #007bff;
+  background-color: #ff8f33  !important ;
   color: white;
   display: flex;
   align-items: center;
@@ -323,7 +323,7 @@
 }
 
 .cv-link {
-  color: #007bff;
+  color: #ff8f33 !important;
   text-decoration: none;
 }
 
@@ -343,6 +343,6 @@
 }
 
 .application-actions .action-button.primary {
-  background-color: #007bff;
+  background-color: #ff8f33;
   color: white;
 }

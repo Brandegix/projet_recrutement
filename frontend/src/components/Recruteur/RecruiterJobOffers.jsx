@@ -112,9 +112,7 @@ const RecruiterJobOffers = () => {
                 <div className="dashboard-header">
                     <h1>Mes Offres d'Emploi</h1>
                     <div style={{ textAlign: "center", marginTop: "20px" }}>
-                        <Link to="/recruiter-profile" className="view-jobs-link">
-                            Explorer les candidats
-                        </Link>
+                       
                     </div>
                     <button className="create-job-button" onClick={handleCreateJobOffer}>
                         <span className="button-icon">+</span> Publier une nouvelle offre
@@ -139,7 +137,7 @@ const RecruiterJobOffers = () => {
                     </div>
                 ) : filteredOffers.length === 0 ? (
                     <div className="empty-state">
-                        <div className="empty-icon">📄</div>
+                        <div className="empty-icon"></div>
                         <h2>Aucune offre d'emploi disponible</h2>
                         <p>Commencez par publier votre première offre d'emploi pour attirer des candidats.</p>
                         <button className="create-first-job-button" onClick={handleCreateJobOffer}>
@@ -155,39 +153,31 @@ const RecruiterJobOffers = () => {
                                     <div className="offer-badges">
                                         <span className="badge badge-type">{offer.type || 'CDI'}</span>
                                         <span className="badge badge-location">{offer.location}</span>
-                                        {offer.is_active ? (
-                                            <span className="status-text active">
-                                                ✅ Active
-                                            </span>
-                                        ) : (
-                                            <span className="status-text inactive">
-                                                ❌ Inactive
-                                            </span>
-                                        )}
+                                        
                                     </div>
                                 </div>
 
                                 <div className="offer-details">
                                     <div className="offer-detail">
-                                        <span className="detail-icon" role="img" aria-label="entreprise">🏢</span>
+                                        <span className="detail-icon" role="img" aria-label="entreprise"> Entreprise </span>
                                         <span className="detail-text">{offer.company}</span>
                                     </div>
                                     <div className="offer-detail">
-                                        <span className="detail-icon" role="img" aria-label="salaire">💰</span>
+                                        <span className="detail-icon" role="img" aria-label="salaire"> Salaire </span>
                                         <span className="detail-text">{offer.salary} MAD</span>
                                     </div>
                                     <div className="offer-detail">
-                                        <span className="detail-icon" role="img" aria-label="description">📝</span>
+                                        <span className="detail-icon" role="img" aria-label="description"> Description </span>
                                         <span className="detail-text">{offer.description.substring(0, 120)}...</span>
                                     </div>
                                 </div>
 
                                 <div className="offer-actions">
                                     <button className="action-button edit" onClick={() => navigate(`/edit-offer/${offer.id}`)}>
-                                        ✏️ Modifier
+                                         Modifier
                                     </button>
                                     <button className="action-button delete" onClick={() => handleDeleteOffer(offer.id)}>
-                                        🗑️ Supprimer
+                                         Supprimer
                                     </button>
                                 </div>
 
@@ -260,13 +250,14 @@ const RecruiterJobOffers = () => {
                                 width: "50px",
                                 height: "50px",
                                 borderRadius: "50%",
-                                backgroundColor: "#007bff",
+                                backgroundColor: "#ff8f33",
                                 color: "#fff",
                                 display: "flex",
                                 justifyContent: "center",
                                 alignItems: "center",
                                 fontSize: "20px",
-                                fontWeight: "bold"
+                                fontWeight: "bold",
+
                             }}>
                                 {app.candidate?.name?.charAt(0) || "?"}
                             </div>
@@ -308,6 +299,7 @@ const RecruiterJobOffers = () => {
                                 Contacter
                             </button>
                         </div>
+                        
                     </div>
                 ))}
         </div>

@@ -98,17 +98,14 @@ const AboutUs = () => {
 
             <div className="team">
               <div className="team-member">
-                <img src="team-member1.jpg" alt="Team Member 1" />
                 <h4>Marie Dupont</h4>
                 <p>Directrice des Ressources Humaines</p>
               </div>
               <div className="team-member">
-                <img src="team-member2.jpg" alt="Team Member 2" />
                 <h4>Jean Martin</h4>
                 <p>Responsable Marketing</p>
               </div>
               <div className="team-member">
-                <img src="team-member3.jpg" alt="Team Member 3" />
                 <h4>Ahmed Kader</h4>
                 <p>Responsable Technique</p>
               </div>
@@ -118,9 +115,8 @@ const AboutUs = () => {
 
         {/* Services Section */}
       
-          <header className="services-hero">
+          <header className="about-header">
             <h1>Nos Services</h1>
-            <p>Casajobs.ma vous accompagne à chaque étape de votre processus de recrutement.</p>
           </header>
 
           <section className="services-list">
@@ -142,7 +138,7 @@ const AboutUs = () => {
             ))}
           </section>
 
-          <section className="cta-section">
+          <section className="about-section">
             <h2>Vous souhaitez recruter ?</h2>
             <p>Contactez notre équipe pour bénéficier d’un accompagnement sur mesure.</p>
             <button className="cta-button">Contactez-nous</button>

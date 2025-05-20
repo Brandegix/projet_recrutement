@@ -1,7 +1,6 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { FaUser, FaClock, FaMicrophone } from 'react-icons/fa';
-
+import JobOfferStatistics from "./components/JobOfferStatistics";
 // ✅ Pages principales de l'application
 import StageRecherche from "./StageRecherche";
 import RecruteurAjout from "./components/RecruteurAjout.jsx";
@@ -48,6 +47,7 @@ import Dashboard_admin from './components/Dashboard_admin';
 import Candidatesadmin from './components/Candidatesadmin';
 import AboutUs from './components/AboutUs';
 
+import ScrollToTop from './components/ScrollToTop'; // adjust path if needed
 
 
 
@@ -76,13 +76,56 @@ import CandidateSearchFilter from "./components/CandidateSearchFilter";
 import Chat from './components/Chat';
 import ApplicationChat from './components/Recruteur/ApplicationChat.jsx';
 import CandidateApplicationChat from './components/Candidat/CandidateApplicationChat.jsx';
-
-
+import GlobalSocket from './components/GlobalSocket.jsx';
+import JobDetail from './components/JobDetail';
+import CVsExamples from './components/CVsExamples';
+import React, { useEffect } from 'react';
+import socket from './socket';
+import SavedJobOffers from  './components/Candidat/SavedJobOffers';
 
 function App() {
+
+  useEffect(() => {
+    if ("Notification" in window) {
+      Notification.requestPermission().then((permission) => {
+        console.log("Notification permission:", permission);
+      });
+    }
+  }, []);
+  
+  
+  useEffect(() => {
+    socket.connect(); // 🔌 Connect globally
+
+    socket.on("receive_message", (msg) => {
+      // ✅ Only show notification if the message is not sent by the current user
+      const currentUserId = sessionStorage.getItem('user_id');
+      const currentUserType = sessionStorage.getItem('user_type');
+
+      if (msg.user_id.toString() !== currentUserId || msg.user_type !== currentUserType) {
+        showNotification(msg);
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  const showNotification = (msg) => {
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification("New Message!", {
+        body: `${msg.user}: ${msg.message}`,
+        icon: "/notification-icon.png",
+      });
+    }
+  };
+ // Runs when pathname changes
   return (
     <Router>
-      <Routes>
+
+  <ScrollToTop />  {/* ✅ good placement */}
+  <Routes>
         
       <Route path="/ContactUs" element={<ContactUs />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
@@ -160,10 +203,14 @@ function App() {
 <Route path="/chat" element={<Chat />} />
 <Route path="/ApplicationChat" element={<ApplicationChat />} />
 <Route path="/CandidateApplicationChat" element={<CandidateApplicationChat />} />
+<Route path="/GlobalSocket" element={<GlobalSocket />} />
+<Route path="/offres/:id" element={<JobDetail />} />
+<Route path="/CVsExamples" element={<CVsExamples />} />
+<Route path="/SavedJobOffers" element={<SavedJobOffers />} />
 
-CandidateApplications
+<Route path="/job-offer-statistics" element={<JobOfferStatistics />} />
 
-        
+
       </Routes>
     </Router>
   );

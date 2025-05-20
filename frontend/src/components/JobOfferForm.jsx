@@ -175,16 +175,7 @@ function JobOfferForm() {
                         />
                     </div>
 
-                    <div className="input-group logo-upload">
-                        <label>Logo de l'Entreprise (optionnel)</label>
-                        <input
-                            type="file"
-                            onChange={(e) => setLogo(e.target.files[0])}
-                            className="file-input"
-                            accept="image/*"
-                        />
-                        <p className="helper-text">Taille recommandée : 200x200px. Taille maximale : 1Mo</p>
-                    </div>
+                   
 
                     
 

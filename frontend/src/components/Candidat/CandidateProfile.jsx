@@ -1,47 +1,57 @@
 import React, { useEffect, useState } from "react";
-import "../../assets/css/CandidateProfile.css";
+// import "../../assets/css/CandidateProfile.css"; // Removed import of external CSS
 import Navbar from "../Navbara";
 import Footer from "../Footer";
-import defaultProfileImage from '../../assets/images/choixRole/recruiter.jpg';
+import candidatImage from '../../assets/images/choixRole/recruiter.jpg';
 import JobSearchAndOffers from "../JobSearchAndOffers";
 import { Link } from "react-router-dom";
-import { FaPen } from 'react-icons/fa';
+import JobCardss from "./JobCardss";
+
 
 function CandidateProfile() {
   const [candidate, setCandidate] = useState(null);
   const [cvFile, setCvFile] = useState(null);
   const [profileImageFile, setProfileImageFile] = useState(null);
-  const [applicationCount, setApplicationCount] = useState(0);
+  const [applicationCount, setApplicationCount] = useState(0); // État pour le nombre de candidatures
+  const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
+    // Récupérer les détails du candidat, y compris les compétences
     fetch("http://localhost:5000/api/candidates/profile", {
       method: "GET",
-      credentials: "include",
+      credentials: "include", // ✅ permet d'envoyer les cookies
     })
       .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch candidate data");
+        console.log(res); // 👈 Affiche la réponse pour débogage
+        if (!res.ok) throw new Error("Échec de la récupération des données du candidat");
         return res.json();
       })
       .then(data => {
+        // Analyser la chaîne JSON des compétences si c'est une chaîne
         if (typeof data.skills === 'string') {
           data.skills = JSON.parse(data.skills);
         }
-        setCandidate(data);
+        // Vérifier que profile_image fait bien partie de la réponse
+        if (data.profile_image) {
+          console.log('Image de profil disponible:', data.profile_image); // Débogage
+        }
+        setCandidate(data); // Mettre à jour les données du candidat après la récupération
       })
-      .catch((err) => console.error("Error loading profile:", err));
+      .catch((err) => console.error("Erreur lors du chargement:", err));
 
+    // Récupérer le nombre de candidatures pour le candidat
     fetch("http://localhost:5000/api/getapplicationsCount", {
       method: "GET",
       credentials: "include",
     })
       .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch application count");
+        if (!res.ok) throw new Error("Échec de la récupération du nombre de candidatures");
         return res.json();
       })
       .then(data => {
-        setApplicationCount(data.statistics.application_count);
+        setApplicationCount(data.statistics.application_count); // Définir le nombre de candidatures
       })
-      .catch((err) => console.error("Error loading application count:", err));
+      .catch((err) => console.error("Erreur lors de la récupération du nombre de candidatures:", err));
   }, []);
 
   const handleCvChange = (e) => {
@@ -61,20 +71,50 @@ function CandidateProfile() {
       credentials: "include",
     })
       .then((res) => {
-        if (!res.ok) throw new Error("Failed to upload CV");
-        alert("CV uploaded successfully");
+        if (!res.ok) throw new Error("Échec du téléchargement du CV");
+        alert("CV téléchargé avec succès");
         window.location.reload();
       })
       .catch((err) => {
         console.error(err);
-        alert("Failed to upload CV");
+        alert("Échec du téléchargement du CV");
       });
   };
 
   const handleProfileImageChange = (e) => {
-    setProfileImageFile(e.target.files[0]);
-  };
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setProfileImageFile(file);
+  
+      // Automatically upload on file select
+      const formData = new FormData();
+      formData.append("profile_image", file);
+  
+      fetch("http://localhost:5000/api/upload-profile-image", {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Échec du téléchargement de l'image de profil");
+          return res.json();
+        })
+        .then(data => {
+          setCandidate(prev => ({
+            ...prev,
+            profile_image: data.profile_image,
+          }));
+          alert("Image de profil téléchargée avec succès");
+          window.location.reload();
 
+        })
+        .catch((err) => {
+          console.error(err);
+          alert("Échec du téléchargement de l'image de profil");
+        });
+    }
+  };
+  
   const handleProfileImageUpload = (e) => {
     e.preventDefault();
     if (!profileImageFile) return;
@@ -88,167 +128,284 @@ function CandidateProfile() {
       credentials: "include",
     })
       .then((res) => {
-        if (!res.ok) throw new Error("Failed to upload profile image");
-        return res.json();
+        if (!res.ok) throw new Error("Échec du téléchargement de l'image de profil");
+        return res.json(); // On attend l'objet candidat mis à jour avec profile_image
       })
       .then(data => {
         setCandidate(prevState => ({
           ...prevState,
-          profile_image: data.profile_image,
+          profile_image: data.profile_image,   // Mettre à jour l'image de profil dans l'état
         }));
-        alert("Profile image uploaded successfully");
+        alert("Image de profil téléchargée avec succès");
         window.location.reload();
       })
       .catch((err) => {
         console.error(err);
-        alert("Failed to upload profile image");
+        alert("Échec du téléchargement de l'image de profil");
       });
   };
 
-  const staticExperience = "5 years in web development, focused on full-stack applications.";
+  const staticExperience = "5 ans en développement web, axé sur les applications Full-stack.";
+  const staticJobOffers = [
+    { id: 1, title: "Développeur Front-End", description: "Collaborer sur des tâches front-end et back-end." },
+    { id: 2, title: "Développeur Back-End", description: "Travailler avec Node.js pour construire des services API." },
+    { id: 3, title: "Développeur Full-Stack", description: "Développer des interfaces utilisateur avec React." },
+  ];
 
   return (
     <>
       <Navbar />
-      <div className="candidate-profile__page">
-        <div className="candidate-profile__container">
-          <div className="candidate-profile__header">
-            <div className="candidate-profile__picture-container">
-              {candidate && candidate.profile_image ? (
-                <img
-                  src={`http://localhost:5000/uploads/profile_images/${candidate.profile_image}`}
-                  alt="Profile"
-                  className="candidate-profile__img"
-                />
-              ) : (
-                <img
-                  src={defaultProfileImage}
-                  alt="Default Profile"
-                  className="candidate-profile__img"
-                />
-              )}
-            </div>
+      <div className="profile-page">
+        <div className="profile-container">
+          <div className="profile-header">
+          <div
+  className="profile-picture"
+  onMouseEnter={() => setIsHovering(true)}
+  onMouseLeave={() => setIsHovering(false)}
+  style={{ position: 'relative', width: '150px', height: '150px', cursor: 'pointer' }}
+>
+  <img
+    src={candidate && candidate.profile_image 
+      ? `http://localhost:5000/uploads/profile_images/${candidate.profile_image}` 
+      : candidatImage}
+    alt="Profil"
+    className="profile-img"
+    style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+  />
 
-            <div className="candidate-profile__info">
-              <h2 className="candidate-profile__name">
-                {candidate ? candidate.name : "Loading..."}
+  {/* Overlay with modifier button */}
+  {isHovering && (
+    <div
+      style={{
+        position: 'absolute',
+        top: 0, left: 0,
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        borderRadius: '50%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: '1.1rem',
+        userSelect: 'none',
+      }}
+      onClick={() => document.getElementById('profile-image-input').click()}
+    >
+      Modifier
+    </div>
+  )}
+
+  {/* Hidden file input */}
+ <input
+  id="profile-image-input"
+  type="file"
+  accept="image/*"
+  style={{ display: 'none' }}
+  onChange={handleProfileImageChange} // ✅ Change this from `onSubmit` to `onChange`
+/>
+
+</div>
+
+
+            <div className="profile-info">
+              <h2 className="profile-name">
+                {candidate ? candidate.name : "Chargement..."}
               </h2>
-              <p className="candidate-profile__role">
-                Role: Junior Developer
+              <p className="profile-role">
+                Profil candidat
+
               </p>
-              <Link to="/edit-profile" className="candidate-profile__edit-link">
-                <FaPen className="candidate-profile__edit-icon" /> Edit Profile
-              </Link>
+              <a
+                href={`/edit-profile`}
+                className="edit-link"
+                style={{
+                  display: 'inline-block',
+                  padding: '8px 12px',
+                  backgroundColor: '#f8f9fa',
+                  color: '#495057',
+                  border: 'none', // Removed the border
+                  borderRadius: '5px',
+                  fontSize: '0.9rem',
+                  textDecoration: 'none',
+                  marginTop: '10px',
+                }}
+              >
+                ✏️ Modifier le profil
+              </a>
             </div>
           </div>
 
-          <form className="candidate-profile__image-form" onSubmit={handleProfileImageUpload}>
-            <input 
-              type="file" 
-              accept="image/*" 
-              onChange={handleProfileImageChange} 
-              className="candidate-profile__file-input"
-            />
-            <button className="candidate-profile__upload-btn" type="submit">Upload Profile Image</button>
-          </form>
+          <div
+            style={{
+              marginTop: '20px',
+              marginBottom: '20px',
+              display: 'flex',
+              gap: '20px', // Space between the two upload sections
+              flexWrap: 'wrap', // Allows them to wrap on smaller screens
+            }}
+          >
+           
+           
+          </div>
 
           {candidate && typeof candidate.completion === 'number' && (
-            <div className="candidate-profile__completion">
-              <h4 className="candidate-profile__completion-title">Profile Completion</h4>
-              <progress 
-                className="candidate-profile__completion-bar" 
-                value={candidate.completion} 
-                max="100"
-              ></progress>
-              <p className="candidate-profile__completion-percent">{candidate.completion}% completed</p>
+            <div className="profile-completion">
+              <h4>Complétion du profil</h4>
+              <progress value={candidate.completion} max="100"></progress>
+              <p>{candidate.completion}% complété</p>
             </div>
           )}
 
-          <div className="candidate-profile__content-container">
-            <div className="candidate-profile__card candidate-profile__details-card">
-              <div className="candidate-profile__details">
-                <div className="candidate-profile__detail-item">
-                  <strong className="candidate-profile__detail-label">Email: </strong>
-                  <span className="candidate-profile__detail-value">{candidate ? candidate.email : "Loading..."}</span>
+          <div className="container" style={{ display: 'flex', gap: '20px', flexDirection: 'row', alignItems: 'stretch' }}>
+            <div className="card profile-card">
+              <div className="profile-details">
+                <div className="profile-detail">
+                  <strong>Email: </strong>{candidate ? candidate.email : "Chargement..."}
                 </div>
-                <div className="candidate-profile__detail-item">
-                  <strong className="candidate-profile__detail-label">Phone: </strong>
-                  <span className="candidate-profile__detail-value">{candidate ? candidate.phoneNumber : "Loading..."}</span>
+                <div className="profile-detail">
+                  <strong>Téléphone: </strong>{candidate ? `${candidate.phoneNumber}` : "Chargement..."}
                 </div>
-                <div className="candidate-profile__detail-item">
-                  <strong className="candidate-profile__detail-label">Address: </strong>
-                  <span className="candidate-profile__detail-value">{candidate ? candidate.address : "Loading..."}</span>
+                <div className="profile-detail">
+                  <strong>Adresse: </strong>{candidate ? candidate.address : "Chargement..."}
                 </div>
-                <div className="candidate-profile__detail-item">
-                  <strong className="candidate-profile__detail-label">Date of Birth: </strong>
-                  <span className="candidate-profile__detail-value">{candidate ? candidate.dateOfBirth : "Loading..."}</span>
+                <div className="profile-detail">
+                  <strong>Date de naissance: </strong>{candidate ? candidate.dateOfBirth : "Chargement..."}
                 </div>
+                <div className="profile-detail">
+                <p>                           .</p>
+                </div>
+
               </div>
             </div>
 
-            <div className="candidate-profile__skills-section">
-              <h4 className="candidate-profile__skills-title">Skills</h4>
-              {candidate && candidate.skills ? (
-                <div className="candidate-profile__skills-graph">
-                  {candidate.skills.map((skill) => (
-                    <div key={skill.name} className="candidate-profile__skill-item">
-                      <span className="candidate-profile__skill-name">{skill.name}</span>
-                      <progress 
-                        className="candidate-profile__skill-progress" 
-                        value={skill.level} 
-                        max="100"
-                      ></progress>
-                    </div>
-                  ))}
+            <div className="skills-section" style={{ maxWidth: 400, margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
+  <h4 style={{ borderBottom: '2px solid #FFA500', paddingBottom: '5px', color: '#495057' }}>Compétences</h4>
+
+  {candidate && candidate.skills ? (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '15px' }}>
+      {candidate.skills.map((skill) => {
+        // Choose a color shade based on skill level (green-orange-red scale)
+        const getColor = (level) => {
+          if (level >= 80) return '#28a745'; // green
+          if (level >= 50) return '#FFA500'; // orange
+          return '#dc3545'; // red
+        };
+
+        return (
+          <div
+            key={skill.name}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '8px 12px',
+              borderRadius: '8px',
+              backgroundColor: '#f9f9f9',
+              color: '#495057',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+            }}
+          >
+            <div
+              style={{
+                width: '16px',
+                height: '16px',
+                borderRadius: '50%',
+                backgroundColor: getColor(skill.level),
+                flexShrink: 0,
+                boxShadow: `0 0 6px ${getColor(skill.level)}55`,
+              }}
+              title={`Niveau : ${skill.level}%`}
+            />
+            <span style={{ flex: 1, fontWeight: '600', fontSize: '16px' }}>{skill.name}</span>
+            <span style={{ fontWeight: 'bold', color: getColor(skill.level) }}>{skill.level}%</span>
+          </div>
+        );
+      })}
+    </div>
+  ) : (
+    <p>Chargement des compétences...</p>
+  )}
+</div>
+  </div>
+ {/* Upload CV Section */}
+ <div style={{ flex: '1 1 300px', marginTop: '30px' }}>
+              <h4 style={{ color: '#495057', fontSize: '1.2rem', marginBottom: '15px' }}>
+                Téléchargez votre CV
+              </h4>
+              <form
+                onSubmit={handleCvUpload}
+                style={{
+                  marginTop: '15px',
+                  display: 'flex',
+                  gap: '10px',
+                  alignItems: 'center',
+                  border: 'none'
+                }}
+              >
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  onChange={handleCvChange}
+                  style={{
+                    flexGrow: 1,
+                    padding: '10px',
+                    border: 'none',
+                    outline: 'none',
+                    borderRadius: '5px',
+                    fontSize: '0.9rem',
+                    backgroundColor: '#f8f9fa',
+                  }}
+                />
+                <button
+                  className="upload-btn"
+                  type="submit"
+                  style={{
+                    padding: '10px 15px',
+                    backgroundColor: '#28a745',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    transition: 'background-color 0.3s ease',
+                  }}
+                  onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#1e7e34')}
+                  onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#28a745')}
+                >
+                  Télécharger votre CV
+                </button>
+                
+              </form>
+              {candidate && candidate.cv_filename ? (
+                <div style={{ marginTop: '10px' }}>
+                  <p style={{ fontSize: '0.95rem', color: '#495057' }}>
+                    CV actuel :{' '}
+                    <a
+                      href={`http://localhost:5000/uploads/${candidate.cv_filename}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: '#007bff', textDecoration: 'none', color: '#fc8e20' }}
+                    >
+                      {candidate.cv_filename}
+                    </a>
+                  </p>
                 </div>
               ) : (
-                <p className="candidate-profile__loading-text">Loading skills...</p>
+                <p style={{ fontSize: '0.95rem', color: '#6c757d', marginTop: '10px' }}>
+                  Aucun CV téléchargé pour l'instant.
+                </p>
               )}
             </div>
-          </div>
+          
+          <div style={{ textAlign: "center", marginTop: "20px" ,color: '#fc8e20'}}>
+                       <Link to="/offres" style={{ color: '#007bff', textDecoration: 'none', color: '#fc8e20' }}>
+                          Consulter les offres d'emploi
+                       </Link>
+                     </div>
 
-          <div className="candidate-profile__card candidate-profile__cv-section">
-            <h4 className="candidate-profile__cv-title">Upload Your CV</h4>
-            {candidate && candidate.cv_filename ? (
-              <div className="candidate-profile__cv-current">
-                <p className="candidate-profile__cv-text">
-                  Current CV: <a 
-                    href={`http://localhost:5000/uploads/${candidate.cv_filename}`} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="candidate-profile__cv-link"
-                  >
-                    {candidate.cv_filename}
-                  </a>
-                </p>
-              </div>
-            ) : (
-              <p className="candidate-profile__cv-text">No CV uploaded yet.</p>
-            )}
-            <form className="candidate-profile__cv-form" onSubmit={handleCvUpload}>
-              <input 
-                type="file" 
-                accept=".pdf,.doc,.docx" 
-                onChange={handleCvChange} 
-                className="candidate-profile__file-input"
-              />
-              <button className="candidate-profile__upload-btn" type="submit">Upload CV</button>
-            </form>
-          </div>
-
-          <div className="candidate-profile__stats-container">
-           
-            <div className="candidate-profile__stat-card">
-              <h4 className="candidate-profile__stat-title">Applications Sent</h4>
-              <p className="candidate-profile__stat-value">{applicationCount}</p>
-              <Link to="/applications" className="candidate-profile__applications-link">View my applications</Link>
-            </div>
-          </div>
-
-          <div className="candidate-profile__card candidate-profile__jobs-section">
-            <h3 className="candidate-profile__jobs-title">Explore New Job Offers</h3>
-            <JobSearchAndOffers candidateId={candidate ? 1 : null} />
-          </div>
+          
         </div>
       </div>
       <Footer />

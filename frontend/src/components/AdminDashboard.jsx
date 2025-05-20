@@ -5,7 +5,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   PieChart, Pie, Cell, ResponsiveContainer
 } from 'recharts';
-import { FiHome, FiUsers, FiBriefcase, FiClipboard, FiBarChart } from 'react-icons/fi';
+import { FiHome, FiUsers, FiBriefcase, FiClipboard, FiBarChart ,FiLogOut} from 'react-icons/fi';
 
 const AdminDashboard = () => {
   const [totalCandidates, setTotalCandidates] = useState(0);
@@ -16,12 +16,14 @@ const AdminDashboard = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [totalApplications, setTotalApplications] = useState(0);
   const [showColorInputs, setShowColorInputs] = useState(false); // <-- toggle
-
+const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [user, setUser] = useState(null);
   // Couleurs personnalisables
   const [barColor, setBarColor] = useState('#4cc9f0');
   const [pieColor1, setPieColor1] = useState('#4895ef');
   const [pieColor2, setPieColor2] = useState('#7209b7');
 
+  
   useEffect(() => {
     fetchDashboardStats();
   }, []);
@@ -87,6 +89,12 @@ const AdminDashboard = () => {
               <FiBriefcase className="icon" />
               <Link to="/ManageJobs"><span>Gérer les offres</span></Link>
             </li>
+            {isLoggedIn && user && (
+                    <li onClick={handleLogout} className="logout-link">
+                      <FiLogOut className="icon" />
+                      <span>Se déconnecter</span>
+                    </li>
+                  )}
           </ul>
         </nav>
       </div>
