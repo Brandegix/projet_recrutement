@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import "../../assets/css/RecruiterJobOffers.css";
+import { useNavigate, Link } from 'react-router-dom';
 import Navbar from "../Navbara";
 import Footer from "../Footer";
-import { Link } from "react-router-dom";
 import ApplicationChat from './ApplicationChat';
 
 const RecruiterJobOffers = () => {
@@ -15,312 +13,117 @@ const RecruiterJobOffers = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
     const [selectedApplicationId, setSelectedApplicationId] = useState(null);
-    const [user, setUser] = useState(null); // To store recruiter's user data, to get the recruiter ID
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
         setIsLoading(true);
+        fetch('http://localhost:5000/api/recruiter/profile', { method: 'GET', credentials: 'include' })
+            .then(res => res.json())
+            .then(userData => setUser(userData))
+            .catch(err => console.error("Error fetching recruiter profile:", err));
 
-        // Fetch recruiter's user data first
-        fetch('http://localhost:5000/api/recruiter/profile', {  // Corrected endpoint
-            method: 'GET',
-            credentials: 'include',
-        })
-            .then((response) => {
-                if (!response.ok) throw new Error("Failed to fetch recruiter profile");
+        fetch('http://localhost:5000/api/recruiter/job_offers', { method: 'GET', credentials: 'include' })
+            .then(response => {
+                if (!response.ok) throw new Error("Failed to fetch job offers");
                 return response.json();
             })
-            .then((userData) => {
-                setUser(userData); // Store recruiter data
-                // Fetch job offers *after* getting recruiter data
-                fetch('http://localhost:5000/api/recruiter/job_offers', {
-                    method: 'GET',
-                    credentials: 'include',
-                })
-                    .then((response) => {
-                        if (!response.ok) throw new Error("Failed to fetch job offers");
-                        return response.json();
-                    })
-                    .then((data) => setOffers(data))
-                    .catch((error) => {
-                        console.error(error);
-                        setError("Pas de candidatures pour l'instant");
-                    });
+            .then(data => setOffers(data))
+            .catch(error => setError("Impossible de charger les offres d'emploi."))
+            .finally(() => setIsLoading(false));
 
-                // Fetch applications
-                fetch('http://localhost:5000/api/recruiter/applications', {
-                    method: 'GET',
-                    credentials: 'include',
-                })
-                    .then((response) => {
-                        if (!response.ok) throw new Error("Failed to fetch applications");
-                        return response.json();
-                    })
-                    .then((data) => {
-                        setApplications(data);
-                        setIsLoading(false);
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                        setError("Pas de candidatures pour l'instant");
-                        setIsLoading(false);
-                    });
-            })
-            .catch((error) => {
-                console.error(error);
-                setError("Impossible de charger votre profil. Veuillez réessayer plus tard.");
-                setIsLoading(false); // Ensure loading is set to false on error
-            });
+        fetch('http://localhost:5000/api/recruiter/applications', { method: 'GET', credentials: 'include' })
+            .then(response => response.json())
+            .then(data => setApplications(data))
+            .catch(error => console.error("Error fetching applications:", error));
+
     }, []);
 
-
-    const handleCreateJobOffer = () => {
-        navigate('/JobOfferForm');
-    };
-
+    const handleCreateJobOffer = () => navigate('/JobOfferForm');
     const handleDeleteOffer = (offerId) => {
         if (window.confirm("Êtes-vous sûr de vouloir supprimer cette offre ?")) {
-            fetch(`http://localhost:5000/api/recruiter/job_offers/${offerId}`, {
-                method: 'DELETE',
-                credentials: 'include',
-            })
-                .then((response) => {
+            fetch(`http://localhost:5000/api/recruiter/job_offers/${offerId}`, { method: 'DELETE', credentials: 'include' })
+                .then(response => {
                     if (!response.ok) throw new Error("Erreur lors de la suppression");
-                    setOffers(prev => prev.filter(offer => offer.id !== offerId));
-                    setSuccessMessage("Offre supprimée avec succès !");
-                    setTimeout(() => setSuccessMessage(null), 4000);
+                    setOffers(prev => prev.filter(o => o.id !== offerId));
+                    setSuccessMessage("Offre supprimée !");
+                    setTimeout(() => setSuccessMessage(null), 3000);
                 })
-                .catch((error) => {
-                    console.error(error);
-                    alert("Une erreur est survenue. Veuillez réessayer.");
-                });
+                .catch(error => alert("Erreur lors de la suppression."));
         }
     };
-
-    const formatDate = (dateString) => {
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString('fr-FR', options);
-    };
-
-    const filteredOffers = offers.filter(offer =>
-        offer.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const formatDate = (dateString) => new Date(dateString).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
+    const filteredOffers = offers.filter(offer => offer.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
     return (
         <>
             <Navbar />
-            <div className="recruiter-dashboard">
-                <div className="dashboard-header">
-                    <h1>Mes Offres d'Emploi</h1>
-                    <div style={{ textAlign: "center", marginTop: "20px" }}>
-                       
-                    </div>
-                    <button className="create-job-button" onClick={handleCreateJobOffer}>
-                        <span className="button-icon">+</span> Publier une nouvelle offre
+            <div style={enhancedStyles.dashboard}>
+                <div style={enhancedStyles.header}>
+                    <h1 style={enhancedStyles.h1}>Gestion des Offres</h1>
+                    <button style={enhancedStyles.createButton} onClick={handleCreateJobOffer}>
+                        <span style={{ fontSize: '1em', marginRight: '8px' }}>+</span> Ajouter Offre
                     </button>
                 </div>
-
-                <input
-                    type="text"
-                    placeholder="Rechercher une offre..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="search-input"
-                />
-
-                {successMessage && <div className="success-message">{successMessage}</div>}
-                {error && <div className="error-message">{error}</div>}
-
+                <div style={enhancedStyles.searchContainer}>
+                    <input
+                        type="text"
+                        placeholder="Rechercher par titre..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        style={enhancedStyles.searchInput}
+                    />
+                </div>
+                {successMessage && <div style={enhancedStyles.success}>{successMessage}</div>}
+                {error && <div style={enhancedStyles.error}>{error}</div>}
                 {isLoading ? (
-                    <div className="loading-container">
-                        <div className="loading-spinner"></div>
-                        <p>Chargement en cours...</p>
-                    </div>
+                    <div style={enhancedStyles.loading}>Chargement...</div>
                 ) : filteredOffers.length === 0 ? (
-                    <div className="empty-state">
-                        <div className="empty-icon"></div>
-                        <h2>Aucune offre d'emploi disponible</h2>
-                        <p>Commencez par publier votre première offre d'emploi pour attirer des candidats.</p>
-                        <button className="create-first-job-button" onClick={handleCreateJobOffer}>
-                            Créer ma première offre
-                        </button>
-                    </div>
+                    <div style={enhancedStyles.empty}>Aucune offre d'emploi disponible.</div>
                 ) : (
-                    <div className="offers-grid">
-                        {filteredOffers.map((offer) => (
-                            <div key={offer.id} className="job-offer-card">
-                                <div className="offer-header">
-                                    <h2>{offer.title}</h2>
-                                    <div className="offer-badges">
-                                        <span className="badge badge-type">{offer.type || 'CDI'}</span>
-                                        <span className="badge badge-location">{offer.location}</span>
-                                        
-                                    </div>
+                    <div style={enhancedStyles.offerList}>
+                        {filteredOffers.map(offer => (
+                            <div key={offer.id} style={enhancedStyles.offerCard}>
+                                <h3 style={enhancedStyles.offerTitle}>{offer.title}</h3>
+                                <div style={enhancedStyles.offerDetails}>
+                                    <p><strong style={enhancedStyles.strong}>Entreprise:</strong> {offer.company}</p>
+                                    <p><strong style={enhancedStyles.strong}>Lieu:</strong> {offer.location}</p>
+                                    <p><strong style={enhancedStyles.strong}>Type:</strong> {offer.type || 'N/A'}</p>
+                                    <p style={enhancedStyles.offerDescription}>{offer.description.substring(0, 100)}...</p>
                                 </div>
-
-                                <div className="offer-details">
-                                    <div className="offer-detail">
-                                        <span className="detail-icon" role="img" aria-label="entreprise"> Entreprise </span>
-                                        <span className="detail-text">{offer.company}</span>
+                                <div style={enhancedStyles.applicationsPreview}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                        <h4 style={enhancedStyles.applicationsPreviewTitle}>Candidatures Récentes</h4>
+                                        {applications.filter(app => app.job_offer_id === offer.id).length > 0 && (
+                                            <Link to={`/recruiter/job-offers/${offer.id}/applications`} style={enhancedStyles.viewAllApplications}>
+                                                Voir toutes ({applications.filter(a => a.job_offer_id === offer.id).length})
+                                            </Link>
+                                        )}
                                     </div>
-                                    <div className="offer-detail">
-                                        <span className="detail-icon" role="img" aria-label="salaire"> Salaire </span>
-                                        <span className="detail-text">{offer.salary} MAD</span>
-                                    </div>
-                                    <div className="offer-detail">
-                                        <span className="detail-icon" role="img" aria-label="description"> Description </span>
-                                        <span className="detail-text">{offer.description.substring(0, 120)}...</span>
-                                    </div>
+                                    {applications.filter(app => app.job_offer_id === offer.id).length === 0 ? (
+                                        <p style={{ fontStyle: 'italic', color: '#777', fontSize: '0.9em', marginTop: '5px' }}>Aucune candidature pour le moment.</p>
+                                    ) : (
+                                        applications
+                                            .filter(app => app.job_offer_id === offer.id)
+                                            .slice(-1)
+                                            .map(app => (
+                                                <div key={app.id} style={enhancedStyles.applicationItem}>
+                                                    {app.candidate?.name} ({formatDate(app.application_date)})
+                                                </div>
+                                            ))
+                                    )}
                                 </div>
-
-                                <div className="offer-actions">
-                                    <button className="action-button edit" onClick={() => navigate(`/edit-offer/${offer.id}`)}>
-                                         Modifier
-                                    </button>
-                                    <button className="action-button delete" onClick={() => handleDeleteOffer(offer.id)}>
-                                         Supprimer
-                                    </button>
+                                <div style={enhancedStyles.offerActions}>
+                                    <Link to={`/edit-offer/${offer.id}`} style={enhancedStyles.editButton}>Modifier</Link>
+                                    <button style={enhancedStyles.deleteButton} onClick={() => handleDeleteOffer(offer.id)}>Supprimer</button>
                                 </div>
-
-                                <div style={{ 
-    padding: "20px",
-    backgroundColor: "#f9f9f9",
-    borderRadius: "10px",
-    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)"
-}}>
-    <h3 style={{ 
-        fontSize: "24px",
-        fontWeight: "bold",
-        marginBottom: "15px",
-        textAlign: "center",
-        color: "#333"
-    }}>
-        Candidatures
-        <span style={{ 
-            fontSize: "18px",
-            fontWeight: "bold",
-            color: "#007bff",
-            marginLeft: "8px"
-        }}>
-            {applications.filter(app => app.job_offer_id === offer.id).length}
-        </span>
-    </h3>
-
-    {applications.filter(app => app.job_offer_id === offer.id).length === 0 ? (
-        <p style={{ 
-            textAlign: "center",
-            fontSize: "16px",
-            color: "#888",
-            padding: "10px",
-            backgroundColor: "#fff",
-            borderRadius: "10px",
-            boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.1)"
-        }}>
-            Aucune candidature pour cette offre.
-        </p>
-    ) : (
-        <div style={{ 
-            display: "flex",
-            flexDirection: "column",
-            gap: "15px"
-        }}>
-            {applications
-                .filter(app => app.job_offer_id === offer.id)
-                .map((app) => (
-                    <div key={app.id} style={{ 
-                        display: "flex",
-                        flexDirection: "column",
-                        backgroundColor: "#fff",
-                        padding: "15px",
-                        borderRadius: "10px",
-                        boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.1)",
-                        transition: "0.3s",
-                        ":hover": {
-                            transform: "scale(1.02)"
-                        }
-                    }}>
-                        <div style={{ 
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "15px",
-                            borderBottom: "2px solid #ddd",
-                            paddingBottom: "10px",
-                            marginBottom: "10px"
-                        }}>
-                            <div style={{ 
-                                width: "50px",
-                                height: "50px",
-                                borderRadius: "50%",
-                                backgroundColor: "#ff8f33",
-                                color: "#fff",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                fontSize: "20px",
-                                fontWeight: "bold",
-
-                            }}>
-                                {app.candidate?.name?.charAt(0) || "?"}
-                            </div>
-                            <div style={{ flex: 1 }}>
-                                <h4>{app.candidate?.name}</h4>
-                                <div style={{ display: "grid", gap: "5px" }}>
-                                    <div style={{ fontSize: "14px", color: "#555" }}>
-                                        <strong>Email:</strong> {app.candidate?.email || "N/A"}
-                                    </div>
-                                    <div style={{ fontSize: "14px", color: "#555" }}>
-                                        <strong>Téléphone:</strong> {app.candidate?.phoneNumber || "N/A"}
-                                    </div>
-                                    <div style={{ fontSize: "14px", color: "#555" }}>
-                                        <strong>CV:</strong>
-                                        <a href={`http://localhost:5000/uploads/cv/${app.candidate?.cv_filename}`} 
-                                           target="_blank" 
-                                           rel="noopener noreferrer"
-                                           style={{ textDecoration: "none", color: "#007bff", fontWeight: "bold" }}>
-                                            Voir CV
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div style={{ textAlign: "right", fontSize: "14px", color: "#666" }}>
-                            Candidature reçue le {formatDate(app.application_date)}
-                        </div>
-                        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
-                            <button style={{ 
-                                padding: "10px 15px",
-                                backgroundColor: "#007bff",
-                                color: "#fff",
-                                border: "none",
-                                borderRadius: "5px",
-                                cursor: "pointer",
-                                transition: "0.3s",
-                            }} 
-                            onClick={() => setSelectedApplicationId(app.id)}>
-                                Contacter
-                            </button>
-                        </div>
-                        
-                    </div>
-                ))}
-        </div>
-    )}
-</div>
-
-                                   
                             </div>
                         ))}
                     </div>
                 )}
-                {selectedApplicationId && (
-                    <div className="chat-section">
-                        <ApplicationChat
-                            userId={user?.id}
-                            userType={'recruiter'}
-                            applicationId={selectedApplicationId}
-                        />
-                        <button onClick={() => setSelectedApplicationId(null)}>
-                            Close Chat
-                        </button>
+                {selectedApplicationId && user?.id && (
+                    <div style={enhancedStyles.chatSection}>
+                        <ApplicationChat userId={user.id} userType={'recruiter'} applicationId={selectedApplicationId} />
+                        <button onClick={() => setSelectedApplicationId(null)} style={enhancedStyles.closeChatButton}>Fermer Chat</button>
                     </div>
                 )}
             </div>
@@ -329,5 +132,53 @@ const RecruiterJobOffers = () => {
     );
 };
 
-export default RecruiterJobOffers;
+const enhancedStyles = {
+    dashboard: { fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif', padding: '30px', backgroundColor: '#f4f4f4', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' },
+    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', width: '90%', maxWidth: '1200px' },
+    h1: { color: '#333', fontSize: '2.5em', fontWeight: '600' },
+    createButton: {
+        backgroundColor: '#ff8f00',
+        color: 'white',
+        border: 'none',
+        padding: '12px 20px',
+        borderRadius: '10px',
+        cursor: 'pointer',
+        fontSize: '1.1em',
+        transition: 'background-color 0.3s ease-in-out',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        display: 'flex',
+        alignItems: 'center',
+        minWidth: '200px', // Add a minimum width to the button
+        justifyContent: 'center', // Center the content within the button
+    },  createButtonHover: { backgroundColor: '#e65100' },
+    searchContainer: { width: '90%', maxWidth: '1200px', marginBottom: '20px' },
+    searchInput: { width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #ccc', boxSizing: 'border-box', fontSize: '1em' },
+    offerList: { width: '90%', maxWidth: '1200px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '25px' },
+    offerCard: {
+        backgroundColor: 'white', padding: '25px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+        border: '1px solid #ddd'
+    },
+    offerTitle: { color: '#333', fontSize: '1.7em', fontWeight: '600', marginBottom: '12px' },
+    offerDetails: { marginBottom: '15px', fontSize: '1em', color: '#555' },
+    strong: { fontWeight: 'bold' },
+    offerDescription: { color: '#555', fontSize: '1em', marginBottom: '15px' },
+    applicationsPreview: { marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '15px' },
+    applicationsPreviewTitle: { color: '#333', fontSize: '1.1em', fontWeight: '500', marginBottom: '10px' },
+    applicationItem: { backgroundColor: '#f9f9f9', padding: '8px', borderRadius: '4px', marginBottom: '5px', fontSize: '0.95em', color: '#555' },
+    viewAllApplications: { color: '#ff8f00', textDecoration: 'none', fontSize: '0.9em', fontWeight: '500' },
+    offerActions: { display: 'flex', gap: '10px', alignItems: 'center' },
+    editButton: { backgroundColor: '#424242', color: 'white', border: 'none', padding: '10px 18px', borderRadius: '8px', cursor: 'pointer', fontSize: '0.9em', textDecoration: 'none', transition: 'background-color 0.3s ease-in-out' },
+    editButtonHover: { backgroundColor: '#212121' },
+    deleteButton: { backgroundColor: '#d32f2f', color: 'white', border: 'none', padding: '10px 18px', borderRadius: '8px', cursor: 'pointer', fontSize: '0.9em', transition: 'background-color 0.3s ease-in-out' },
+    deleteButtonHover: { backgroundColor: '#b71c1c' },
+    applicationsButton: { backgroundColor: '#ff8f00', color: 'white', border: 'none', padding: '10px 18px', borderRadius: '8px', cursor: 'pointer', fontSize: '0.9em', textDecoration: 'none', transition: 'background-color 0.3s ease-in-out' },
+    applicationsButtonHover: { backgroundColor: '#e65100' },
+    loading: { textAlign: 'center', marginTop: '30px', color: '#777', fontSize: '1.1em' },
+    empty: { textAlign: 'center', marginTop: '30px', color: '#777', fontSize: '1.1em' },
+    success: { backgroundColor: '#fff3e0', color: '#e65100', padding: '15px', margin: '20px auto', borderRadius: '8px', width: '90%', maxWidth: '1200px' },
+    error: { backgroundColor: '#ffebee', color: '#d32f2f', padding: '15px', margin: '20px auto', borderRadius: '8px', width: '90%', maxWidth: '1200px' },
+    chatSection: { marginTop: '30px', padding: '20px', backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 2px 6px rgba(0,0,0,0.03)', width: '90%', maxWidth: '1200px' },
+    closeChatButton: { backgroundColor: '#6c757d', color: 'white', border: 'none', padding: '10px 18px', borderRadius: '8px', cursor: 'pointer', fontSize: '0.9em', marginTop: '15px' },
+};
 
+export default RecruiterJobOffers;

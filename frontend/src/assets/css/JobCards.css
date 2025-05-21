@@ -10,10 +10,35 @@ body {
   background-color: #f9fafb;
   color: #333;
 }
-.pagination{
-  align-items: center;
-  margin-left: 250px;
-  padding-bottom: 100px;
+.pagination {
+  display: flex;
+  justify-content: center; /* This will center the items horizontally */
+  align-items: center; /* This will center items vertically (if needed) */
+  margin-top: 20px; /* Add some space above the pagination */
+  padding: 10px; /* Optional: add some padding around the buttons */
+}
+
+.pagination button {
+  padding: 8px 12px;
+  margin: 0 5px;
+  border: 1px solid #ddd;
+  background-color: #f8f9fa;
+  color: #333;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.pagination button.active {
+  background-color: #ffffff;
+  color: rgb(255, 255, 255);
+  border-color: #ffffff;
+}
+
+.pagination button:disabled {
+  background-color: #e9ecef;
+  color: #6c757d;
+  border-color: #e9ecef;
+  cursor: not-allowed;
 }
 /* Grid container for offers */
 .offers-grid {

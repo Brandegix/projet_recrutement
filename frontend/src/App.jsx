@@ -56,6 +56,8 @@ import ScrollToTop from './components/ScrollToTop'; // adjust path if needed
 import ContactUs from './components/ContactUs';
 
 
+import JobOfferApplications from './components/Recruteur/JobOfferApplications';
+
 
 
 
@@ -209,6 +211,7 @@ function App() {
 <Route path="/SavedJobOffers" element={<SavedJobOffers />} />
 
 <Route path="/job-offer-statistics" element={<JobOfferStatistics />} />
+<Route path="/recruiter/job-offers/:offerId/applications" element={<JobOfferApplications />} />
 
 
       </Routes>
