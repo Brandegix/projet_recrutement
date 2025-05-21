@@ -2006,12 +2006,13 @@ def get_job_offers_statisticsssss():
             # Compter le nombre de candidatures pour cette offre
             application_count = Application.query.filter_by(job_offer_id=offer.id).count()
             print(f"Offer {offer.id}: {application_count} applications")  # Debug log
-            
+            saved_count = SavedJob.query.filter_by(job_offer_id=offer.id).count()
             statistics.append({
                 'id': offer.id,
                 'title': offer.title,
                 'company': offer.company,
                 'application_count': application_count,
+                'saved_count': saved_count,
                 'is_active': bool(offer.is_active),
                 'created_at': datetime.now().strftime('%Y-%m-%d'),
                 'views': offer.views or 0
