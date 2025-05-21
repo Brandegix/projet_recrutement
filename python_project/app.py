@@ -2234,15 +2234,13 @@ def add_job_offer():
     return jsonify({"message": "Offre ajoutée avec succès !"}), 201
 
 
-
 @app.route("/api/je", methods=["GET"])
 def get_job_offers_with_logos():
     try:
-        # ✅ Join JobOffer with Recruiter using recruiter_id and filter by is_active
+        # ✅ Join JobOffer with Recruiter and filter only active offers
         offers = db.session.query(JobOffer, Recruiter.profile_image).join(
-    Recruiter, JobOffer.recruiter_id == Recruiter.id, isouter=True  # <-- left outer join
-).all()
-
+            Recruiter, JobOffer.recruiter_id == Recruiter.id, isouter=True
+        ).filter(JobOffer.is_active == True).all()
 
         offers_list = [{
             "id": offer.JobOffer.id,
@@ -2255,13 +2253,14 @@ def get_job_offers_with_logos():
             "salary": offer.JobOffer.salary,
             "type": offer.JobOffer.type,
             "recruiter_id": offer.JobOffer.recruiter_id,
-
             "logo": f"http://localhost:5000/uploads/profile_images/{offer.profile_image}" if offer.profile_image else None
         } for offer in offers]
 
         return jsonify(offers_list)
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 # @app.route("/api/delete_job_offer/<int:offer_id>", methods=["DELETE"])
 # def delete_job_offer(offer_id):
