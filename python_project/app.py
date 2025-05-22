@@ -228,12 +228,14 @@ class Admin(db.Model):
         
 
 
+
 # Define the Application model
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     candidate_id = db.Column(db.Integer, nullable=False)
     job_offer_id = db.Column(db.Integer, db.ForeignKey('JobOffer.id'), nullable=False)
     application_date = db.Column(db.DateTime, default=datetime.utcnow)
+    viewed = db.Column(db.Boolean, default=False)  # ✅ Add this field
 
     job_offer = db.relationship('JobOffer', backref='applications')  # ✅ Add this line
 
@@ -953,12 +955,13 @@ def get_recruiter_applications():
             'candidate_id': app.candidate_id,
             'job_offer_id': app.job_offer_id,
             'application_date': app.application_date.strftime('%Y-%m-%d %H:%M'),
+            'viewed': app.viewed,
             'candidate': {
                 'username': candidate.username,
                 'name': candidate.name,
                 'email': candidate.email,
                 'phoneNumber': candidate.phoneNumber,
-                'cv_filename': candidate.cv_filename
+                'cv_filename': candidate.cv_filename,
 
             } if candidate else None,
             'job_offer': {
@@ -1292,6 +1295,19 @@ def check_session():
         "isLoggedIn": is_logged_in,
         "user": user
     })
+
+
+
+# Marking application as viewed
+@app.route('/api/mark_as_viewed/<int:application_id>', methods=['POST'])
+def mark_as_viewed(application_id):
+    application = Application.query.get(application_id)
+    if not application:
+        return jsonify({'message': 'Application not found'}), 404
+
+    application.viewed = True
+    db.session.commit()
+    return jsonify({'message': 'Application marked as viewed'}), 200
 
 @app.route('/recruiter/profile', methods=['GET', 'POST'])
 def recruiter_profile():
@@ -2486,7 +2502,8 @@ def get_applicationsss():
                 'candidate_id': app.candidate_id,
                 'job_offer_id': app.job_offer_id,
                 'application_date': app.application_date.strftime('%Y-%m-%d %H:%M'),
-                'job_offer': offer_data
+                'job_offer': offer_data,
+                'viewed': app.viewed, 
             })
             print(applications_list)
 

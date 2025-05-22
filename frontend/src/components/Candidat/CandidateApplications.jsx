@@ -238,40 +238,52 @@ const CandidateApplications = () => {
                     </div>
                 ) : (
                     <div style={styles.grid}>
-                        {applications.map((application) => (
-                            <div key={application.id} style={styles.card}>
-                                <div style={styles.header}>
-                                    {application.job_offer?.title || "Titre non disponible"}
-                                </div>
-                                <div style={styles.info}>
-                                    <div style={styles.infoItem}>
-                                        <strong>Entreprise:</strong>{" "}
-                                        {application.job_offer?.company || "N/A"}
-                                    </div>
-                                    <div style={styles.infoItem}>
-                                        <strong>Lieu:</strong>{" "}
-                                        {application.job_offer?.location || "N/A"}
-                                    </div>
-                                    <div style={styles.infoItem}>
-                                        <strong>Date de candidature:</strong>{" "}
-                                        {new Date(
-                                            application.application_date
-                                        ).toLocaleDateString()}
-                                    </div>
-                                </div>
-                                {recruiterStartedMap[application.id] && (
-                                    <button
-                                        onClick={() => openChatModal(application.id)}
-                                        style={styles.button}
-                                    >
-                                        Discuter avec le recruteur
-                                        {notifications[application.id] && (
-                                            <span style={styles.redDot}></span>
-                                        )}
-                                    </button>
-                                )}
-                            </div>
-                        ))}
+                       {applications.map((application) => (
+  <div key={application.id} style={styles.card}>
+    <div style={styles.header}>
+      {application.job_offer?.title || "Titre non disponible"}
+    </div>
+    <div style={styles.info}>
+      <div style={styles.infoItem}>
+        <strong>Entreprise:</strong>{" "}
+        {application.job_offer?.company || "N/A"}
+      </div>
+      <div style={styles.infoItem}>
+        <strong>Lieu:</strong>{" "}
+        {application.job_offer?.location || "N/A"}
+      </div>
+      <div style={styles.infoItem}>
+        <strong>Date de candidature:</strong>{" "}
+        {new Date(application.application_date).toLocaleDateString()}
+      </div>
+    </div>
+
+    {/* Show recruiter chat button if applicable */}
+    {recruiterStartedMap[application.id] && (
+      <button
+        onClick={() => openChatModal(application.id)}
+        style={styles.button}
+      >
+        Discuter avec le recruteur
+        {notifications[application.id] && (
+          <span style={styles.redDot}></span>
+        )}
+      </button>
+    )}
+
+    {/* Show "Vu ✔" if viewed, else show "Pending" */}
+    {application.viewed ? (
+      <span style={{ marginLeft: "10px", color: "#28a745", fontWeight: "bold", fontSize: "14px" }}>
+        Vu ✔
+      </span>
+    ) : (
+      <span style={{ marginLeft: "10px", color: "#ff9800", fontWeight: "bold", fontSize: "14px" }}>
+        En attente ⏳
+      </span>
+    )}
+  </div>
+))}
+
                     </div>
                 )}
             </div>

@@ -58,7 +58,7 @@ import ContactUs from './components/ContactUs';
 
 import JobOfferApplications from './components/Recruteur/JobOfferApplications';
 
-
+import SEO from './components/SEO';
 
 
 import VerifyOtp from './components/VerifyOtp';
@@ -125,7 +125,10 @@ function App() {
  // Runs when pathname changes
   return (
     <Router>
-
+ <SEO 
+        title="Default Site Title" 
+        description="Default description for my app"
+      />
   <ScrollToTop />  {/* ✅ good placement */}
   <Routes>
         

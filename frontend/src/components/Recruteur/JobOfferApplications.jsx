@@ -80,6 +80,35 @@ const JobOfferApplications = () => {
         setChatApplicationId(null);
     };
 
+
+    const markAsViewed = async (applicationId) => {
+        try {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/mark_as_viewed/${applicationId}`, {
+            method: 'POST',
+            credentials: 'include',
+          });
+      
+          if (!response.ok) {
+            throw new Error('Failed to mark application as viewed');
+          }
+      
+          // Update state: mark the application as viewed locally
+          setApplications(prevApps =>
+            prevApps.map(app =>
+              app.id === applicationId ? { ...app, viewed: true } : app
+            )
+          );
+      
+          setFilteredApplications(prevApps =>
+            prevApps.map(app =>
+              app.id === applicationId ? { ...app, viewed: true } : app
+            )
+          );
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      
     if (isLoading) {
         return <div style={jobAppStyles.loading}>Chargement des candidatures...</div>;
     }
@@ -125,27 +154,62 @@ const JobOfferApplications = () => {
                                             <div style={jobAppStyles.contactItem}>Email: {app.candidate?.email || "N/A"}</div>
                                             <div style={jobAppStyles.contactItem}>Téléphone: {app.candidate?.phoneNumber || "N/A"}</div>
                                             <div style={jobAppStyles.contactItem}>
-                                            CV: <a href={`${process.env.REACT_APP_API_URL}/uploads/cv/${app.candidate?.cv_filename}`}
+                                            CV: <a
+  href={`${process.env.REACT_APP_API_URL}/uploads/cv/${app.candidate?.cv_filename}`}
+  target="_blank"
+  rel="noopener noreferrer"
+  style={jobAppStyles.cvLink}
+  onClick={() => markAsViewed(app.id)}
+>
+  Voir CV
+</a>
 
-                                                       target="_blank"
-                                                       rel="noopener noreferrer"
-                                                       style={jobAppStyles.cvLink}>Voir CV</a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div style={jobAppStyles.applicationActions}>
-                                    <div style={jobAppStyles.applicationDate}>
-                                        Reçu le {formatDate(app.application_date)}
-                                    </div>
-                                    <button
-                                        style={jobAppStyles.contactButton}
-                                        onClick={() => openChatModal(app.id)}
-                                    >
-                                        Contacter
-                                    </button>
+                                <div style={{ 
+  display: "flex", 
+  alignItems: "center", 
+  gap: "15px", 
+  padding: "10px", 
+  border: "1px solid #ddd", 
+  borderRadius: "8px", 
+  backgroundColor: "#f9f9f9" 
+}}>
+  <div style={{ fontSize: "14px", fontWeight: "bold", color: "#555" }}>
+    Reçu le {formatDate(app.application_date)}
+  </div>
+
+  <button
+    style={{ 
+      ...jobAppStyles.contactButton, 
+      padding: "8px 15px", 
+      backgroundColor: "#007bff", 
+      color: "#fff", 
+      borderRadius: "5px", 
+      cursor: "pointer", 
+      transition: "background 0.3s" 
+    }}
+    onClick={() => openChatModal(app.id)}
+    onMouseOver={(e) => e.target.style.backgroundColor = "#0056b3"}
+    onMouseOut={(e) => e.target.style.backgroundColor = "#007bff"}
+  >
+    Contacter
+  </button>
+
+  {/* Mark as Viewed button (if not already viewed) */}
+  
+  {/* Show "Vu" label if already viewed */}
+  {app.viewed && (
+    <span style={{ marginLeft: "10px", color: "#28a745", fontWeight: "bold", fontSize: "14px" }}>
+      Vu ✔
+    </span>
+  )}
+</div>
+
+
                                 </div>
-                            </div>
                         ))}
                     </div>
                 )}

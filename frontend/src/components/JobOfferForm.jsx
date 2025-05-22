@@ -180,7 +180,7 @@ function JobOfferForm() {
                     
 
                     <div className="form-actions">
-                        <button className="cancel-button" onClick={() => navigate("/RecruiterJobOffers")} type="button">
+                        <button className="submit-button" onClick={() => navigate("/RecruiterJobOffers")} type="button">
                             Annuler
                         </button>
                         <button className="submit-button" type="submit">
