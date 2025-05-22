@@ -8,7 +8,7 @@ function CandidateApplicationChat({ applicationId, candidateId }) {
 
   useEffect(() => {
     // ✅ Connect to WebSocket when the component mounts
-    socketRef.current = io("http://localhost:5000", {
+    socketRef.current = io(`${process.env.REACT_APP_API_URL}`, {
       transports: ["websocket"],
       withCredentials: true,
     });

@@ -23,7 +23,7 @@ const Recruitersadmin = () => {
           
           const updatedSubscriptionStatus = recruiter.subscription_active ?? false; // ✅ Ensure it has a default value
           
-          const response = await fetch(`http://localhost:5000/api/recruiters/${id}`, {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/recruiters/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ subscription_active: !updatedSubscriptionStatus })
@@ -43,7 +43,7 @@ const Recruitersadmin = () => {
       };
       
       useEffect(() => {
-        fetch("http://localhost:5000/api/session", {
+        fetch(`${process.env.REACT_APP_API_URL}/api/session`, {
           credentials: "include",
         })
           .then(res => res.ok ? res.json() : Promise.reject("Not logged in"))
@@ -63,7 +63,7 @@ const Recruitersadmin = () => {
       }, []);
     
       const handleLogout = () => {
-        fetch("http://localhost:5000/api/logout", {
+        fetch(`${process.env.REACT_APP_API_URL}/api/logout`, {
           method: "POST",
           credentials: "include",
         })
@@ -80,7 +80,7 @@ const Recruitersadmin = () => {
 
   const fetchRecruiters = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/recruiters');
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/recruiters`);
       if (!response.ok) throw new Error(`Erreur HTTP : ${response.status}`);
       
       const data = await response.json();
@@ -105,7 +105,7 @@ const Recruitersadmin = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce recruteur ?')) return;
     try {
-      const response = await fetch(`http://localhost:5000/api/recruiters/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/recruiters/${id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error("Erreur lors de la suppression.");
       fetchRecruiters();
     } catch (err) {
@@ -125,7 +125,7 @@ const Recruitersadmin = () => {
 
   const handleSaveChanges = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/recruiters/${selectedRecruiter.id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/recruiters/${selectedRecruiter.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(selectedRecruiter),

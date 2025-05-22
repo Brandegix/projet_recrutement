@@ -18,7 +18,7 @@ function ResetPasswordCandidat() {
 
   const handleResetPassword = async () => {
     try {
-      await axios.post("http://localhost:5000/api/candidate/reset-password", { email, password: newPassword });
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/candidate/reset-password`, { email, password: newPassword });
       alert("Mot de passe réinitialisé !");
       navigate("/login/candidat"); // ✅ Redirect back to login
     } catch (error) {

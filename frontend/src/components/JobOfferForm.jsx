@@ -36,7 +36,7 @@ function JobOfferForm() {
         }
 
         try {
-            const response = await fetch("http://localhost:5000/api/job_offers", {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/job_offers`, {
                 method: "POST",
                 body: formData,
                 credentials: 'include',

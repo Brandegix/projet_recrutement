@@ -11,7 +11,7 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false); // 👈 Mobile menu toggle
 
   const handleLogout = () => {
-    fetch('http://localhost:5000/api/logout', {
+    fetch(`${process.env.REACT_APP_API_URL}/api/logout`, {
       method: 'POST',
       credentials: 'include',
     })

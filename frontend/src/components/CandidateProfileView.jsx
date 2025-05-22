@@ -13,7 +13,7 @@ const CandidateProfileView = () => {
   useEffect(() => {
     const fetchCandidateProfile = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/wecandidates/profile/${candidateId}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/wecandidates/profile/${candidateId}`, {
           credentials: 'include',
         });
 
@@ -48,8 +48,8 @@ const CandidateProfileView = () => {
           <div className="profile-picture" style={{ width: '150px', height: '150px', borderRadius: '50%', overflow: 'hidden', marginBottom: '20px' }}>
             {candidate && candidate.profile_image ? (
               <img
-                src={`http://localhost:5000/uploads/profile_images/${candidate.profile_image}`}
-                alt="Profil"
+              src={`${process.env.REACT_APP_API_URL}/uploads/profile_images/${candidate.profile_image}`}
+              alt="Profil"
                 className="profile-img"
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />

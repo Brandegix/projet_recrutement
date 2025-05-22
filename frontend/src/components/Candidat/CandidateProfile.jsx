@@ -17,7 +17,7 @@ function CandidateProfile() {
 
   useEffect(() => {
     // Récupérer les détails du candidat, y compris les compétences
-    fetch("http://localhost:5000/api/candidates/profile", {
+    fetch(`${process.env.REACT_APP_API_URL}/api/candidates/profile`, {
       method: "GET",
       credentials: "include", // ✅ permet d'envoyer les cookies
     })
@@ -40,7 +40,7 @@ function CandidateProfile() {
       .catch((err) => console.error("Erreur lors du chargement:", err));
 
     // Récupérer le nombre de candidatures pour le candidat
-    fetch("http://localhost:5000/api/getapplicationsCount", {
+    fetch(`${process.env.REACT_APP_API_URL}/api/getapplicationsCount`, {
       method: "GET",
       credentials: "include",
     })
@@ -65,7 +65,7 @@ function CandidateProfile() {
     const formData = new FormData();
     formData.append("cv", cvFile);
 
-    fetch("http://localhost:5000/api/upload-cv", {
+    fetch(`${process.env.REACT_APP_API_URL}/api/upload-cv`, {
       method: "POST",
       body: formData,
       credentials: "include",
@@ -90,7 +90,7 @@ function CandidateProfile() {
       const formData = new FormData();
       formData.append("profile_image", file);
   
-      fetch("http://localhost:5000/api/upload-profile-image", {
+      fetch(`${process.env.REACT_APP_API_URL}/api/upload-profile-image`, {
         method: "POST",
         body: formData,
         credentials: "include",
@@ -122,7 +122,7 @@ function CandidateProfile() {
     const formData = new FormData();
     formData.append("profile_image", profileImageFile);
 
-    fetch("http://localhost:5000/api/upload-profile-image", {
+    fetch(`${process.env.REACT_APP_API_URL}/api/upload-profile-image`, {
       method: "POST",
       body: formData,
       credentials: "include",
@@ -166,7 +166,7 @@ function CandidateProfile() {
 >
   <img
     src={candidate && candidate.profile_image 
-      ? `http://localhost:5000/uploads/profile_images/${candidate.profile_image}` 
+      ? `${process.env.REACT_APP_API_URL}/uploads/profile_images/${candidate.profile_image}`
       : candidatImage}
     alt="Profil"
     className="profile-img"
@@ -383,8 +383,8 @@ function CandidateProfile() {
                   <p style={{ fontSize: '0.95rem', color: '#495057' }}>
                     CV actuel :{' '}
                     <a
-                      href={`http://localhost:5000/uploads/${candidate.cv_filename}`}
-                      target="_blank"
+href={`${process.env.REACT_APP_API_URL}/uploads/${candidate.cv_filename}`}
+target="_blank"
                       rel="noopener noreferrer"
                       style={{ color: '#007bff', textDecoration: 'none', color: '#fc8e20' }}
                     >

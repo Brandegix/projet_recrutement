@@ -11,8 +11,8 @@ const Dash = () => {
 
   useEffect(() => {
     // D'abord, récupérer l'ID du recruteur depuis Flask (session)
-    axios.get('http://localhost:5000/api/current_recruiter', { withCredentials: true })
-      .then((res) => {
+    axios.get(`${process.env.REACT_APP_API_URL}/api/current_recruiter`, { withCredentials: true })
+    .then((res) => {
         const id = res.data.recruiter_id;
         setRecruiterId(id);
       })
@@ -27,7 +27,7 @@ const Dash = () => {
 
     const fetchOffers = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/recruiter/${recruiterId}/offers`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/recruiter/${recruiterId}/offers`);
         setOffers(response.data);
       } catch (err) {
         setError('Erreur lors de la récupération des offres.');
@@ -37,7 +37,7 @@ const Dash = () => {
 
     const fetchApplications = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/recruiter/${recruiterId}/applications`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/recruiter/${recruiterId}/applications`);
         setApplications(response.data);
       } catch (err) {
         setError('Erreur lors de la récupération des candidatures.');

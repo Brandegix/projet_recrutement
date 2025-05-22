@@ -24,8 +24,8 @@ const JobOfferApplications = () => {
         setIsLoading(true);
 
         // Fetch recruiter profile
-        fetch('http://localhost:5000/api/recruiter/profile', { method: 'GET', credentials: 'include' })
-            .then(res => {
+        fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/profile`, { method: 'GET', credentials: 'include' })
+        .then(res => {
                 if (!res.ok) throw new Error("Failed to fetch recruiter profile");
                 return res.json();
             })
@@ -33,8 +33,8 @@ const JobOfferApplications = () => {
             .catch(err => console.error("Error fetching recruiter profile:", err));
 
         // Fetch all applications for the recruiter
-        fetch('http://localhost:5000/api/recruiter/applications', { method: 'GET', credentials: 'include' })
-            .then(response => {
+        fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/applications`, { method: 'GET', credentials: 'include' })
+        .then(response => {
                 if (!response.ok) throw new Error("Failed to fetch applications");
                 return response.json();
             })
@@ -47,8 +47,8 @@ const JobOfferApplications = () => {
             .finally(() => setIsLoading(false));
 
         // Fetch job offer details
-        fetch(`http://localhost:5000/api/job_offers/${offerId}`)
-            .then(response => {
+        fetch(`${process.env.REACT_APP_API_URL}/api/job_offers/${offerId}`)
+        .then(response => {
                 if (!response.ok) throw new Error("Failed to fetch job offer details");
                 return response.json();
             })
@@ -125,7 +125,8 @@ const JobOfferApplications = () => {
                                             <div style={jobAppStyles.contactItem}>Email: {app.candidate?.email || "N/A"}</div>
                                             <div style={jobAppStyles.contactItem}>Téléphone: {app.candidate?.phoneNumber || "N/A"}</div>
                                             <div style={jobAppStyles.contactItem}>
-                                                CV: <a href={`http://localhost:5000/uploads/cv/${app.candidate?.cv_filename}`}
+                                            CV: <a href={`${process.env.REACT_APP_API_URL}/uploads/cv/${app.candidate?.cv_filename}`}
+
                                                        target="_blank"
                                                        rel="noopener noreferrer"
                                                        style={jobAppStyles.cvLink}>Voir CV</a>

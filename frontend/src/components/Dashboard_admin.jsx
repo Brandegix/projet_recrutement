@@ -27,7 +27,7 @@ const Dashboard_admin = () => {
       const [user, setUser] = useState(null);
     
       useEffect(() => {
-        fetch("http://localhost:5000/api/session", {
+        fetch(`${process.env.REACT_APP_API_URL}/api/session`, {
           credentials: "include",
         })
           .then(res => res.ok ? res.json() : Promise.reject("Not logged in"))
@@ -47,7 +47,7 @@ const Dashboard_admin = () => {
       }, []);
     
       const handleLogout = () => {
-        fetch("http://localhost:5000/api/logout", {
+        fetch(`${process.env.REACT_APP_API_URL}/api/logout`, {
           method: "POST",
           credentials: "include",
         })
@@ -61,7 +61,7 @@ const Dashboard_admin = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/dashboardd');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/dashboardd`);
         const data = await response.json();
   
         console.log("Fetched Dashboard Data:", data); // ✅ Debugging Log

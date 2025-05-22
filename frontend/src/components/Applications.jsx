@@ -13,7 +13,7 @@ const Applications = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/session", {
+    fetch(`${process.env.REACT_APP_API_URL}/api/session`, {
       credentials: "include",
     })
       .then(res => res.ok ? res.json() : Promise.reject("Not logged in"))
@@ -33,7 +33,7 @@ const Applications = () => {
   }, []);
 
   const handleLogout = () => {
-    fetch("http://localhost:5000/api/logout", {
+    fetch(`${process.env.REACT_APP_API_URL}/api/logout`, {
       method: "POST",
       credentials: "include",
     })
@@ -46,8 +46,8 @@ const Applications = () => {
   };
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/sapplications')
-      .then(res => res.json())
+    fetch(`${process.env.REACT_APP_API_URL}/api/sapplications`)
+    .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
           setApplications(data);

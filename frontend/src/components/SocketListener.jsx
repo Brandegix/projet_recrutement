@@ -6,7 +6,7 @@ const SocketListener = () => {
   const [newMessage, setNewMessage] = useState(null);
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:5000", { transports: ["websocket"], withCredentials: true });
+    socketRef.current = io(`${process.env.REACT_APP_API_URL}`, { transports: ["websocket"], withCredentials: true });
 
     // ✅ Listen for incoming messages globally
     socketRef.current.on("receive_message", (msg) => {

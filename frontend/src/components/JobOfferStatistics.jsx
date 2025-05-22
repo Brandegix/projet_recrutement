@@ -27,7 +27,7 @@ const JobOfferStatistics = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.get('http://localhost:5000/api/recruiter/job_offers_statisticcs', {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/recruiter/job_offers_statisticcs`, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ const JobOfferStatistics = () => {
 
     const toggleJobOffer = async (offerId) => {
         try {
-            const response = await axios.post(`http://localhost:5000/api/recruiter/job_offers/${offerId}/toggle`, {}, {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/recruiter/job_offers/${offerId}/toggle`, {}, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json',
@@ -336,8 +336,8 @@ const JobOfferStatistics = () => {
                                         nameKey="name"
                                         cx="50%"
                                         cy="50%"
-                                        innerRadius={60}
-                                        outerRadius={90}
+                                        innerRadius={50}
+                                        outerRadius={70}
                                         labelLine={false}
                                         label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
                                     >

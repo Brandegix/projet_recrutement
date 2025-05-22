@@ -8,7 +8,7 @@ function RequestResetAdmin() {
 
   const handleRequestReset = async () => {
     try {
-      await axios.post("http://localhost:5000/api/admin/request-reset", { email });
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/admin/request-reset`, { email });
       alert("Code de réinitialisation envoyé !");
       navigate(`/admin/verify-otp?email=${email}`); // ✅ Redirect to OTP verification page
     } catch (error) {

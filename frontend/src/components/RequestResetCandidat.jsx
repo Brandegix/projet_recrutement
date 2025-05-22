@@ -8,7 +8,7 @@ function RequestResetCandidat() {
 
   const handleRequestReset = async () => {
     try {
-      await axios.post("http://localhost:5000/api/candidate/request-reset", { email }, { withCredentials: true });
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/candidate/request-reset`, { email }, { withCredentials: true });
       alert("Code de réinitialisation envoyé !");
       navigate(`/candidate/verify-otp?email=${email}`);
     } catch (error) {

@@ -18,7 +18,7 @@ function VerifyOtp() {
 
   const handleVerifyOtp = async () => {
     try {
-      await axios.post("http://localhost:5000/api/verify-otp", { email, otp }, { withCredentials: true });
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/verify-otp`, { email, otp }, { withCredentials: true });
       alert("Code vérifié avec succès !");
       
       // ✅ Redirect to reset password page after successful verification

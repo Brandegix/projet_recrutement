@@ -6,8 +6,8 @@ function CandidateSearchFilter() {
   const [filters, setFilters] = useState({ name: "", skills: "" });
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/candidates")
-      .then((res) => res.json())
+    fetch(`${process.env.REACT_APP_API_URL}/api/candidates`)
+    .then((res) => res.json())
       .then((data) => {
         setCandidates(data);
       })

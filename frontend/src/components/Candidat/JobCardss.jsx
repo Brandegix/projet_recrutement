@@ -84,8 +84,8 @@ const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
   const [savedJobs, setSavedJobs] = useState([]); // Store IDs of saved jobs
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/je')
-      .then(response => {
+    axios.get(`${process.env.REACT_APP_API_URL}/api/je`)
+    .then(response => {
         const updatedJobs = response.data.map(job => ({
           ...job,
           logo: job.logo || "https://dummyimage.com/80x80/000/fff.png&text=No+Logo"
@@ -106,8 +106,8 @@ const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
 useEffect(() => {
   
 
-  axios.get('http://localhost:5000/api/saved-jobs', { withCredentials: true })
-    .then(response => {
+  axios.get(`${process.env.REACT_APP_API_URL}/api/saved-jobs`, { withCredentials: true })
+  .then(response => {
       const savedJobIds = response.data.map(job => job.id);
       setSavedJobs(savedJobIds);
     })
@@ -117,7 +117,7 @@ useEffect(() => {
 }, [candidateId]);
 
 const handleSavedJob = (jobId) => {
-  fetch('http://localhost:5000/api/save-job', {
+  fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
@@ -140,14 +140,14 @@ const handleSavedJob = (jobId) => {
 
     // Fetch candidate & applications
     useEffect(() => {
-      fetch("http://localhost:5000/api/current_candidate", { credentials: 'include' })
-        .then(res => res.json())
+      fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { credentials: 'include' })
+      .then(res => res.json())
         .then(data => {
           setCandidate(data);
           setCandidateId(data.id);
   
           // Then get applied jobs
-          return fetch("http://localhost:5000/api/getapplications", {
+          return fetch(`${process.env.REACT_APP_API_URL}/api/getapplications`, {
             credentials: 'include'
           });
         })
@@ -166,7 +166,7 @@ const handleSavedJob = (jobId) => {
         handleUnsaveJob(jobId);
       } else {
         // Save job
-        fetch('http://localhost:5000/api/save-job', {
+        fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
@@ -187,7 +187,7 @@ const handleSavedJob = (jobId) => {
     };
     
     const handleUnsaveJob = (jobId) => {
-      fetch('http://localhost:5000/api/unsave-job', {
+      fetch(`${process.env.REACT_APP_API_URL}/api/unsave-job`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -224,7 +224,7 @@ const handleSavedJob = (jobId) => {
   };
   
   const handleApply = (jobId) => {
-    fetch('http://localhost:5000/api/applications', {
+    fetch(`${process.env.REACT_APP_API_URL}/api/applications`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
@@ -236,7 +236,7 @@ const handleSavedJob = (jobId) => {
         setAppliedJobs(prev => [...prev, jobId]);  // Mark job as applied
         setFilteredJobs(prev => prev.filter(job => job.id !== jobId));
 
-        fetch(`http://localhost:5000/api/notify-recruiter/${jobId}`, {
+        fetch(`${process.env.REACT_APP_API_URL}/api/notify-recruiter/${jobId}`, {
           method: 'POST',
           credentials: 'include'
         })

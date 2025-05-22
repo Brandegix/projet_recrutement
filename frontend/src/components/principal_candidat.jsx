@@ -6,8 +6,8 @@ const CandidatePage = () => {
   const [offers, setOffers] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/job_offers")
-      .then(res => setOffers(res.data))
+    axios.get(`${process.env.REACT_APP_API_URL}/api/job_offers`)
+    .then(res => setOffers(res.data))
       .catch(err => console.error(err));
   }, []);
 

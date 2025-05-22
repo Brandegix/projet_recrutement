@@ -29,8 +29,8 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
   }, []);
 
   const fetchDashboardStats = () => {
-    fetch('http://localhost:5000/api/stats')
-      .then(res => res.json())
+    fetch(`${process.env.REACT_APP_API_URL}/api/stats`)
+    .then(res => res.json())
       .then(data => {
         setTotalCandidates(data.totalCandidates);
         setTotalRecruiters(data.totalRecruiters);
@@ -42,7 +42,7 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
   };
 
   const handleLogout = () => {
-    fetch("http://localhost:5000/api/logout", {
+    fetch(`${process.env.REACT_APP_API_URL}/api/logout`, {
       method: "POST",
       credentials: "include",
     })

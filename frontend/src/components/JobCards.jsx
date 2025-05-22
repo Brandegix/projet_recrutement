@@ -72,8 +72,8 @@ function JobCards() {
   const [searchTerm, setSearchTerm] = useState('');
   
   useEffect(() => {
-    axios.get('http://localhost:5000/api/je')
-      .then(response => {
+    axios.get(`${process.env.REACT_APP_API_URL}/api/je`)
+    .then(response => {
         const updatedJobs = response.data.map(job => ({
           ...job,
           logo: job.logo && job.logo.startsWith("http")

@@ -19,7 +19,7 @@ const JobDetail = () => {
     useEffect(() => {
         const fetchJobDetails = async () => {
           try {
-            const response = await axios.get(`http://localhost:5000/api/job_offers/${id}`);
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/job_offers/${id}`);
             const jobData = response.data;
       
             // Provide a default logo if none present
@@ -42,8 +42,8 @@ const JobDetail = () => {
       
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/current_candidate", { credentials: 'include' })
-            .then(res => res.json())
+        fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { credentials: 'include' })
+        .then(res => res.json())
             .then(data => {
                 setCandidateId(data.id);
             })
@@ -51,7 +51,7 @@ const JobDetail = () => {
     }, []);
 
     const handleApply = (jobId) => {
-        fetch('http://localhost:5000/api/applications', {
+        fetch(`${process.env.REACT_APP_API_URL}/api/applications`, {
             method: 'POST',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
@@ -63,7 +63,7 @@ const JobDetail = () => {
             navigate('/applications');
     
             // ✅ Notifier le recruteur avec infos supplémentaires
-            fetch(`http://localhost:5000/api/notify-recruiter/${jobId}`, {
+            fetch(`${process.env.REACT_APP_API_URL}/api/notify-recruiter/${jobId}`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },

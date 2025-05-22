@@ -22,7 +22,7 @@ function RecruiterProfile() {
     const formData = new FormData();
     formData.append("profile_image", file);
 
-    fetch("http://localhost:5000/api/upload-profile-image-recruiter", {
+    fetch(`${process.env.REACT_APP_API_URL}/api/upload-profile-image-recruiter`, {
       method: "POST",
       body: formData,
       credentials: "include",
@@ -68,8 +68,8 @@ function RecruiterProfile() {
         setError(err.message);
       });
 
-    fetch("http://localhost:5000/api/recruiter/job_offers_statistics", {
-      method: "GET",
+      fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/job_offers_statistics`, {
+        method: "GET",
       credentials: "include",
     })
       .then((res) => {
@@ -94,7 +94,7 @@ function RecruiterProfile() {
 
   const handleSaveDomains = () => {
     const selectedDomains = domains.filter(domain => domain.selected).map(domain => domain.name);
-    fetch("http://localhost:5000/recruiter/profile", {
+    fetch(`${process.env.REACT_APP_API_URL}/recruiter/profile`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

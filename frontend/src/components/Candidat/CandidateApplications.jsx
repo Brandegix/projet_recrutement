@@ -76,7 +76,7 @@ const CandidateApplications = () => {
     useEffect(() => {
         if (!candidate?.id) return;
 
-        socketRef.current = io("http://localhost:5000", {
+        socketRef.current = io("${process.env.REACT_APP_API_URL}", {
             transports: ["websocket"],
             withCredentials: true,
         });

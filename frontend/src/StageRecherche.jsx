@@ -19,8 +19,8 @@ const [selectedDomaine, setSelectedDomaine] = useState('');
 
 
 useEffect(() => {
-  axios.get("http://localhost:5000/api/job_offers")
-    .then((res) => {
+  axios.get(`${process.env.REACT_APP_API_URL}/api/job_offers`)
+  .then((res) => {
       console.log("Données reçues : ", res.data);  // Affiche les données dans la console
       setOffres(res.data); // Vérifie que tu les passes bien au state
     })
@@ -44,7 +44,8 @@ useEffect(() => {
 
     try {
       const res = await fetch(
-        "http://localhost:5000/api/job_offers/filter",
+        `${process.env.REACT_APP_API_URL}/api/job_offers/filter`
+,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

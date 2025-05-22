@@ -15,7 +15,7 @@ function VerifyOtpAdmin() {
 
   const handleVerifyOtp = async () => {
     try {
-      await axios.post("http://localhost:5000/api/admin/verify-otp", { email, otp });
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/admin/verify-otp`, { email, otp });
       alert("Code vérifié avec succès !");
       navigate(`/admin/reset-password?email=${email}`);
     } catch (error) {

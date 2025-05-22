@@ -14,7 +14,7 @@ function Chat({ selectedApplicationId }) {
   
     // Initialize WebSocket only if it doesn't exist
     if (!socketRef.current) {
-      socketRef.current = io("http://localhost:5000", { transports: ["websocket"] });
+      socketRef.current = io(`${process.env.REACT_APP_API_URL}`, { transports: ["websocket"] });
   
       socketRef.current.on("connect", () => {
         console.log("✅ Connected to WebSocket server");

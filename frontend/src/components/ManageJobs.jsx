@@ -16,7 +16,7 @@ const ManageJobs = () => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/session", {
+        fetch(`${process.env.REACT_APP_API_URL}/api/session`, {
             credentials: "include",
         })
             .then(res => res.ok ? res.json() : Promise.reject("Not logged in"))
@@ -36,7 +36,7 @@ const ManageJobs = () => {
     }, []);
 
     const handleLogout = () => {
-        fetch("http://localhost:5000/api/logout", {
+        fetch(`${process.env.REACT_APP_API_URL}/api/logout`, {
             method: "POST",
             credentials: "include",
         })
@@ -54,7 +54,7 @@ const ManageJobs = () => {
 
     const fetchJobs = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/job_offers');
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/job_offers`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch jobs: ${response.status} ${response.statusText}`);
             }
@@ -72,7 +72,7 @@ const ManageJobs = () => {
     const handleDelete = async (id) => {
         if (!window.confirm("Êtes-vous sûr de vouloir supprimer cette offre d'emploi ?")) return;
         try {
-            const response = await fetch(`http://localhost:5000/api/job_offers/${id}`, { method: "DELETE" });
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/job_offers/${id}`, { method: "DELETE" });
             if (!response.ok) {
                 throw new Error(`Failed to delete job: ${response.status} ${response.statusText}`);
             }
@@ -95,7 +95,7 @@ const ManageJobs = () => {
     const handleSaveChanges = async () => {
         if (!selectedJob) return;
         try {
-            const response = await fetch(`http://localhost:5000/api/job_offers/${selectedJob.id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/job_offers/${selectedJob.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(selectedJob),

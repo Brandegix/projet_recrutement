@@ -8,8 +8,8 @@ const ProfileRecruteur = () => {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-              const response = await fetch('http://localhost:5000/api/recruiters/profile', {
-                method: 'GET',
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/recruiters/profile`, {
+                    method: 'GET',
                 credentials: 'include',  // garde bien ça pour envoyer les cookies de session
             });
             

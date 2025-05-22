@@ -12,7 +12,7 @@ function RequestResetRecruteur() {
 
   const handleRequestReset = async () => {
     try {
-      await axios.post("http://localhost:5000/api/request-reset", { email: resetEmail }, { withCredentials: true });
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/request-reset`, { email: resetEmail }, { withCredentials: true });
       alert("Code de réinitialisation envoyé à votre email.");
       window.location.href = `/verify-otp?email=${resetEmail}`;
     } catch (err) {

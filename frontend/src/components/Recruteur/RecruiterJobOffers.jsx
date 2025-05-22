@@ -17,12 +17,12 @@ const RecruiterJobOffers = () => {
 
     useEffect(() => {
         setIsLoading(true);
-        fetch('http://localhost:5000/api/recruiter/profile', { method: 'GET', credentials: 'include' })
-            .then(res => res.json())
+        fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/profile`, { method: 'GET', credentials: 'include' })
+        .then(res => res.json())
             .then(userData => setUser(userData))
             .catch(err => console.error("Error fetching recruiter profile:", err));
 
-        fetch('http://localhost:5000/api/recruiter/job_offers', { method: 'GET', credentials: 'include' })
+            fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/job_offers`, { method: 'GET', credentials: 'include' })
             .then(response => {
                 if (!response.ok) throw new Error("Failed to fetch job offers");
                 return response.json();
@@ -31,7 +31,7 @@ const RecruiterJobOffers = () => {
             .catch(error => setError("Impossible de charger les offres d'emploi."))
             .finally(() => setIsLoading(false));
 
-        fetch('http://localhost:5000/api/recruiter/applications', { method: 'GET', credentials: 'include' })
+            fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/applications`, { method: 'GET', credentials: 'include' })
             .then(response => response.json())
             .then(data => setApplications(data))
             .catch(error => console.error("Error fetching applications:", error));
@@ -41,8 +41,8 @@ const RecruiterJobOffers = () => {
     const handleCreateJobOffer = () => navigate('/JobOfferForm');
     const handleDeleteOffer = (offerId) => {
         if (window.confirm("Êtes-vous sûr de vouloir supprimer cette offre ?")) {
-            fetch(`http://localhost:5000/api/recruiter/job_offers/${offerId}`, { method: 'DELETE', credentials: 'include' })
-                .then(response => {
+            fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/job_offers/${offerId}`, { method: 'DELETE', credentials: 'include' })
+            .then(response => {
                     if (!response.ok) throw new Error("Erreur lors de la suppression");
                     setOffers(prev => prev.filter(o => o.id !== offerId));
                     setSuccessMessage("Offre supprimée !");

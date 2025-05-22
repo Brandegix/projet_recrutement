@@ -15,7 +15,7 @@ const OffresRecruteur = () => {
             return;
         }
 
-        fetch('http://localhost:5000/api/job_offersr', {
+        fetch(`${process.env.REACT_APP_API_URL}/api/job_offersr`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,

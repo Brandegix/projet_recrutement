@@ -17,7 +17,7 @@ const Candidatesadmin = () => {
     const [user, setUser] = useState(null);
   
     useEffect(() => {
-      fetch("http://localhost:5000/api/session", {
+      fetch(`${process.env.REACT_APP_API_URL}/api/session`, {
         credentials: "include",
       })
         .then(res => res.ok ? res.json() : Promise.reject("Not logged in"))
@@ -37,7 +37,7 @@ const Candidatesadmin = () => {
     }, []);
   
     const handleLogout = () => {
-      fetch("http://localhost:5000/api/logout", {
+      fetch(`${process.env.REACT_APP_API_URL}/api/logout`, {
         method: "POST",
         credentials: "include",
       })
@@ -54,7 +54,7 @@ const Candidatesadmin = () => {
 
   const fetchCandidates = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/candidates1');
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/candidates1`);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       if (!Array.isArray(data)) throw new Error('API response is not an array');
@@ -72,7 +72,7 @@ const Candidatesadmin = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce candidat ?')) return;
     try {
-      const response = await fetch(`http://localhost:5000/api/candidates/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/candidates/${id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Erreur lors de la suppression.');
       fetchCandidates(); // rafraîchit la liste
     } catch (err) {
@@ -92,7 +92,7 @@ const Candidatesadmin = () => {
 
   const handleSaveChanges = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/candidates/${selectedCandidate.id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/candidates/${selectedCandidate.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(selectedCandidate),
