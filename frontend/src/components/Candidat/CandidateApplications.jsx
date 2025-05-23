@@ -3,10 +3,12 @@ import Navbar from "../Navbara";
 import Footer from "../Footer";
 import { io } from "socket.io-client";
 import ApplicationChat from "../Recruteur/ApplicationChat";
-import GlobalSocket from "../GlobalSocket"; // ✅ Import global socket listener
+import GlobalSocket from "../GlobalSocket";
 import Modal from 'react-modal';
+import { FaComment, FaSpinner, FaEye, FaClock, FaBriefcase, FaMapMarkerAlt, FaCalendarAlt, FaTimes, FaComments } from 'react-icons/fa';
+import { IoClose } from 'react-icons/io5';
 
-Modal.setAppElement('#root'); // Bind modal to the root element
+Modal.setAppElement('#root');
 
 const CandidateApplications = () => {
     const [applications, setApplications] = useState([]);
@@ -95,7 +97,6 @@ const CandidateApplications = () => {
                 )
             );
 
-            // 🔔 Trigger notification only if chat is not open in modal
             if (msg.applicationId !== selectedApplicationId || !isChatModalOpen) {
                 setNotifications((prev) => ({
                     ...prev,
@@ -121,211 +122,454 @@ const CandidateApplications = () => {
     };
 
     const styles = {
+        pageBackground: {
+            background: '#f4f4f4',
+            minHeight: '100vh',
+            paddingBottom: '2rem',
+        },
         wrapper: {
-            maxWidth: "900px",
-            margin: "2rem auto",
+            maxWidth: "1200px",
+            margin: "0 auto",
             padding: "2rem",
-            fontFamily: "'Arial', sans-serif",
-            backgroundColor: "#f9f9f9",
-            minHeight: "80vh",
-            borderRadius: "10px",
-            boxShadow: "0 4px 8px rgba(0,0,0,0.05)",
-        },
-        title: {
-            fontSize: "2.4rem",
-            fontWeight: "bold",
-            textAlign: "center",
-            marginBottom: "2.5rem",
-            color: "#333",
-        },
-        grid: {
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
-            gap: "2rem",
-        },
-        card: {
-            backgroundColor: "#fff",
-            borderRadius: "10px",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-            padding: "1.8rem",
-            transition: "transform 0.2s ease-in-out",
-            border: "1px solid #eee",
-            ":hover": {
-                transform: "scale(1.01)",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.12)",
-            },
+            fontFamily: "'Inter', 'Segoe UI', sans-serif",
         },
         header: {
-            fontSize: "1.3rem",
-            fontWeight: "600",
-            color: "#374151",
+            textAlign: 'center',
+            marginBottom: '3rem',
+            color: 'white',
+        },
+        title: {
+            fontSize: "3.5rem",
+            fontWeight: "900",
             marginBottom: "1rem",
+            background: 'linear-gradient(45deg, #ff6b35, #ff8c42)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            textShadow: '0 2px 4px rgba(0,0,0,0.1)',
         },
-        info: {
-            fontSize: "1rem",
-            color: "#555",
-            lineHeight: "1.7",
-            marginBottom: "1.2rem",
+        subtitle: {
+            fontSize: "1.2rem",
+            opacity: 0.9,
+            fontWeight: '400',
+            maxWidth: '600px',
+            margin: '0 auto',
+            lineHeight: '1.6',
+            color: '#000000',  // or simply 'black'
+        
+        
         },
-        infoItem: {
-            marginBottom: "0.5rem",
+        statsBar: {
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '2rem',
+            marginBottom: '3rem',
+            flexWrap: 'wrap',
         },
-        button: {
-          backgroundColor: "#007bff",
-          color: "#fff",
-          border: "none",
-          padding: "0.8rem 1.2rem",
-          borderRadius: "8px",
-          fontSize: "1rem",
-          fontWeight: "500",
-          cursor: "pointer",
-          transition: "background-color 0.2s ease",
-          textAlign: "center",
-          minWidth: "200px", /* Added a minimum width */
-          position: "relative",
-          height: "60px",
-      },
-        redDot: {
-            position: "absolute",
-            top: "-5px",
-            right: "-5px",
-            height: "12px",
-            width: "12px",
-            backgroundColor: "#dc3545",
-            borderRadius: "50%",
+        statCard: {
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 107, 53, 0.3)',
+            borderRadius: '16px',
+            padding: '1.5rem',
+            textAlign: 'center',
+            color: 'white',
+            minWidth: '150px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        },
+        statNumber: {
+            fontSize: '2rem',
+            fontWeight: '700',
+            display: 'block',
+            color: '#ff6b35',
+        },
+        statLabel: {
+            fontSize: '0.9rem',
+            opacity: 0.8,
+            marginTop: '0.5rem',
+            color: 'black',
+        },
+        applicationGrid: {
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
+            gap: '2rem',
+            marginBottom: '2rem',
+        },
+        applicationCard: {
+            background: '#ffffff',
+            borderRadius: '20px',
+            padding: '2rem',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+            border: '1px solid #f0f0f0',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            position: 'relative',
+            overflow: 'hidden',
+            cursor: 'pointer',
+        },
+        cardHover: {
+            transform: 'translateY(-5px)',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
+            borderColor: '#ff6b35',
+        },
+        cardHeader: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            marginBottom: '1.5rem',
+        },
+        jobTitle: {
+            fontSize: '1.4rem',
+            fontWeight: '700',
+            color: '#1a1a1a',
+            marginBottom: '0.5rem',
+            lineHeight: '1.3',
+        },
+        statusBadge: {
+            padding: '0.4rem 1rem',
+            borderRadius: '20px',
+            fontSize: '0.8rem',
+            fontWeight: '600',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+        },
+        statusViewed: {
+            background: 'linear-gradient(135deg, #ff6b35, #ff8c42)',
+            color: 'white',
+        },
+        statusPending: {
+            background: 'linear-gradient(135deg, #666666, #888888)',
+            color: 'white',
+        },
+        companyInfo: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.8rem',
+            marginBottom: '1.5rem',
+        },
+        infoRow: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.8rem',
+            color: '#666666',
+            fontSize: '0.95rem',
+        },
+        infoIcon: {
+            width: '16px',
+            height: '16px',
+            color: '#ff6b35',
+        },
+        cardActions: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingTop: '1.5rem',
+            borderTop: '1px solid #e0e0e0',
+        },
+        chatButton: {
+            background: 'linear-gradient(135deg, #ff6b35, #ff8c42)',
+            color: 'white',
+            border: 'none',
+            padding: '0.8rem 1.5rem',
+            borderRadius: '12px',
+            fontSize: '0.9rem',
+            fontWeight: '600',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+            transition: 'all 0.2s ease',
+            position: 'relative',
+            boxShadow: '0 4px 15px rgba(255, 107, 53, 0.3)',
+        },
+        chatButtonHover: {
+            transform: 'translateY(-1px)',
+            boxShadow: '0 6px 20px rgba(255, 107, 53, 0.4)',
+            background: 'linear-gradient(135deg, #ff5722, #ff6b35)',
+        },
+        notificationDot: {
+            position: 'absolute',
+            top: '-4px',
+            right: '-4px',
+            width: '12px',
+            height: '12px',
+            backgroundColor: '#ef4444',
+            borderRadius: '50%',
+            border: '2px solid white',
+            animation: 'pulse 2s infinite',
         },
         emptyState: {
-            textAlign: "center",
-            padding: "4rem",
-            color: "#777",
-            fontSize: "1.2rem",
+            textAlign: 'center',
+            padding: '4rem 2rem',
+            background: '#ffffff',
+            borderRadius: '20px',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+            color: '#666666',
         },
-        chatModal: {
-          overlay: { backgroundColor: 'rgba(0, 0, 0, 0.6)', zIndex: 1050 }, /* Added zIndex to the overlay */
-          content: {
-              top: '50%', left: '50%', right: 'auto', bottom: 'auto',
-              marginRight: '-50%', transform: 'translate(-50%, -50%)',
-              padding: '20px', borderRadius: '12px', maxWidth: '600px', width: '90%',
-              maxHeight: '80vh', overflow: 'auto', borderColor: '#ccc',
-              zIndex: 1051, /* Added zIndex to the content */
-          },
-      },
+        emptyIcon: {
+            fontSize: '4rem',
+            color: '#cccccc',
+            marginBottom: '1.5rem',
+        },
+        emptyTitle: {
+            fontSize: '1.5rem',
+            fontWeight: '600',
+            color: '#1a1a1a',
+            marginBottom: '0.5rem',
+        },
+        emptyText: {
+            fontSize: '1.1rem',
+            lineHeight: '1.6',
+            color: '#666666',
+        },
+        loadingContainer: {
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '4rem',
+            background: '#ffffff',
+            borderRadius: '20px',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+        },
+        loadingContent: {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '1rem',
+        },
+        loadingText: {
+            fontSize: '1.2rem',
+            color: '#666666',
+            fontWeight: '500',
+        },
+        spinner: {
+            fontSize: '2rem',
+            color: '#ff6b35',
+            animation: 'spin 1s linear infinite',
+        },
+        modal: {
+            overlay: {
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                backdropFilter: 'blur(4px)',
+                zIndex: 1050,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+            },
+            content: {
+                background: 'white',
+                borderRadius: '24px',
+                padding: '0',
+                maxWidth: '800px',
+                width: '95%',
+                maxHeight: '90vh',
+                overflow: 'hidden',
+                position: 'relative',
+                boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3)',
+                border: 'none',
+            },
+        },
+        modalHeader: {
+            background: 'linear-gradient(135deg, #1a1a1a, #2d2d2d)',
+            color: 'white',
+            padding: '2rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            borderBottom: '3px solid #ff6b35',
+        },
         modalTitle: {
-            color: '#333', fontSize: '1.6rem', fontWeight: '500', marginBottom: '1rem', textAlign: 'center',
+            fontSize: '1.5rem',
+            fontWeight: '700',
+            margin: 0,
+            color: 'white',
         },
         closeButton: {
-            position: 'absolute', top: '10px', right: '10px',
-            background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: '#777',
+            background: 'rgba(255, 255, 255, 0.1)',
+            border: '1px solid rgba(255, 107, 53, 0.3)',
+            borderRadius: '8px',
+            width: '40px',
+            height: '40px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            color: 'black',
+            fontSize: '1.2rem',
+            transition: 'all 0.2s ease',
+        },
+        modalBody: {
+            padding: '2rem',
+            maxHeight: 'calc(90vh - 100px)',
+            overflow: 'auto',
         },
     };
 
+    const totalApplications = applications.length;
+    const viewedApplications = applications.filter(app => app.viewed).length;
+    const activeChats = Object.values(recruiterStartedMap).filter(Boolean).length;
+
     return (
         <>
-            <Navbar />
-            {candidate && (
-                <GlobalSocket userId={candidate.id} userType="candidate" />
-            )}
-            <div style={styles.wrapper}>
-                <h2 style={styles.title}>Mes Candidatures</h2>
-                <p style={{ fontSize: '1rem', color: '#333', lineHeight: '1.5', marginBottom:'10px'  }}>
-  Vous pouvez discuter avec un recruteur uniquement si celui-ci a initié la conversation. Veuillez vérifier votre boîte e-mail.
-</p>
-                {loading ? (
-                    <div style={styles.emptyState}>
-                        <p>Chargement des candidatures...</p>
-                    </div>
-                ) : applications.length === 0 ? (
-                    <div style={styles.emptyState}>
-                        <p>Aucune candidature soumise pour le moment.</p>
-                    </div>
-                ) : (
-                    <div style={styles.grid}>
-                    {applications.map((application) => (
-  <div key={application.id} style={styles.card}>
-    <div style={{ marginBottom: "1rem" }}>
-      <h3 style={styles.header}>
-        {application.job_offer?.title || "Titre non disponible"}
-      </h3>
-      <p style={styles.infoItem}><strong>Entreprise:</strong> {application.job_offer?.company || "N/A"}</p>
-      <p style={styles.infoItem}><strong>Lieu:</strong> {application.job_offer?.location || "N/A"}</p>
-      <p style={styles.infoItem}>
-        <strong>Date de candidature:</strong>{" "}
-        {new Date(application.application_date).toLocaleDateString()}
-      </p>
-    </div>
-
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1.2rem" }}>
-    {recruiterStartedMap[application.id] && (
-  <button
-    onClick={() => openChatModal(application.id)}
-    style={{
-      color: '#ff9800',
-      background: 'none',
-      border: 'none',
-      padding: 0,
-      fontSize: '14px',
-      cursor: 'pointer',
-      position: 'relative',
-      width: '300px',
-    }}
-  >
-    Discuter avec le recruteur
-    {notifications[application.id] && (
-      <span
-        style={{
-          position: 'absolute',
-          top: '-4px',
-          right: '-10px',
-          width: '8px',
-          height: '8px',
-          backgroundColor: 'red',
-          borderRadius: '50%',
-        }}
-      ></span>
-    )}
-  </button>
-)}
-
-
-      <span
-        style={{
-          fontSize: "0.9rem",
-          fontWeight: "600",
-          color: application.viewed ? "#28a745" : "#ff9800",
-          backgroundColor: application.viewed ? "#e6f4ea" : "#fff8e1",
-          padding: "0.3rem 0.8rem",
-          borderRadius: "8px",
-          marginLeft: "1rem",
-        }}
-      >
-        {application.viewed ? "Vu ✔" : "En attente ⏳"}
-      </span>
-    </div>
-  </div>
-))}
-
-                    </div>
+            <style jsx>{`
+                @keyframes spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+                @keyframes pulse {
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0.5; }
+                }
+            `}</style>
+            
+            <div style={styles.pageBackground}>
+                <Navbar />
+                {candidate && (
+                    <GlobalSocket userId={candidate.id} userType="candidate" />
                 )}
+                
+                <div style={styles.wrapper}>
+                    <div style={styles.header}>
+                        <h1 style={styles.title}>Mes Candidatures</h1>
+                        <p style={styles.subtitle}>
+                            Suivez l'évolution de vos candidatures et discutez avec les recruteurs intéressés par votre profil.
+                        </p>
+                    </div>
+
+                    {!loading && (
+                        <div style={styles.statsBar}>
+                            <div style={styles.statCard}>
+                                <span style={styles.statNumber}>{totalApplications}</span>
+                                <span style={styles.statLabel}>Total Candidatures</span>
+                            </div>
+                            <div style={styles.statCard}>
+                                <span style={styles.statNumber}>{viewedApplications}</span>
+                                <span style={styles.statLabel}>Vues</span>
+                            </div>
+                            <div style={styles.statCard}>
+                                <span style={styles.statNumber}>{activeChats}</span>
+                                <span style={styles.statLabel}>Conversations</span>
+                            </div>
+                        </div>
+                    )}
+
+                    {loading ? (
+                        <div style={styles.loadingContainer}>
+                            <div style={styles.loadingContent}>
+                                <FaSpinner style={styles.spinner} />
+                                <div style={styles.loadingText}>Chargement de vos candidatures...</div>
+                            </div>
+                        </div>
+                    ) : applications.length === 0 ? (
+                        <div style={styles.emptyState}>
+                            <FaBriefcase style={styles.emptyIcon} />
+                            <h3 style={styles.emptyTitle}>Aucune candidature pour le moment</h3>
+                            <p style={styles.emptyText}>
+                                Commencez à postuler aux offres qui vous intéressent pour voir vos candidatures apparaître ici.
+                            </p>
+                        </div>
+                    ) : (
+                        <div style={styles.applicationGrid}>
+                            {applications.map((application) => (
+                                <div 
+                                    key={application.id} 
+                                    style={styles.applicationCard}
+                                    onMouseEnter={(e) => {
+                                        Object.assign(e.currentTarget.style, styles.cardHover);
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.transform = 'translateY(0)';
+                                        e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.1)';
+                                    }}
+                                >
+                                    <div style={styles.cardHeader}>
+                                        <div>
+                                            <h3 style={styles.jobTitle}>
+                                                {application.job_offer?.title || "Titre non disponible"}
+                                            </h3>
+                                        </div>
+                                        <div style={{
+                                            ...styles.statusBadge,
+                                            ...(application.viewed ? styles.statusViewed : styles.statusPending)
+                                        }}>
+                                            {application.viewed ? <FaEye /> : <FaClock />}
+                                            {application.viewed ? "Reçue" : "En attente"}
+                                        </div>
+                                    </div>
+
+                                    <div style={styles.companyInfo}>
+                                        <div style={styles.infoRow}>
+                                            <FaBriefcase style={styles.infoIcon} />
+                                            <span>{application.job_offer?.company || "N/A"}</span>
+                                        </div>
+                                        <div style={styles.infoRow}>
+                                            <FaMapMarkerAlt style={styles.infoIcon} />
+                                            <span>{application.job_offer?.location || "N/A"}</span>
+                                        </div>
+                                        <div style={styles.infoRow}>
+                                            <FaCalendarAlt style={styles.infoIcon} />
+                                            <span>
+                                                Candidaté le {new Date(application.application_date).toLocaleDateString('fr-FR')}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {recruiterStartedMap[application.id] && (
+                                        <div style={styles.cardActions}>
+                                            <span style={{ color: '#ff6b35', fontSize: '0.9rem', fontWeight: '500' }}>
+                                                💬 Conversation disponible
+                                            </span>
+                                            <button
+                                                onClick={() => openChatModal(application.id)}
+                                                style={styles.chatButton}
+                                                onMouseEnter={(e) => {
+                                                    Object.assign(e.currentTarget.style, styles.chatButtonHover);
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.transform = 'translateY(0)';
+                                                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 107, 53, 0.3)';
+                                                    e.currentTarget.style.background = 'linear-gradient(135deg, #ff6b35, #ff8c42)';
+                                                }}
+                                            >
+                                                <FaComments />
+                                                Discuter
+                                                {notifications[application.id] && (
+                                                    <span style={styles.notificationDot}></span>
+                                                )}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+                <Footer />
+
+                <Modal
+                    isOpen={isChatModalOpen}
+                    onRequestClose={closeChatModal}
+                    style={styles.modal}
+                >
+                    <div style={styles.modalHeader}>
+                        <h2 style={styles.modalTitle}>Conversation avec le recruteur</h2>
+                        <button onClick={closeChatModal} style={styles.closeButton}>
+                        <IoClose size={20} />
+                        </button>
+                    </div>
+                    <div style={styles.modalBody}>
+                        {selectedApplicationId && candidate?.id && (
+                            <ApplicationChat
+                                applicationId={selectedApplicationId}
+                                userId={candidate.id}
+                                userType="candidate"
+                            />
+                        )}
+                    </div>
+                </Modal>
             </div>
-            <Footer />
-
-            <Modal
-                isOpen={isChatModalOpen}
-                onRequestClose={closeChatModal}
-                style={styles.chatModal}
-            >
-                <h2 style={styles.modalTitle}>Chat avec le recruteur</h2>
-                <button onClick={closeChatModal} style={styles.closeButton}>
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                {selectedApplicationId && candidate?.id && (
-                    <ApplicationChat
-                        applicationId={selectedApplicationId}
-                        userId={candidate.id}
-                        userType="candidate"
-                    />
-                )}
-            </Modal>
         </>
     );
 };

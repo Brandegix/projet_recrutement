@@ -131,7 +131,6 @@ class Candidate(db.Model):
     cv_filename = db.Column(db.String(255))
     profile_image = db.Column(db.String(255))  # 🔧 AJOUT ICI
     reset_token = db.Column(db.String(255), nullable=True)  # ✅ Add this line
-
     def set_skills(self, skills_list):
         self.skills = json.dumps(skills_list)
 

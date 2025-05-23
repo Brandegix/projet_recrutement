@@ -7,35 +7,32 @@ import JobSearchAndOffers from "../JobSearchAndOffers";
 import { Link } from "react-router-dom";
 import JobCardss from "./JobCardss";
 
-
 function CandidateProfile() {
   const [candidate, setCandidate] = useState(null);
   const [cvFile, setCvFile] = useState(null);
   const [profileImageFile, setProfileImageFile] = useState(null);
-  const [applicationCount, setApplicationCount] = useState(0); // État pour le nombre de candidatures
+  const [applicationCount, setApplicationCount] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
     // Récupérer les détails du candidat, y compris les compétences
     fetch(`${process.env.REACT_APP_API_URL}/api/candidates/profile`, {
       method: "GET",
-      credentials: "include", // ✅ permet d'envoyer les cookies
+      credentials: "include",
     })
       .then((res) => {
-        console.log(res); // 👈 Affiche la réponse pour débogage
+        console.log(res);
         if (!res.ok) throw new Error("Échec de la récupération des données du candidat");
         return res.json();
       })
       .then(data => {
-        // Analyser la chaîne JSON des compétences si c'est une chaîne
         if (typeof data.skills === 'string') {
           data.skills = JSON.parse(data.skills);
         }
-        // Vérifier que profile_image fait bien partie de la réponse
         if (data.profile_image) {
-          console.log('Image de profil disponible:', data.profile_image); // Débogage
+          console.log('Image de profil disponible:', data.profile_image);
         }
-        setCandidate(data); // Mettre à jour les données du candidat après la récupération
+        setCandidate(data);
       })
       .catch((err) => console.error("Erreur lors du chargement:", err));
 
@@ -49,7 +46,7 @@ function CandidateProfile() {
         return res.json();
       })
       .then(data => {
-        setApplicationCount(data.statistics.application_count); // Définir le nombre de candidatures
+        setApplicationCount(data.statistics.application_count);
       })
       .catch((err) => console.error("Erreur lors de la récupération du nombre de candidatures:", err));
   }, []);
@@ -86,7 +83,6 @@ function CandidateProfile() {
       const file = e.target.files[0];
       setProfileImageFile(file);
   
-      // Automatically upload on file select
       const formData = new FormData();
       formData.append("profile_image", file);
   
@@ -106,7 +102,6 @@ function CandidateProfile() {
           }));
           alert("Image de profil téléchargée avec succès");
           window.location.reload();
-
         })
         .catch((err) => {
           console.error(err);
@@ -129,12 +124,12 @@ function CandidateProfile() {
     })
       .then((res) => {
         if (!res.ok) throw new Error("Échec du téléchargement de l'image de profil");
-        return res.json(); // On attend l'objet candidat mis à jour avec profile_image
+        return res.json();
       })
       .then(data => {
         setCandidate(prevState => ({
           ...prevState,
-          profile_image: data.profile_image,   // Mettre à jour l'image de profil dans l'état
+          profile_image: data.profile_image,
         }));
         alert("Image de profil téléchargée avec succès");
         window.location.reload();
@@ -152,260 +147,552 @@ function CandidateProfile() {
     { id: 3, title: "Développeur Full-Stack", description: "Développer des interfaces utilisateur avec React." },
   ];
 
+  const styles = {
+    profilePage: {
+      minHeight: '100vh',
+      backgroundColor: '#fafafa',
+      paddingTop: '40px',
+      paddingBottom: '60px',
+    },
+    profileContainer: {
+      maxWidth: '1200px',
+      margin: '0 auto',
+      padding: '0 20px',
+    },
+    profileHeader: {
+      background: 'linear-gradient(135deg, #fff 0%, #f8f8f8 100%)',
+      borderRadius: '20px',
+      padding: '40px',
+      marginBottom: '30px',
+      boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+      border: '1px solid #f0f0f0',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '40px',
+      flexWrap: 'wrap',
+    },
+    profilePicture: {
+      position: 'relative',
+      width: '180px',
+      height: '180px',
+      cursor: 'pointer',
+      flexShrink: 0,
+    },
+    profileImg: {
+      width: '100%',
+      height: '100%',
+      borderRadius: '50%',
+      objectFit: 'cover',
+      border: '4px solid #ff6b35',
+      boxShadow: '0 8px 25px rgba(255, 107, 53, 0.2)',
+      transition: 'all 0.3s ease',
+    },
+    hoverOverlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'rgba(255, 107, 53, 0.8)',
+      borderRadius: '50%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      color: 'white',
+      fontWeight: 'bold',
+      fontSize: '1.1rem',
+      userSelect: 'none',
+      transition: 'all 0.3s ease',
+    },
+    profileInfo: {
+      flex: 1,
+      minWidth: '300px',
+    },
+    profileName: {
+      fontSize: '3rem',
+      fontWeight: '300',
+      marginBottom: '0.5rem',
+      background: 'linear-gradient(45deg, #ff6b35, #ff8c42)',
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
+      backgroundClip: 'text',
+      letterSpacing: '-1px',
+    },
+    profileRole: {
+      fontSize: '1.2rem',
+      color: '#666',
+      marginBottom: '20px',
+      fontWeight: '400',
+    },
+    editLink: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '8px',
+      padding: '12px 24px',
+      backgroundColor: '#fff',
+      color: '#333',
+      border: '2px solid #ff6b35',
+      borderRadius: '25px',
+      fontSize: '0.95rem',
+      textDecoration: 'none',
+      fontWeight: '500',
+      transition: 'all 0.3s ease',
+      boxShadow: '0 4px 15px rgba(255, 107, 53, 0.1)',
+    },
+    completionSection: {
+      backgroundColor: '#fff',
+      borderRadius: '15px',
+      padding: '25px',
+      marginBottom: '30px',
+      boxShadow: '0 5px 20px rgba(0,0,0,0.06)',
+      border: '1px solid #f0f0f0',
+    },
+    completionTitle: {
+      fontSize: '1.3rem',
+      fontWeight: '600',
+      color: '#333',
+      marginBottom: '15px',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '10px',
+    },
+    progressBar: {
+      width: '100%',
+      height: '12px',
+      backgroundColor: '#f0f0f0',
+      borderRadius: '6px',
+      overflow: 'hidden',
+      marginBottom: '10px',
+    },
+    progressFill: {
+      height: '100%',
+      background: 'linear-gradient(90deg, #ff6b35, #ff8c42)',
+      borderRadius: '6px',
+      transition: 'width 0.3s ease',
+    },
+    mainContent: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: '30px',
+      marginBottom: '40px',
+    },
+    card: {
+      backgroundColor: '#fff',
+      borderRadius: '15px',
+      padding: '30px',
+      boxShadow: '0 5px 20px rgba(0,0,0,0.06)',
+      border: '1px solid #f0f0f0',
+      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+    },
+    cardTitle: {
+      fontSize: '1.4rem',
+      fontWeight: '600',
+      color: '#333',
+      marginBottom: '20px',
+      paddingBottom: '10px',
+      borderBottom: '3px solid #ff6b35',
+      display: 'inline-block',
+    },
+    profileDetail: {
+      display: 'flex',
+      alignItems: 'center',
+      padding: '12px 0',
+      borderBottom: '1px solid #f5f5f5',
+    },
+    profileDetailLabel: {
+      fontWeight: '600',
+      color: '#555',
+      minWidth: '120px',
+      fontSize: '0.95rem',
+    },
+    profileDetailValue: {
+      color: '#333',
+      fontSize: '0.95rem',
+    },
+    skillsSection: {
+      backgroundColor: '#fff',
+      borderRadius: '15px',
+      padding: '30px',
+      boxShadow: '0 5px 20px rgba(0,0,0,0.06)',
+      border: '1px solid #f0f0f0',
+    },
+    skillItem: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '15px',
+      padding: '15px 20px',
+      borderRadius: '12px',
+      backgroundColor: '#fafafa',
+      marginBottom: '12px',
+      border: '1px solid #f0f0f0',
+      transition: 'all 0.3s ease',
+    },
+    skillIndicator: {
+      width: '20px',
+      height: '20px',
+      borderRadius: '50%',
+      flexShrink: 0,
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+    },
+    skillName: {
+      flex: 1,
+      fontWeight: '600',
+      fontSize: '1rem',
+      color: '#333',
+    },
+    skillLevel: {
+      fontWeight: 'bold',
+      fontSize: '0.9rem',
+    },
+    cvSection: {
+      backgroundColor: '#fff',
+      borderRadius: '15px',
+      padding: '30px',
+      boxShadow: '0 5px 20px rgba(0,0,0,0.06)',
+      border: '1px solid #f0f0f0',
+      marginBottom: '30px',
+    },
+    cvForm: {
+      display: 'flex',
+      gap: '15px',
+      alignItems: 'center',
+      marginBottom: '20px',
+      flexWrap: 'wrap',
+    },
+    fileInput: {
+      flex: '1',
+      minWidth: '250px',
+      padding: '12px 16px',
+      border: '2px solid #f0f0f0',
+      borderRadius: '10px',
+      fontSize: '0.95rem',
+      backgroundColor: '#fafafa',
+      transition: 'border-color 0.3s ease',
+    },
+    uploadBtn: {
+      backgroundColor: '#ff6b35',
+      color: '#fff',
+      border: 'none',
+      borderRadius: '10px',
+      padding: '12px 24px',
+      cursor: 'pointer',
+      fontSize: '0.95rem',
+      fontWeight: '600',
+      minWidth: '180px',
+      transition: 'all 0.3s ease',
+      boxShadow: '0 4px 15px rgba(255, 107, 53, 0.2)',
+    },
+    currentCv: {
+      padding: '15px 20px',
+      backgroundColor: '#f8f9fa',
+      borderRadius: '10px',
+      border: '1px solid #e9ecef',
+    },
+    cvLink: {
+      color: '#ff6b35',
+      textDecoration: 'none',
+      fontWeight: '600',
+      transition: 'color 0.3s ease',
+    },
+    offersLink: {
+      textAlign: 'center',
+      marginTop: '40px',
+    },
+    offersLinkBtn: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '10px',
+      padding: '15px 30px',
+      backgroundColor: '#ff6b35',
+      color: '#fff',
+      textDecoration: 'none',
+      borderRadius: '25px',
+      fontSize: '1.1rem',
+      fontWeight: '600',
+      transition: 'all 0.3s ease',
+      boxShadow: '0 6px 20px rgba(255, 107, 53, 0.3)',
+    },
+  };
+
+  const getSkillColor = (level) => {
+    if (level >= 80) return '#ff6b35';
+    if (level >= 50) return '#ff8c42';
+    return '#ffb366';
+  };
+
   return (
     <>
       <Navbar />
-      <div className="profile-page">
-        <div className="profile-container">
-          <div className="profile-header">
-          <div
-  className="profile-picture"
-  onMouseEnter={() => setIsHovering(true)}
-  onMouseLeave={() => setIsHovering(false)}
-  style={{ position: 'relative', width: '150px', height: '150px', cursor: 'pointer' }}
->
-  <img
-    src={candidate && candidate.profile_image 
-      ? `${process.env.REACT_APP_API_URL}/uploads/profile_images/${candidate.profile_image}`
-      : candidatImage}
-    alt="Profil"
-    className="profile-img"
-    style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
-  />
+      <div style={styles.profilePage}>
+        <div style={styles.profileContainer}>
+          {/* Profile Header */}
+          <div style={styles.profileHeader}>
+            <div
+              style={styles.profilePicture}
+              onMouseEnter={() => setIsHovering(true)}
+              onMouseLeave={() => setIsHovering(false)}
+            >
+              <img
+                src={candidate && candidate.profile_image 
+                  ? `${process.env.REACT_APP_API_URL}/uploads/profile_images/${candidate.profile_image}`
+                  : candidatImage}
+                alt="Profil"
+                style={{
+                  ...styles.profileImg,
+                  transform: isHovering ? 'scale(1.05)' : 'scale(1)',
+                }}
+              />
 
-  {/* Overlay with modifier button */}
-  {isHovering && (
-    <div
-      style={{
-        position: 'absolute',
-        top: 0, left: 0,
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        borderRadius: '50%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: '1.1rem',
-        userSelect: 'none',
-      }}
-      onClick={() => document.getElementById('profile-image-input').click()}
-    >
-      Modifier
-    </div>
-  )}
+              {isHovering && (
+                <div
+                  style={styles.hoverOverlay}
+                  onClick={() => document.getElementById('profile-image-input').click()}
+                >
+                  📸 Modifier
+                </div>
+              )}
 
-  {/* Hidden file input */}
- <input
-  id="profile-image-input"
-  type="file"
-  accept="image/*"
-  style={{ display: 'none' }}
-  onChange={handleProfileImageChange} // ✅ Change this from `onSubmit` to `onChange`
-/>
+              <input
+                id="profile-image-input"
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleProfileImageChange}
+              />
+            </div>
 
-</div>
-
-
-            <div className="profile-info">
-              <h2 className="profile-name">
+            <div style={styles.profileInfo}>
+              <h2 style={styles.profileName}>
                 {candidate ? candidate.name : "Chargement..."}
               </h2>
-              <p className="profile-role">
-                Profil candidat
-
-              </p>
+              <p style={styles.profileRole}>Profil candidat</p>
               <a
-                href={`/edit-profile`}
-                className="edit-link"
+                href="/edit-profile"
                 style={{
-                  display: 'inline-block',
-                  padding: '8px 12px',
-                  backgroundColor: '#f8f9fa',
-                  color: '#495057',
-                  border: 'none', // Removed the border
-                  borderRadius: '5px',
-                  fontSize: '0.9rem',
-                  textDecoration: 'none',
-                  marginTop: '10px',
+                  ...styles.editLink,
+                  ':hover': {
+                    backgroundColor: '#ff6b35',
+                    color: '#fff',
+                    transform: 'translateY(-2px)',
+                  }
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = '#ff6b35';
+                  e.target.style.color = '#fff';
+                  e.target.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = '#fff';
+                  e.target.style.color = '#333';
+                  e.target.style.transform = 'translateY(0)';
                 }}
               >
-                ✏️ Modifier le profil
+                 Modifier le profil
               </a>
             </div>
           </div>
 
-          <div
-            style={{
-              marginTop: '20px',
-              marginBottom: '20px',
-              display: 'flex',
-              gap: '20px', // Space between the two upload sections
-              flexWrap: 'wrap', // Allows them to wrap on smaller screens
-            }}
-          >
-           
-           
-          </div>
-
+          {/* Profile Completion */}
           {candidate && typeof candidate.completion === 'number' && (
-            <div className="profile-completion">
-              <h4>Complétion du profil</h4>
-              <progress value={candidate.completion} max="100"></progress>
-              <p>{candidate.completion}% complété</p>
+            <div style={styles.completionSection}>
+              <h4 style={styles.completionTitle}>
+                📊 Complétion du profil
+              </h4>
+              <div style={styles.progressBar}>
+                <div 
+                  style={{
+                    ...styles.progressFill,
+                    width: `${candidate.completion}%`
+                  }}
+                />
+              </div>
+              <p style={{ color: '#666', fontSize: '0.95rem', margin: 0 }}>
+                {candidate.completion}% complété
+              </p>
             </div>
           )}
 
-          <div className="container" style={{ display: 'flex', gap: '20px', flexDirection: 'row', alignItems: 'stretch' }}>
-            <div className="card profile-card">
-              <div className="profile-details">
-                <div className="profile-detail">
-                  <strong>Email: </strong>{candidate ? candidate.email : "Chargement..."}
-                </div>
-                <div className="profile-detail">
-                  <strong>Téléphone: </strong>{candidate ? `${candidate.phoneNumber}` : "Chargement..."}
-                </div>
-                <div className="profile-detail">
-                  <strong>Adresse: </strong>{candidate ? candidate.address : "Chargement..."}
-                </div>
-                <div className="profile-detail">
-                  <strong>Date de naissance: </strong>{candidate ? candidate.dateOfBirth : "Chargement..."}
-                </div>
-                <div className="profile-detail">
-                <p>                           .</p>
-                </div>
-
+          {/* Main Content Grid */}
+          <div style={styles.mainContent}>
+            {/* Personal Details Card */}
+            <div 
+              style={styles.card}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-5px)';
+                e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 5px 20px rgba(0,0,0,0.06)';
+              }}
+            >
+              <h4 style={styles.cardTitle}> Informations personnelles</h4>
+              <div style={styles.profileDetail}>
+                <span style={styles.profileDetailLabel}>Email:</span>
+                <span style={styles.profileDetailValue}>
+                  {candidate ? candidate.email : "Chargement..."}
+                </span>
+              </div>
+              <div style={styles.profileDetail}>
+                <span style={styles.profileDetailLabel}>Téléphone:</span>
+                <span style={styles.profileDetailValue}>
+                  {candidate ? candidate.phoneNumber : "Chargement..."}
+                </span>
+              </div>
+              <div style={styles.profileDetail}>
+                <span style={styles.profileDetailLabel}>Adresse:</span>
+                <span style={styles.profileDetailValue}>
+                  {candidate ? candidate.address : "Chargement..."}
+                </span>
+              </div>
+              <div style={styles.profileDetail}>
+                <span style={styles.profileDetailLabel}>Naissance:</span>
+                <span style={styles.profileDetailValue}>
+                  {candidate ? candidate.dateOfBirth : "Chargement..."}
+                </span>
               </div>
             </div>
 
-            <div className="skills-section" style={{ maxWidth: 400, margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
-  <h4 style={{ borderBottom: '2px solid #FFA500', paddingBottom: '5px', color: '#495057' }}>Compétences</h4>
-
-  {candidate && candidate.skills ? (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '15px' }}>
-      {candidate.skills.map((skill) => {
-        // Choose a color shade based on skill level (green-orange-red scale)
-        const getColor = (level) => {
-          if (level >= 80) return '#28a745'; // green
-          if (level >= 50) return '#FFA500'; // orange
-          return '#dc3545'; // red
-        };
-
-        return (
-          <div
-            key={skill.name}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              padding: '8px 12px',
-              borderRadius: '8px',
-              backgroundColor: '#f9f9f9',
-              color: '#495057',
-                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-            }}
-          >
-            <div
-              style={{
-                width: '16px',
-                height: '16px',
-                borderRadius: '50%',
-                backgroundColor: getColor(skill.level),
-                flexShrink: 0,
-                boxShadow: `0 0 6px ${getColor(skill.level)}55`,
+            {/* Skills Card */}
+            <div 
+              style={styles.card}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-5px)';
+                e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
               }}
-              title={`Niveau : ${skill.level}%`}
-            />
-            <span style={{ flex: 1, fontWeight: '600', fontSize: '16px' }}>{skill.name}</span>
-            <span style={{ fontWeight: 'bold', color: getColor(skill.level) }}>{skill.level}%</span>
-          </div>
-        );
-      })}
-    </div>
-  ) : (
-    <p>Chargement des compétences...</p>
-  )}
-</div>
-  </div>
- {/* Upload CV Section */}
- <div style={{ flex: '1 1 300px', marginTop: '30px' }}>
-              <h4 style={{ color: '#495057', fontSize: '1.2rem', marginBottom: '15px' }}>
-                Téléchargez votre CV
-              </h4>
-              <form
-                onSubmit={handleCvUpload}
-                style={{
-                  marginTop: '15px',
-                  display: 'flex',
-                  gap: '10px',
-                  alignItems: 'center',
-                  border: 'none'
-                }}
-              >
-                <input
-                  type="file"
-                  accept=".pdf,.doc,.docx"
-                  onChange={handleCvChange}
-                  style={{
-                    flexGrow: 1,
-                    padding: '10px',
-                    border: 'none',
-                    outline: 'none',
-                    borderRadius: '5px',
-                    fontSize: '0.9rem',
-                    backgroundColor: '#f8f9fa',
-                  }}
-                />
-                <button
-                  className="upload-btn"
-                  type="submit"
-                  style={{
-                    padding: '10px 15px',
-                    backgroundColor: '#28a745',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '5px',
-                    cursor: 'pointer',
-                    fontSize: '0.9rem',
-                    transition: 'background-color 0.3s ease',
-                  }}
-                  onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#1e7e34')}
-                  onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#28a745')}
-                >
-                  Télécharger votre CV
-                </button>
-                
-              </form>
-              {candidate && candidate.cv_filename ? (
-                <div style={{ marginTop: '10px' }}>
-                  <p style={{ fontSize: '0.95rem', color: '#495057' }}>
-                    CV actuel :{' '}
-                    <a
-href={`${process.env.REACT_APP_API_URL}/uploads/${candidate.cv_filename}`}
-target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ color: '#007bff', textDecoration: 'none', color: '#fc8e20' }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 5px 20px rgba(0,0,0,0.06)';
+              }}
+            >
+              <h4 style={styles.cardTitle}> Compétences</h4>
+              {candidate && candidate.skills ? (
+                <div>
+                  {candidate.skills.map((skill) => (
+                    <div
+                      key={skill.name}
+                      style={{
+                        ...styles.skillItem,
+                        ':hover': {
+                          backgroundColor: '#f5f5f5',
+                          transform: 'translateX(5px)',
+                        }
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = '#f5f5f5';
+                        e.currentTarget.style.transform = 'translateX(5px)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = '#fafafa';
+                        e.currentTarget.style.transform = 'translateX(0)';
+                      }}
                     >
-                      {candidate.cv_filename}
-                    </a>
-                  </p>
+                      <div
+                        style={{
+                          ...styles.skillIndicator,
+                          backgroundColor: getSkillColor(skill.level),
+                        }}
+                        title={`Niveau : ${skill.level}%`}
+                      />
+                      <span style={styles.skillName}>{skill.name}</span>
+                      <span 
+                        style={{
+                          ...styles.skillLevel,
+                          color: getSkillColor(skill.level)
+                        }}
+                      >
+                        {skill.level}%
+                      </span>
+                    </div>
+                  ))}
                 </div>
               ) : (
-                <p style={{ fontSize: '0.95rem', color: '#6c757d', marginTop: '10px' }}>
-                  Aucun CV téléchargé pour l'instant.
+                <p style={{ color: '#666', fontStyle: 'italic' }}>
+                  Chargement des compétences...
                 </p>
               )}
             </div>
-          
-          <div style={{ textAlign: "center", marginTop: "20px" ,color: '#fc8e20'}}>
-                       <Link to="/offres" style={{ color: '#007bff', textDecoration: 'none', color: '#fc8e20' }}>
-                          Consulter les offres d'emploi
-                       </Link>
-                     </div>
+          </div>
 
-          
+          {/* CV Upload Section */}
+          <div style={styles.cvSection}>
+            <h4 style={styles.cardTitle}> Téléchargez votre CV</h4>
+            
+            <form onSubmit={handleCvUpload} style={styles.cvForm}>
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx"
+                onChange={handleCvChange}
+                style={{
+                  ...styles.fileInput,
+                  ':focus': {
+                    borderColor: '#ff6b35',
+                    outline: 'none',
+                  }
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#ff6b35'}
+                onBlur={(e) => e.target.style.borderColor = '#f0f0f0'}
+              />
+              <button
+                type="submit"
+                style={styles.uploadBtn}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#e55a2b';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 107, 53, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#ff6b35';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 107, 53, 0.2)';
+                }}
+              >
+                 Télécharger CV
+              </button>
+            </form>
+
+            {candidate && candidate.cv_filename ? (
+              <div style={styles.currentCv}>
+                <p style={{ margin: 0, fontSize: '0.95rem', color: '#555' }}>
+                  <strong>CV actuel:</strong>{' '}
+                  <a
+                    href={`${process.env.REACT_APP_API_URL}/uploads/${candidate.cv_filename}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={styles.cvLink}
+                    onMouseEnter={(e) => e.target.style.color = '#e55a2b'}
+                    onMouseLeave={(e) => e.target.style.color = '#ff6b35'}
+                  >
+                    {candidate.cv_filename}
+                  </a>
+                </p>
+              </div>
+            ) : (
+              <p style={{ fontSize: '0.95rem', color: '#999', fontStyle: 'italic' }}>
+                Aucun CV téléchargé pour l'instant.
+              </p>
+            )}
+          </div>
+
+          {/* Job Offers Link */}
+          <div style={styles.offersLink}>
+            <Link 
+              to="/offres" 
+              style={styles.offersLinkBtn}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#e55a2b';
+                e.currentTarget.style.transform = 'translateY(-3px)';
+                e.currentTarget.style.boxShadow = '0 8px 25px rgba(255, 107, 53, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#ff6b35';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 107, 53, 0.3)';
+              }}
+            >
+              Consulter les offres d'emploi
+            </Link>
+          </div>
         </div>
       </div>
       <Footer />
