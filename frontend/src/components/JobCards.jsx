@@ -464,19 +464,69 @@ function JobCards() {
         
         )}
       </div>
-      <div className="pagination">
-        <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1}>Précédent</button>
-        {[...Array(totalPages)].map((_, idx) => (
-          <button
-            key={idx}
-            className={currentPage === idx + 1 ? 'active' : ''}
-            onClick={() => paginate(idx + 1)}
-          >
-            {idx + 1}
-          </button>
-        ))}
-        <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages}>Suivant</button>
-      </div>
+      <div
+  className="pagination"
+  style={{
+    display: 'flex',
+    gap: '0.25rem',
+    marginTop: '1rem',
+    justifyContent: 'center',
+  }}
+>
+  <button
+    onClick={() => paginate(currentPage - 1)}
+    disabled={currentPage === 1}
+    style={{
+      padding: '0.25rem 0.5rem',
+      fontSize: '0.75rem',
+      border: '1px solid #ccc',
+      backgroundColor: '#f8f9fa',
+      borderRadius: '4px',
+      width:'70px',
+      cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+      opacity: currentPage === 1 ? 0.6 : 1,
+    }}
+  >
+    Précédent
+  </button>
+
+  {[...Array(totalPages)].map((_, idx) => (
+    <button
+      key={idx}
+      onClick={() => paginate(idx + 1)}
+      style={{
+        padding: '0.25rem 0.5rem',
+        fontSize: '0.75rem',
+        border: '1px solid #ccc',
+        backgroundColor: currentPage === idx + 1 ? '#007bff' : '#f8f9fa',
+        color: currentPage === idx + 1 ? 'white' : 'black',
+        borderRadius: '4px',
+        width:'70px',
+        cursor: 'pointer',
+      }}
+    >
+      {idx + 1}
+    </button>
+  ))}
+
+  <button
+    onClick={() => paginate(currentPage + 1)}
+    disabled={currentPage === totalPages}
+    style={{
+      padding: '0.25rem 0.5rem',
+      fontSize: '0.75rem',
+      border: 'none',
+      backgroundColor: '#f8f9fa',
+      borderRadius: '4px',
+      width:'70px',
+      cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+      opacity: currentPage === totalPages ? 0.6 : 1,
+    }}
+  >
+    Suivant
+  </button>
+</div>
+
     </>
   );
 }

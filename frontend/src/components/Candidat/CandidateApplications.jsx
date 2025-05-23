@@ -227,7 +227,9 @@ const CandidateApplications = () => {
             )}
             <div style={styles.wrapper}>
                 <h2 style={styles.title}>Mes Candidatures</h2>
-
+                <p style={{ fontSize: '1rem', color: '#333', lineHeight: '1.5', marginBottom:'10px'  }}>
+  Vous pouvez discuter avec un recruteur uniquement si celui-ci a initié la conversation. Veuillez vérifier votre boîte e-mail.
+</p>
                 {loading ? (
                     <div style={styles.emptyState}>
                         <p>Chargement des candidatures...</p>
@@ -238,49 +240,67 @@ const CandidateApplications = () => {
                     </div>
                 ) : (
                     <div style={styles.grid}>
-                       {applications.map((application) => (
+                    {applications.map((application) => (
   <div key={application.id} style={styles.card}>
-    <div style={styles.header}>
-      {application.job_offer?.title || "Titre non disponible"}
-    </div>
-    <div style={styles.info}>
-      <div style={styles.infoItem}>
-        <strong>Entreprise:</strong>{" "}
-        {application.job_offer?.company || "N/A"}
-      </div>
-      <div style={styles.infoItem}>
-        <strong>Lieu:</strong>{" "}
-        {application.job_offer?.location || "N/A"}
-      </div>
-      <div style={styles.infoItem}>
+    <div style={{ marginBottom: "1rem" }}>
+      <h3 style={styles.header}>
+        {application.job_offer?.title || "Titre non disponible"}
+      </h3>
+      <p style={styles.infoItem}><strong>Entreprise:</strong> {application.job_offer?.company || "N/A"}</p>
+      <p style={styles.infoItem}><strong>Lieu:</strong> {application.job_offer?.location || "N/A"}</p>
+      <p style={styles.infoItem}>
         <strong>Date de candidature:</strong>{" "}
         {new Date(application.application_date).toLocaleDateString()}
-      </div>
+      </p>
     </div>
 
-    {/* Show recruiter chat button if applicable */}
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1.2rem" }}>
     {recruiterStartedMap[application.id] && (
-      <button
-        onClick={() => openChatModal(application.id)}
-        style={styles.button}
-      >
-        Discuter avec le recruteur
-        {notifications[application.id] && (
-          <span style={styles.redDot}></span>
-        )}
-      </button>
+  <button
+    onClick={() => openChatModal(application.id)}
+    style={{
+      color: '#ff9800',
+      background: 'none',
+      border: 'none',
+      padding: 0,
+      fontSize: '14px',
+      cursor: 'pointer',
+      position: 'relative',
+      width: '300px',
+    }}
+  >
+    Discuter avec le recruteur
+    {notifications[application.id] && (
+      <span
+        style={{
+          position: 'absolute',
+          top: '-4px',
+          right: '-10px',
+          width: '8px',
+          height: '8px',
+          backgroundColor: 'red',
+          borderRadius: '50%',
+        }}
+      ></span>
     )}
+  </button>
+)}
 
-    {/* Show "Vu ✔" if viewed, else show "Pending" */}
-    {application.viewed ? (
-      <span style={{ marginLeft: "10px", color: "#28a745", fontWeight: "bold", fontSize: "14px" }}>
-        Vu ✔
+
+      <span
+        style={{
+          fontSize: "0.9rem",
+          fontWeight: "600",
+          color: application.viewed ? "#28a745" : "#ff9800",
+          backgroundColor: application.viewed ? "#e6f4ea" : "#fff8e1",
+          padding: "0.3rem 0.8rem",
+          borderRadius: "8px",
+          marginLeft: "1rem",
+        }}
+      >
+        {application.viewed ? "Vu ✔" : "En attente ⏳"}
       </span>
-    ) : (
-      <span style={{ marginLeft: "10px", color: "#ff9800", fontWeight: "bold", fontSize: "14px" }}>
-        En attente ⏳
-      </span>
-    )}
+    </div>
   </div>
 ))}
 
