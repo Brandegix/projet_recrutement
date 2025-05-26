@@ -18,6 +18,7 @@ const StageRecherche = () => {
   const [selectedLieu, setSelectedLieu] = useState('');
   const [selectedSalaire, setSelectedSalaire] = useState('');
   const [selectedDomaine, setSelectedDomaine] = useState('');
+  const [publicRecruiters, setPublicRecruiters] = useState([]);
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/job_offers`)
@@ -30,6 +31,23 @@ const StageRecherche = () => {
       });
   }, []);
 
+
+  const truncate = (str, maxLength) => {
+    if (!str) return "";
+    return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
+  };
+  
+
+  useEffect(() => {
+    // Fetch public recruiters when component mounts
+    axios.get(`${process.env.REACT_APP_API_URL}/api/recruiters/public`)
+      .then(res => {
+        setPublicRecruiters(res.data);
+      })
+      .catch(err => {
+        console.error("Error fetching public recruiters:", err);
+      });
+  }, []);
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -156,6 +174,172 @@ const StageRecherche = () => {
           <CVsExamples />
         </section>
 
+
+        <section style={{ 
+          padding: "80px 20px", 
+          backgroundColor: "#0a0a0a",
+          background: 'linear-gradient(135deg, #0a0a0a 0%, #000000 100%)'
+        }}>
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <h2 style={{ 
+              textAlign: "center", 
+              marginBottom: "60px",
+              fontSize: 'clamp(2rem, 4vw, 3rem)',
+              fontWeight: '700',
+              background: 'linear-gradient(135deg, #ffffff 0%, #ff6b35 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              lineHeight: '1.2'
+            }}>
+              Recruteurs en ligne
+            </h2>
+            
+            <div style={{ 
+              display: "grid", 
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: "30px", 
+              justifyContent: "center",
+              maxWidth: "1000px",
+              margin: "0 auto"
+            }}>
+              {publicRecruiters.length === 0 ? (
+                <div style={{
+                  gridColumn: "1 / -1",
+                  textAlign: "center",
+                  padding: "60px 20px",
+                  backgroundColor: "#111111",
+                  borderRadius: "20px",
+                  border: "1px solid #333333"
+                }}>
+                  <p style={{ 
+                    color: "#cccccc", 
+                    fontSize: "1.2rem",
+                    margin: "0"
+                  }}>
+                    Aucun recruteur public disponible pour le moment.
+                  </p>
+                </div>
+              ) : (
+                publicRecruiters.map((recruiter) => (
+                  <div
+                    key={recruiter.id}
+                    style={{
+                      background: 'linear-gradient(135deg, #111111 0%, #1a1a1a 100%)',
+                      padding: "30px",
+                      borderRadius: "20px",
+                      textAlign: "center",
+                      border: "1px solid #333333",
+                      transition: "all 0.3s ease",
+                      position: "relative",
+                      overflow: "hidden"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-10px)';
+                      e.currentTarget.style.boxShadow = '0 20px 40px rgba(255, 107, 53, 0.2)';
+                      e.currentTarget.style.borderColor = '#ff6b35';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                      e.currentTarget.style.borderColor = '#333333';
+                    }}
+                  >
+                    {/* Subtle background accent */}
+                    <div style={{
+                      position: "absolute",
+                      top: "0",
+                      right: "0",
+                      width: "60px",
+                      height: "60px",
+                      background: 'linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, transparent 100%)',
+                      borderRadius: "0 20px 0 60px"
+                    }}></div>
+                    
+                    {/* Company Icon/Avatar placeholder */}
+                    <div style={{
+                      width: "60px",
+                      height: "60px",
+                      background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
+                      borderRadius: "50%",
+                      margin: "0 auto 20px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "1.5rem",
+                      fontWeight: "bold",
+                      color: "#ffffff"
+                    }}>
+                      {recruiter.company.charAt(0).toUpperCase()}
+                    </div>
+                    
+                    <h3 style={{ 
+                      margin: "0 0 15px",
+                      fontSize: "1.4rem",
+                      fontWeight: "600",
+                      color: "#ffffff",
+                      lineHeight: "1.3"
+                    }}>
+                      {recruiter.company}
+                    </h3>
+                    
+                    <p style={{ 
+                      fontSize: "1.1rem",
+                      color: "#ff6b35",
+                      marginBottom: "10px",
+                      fontWeight: "500"
+                    }}>
+                      {recruiter.name}
+                    </p>
+                    
+                    <p style={{ 
+                      fontSize: "0.95rem", 
+                      color: "#cccccc", 
+                      marginBottom: "25px",
+                      lineHeight: "1.5",
+                      minHeight: "40px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center"
+                    }}>
+                      {recruiter.title}
+                    </p>
+                    
+                    <Link
+                      to={`/recruiters/${recruiter.id}`}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        padding: "12px 25px",
+                        borderRadius: "50px",
+                        background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
+                        color: "#ffffff",
+                        textDecoration: "none",
+                        fontWeight: "600",
+                        fontSize: "0.95rem",
+                        transition: "all 0.3s ease",
+                        border: "none",
+                        cursor: "pointer"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.05)';
+                        e.currentTarget.style.boxShadow = '0 10px 25px rgba(255, 107, 53, 0.4)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
+                    >
+                      Voir Profil
+                      <span style={{ fontSize: "0.8rem" }}>→</span>
+                    </Link>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </section>
+
         {/* FAQ Section with Dark Background */}
         <div style={{ 
           backgroundColor: '#0a0a0a',
@@ -164,6 +348,8 @@ const StageRecherche = () => {
           <FaqSection />
         </div>
 
+
+      
         {/* Contact Section with Dark Background */}
         <div id="contact" style={{ 
           backgroundColor: '#000000'

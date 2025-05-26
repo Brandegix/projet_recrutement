@@ -12,7 +12,9 @@ function EditRecruiterProfile() {
         address: '',
         name: '',
         creationDate: '',
+        public_profile: false, // NEW
     });
+    
 
     const navigate = useNavigate();
 
@@ -138,6 +140,21 @@ function EditRecruiterProfile() {
                             style={styles.textarea}
                         />
                     </div>
+                    <div style={{ width: '100%' }}>
+    <label htmlFor="public_profile" style={styles.label}>Afficher mon profil publiquement</label>
+    <input
+        type="checkbox"
+        id="public_profile"
+        name="public_profile"
+        checked={profile.public_profile}
+        onChange={(e) =>
+            setProfile({
+                ...profile,
+                public_profile: e.target.checked,
+            })
+        }
+    />
+</div>
 
                     <button type="submit" style={styles.button}>
                         Enregistrer

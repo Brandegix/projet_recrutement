@@ -85,6 +85,37 @@ function RecruiterProfile() {
 
   }, []);
 
+
+  const handleCoverImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    const formData = new FormData();
+    formData.append("cover_image", file);
+  
+    fetch(`${process.env.REACT_APP_API_URL}/api/upload-cover-image-recruiter`, {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Cover image upload failed");
+        return res.json();
+      })
+      .then(data => {
+        setProfile(prevState => ({
+          ...prevState,
+          cover_image: data.cover_image,
+        }));
+        alert("Image de couverture mise à jour avec succès !");
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("Échec du téléchargement de l'image de couverture");
+      });
+  };
+  
   const handleAddDomain = () => {
     if (newDomain.trim() === "") return;
     const updatedDomains = [...domains, { name: newDomain, selected: true }];
@@ -122,6 +153,17 @@ function RecruiterProfile() {
       paddingTop: '40px',
       paddingBottom: '60px',
     },
+    coverImageContainer: {
+      width: '100%',
+      marginBottom: '30px', // Add some space below the cover image
+      borderRadius: '0 0 15px 15px', // Optional: slightly round the bottom corners
+      overflow: 'hidden', // To contain the rounded corners
+    },
+    coverImage: {
+      width: '100%',
+      height: '250px', // Adjust the height as needed
+      objectFit: 'cover',
+    },
     profileContainer: {
       maxWidth: '1200px',
       margin: '0 auto',
@@ -410,10 +452,28 @@ function RecruiterProfile() {
   return (
     <>
       <Navbar />
+      
+
       <div style={styles.profilePage}>
-        <div style={styles.profileContainer}>
-          {/* Profile Header */}
-          <div style={styles.profileHeader}>
+      <div style={styles.profileContainer}>
+
+{/* Cover Image */}
+{profile.cover_image && (
+  <img
+    src={`${process.env.REACT_APP_API_URL}${profile.cover_image}`}
+    alt="Cover"
+    style={{
+      width: '100%',
+      height: '200px',
+      objectFit: 'cover',
+      borderRadius: '15px',
+      marginBottom: '20px',
+    }}
+  />
+)}
+
+{/* Profile Header */}
+<div style={styles.profileHeader}>
             <div
               style={styles.profilePicture}
               onMouseEnter={() => setIsHovering(true)}
@@ -480,6 +540,19 @@ function RecruiterProfile() {
               {profile.description || "Vous n'avez pas encore ajouté de description d'entreprise. Cliquez sur 'Modifier le profil' pour en ajouter une."}
             </p>
           </div>
+
+{/* COVER IMAGE Upload Section */}
+<div style={{ marginBottom: '20px' }}>
+  <label htmlFor="coverImageUpload" style={{ fontWeight: 'bold', marginBottom: '10px', display: 'block' }}>
+    Upload Cover Image:
+  </label>
+  <input
+    type="file"
+    accept="image/*"
+    onChange={handleCoverImageChange}
+    id="coverImageUpload"
+  />
+</div>
 
           {/* Info Cards */}
           <div style={styles.cardsContainer}>

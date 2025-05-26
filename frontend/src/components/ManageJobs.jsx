@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import '../assets/css/AdminTable.css';
-import { FiSearch } from 'react-icons/fi';
+import { FiSearch, FiHome, FiUsers, FiBriefcase, FiCalendar, FiBarChart, FiClipboard, FiLogOut, FiEdit, FiTrash } from 'react-icons/fi';
 import { Link, useNavigate } from "react-router-dom";
-import { FiHome, FiUsers, FiBriefcase, FiCalendar, FiBarChart, FiClipboard, FiLogOut } from "react-icons/fi";
 
 const ManageJobs = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -14,6 +12,7 @@ const ManageJobs = () => {
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState(null);
+    const [darkMode, setDarkMode] = useState(false); // Assuming you want dark mode capability
 
     useEffect(() => {
         fetch(`${process.env.REACT_APP_API_URL}/api/session`, {
@@ -72,7 +71,7 @@ const ManageJobs = () => {
     const handleDelete = async (id) => {
         if (!window.confirm("Êtes-vous sûr de vouloir supprimer cette offre d'emploi ?")) return;
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/job_offers/${id}`, { method: "DELETE" });
+            const response = await fetch(`<span class="math-inline">\{process\.env\.REACT\_APP\_API\_URL\}/api/job\_offers/</span>{id}`, { method: "DELETE" });
             if (!response.ok) {
                 throw new Error(`Failed to delete job: ${response.status} ${response.statusText}`);
             }
@@ -95,7 +94,7 @@ const ManageJobs = () => {
     const handleSaveChanges = async () => {
         if (!selectedJob) return;
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/job_offers/${selectedJob.id}`, {
+            const response = await fetch(`<span class="math-inline">\{process\.env\.REACT\_APP\_API\_URL\}/api/job\_offers/</span>{selectedJob.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(selectedJob),
@@ -103,7 +102,6 @@ const ManageJobs = () => {
             if (!response.ok) {
                 throw new Error(`Failed to update job: ${response.status} ${response.statusText}`);
             }
-            // Update the job in the state *after* the save is successful.
             setJobs(prevJobs =>
                 prevJobs.map(j => (j.id === selectedJob.id ? { ...selectedJob, is_active: selectedJob.is_active } : j))
             );
@@ -132,6 +130,146 @@ const ManageJobs = () => {
         height: 0,
     };
 
+    const styles = {
+        mainContent: {
+            flex: 1,
+            backgroundColor: darkMode ? '#1a1a1a' : '#f8f9fa',
+            transition: 'all 0.3s ease',
+            display: 'flex',
+            flexDirection: 'column',
+            marginLeft: '260px', // Adjust based on your sidebar width
+        },
+        header: {
+            padding: '20px 32px',
+            backgroundColor: darkMode ? '#2d2d2d' : '#ffffff',
+            borderBottom: darkMode ? '1px solid #404040' : '1px solid #e5e5e5',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+        },
+        headerTitle: {
+            fontSize: '24px',
+            fontWeight: '700',
+            color: darkMode ? '#ffffff' : '#1a1a1a',
+            margin: 0,
+            background: 'linear-gradient(135deg, #ff8c42 0%, #ff6b1a 50%, #e55100 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+        },
+        contentArea: {
+            padding: '24px 32px',
+            flex: 1,
+            overflow: 'auto'
+        },
+        searchBar: {
+            backgroundColor: darkMode ? '#2d2d2d' : '#ffffff',
+            padding: '16px',
+            borderRadius: '12px',
+            marginBottom: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            border: darkMode ? '1px solid #404040' : '1px solid #e5e5e5',
+            boxShadow: darkMode ? '0 2px 8px rgba(0,0,0,0.1)' : '0 1px 3px rgba(0,0,0,0.03)'
+        },
+        searchIcon: {
+            fontSize: '20px',
+            marginRight: '12px',
+            color: darkMode ? '#cccccc' : '#666666'
+        },
+        searchInput: {
+            flex: 1,
+            border: 'none',
+            padding: '10px',
+            borderRadius: '8px',
+            fontSize: '16px',
+            backgroundColor: 'transparent',
+            color: darkMode ? '#ffffff' : '#1a1a1a',
+            '&::placeholder': {
+                color: darkMode ? '#999999' : '#bbbbbb'
+            }
+        },
+        tableContainer: {
+            backgroundColor: darkMode ? '#2d2d2d' : '#ffffff',
+            borderRadius: '12px',
+            boxShadow: darkMode ? '0 4px 20px rgba(0,0,0,0.2)' : '0 4px 20px rgba(0,0,0,0.06)',
+            border: darkMode ? '1px solid #404040' : '1px solid #e5e5e5',
+            overflow: 'auto'
+        },
+        applicationsTable: {
+            width: '100%',
+            borderCollapse: 'collapse',
+            borderSpacing: 0,
+            '& th': {
+                backgroundColor: darkMode ? '#3a3a3a' : '#e9e9e9',
+                color: darkMode ? '#eee' : '#555',
+                padding: '10px 16px',
+                textAlign: 'left',
+                borderBottom: darkMode ? '1px solid #555' : '1px solid #ccc',
+                fontSize: '12px',
+                fontWeight: '600',
+                textTransform: 'uppercase',
+                letterSpacing: '0.3px',
+            },
+            '& td': {
+                padding: '12px 16px',
+                color: darkMode ? '#ccc' : '#666',
+            },
+            '& tr:nth-child(even) td': {
+                backgroundColor: darkMode ? '#222' : '#f9f9f9',
+            },
+            '& tr:last-child td': {
+                borderBottom: 'none'
+            },
+            '& tr': {
+                borderBottom: darkMode ? '1px solid #444' : '1px solid #ddd',
+            },
+            '& thead tr': {
+                borderBottom: darkMode ? '2px solid #555' : '2px solid #bbb',
+            }
+        },
+        emptyMessage: {
+            padding: '20px',
+            color: darkMode ? '#cccccc' : '#666666',
+            textAlign: 'center'
+        },
+        themeToggleContainer: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px'
+        },
+        themeToggle: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            padding: '6px 12px',
+            borderRadius: '50px',
+            backgroundColor: darkMode ? '#404040' : '#f0f0f0',
+            transition: 'all 0.3s ease'
+        },
+        switch: {
+            position: 'relative',
+            width: '40px',
+            height: '22px',
+            backgroundColor: darkMode ? '#007bff' : '#cccccc', // Blue when active in dark mode
+            borderRadius: '50px',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+        },
+        slider: {
+            position: 'absolute',
+            top: '2px',
+            left: darkMode ? '22px' : '2px',
+            width: '18px',
+            height: '18px',
+            backgroundColor: '#ffffff',
+            borderRadius: '50%',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+        }
+    };
+
     const toggleSliderStyle = (isActive) => ({
         position: 'absolute',
         cursor: 'pointer',
@@ -139,7 +277,7 @@ const ManageJobs = () => {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: isActive ? 'green' : '#ccc',
+        backgroundColor: isActive ? '#ff8c42' : '#ccc', // Blue when active
         transition: '.4s',
         borderRadius: '34px',
     });
@@ -161,123 +299,214 @@ const ManageJobs = () => {
     if (error) return <div className="error-message">Erreur : {error}</div>;
 
     return (
-        <div className="candidates-container">
+        <div className={`dashboard-container ${darkMode ? 'dark-mode' : ''}`} style={{ display: 'flex', minHeight: '100vh', backgroundColor: darkMode ? '#1a1a1a' : '#ffffff', fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif", transition: 'all 0.3s ease' }}>
             <div className="sidebar">
                 <div className="sidebar-header"><h2>Casajobs.ma</h2></div>
                 <nav className="sidebar-nav">
                     <ul>
-                        <li>
-                            <FiHome className="icon" />
-                            <Link to="/Dashboard_admin">
-                                <span>Tableau de bord</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <FiUsers className="icon" />
-                            <Link to="/Candidatesadmin">
-                                <span>Gérer les candidats</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <FiUsers className="icon" />
-                            <Link to="/ManageRecruiters">
-                                <span>Gérer les recruteurs</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <FiClipboard className="icon" />
-                            <Link to="/applicationss">
-                                <span>Candidats et leurs postulations</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <FiBarChart className="icon" />
-                            <Link to="/AdminDashboard">
-                                <span>Statistiques</span>
-                            </Link>
-                        </li>
-                        <li className="active">
-                            <FiBriefcase className="icon" />
-                            <Link to="/ManageJobs">
-                                <span>Gérer les offres</span>
-                            </Link>
-                        </li>
+                        <li><FiHome className="icon" /><Link to="/Dashboard_admin"><span>Tableau de bord</span></Link></li>
+                        <li><FiUsers className="icon" /><Link to="/Candidatesadmin"><span>Gérer les candidats</span></Link></li>
+                        <li><FiUsers className="icon" /><Link to="/ManageRecruiters"><span>Gérer les recruteurs</span></Link></li>
+                        <li><FiClipboard className="icon" /><Link to="/applicationss"><span>Candidats et leurs postulations</span></Link></li>
+                        <li><FiBarChart className="icon" /><Link to="/AdminDashboard"><span>Statistiques</span></Link></li>
+                        <li className="active"><FiBriefcase className="icon" /><Link to="/ManageJobs"><span>Gérer les offres</span></Link></li>
                         {isLoggedIn && user && (
-                            <li onClick={handleLogout} className="logout-link">
-                                <FiLogOut className="icon" />
-                                <span>Se déconnecter</span>
-                            </li>
+                            <li onClick={handleLogout} className="logout-link"><FiLogOut className="icon" /><span>Se déconnecter</span></li>
                         )}
                     </ul>
                 </nav>
             </div>
-            <header className="candidates-header">
-                <h1>Gestion des Offres d'Emploi</h1>
-                <p>Gérez et suivez toutes les offres publiées.</p>
-            </header>
 
-            <div className="search-bar">
-                <FiSearch className="search-icon" />
-                <input
-                    type="text"
-                    placeholder="Rechercher par titre, entreprise ou lieu..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
-            </div>
-
-            <div className="candidates-content">
-                <h2>Liste des offres</h2>
-
-                {filteredJobs.length === 0 ? (
-                    <div className="no-results">
-                        {jobs.length === 0
-                            ? "Aucune offre dans la base de données."
-                            : "Aucune offre ne correspond à votre recherche."}
+            <div style={styles.mainContent}>
+                <header style={styles.header}>
+                    <h1 style={styles.headerTitle}>Gestion des Offres d'Emploi</h1>
+                    <div style={styles.themeToggleContainer}>
+                        <div style={styles.themeToggle}>
+                            <span style={{ color: darkMode ? '#e5e5e5' : '#666666', fontSize: '12px', fontWeight: '600' }}>
+                                {darkMode ? "Mode sombre" : "Mode clair"}
+                            </span>
+                            <div style={styles.switch} onClick={() => setDarkMode(!darkMode)}>
+                                <div style={styles.slider}></div>
+                            </div>
+                        </div>
                     </div>
-                ) : (
-                    <div className="table-container">
-                        <table className="candidates-table">
-                            <thead>
-                                <tr>
-                                    <th>Poste</th>
-                                    <th>Entreprise</th>
-                                    <th>Lieu</th>
-                                    <th>Salaire</th>
-                                    <th>Active</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredJobs.map(job => (
-                                    <tr key={job.id}>
-                                        <td>{job.title}</td>
-                                        <td>{job.company}</td>
-                                        <td>{job.location}</td>
-                                        <td>{job.salary} MAD</td>
-                                        <td>
-                                            <label style={toggleContainerStyle} className="switch">
-                                                <input
-                                                    type="checkbox"
-                                                    style={toggleInputStyle}
-                                                    checked={job.is_active}
-                                                    disabled // Keep it disabled
-                                                />
-                                                <span style={toggleSliderStyle(job.is_active)} className="slider round">
-                                                    <span style={sliderBeforeStyle(job.is_active)}></span>
-                                                </span>
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <button className="edit-button" onClick={() => handleEditClick(job)}>Modifier</button>
-                                            <button className="delete-button" onClick={() => handleDelete(job.id)}>Supprimer</button>
-                                        </td>
+                </header>
+                <div style={styles.contentArea}>
+                    <div style={styles.searchBar}>
+                        <FiSearch style={styles.searchIcon} />
+                        <input
+                            type="text"
+                            placeholder="Rechercher par titre, entreprise ou lieu..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            style={styles.searchInput}
+                        />
+                    </div>
+
+                    <div style={styles.tableContainer}>
+                        {filteredJobs.length === 0 ? (
+                            <p style={styles.emptyMessage}>Aucune offre d'emploi trouvée.</p>
+                        ) : (
+                            <table style={{
+                                width: '100%',
+                                borderCollapse: 'collapse',
+                                borderSpacing: 0,
+                            }}>
+                                <thead>
+                                    <tr style={{
+                                        borderBottom: darkMode ? '2px solid #555' : '2px solid #bbb'
+                                    }}>
+                                        <th style={{
+                                            backgroundColor: darkMode ? '#3a3a3a' : '#e9e9e9',
+                                            color: darkMode ? '#eee' : '#555',
+                                            padding: '10px 16px',
+                                            textAlign: 'left',
+                                            borderBottom: darkMode ? '1px solid #555' : '1px solid #ccc',
+                                            fontSize: '12px',
+                                            fontWeight: '600',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.3px',
+                                        }}>Poste</th>
+                                        <th style={{
+                                            backgroundColor: darkMode ? '#3a3a3a' : '#e9e9e9',
+                                            color: darkMode ? '#eee' : '#555',
+                                            padding: '10px 16px',
+                                            textAlign: 'left',
+                                            borderBottom: darkMode ? '1px solid #555' : '1px solid #ccc',
+                                            fontSize: '12px',
+                                            fontWeight: '600',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.3px',
+                                        }}>Entreprise</th>
+                                        <th style={{
+                                            backgroundColor: darkMode ? '#3a3a3a' : '#e9e9e9',
+                                            color: darkMode ? '#eee' : '#555',
+                                            padding: '10px 16px',
+                                            textAlign: 'left',
+                                            borderBottom: darkMode ? '1px solid #555' : '1px solid #ccc',
+                                            fontSize: '12px',
+                                            fontWeight: '600',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.3px',
+                                        }}>Lieu</th>
+                                        <th style={{
+                                            backgroundColor: darkMode ? '#3a3a3a' : '#e9e9e9',
+                                            color: darkMode ? '#eee' : '#555',
+                                            padding: '10px 16px',
+                                            textAlign: 'left',
+                                            borderBottom: darkMode ? '1px solid #555' : '1px solid #ccc',
+                                            fontSize: '12px',
+                                            fontWeight: '600',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.3px',
+                                        }}>Salaire</th>
+                                        <th style={{
+                                            backgroundColor: darkMode ? '#3a3a3a' : '#e9e9e9',
+                                            color: darkMode ? '#eee' : '#555',
+                                            padding: '10px 16px',
+                                            textAlign: 'left',
+                                            borderBottom: darkMode ? '1px solid #555' : '1px solid #ccc',
+                                            fontSize: '12px',
+                                            fontWeight: '600',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.3px',
+                                        }}>Active</th>
+                                        <th style={{
+                                            backgroundColor: darkMode ? '#3a3a3a' : '#e9e9e9',
+                                            color: darkMode ? '#eee' : '#555',
+                                            padding: '10px 16px',
+                                            textAlign: 'left',
+                                            borderBottom: darkMode ? '1px solid #555' : '1px solid #ccc',
+                                            fontSize: '12px',
+                                            fontWeight: '600',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.3px',
+                                        }}>Actions</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {filteredJobs.map((job, index) => (
+                                        <tr
+                                            key={job.id}
+                                            style={{
+                                                borderBottom: darkMode ? '1px solid #444' : '1px solid #ddd',
+                                                backgroundColor: (index % 2 === 1) ? (darkMode ? '#222' : '#f9f9f9') : 'transparent'
+                                            }}
+                                        >
+                                            <td style={{
+                                                padding: '12px 16px',
+                                                color: darkMode ? '#ccc' : '#666',
+                                            }}>{job.title}</td>
+                                            <td style={{
+                                                padding: '12px 16px',
+                                                color: darkMode ? '#ccc' : '#666',
+                                            }}>{job.company}</td>
+                                            <td style={{
+                                                padding: '12px 16px',
+                                                color: darkMode ? '#ccc' : '#666',
+                                            }}>{job.location}</td>
+                                            <td style={{
+                                                padding: '12px 16px',
+                                                color: darkMode ? '#ccc' : '#666',
+                                            }}>{job.salary} MAD</td>
+                                           <td style={{
+                                                padding: '8px 16px', // Slightly reduce vertical padding
+                                                color: darkMode ? '#ccc' : '#666',
+                                                textAlign: 'center', // Center the toggle switch
+                                          }}>
+                                                <label style={toggleContainerStyle} className="switch">
+                                                    <input
+                                                        type="checkbox"
+                                                        style={toggleInputStyle}
+                                                        checked={job.is_active}
+                                                        disabled
+                                                    />
+                                                    <span style={toggleSliderStyle(job.is_active)} >
+                                                        <span style={sliderBeforeStyle(job.is_active)}></span>
+                                                    </span>
+                                                </label>
+                                            </td>
+                                            <td style={{
+                    padding: '12px 16px',
+                    color: darkMode ? '#ccc' : '#666',
+                    textAlign: 'center' // Align icons in the center
+                }}>
+                    <button
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            color: darkMode ? '#8ac4ff' : '#007bff',
+                            cursor: 'pointer',
+                            marginRight: '8px',
+                            padding: '4px',
+                            borderRadius: '4px',
+                        }}
+                        onClick={() => handleEditClick(job)}
+                    >
+                        <FiEdit size={18} />
+                    </button>
+                    <button
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            color: darkMode ? '#ff7878' : '#dc3545',
+                            cursor: 'pointer',
+                            marginLeft: '8px',
+                            padding: '4px',
+                            borderRadius: '4px',
+                        }}
+                        onClick={() => handleDelete(job.id)}
+                    >
+                        <FiTrash size={18} />
+                    </button>
+                </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
 
             {showModal && selectedJob && (
@@ -332,5 +561,3 @@ const ManageJobs = () => {
 };
 
 export default ManageJobs;
-
-

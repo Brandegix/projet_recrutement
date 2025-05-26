@@ -160,11 +160,22 @@ class Recruiter(db.Model):
     profile_image = db.Column(db.String(255))  # <-- Ajout de la colonne pour l'image de profil
     reset_token = db.Column(db.String(255), nullable=True)  # ✅ Add this line
     subscription_active = db.Column(db.Boolean, default=False)  # ✅ Track subscription status
+    public_profile = db.Column(db.Boolean, default=False)  # Show on homepage if True
+    cover_image = db.Column(db.String(255))    # ✅ Cover picture (new column)
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+
+class NewsletterSubscription(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), nullable=False)
+    recruiter_id = db.Column(db.Integer, db.ForeignKey('recruiters.id'), nullable=False)  # ✅ Table name
+    recruiter = db.relationship('Recruiter', backref=db.backref('newsletters', lazy=True))  # ✅ Class name
 
 # Modèle Subscription
 class Subscription(db.Model):
@@ -194,8 +205,25 @@ class JobOffer(db.Model):
     is_active = db.Column(db.Boolean, default=False) # Added the is_active field
     CountModification = db.Column(db.Integer, nullable=False, default=0)
     views = db.Column(db.Integer, default=0)  # Ajout du champ views
-
-
+    posted_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "company": self.company,
+            "location": self.location,
+            "experience": self.experience,
+            "description": self.description,
+            "skills": self.skills,
+            "salary": self.salary,
+            "type": self.type,
+            "recruiter_id": self.recruiter_id,
+            "logo": self.logo,
+            "is_active": self.is_active,
+            "CountModification": self.CountModification,
+            "views": self.views,
+            "posted_at": self.posted_at.isoformat() if self.posted_at else None,
+        }
 class SavedJob(db.Model):
     __tablename__ = 'saved_jobs'
 
@@ -289,6 +317,21 @@ from flask import jsonify, session
 
 from flask import session, redirect, url_for
 
+
+@app.route('/api/newsletter/subscribe', methods=['POST'])
+def subscribe_to_newsletter():
+    data = request.get_json()
+    email = data.get('email')
+    recruiter_id = data.get('recruiter_id')
+
+    if not email or not recruiter_id:
+        return jsonify({'error': 'Missing email or recruiter ID'}), 400
+
+    new_subscription = NewsletterSubscription(email=email, recruiter_id=recruiter_id)
+    db.session.add(new_subscription)
+    db.session.commit()
+
+    return jsonify({'message': 'Subscription successful'}), 200
 
 
 
@@ -830,7 +873,9 @@ def update_recruiter_profile():
     recruiter.companyName = data.get("companyName", recruiter.companyName)
     recruiter.description = data.get("description", recruiter.description)
     recruiter.phoneNumber = data.get("phoneNumber", recruiter.phoneNumber)
-
+    recruiter.public_profile = data.get("public_profile", recruiter.public_profile)
+   
+   
     db.session.commit()
 
     print(f"After update - Name: {recruiter.name}, Email: {recruiter.email}, Company: {recruiter.companyName}")
@@ -1388,10 +1433,129 @@ def get_recruiter_profile():
         'description': recruiter.description,
         'profile_image': recruiter.profile_image,
         'selected_domains': selected_domains,
-        'predefined_domains': predefined_domains        
+        'predefined_domains': predefined_domains,
+        'public_profile' : recruiter.public_profile ,
+                'cover_image' : recruiter.cover_image ,
+
+        
  # <-- ADD THIS
 
     })
+
+
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads', 'cover_images')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
+@app.route('/api/upload-cover-image-recruiter', methods=['POST'])
+def upload_cover_image():
+    recruiter_id = session.get('user_id')  # You can get it from auth if needed
+    file = request.files.get('cover_image')
+
+    if not file or not allowed_file1(file.filename):
+        return jsonify({'error': 'Invalid file'}), 400
+
+    filename = secure_filename(f"cover_{recruiter_id}_{file.filename}")
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(filepath)
+
+    recruiter = Recruiter.query.get(recruiter_id)
+    if not recruiter:
+     return jsonify({'error': 'Recruiter not found'}), 404
+
+    recruiter.cover_image = f"/uploads/cover_images/{filename}"
+    db.session.commit()
+
+
+
+    return jsonify({'cover_image': f"/uploads/cover_images/{filename}"}), 200
+
+# Serve uploaded images
+@app.route('/uploads/cover_images/<filename>')
+def uploaded_cover_image(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+@app.route('/api/recruiter/public-profile/<int:recruiter_id>', methods=['GET'])
+def get_specific_recruiter_profile(recruiter_id):
+    recruiter = Recruiter.query.get(recruiter_id)
+
+    # Static list of predefined domains
+    predefined_domains = ["Informatique", "Finance", "Marketing", "Design", "Droit"]
+    selected_domains = (
+        recruiter.activity_domains.split(",") if recruiter and recruiter.activity_domains else []
+    )
+
+    if not recruiter:
+        return render_template('error_general.html',
+            error_code='404',
+            error_title="Profil non trouvé",
+            error_message="Le profil du recruteur n'a pas été trouvé.",
+            error_details="Vérifiez l'ID du recruteur."
+        ), 404
+
+    # ✅ Static newsletters list (temporary for testing)
+    newsletters = [
+        {
+            "title": "Comment réussir votre entretien d'embauche",
+            "date": "2024-05-01",
+            "content": "Voici quelques conseils utiles pour vos entretiens...",
+        },
+        {
+            "title": "Les tendances du recrutement en 2025",
+            "date": "2024-05-15",
+            "content": "Explorez les nouvelles méthodes de recrutement...",
+        }
+    ]
+    
+    return jsonify({
+        'id': recruiter.id,
+        'name': recruiter.name,
+        'email': recruiter.email,
+        'companyName': recruiter.companyName,
+        'address': recruiter.address,
+        'phoneNumber': recruiter.phoneNumber,
+        'description': recruiter.description,
+        'profile_image': recruiter.profile_image,
+        'selected_domains': selected_domains,
+        'predefined_domains': predefined_domains,
+        'public_profile': recruiter.public_profile,
+        'cover_image': recruiter.cover_image,
+        'newsletters': newsletters,  # ✅ Added here
+    })
+
+@app.route('/api/recruiters/public', methods=['GET'])
+def get_public_recruiters():
+    public_recruiters = Recruiter.query.filter_by(public_profile=True).all()
+    print(public_recruiters)
+    # Convert to list of dicts for JSON serialization
+    result = [{
+        "id": r.id,
+        "name": r.name,
+        "title": r.description,
+        "company": r.companyName,
+        "phone_number": r.phoneNumber,
+
+        
+
+    } for r in public_recruiters]
+    return jsonify(result)
+
+
+
+@app.route('/api/recruiter/<int:recruiter_id>/last-job-offers', methods=['GET'])
+def get_last_job_offers(recruiter_id):
+    # Query last 3 job offers by recruiter ordered by posted date descending
+    job_offers = JobOffer.query.filter_by(recruiter_id=recruiter_id) \
+                               .order_by(JobOffer.posted_at.desc()) \
+                               .limit(3) \
+                               .all()
+    if not job_offers:
+        return jsonify({"message": "No job offers found for this recruiter."}), 404
+    print(job_offers)
+    return jsonify([job.to_dict() for job in job_offers])
+
+
 
 @app.route('/api/upload-profile-image', methods=['POST'])
 def upload_profile_image():
@@ -1600,25 +1764,22 @@ from datetime import datetime
 #     return jsonify(stats)
 @app.route('/api/stats', methods=['GET'])
 def get_recruiter_stats():
-    # Statistiques des candidats inscrits
-    candidates_count = db.session.query(Candidate).count()
+   
+    print(session)
+    total_candidates = db.session.query(Candidate).count()
 
-    # Statistiques des recruteurs inscrits
-    recruiters_count = db.session.query(Recruiter).count()
-
-    # Statistiques des postes ouverts
-    job_offers_count = db.session.query(JobOffer).count()
-
-    # Statistiques des candidatures envoyées
-    applications_count = db.session.query(Application).count()
+    total_recruiters = db.session.query(Recruiter).count()
+    total_jobs = db.session.query(JobOffer).count()
+    total_applications =db.session.query(Candidate).count()
+    print("total_applications:", total_applications)
 
     # Retourner les statistiques sous forme de JSON
-    stats = [
-        {"label": "Candidats inscrits", "value": candidates_count},
-        {"label": "Recruteurs inscrits", "value": recruiters_count},
-        {"label": "Postes ouverts", "value": job_offers_count},
-        {"label": "Candidatures envoyées", "value": applications_count},
-    ]
+    return jsonify({
+        "totalCandidates": total_candidates,
+        "totalRecruiters": total_recruiters,
+        "totalJobs": total_jobs,
+        "totalApplications": total_applications  # ✅ Send application count
+    })
     
     return jsonify(stats)
 #!    changement 
