@@ -85,7 +85,7 @@ import CVsExamples from './components/CVsExamples';
 import React, { useEffect } from 'react';
 import socket from './socket';
 import SavedJobOffers from  './components/Candidat/SavedJobOffers';
-
+import ChatBot from "./components/Chatbot/ChatBot.jsx";
 function App() {
 
   useEffect(() => {
@@ -222,6 +222,7 @@ function App() {
 
 
       </Routes>
+      <ChatBot />
     </Router>
   );
 }
