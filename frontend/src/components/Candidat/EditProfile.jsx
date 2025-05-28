@@ -3,7 +3,7 @@ import "../../assets/css/EditProfile.css";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Navbara";
 import Footer from "../Footer";
-
+import SEO from "../SEO";
 function EditProfile() {
   const [profile, setProfile] = useState({
     name: "",
@@ -78,6 +78,9 @@ function EditProfile() {
   return (
     <>
       <Navbar />
+      <SEO
+        title="Modifier Profile"
+       /> 
     <div className="edit-profile-container">
       <div className="edit-profile-card">
         <h1 className="edit-title">Mettre à jour mon profil</h1>

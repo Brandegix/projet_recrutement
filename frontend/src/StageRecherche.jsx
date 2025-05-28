@@ -18,7 +18,9 @@ const StageRecherche = () => {
   const [selectedLieu, setSelectedLieu] = useState('');
   const [selectedSalaire, setSelectedSalaire] = useState('');
   const [selectedDomaine, setSelectedDomaine] = useState('');
-  const [publicRecruiters, setPublicRecruiters] = useState([]);
+  const [allPublicRecruiters, setAllPublicRecruiters] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const recruitersPerPage = 3;
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/job_offers`)
@@ -36,18 +38,32 @@ const StageRecherche = () => {
     if (!str) return "";
     return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
   };
-  
+
 
   useEffect(() => {
-    // Fetch public recruiters when component mounts
+    // Fetch all public recruiters when component mounts
     axios.get(`${process.env.REACT_APP_API_URL}/api/recruiters/public`)
       .then(res => {
-        setPublicRecruiters(res.data);
+        setAllPublicRecruiters(res.data);
       })
       .catch(err => {
         console.error("Error fetching public recruiters:", err);
       });
   }, []);
+
+  // Get current recruiters
+  const indexOfLastRecruiter = currentPage * recruitersPerPage;
+  const indexOfFirstRecruiter = indexOfLastRecruiter - recruitersPerPage;
+  const currentPublicRecruiters = allPublicRecruiters.slice(indexOfFirstRecruiter, indexOfLastRecruiter);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(allPublicRecruiters.length / recruitersPerPage); i++) {
+    pageNumbers.push(i);
+  }
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -83,14 +99,14 @@ const StageRecherche = () => {
         description="Trouvez des astuces pour réussir vos entretiens, améliorer votre CV et développer votre carrière."
         keywords="conseils carrière, réussir entretien, CV efficace, développement professionnel, formation, emploi, réseau professionnel"
       />
-      
+
       <div style={{
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
         backgroundColor: '#000000',
         color: '#ffffff',
         lineHeight: '1.6'
       }}>
-        
+
         {/* Hero Section with Dark Theme */}
         <section id="home" style={{
           background: 'linear-gradient(135deg, #000000 0%, #0a0a0a 100%)',
@@ -101,8 +117,8 @@ const StageRecherche = () => {
         }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', width: '100%' }}>
             <div style={{ textAlign: 'center' }}>
-              
-              
+
+
               <h1 style={{
                 fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
                 fontWeight: '700',
@@ -114,7 +130,7 @@ const StageRecherche = () => {
               }}>
                 Trouvez le job qui vous ressemble, en un clic.
               </h1>
-              
+
               <p style={{
                 fontSize: '1.3rem',
                 color: '#cccccc',
@@ -125,9 +141,9 @@ const StageRecherche = () => {
               }}>
                 Parce qu'un bon emploi peut changer une vie, Casajobs.ma vous accompagne à chaque étape de votre recherche. Des outils simples, des offres actualisées, et une communauté engagée pour vous aider à trouver le job de vos rêves.
               </p>
-              
-              <Link 
-                to="/ContactUs" 
+
+              <Link
+                to="/ContactUs"
                 style={{
                   background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
                   color: '#ffffff',
@@ -159,10 +175,39 @@ const StageRecherche = () => {
         </section>
 
         {/* JobCards Section with Dark Background */}
-        <div style={{ 
+        <div style={{
           backgroundColor: '#0a0a0a',
           padding: '80px 0'
         }}>
+           <h2 style={{
+              textAlign: "center",
+              marginBottom: "60px",
+              fontSize: 'clamp(2rem, 4vw, 3rem)',
+              fontWeight: '700',
+              background: 'linear-gradient(135deg, #ffffff 0%, #ff6b35 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              lineHeight: '1.2'
+            }}>
+              Offres d'emploi
+            </h2>
+           <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center', marginBottom: '40px' , marginTop: '40px'}}>
+            <p style={{
+              fontSize: '1.1rem',
+              color: '#cccccc',
+              fontWeight: '400'
+            }}>
+             <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center', marginBottom: '40px' , marginTop: '40px'}}>
+            <p style={{
+              fontSize: '1.1rem',
+              color: '#cccccc',
+              fontWeight: '400'
+            }}>
+            Consulter les meilleurs offres d'emploi 
+            </p>
+          </div>
+            </p>
+          </div>
           <JobCards />
         </div>
 
@@ -175,14 +220,14 @@ const StageRecherche = () => {
         </section>
 
 
-        <section style={{ 
-          padding: "80px 20px", 
+        <section style={{
+          padding: "80px 20px",
           backgroundColor: "#0a0a0a",
           background: 'linear-gradient(135deg, #0a0a0a 0%, #000000 100%)'
         }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <h2 style={{ 
-              textAlign: "center", 
+            <h2 style={{
+              textAlign: "center",
               marginBottom: "60px",
               fontSize: 'clamp(2rem, 4vw, 3rem)',
               fontWeight: '700',
@@ -193,16 +238,24 @@ const StageRecherche = () => {
             }}>
               Recruteurs en ligne
             </h2>
-            
-            <div style={{ 
-              display: "grid", 
+            <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center', marginBottom: '40px' , marginTop: '40px'}}>
+            <p style={{
+              fontSize: '1.1rem',
+              color: '#cccccc',
+              fontWeight: '400'
+            }}>
+            Découvrez les profils de nos recruteurs et rapprochez-vous de votre emploi de rêve.
+            </p>
+          </div>
+              <div style={{
+              display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: "30px", 
+              gap: "30px",
               justifyContent: "center",
               maxWidth: "1000px",
               margin: "0 auto"
             }}>
-              {publicRecruiters.length === 0 ? (
+              {currentPublicRecruiters.length === 0 ? (
                 <div style={{
                   gridColumn: "1 / -1",
                   textAlign: "center",
@@ -211,8 +264,8 @@ const StageRecherche = () => {
                   borderRadius: "20px",
                   border: "1px solid #333333"
                 }}>
-                  <p style={{ 
-                    color: "#cccccc", 
+                  <p style={{
+                    color: "#cccccc",
                     fontSize: "1.2rem",
                     margin: "0"
                   }}>
@@ -220,7 +273,7 @@ const StageRecherche = () => {
                   </p>
                 </div>
               ) : (
-                publicRecruiters.map((recruiter) => (
+                currentPublicRecruiters.map((recruiter) => (
                   <div
                     key={recruiter.id}
                     style={{
@@ -254,7 +307,7 @@ const StageRecherche = () => {
                       background: 'linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, transparent 100%)',
                       borderRadius: "0 20px 0 60px"
                     }}></div>
-                    
+
                     {/* Company Icon/Avatar placeholder */}
                     <div style={{
                       width: "60px",
@@ -271,8 +324,8 @@ const StageRecherche = () => {
                     }}>
                       {recruiter.company.charAt(0).toUpperCase()}
                     </div>
-                    
-                    <h3 style={{ 
+
+                    <h3 style={{
                       margin: "0 0 15px",
                       fontSize: "1.4rem",
                       fontWeight: "600",
@@ -281,8 +334,8 @@ const StageRecherche = () => {
                     }}>
                       {recruiter.company}
                     </h3>
-                    
-                    <p style={{ 
+
+                    <p style={{
                       fontSize: "1.1rem",
                       color: "#ff6b35",
                       marginBottom: "10px",
@@ -290,20 +343,21 @@ const StageRecherche = () => {
                     }}>
                       {recruiter.name}
                     </p>
-                    
-                    <p style={{ 
-                      fontSize: "0.95rem", 
-                      color: "#cccccc", 
+
+
+                    <p style={{
+                      color: "#cccccc",
                       marginBottom: "25px",
-                      lineHeight: "1.5",
-                      minHeight: "40px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center"
+                      fontSize: '0.95rem',
+                      lineHeight: '1.6',
+                      margin: '0 0 15px 0',
+                      overflow: 'hidden', // Add this to prevent overflow
+                      display: '-webkit-box',
+                      WebkitLineClamp: 3, // Number of lines to show
+                      WebkitBoxOrient: 'vertical',
                     }}>
                       {recruiter.title}
                     </p>
-                    
                     <Link
                       to={`/recruiters/${recruiter.id}`}
                       style={{
@@ -337,11 +391,48 @@ const StageRecherche = () => {
                 ))
               )}
             </div>
+
+            {allPublicRecruiters.length > recruitersPerPage && (
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+                gap: '5px',
+                marginTop: '30px'
+              }}>
+                {pageNumbers.map(number => (
+                  <button
+                    key={number}
+                    onClick={() => paginate(number)}
+                    style={{
+                      padding: '0.25rem 0.5rem',
+                      fontSize: '0.75rem',
+                      border: '1px solid #ccc',
+                      backgroundColor: '#f8f9fa',
+                      borderRadius: '4px',
+                      width: '70px',
+                      
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#ff8c42';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = currentPage === number ? '#ff6b35' : '#1a1a1a';
+                    }}
+                  >
+                    {number}
+                  </button>
+                ))}
+              </div>
+              
+            )}
+            {/* Statement about the number of profiles per page */}
+            
           </div>
         </section>
 
         {/* FAQ Section with Dark Background */}
-        <div style={{ 
+        <div style={{
           backgroundColor: '#0a0a0a',
           padding: '50px 0'
         }}>
@@ -349,9 +440,8 @@ const StageRecherche = () => {
         </div>
 
 
-      
         {/* Contact Section with Dark Background */}
-        <div id="contact" style={{ 
+        <div id="contact" style={{
           backgroundColor: '#000000'
         }}>
           <CarteComponent />

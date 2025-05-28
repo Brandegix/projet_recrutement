@@ -162,6 +162,7 @@ class Recruiter(db.Model):
     subscription_active = db.Column(db.Boolean, default=False)  # ✅ Track subscription status
     public_profile = db.Column(db.Boolean, default=False)  # Show on homepage if True
     cover_image = db.Column(db.String(255))    # ✅ Cover picture (new column)
+    rc = db.Column(db.String(50), unique=True, nullable=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -169,6 +170,25 @@ class Recruiter(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+
+
+# In your models.py or wherever your SQLAlchemy models are defined
+
+class ActiveSession(db.Model):
+    __tablename__ = 'active_session'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('candidates.id'), nullable=False, unique=True)
+    user_type = db.Column(db.String(50), nullable=False)
+    last_activity = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    # Optional: If you want to easily access the associated candidate
+    # candidate = db.relationship("Candidate", backref="active_sessions") # Use db.relationship
+
+    def __repr__(self):
+        return f"<ActiveSession user_id={self.user_id} - user_type={self.user_type}>"
+
+# You'll need to run a database migration to create this new table.
+# e.g., with Flask-Migrate: flask db migrate, flask db upgrade
 
 
 class NewsletterSubscription(db.Model):
@@ -316,8 +336,37 @@ from flask import jsonify, session
 
 
 from flask import session, redirect, url_for
+ # Admin stuff
+
+from functools import wraps
+
+def admin_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if 'user_id' not in session or session.get('user_type') != 'admin':
+            return jsonify({"message": "Admin login required"}), 403
+        return f(*args, **kwargs)
+    return wrapper
 
 
+
+def candidate_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_type' not in session or session['user_type'] != 'candidate':
+            return jsonify({"message": "Candidate login required"}), 403
+        return f(*args, **kwargs)
+    return decorated_function
+
+def recruiter_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_type' not in session or session['user_type'] != 'recruiter':
+            return jsonify({"message": "Recruiter login required"}), 403
+        return f(*args, **kwargs)
+    return decorated_function
+
+ # newsletter
 @app.route('/api/newsletter/subscribe', methods=['POST'])
 def subscribe_to_newsletter():
     data = request.get_json()
@@ -334,9 +383,30 @@ def subscribe_to_newsletter():
     return jsonify({'message': 'Subscription successful'}), 200
 
 
+@app.route('/api/newsletter/my-subscribers', methods=['GET'])
+@recruiter_required
+def get_my_newsletter_subscribers():
+    recruiter_id = session.get('user_id')
+
+    if not recruiter_id:
+        return jsonify({'error': 'Unauthorized: Recruiter not logged in'}), 401
+
+    subscribers = NewsletterSubscription.query.filter_by(recruiter_id=recruiter_id).all()
+
+    result = [
+        {
+            'id': sub.id,
+            'email': sub.email,
+            'recruiter_id': sub.recruiter_id
+        } for sub in subscribers
+    ]
+
+    return jsonify(result), 200
 
 
- # Admin stuff
+
+
+
  # Admin stuff
 @app.route("/api/admin/login", methods=["POST"])
 def login_admin():
@@ -356,6 +426,8 @@ def login_admin():
         session['user_id'] = admin.id
         session['user_type'] = 'admin'
         session.permanent = True
+        db.session.commit()
+        print("session data :" ,session )
 
         return jsonify({"message": "Connexion réussie", "id": admin.id}), 200
     except Exception as e:
@@ -363,6 +435,7 @@ def login_admin():
 
 
 @app.route('/api/candidates1/<int:id>', methods=['PUT'])
+@admin_required
 def update_candidate(id):
     candidate = Candidate.query.get_or_404(id)
     data = request.json
@@ -374,6 +447,7 @@ def update_candidate(id):
     return jsonify({"message": "Candidat mis à jour avec succès"})
 
 @app.route('/api/candidates/<int:id>', methods=['DELETE'])
+@admin_required
 def delete_candidate(id):
     candidate = Candidate.query.get_or_404(id)
 
@@ -383,6 +457,7 @@ def delete_candidate(id):
 
 
 @app.route('/api/candidates/<int:id>', methods=['GET'])
+@admin_required
 def get_candidate(id):
     candidate = Candidate.query.get_or_404(id)
     return jsonify({
@@ -425,6 +500,7 @@ def delete_recruiter(id):
 
 
 @app.route('/api/recruiters', methods=['GET'])
+@admin_required
 def get_recruiters():
     recruiters = Recruiter.query.all()
     recruiter_list = [{
@@ -432,12 +508,14 @@ def get_recruiters():
         "name": r.name,
         "companyName": r.companyName,
         "email": r.email,
-        "subscription_active": r.subscription_active  # ✅ Ensure this is included
+        "subscription_active": r.subscription_active,
+        "rc": r.rc  # ✅ Added this line
     } for r in recruiters]
 
     print("✅ Recruiter Data:", recruiter_list)  # Debugging statement
-    
+
     return jsonify(recruiter_list)
+
 
 
 @app.route('/api/job_offers/<int:id>', methods=['PUT'])
@@ -560,6 +638,7 @@ def gete_dashboard_data():
         'conversionRate': conversion_rate
     })
 @app.route('/api/stats')
+@admin_required
 def get_stats():
     total_candidates = Candidate.query.count()
     total_recruiters = Recruiter.query.count()
@@ -577,6 +656,7 @@ def get_stats():
 
 
 @app.route('/api/candidates1', methods=['GET'])
+@admin_required
 def get_candidates1():
     try:
         # Récupération des candidats depuis la base de données
@@ -619,6 +699,7 @@ def get_recruiteres():
     recruiter_list = [{"id": r.id, "name": r.name, "companyName": r.companyName, "email": r.email} for r in recruiters]
     return jsonify(recruiter_list)
 @app.route('/api/job_offers', methods=['GET'])
+@admin_required
 def get_job_offeres():
     job_offers = JobOffer.query.all()
     job_list = [{
@@ -632,17 +713,8 @@ def get_job_offeres():
     return jsonify(job_list)
 
 
-from functools import wraps
 
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'admin_id' not in session:
-            return jsonify({"message": "Admin login required"}), 403
-        return f(*args, **kwargs)
-    return decorated_function
 @app.route('/api/admin/dashboard')
-@admin_required
 def admin_dashboard():
     return jsonify({"message": f"Welcome {session['admin_username']}!"})
 
@@ -653,13 +725,28 @@ def admin_status():
      else:
         return jsonify({"logged_in": False}), 200
 
-@app.route('/api/logout', methods=['POST'])
+# Assuming you have a general logout route
+@app.route("/api/logout", methods=["POST"])
 def logout():
-    print("Session before logout:", session)
-    session.clear()
-    session.modified = True  # Ensure session is updated
-    print("Session after logout:", session)
-    return jsonify({"message": "Logout successful"}), 200
+    user_id = session.pop('user_id', None)
+    user_type = session.pop('user_type', None)
+
+    if user_id and user_type:
+        # ✅ Remove entry from ActiveSession table
+        active_session = ActiveSession.query.filter_by(user_id=user_id, user_type=user_type).first()
+        if active_session:
+            db.session.delete(active_session)
+            db.session.commit()
+
+    return jsonify({"message": "Déconnexion réussie"}), 200
+
+
+@app.route("/api/candidates/connected", methods=["GET"])
+def connected_candidates():
+    return jsonify({
+        "connected_candidates_count": len(logged_in_candidates),
+        "connected_candidate_ids": list(logged_in_candidates)  # pour debug
+    }), 200
 
 #*  ___________________________________________Partie Candidat __________________________________
 
@@ -688,6 +775,8 @@ def add_application():
     return jsonify({'message': 'Application submitted successfully!'}), 201
 
 
+# Liste pour stocker les ID (ou emails) des candidats connectés
+logged_in_candidates = set()
 
 
 @app.route("/api/candidates/login", methods=["POST"])
@@ -695,7 +784,7 @@ def login_candidate():
     try:
         data = request.get_json()
         candidate = Candidate.query.filter_by(email=data["email"]).first()
-        
+
         if not candidate or not candidate.check_password(data["password"]):
             return render_template('error_general.html',
                 error_code='401',
@@ -704,14 +793,25 @@ def login_candidate():
                 error_details="Veuillez vérifier votre email et votre mot de passe."
             ), 401
 
-        # Ajout des informations de session
+        # Ajout des informations de session Flask
         session['user_id'] = candidate.id
         session['user_type'] = 'candidate'
         session.permanent = True
 
+        # ✅ Update/Create entry in ActiveSession table
+        active_session = ActiveSession.query.filter_by(user_id=candidate.id, user_type='candidate').first()
+        if active_session:
+            active_session.last_activity = datetime.utcnow()
+        else:
+            new_active_session = ActiveSession(user_id=candidate.id, user_type='candidate', last_activity=datetime.utcnow())
+            db.session.add(new_active_session)
+        db.session.commit()
+
         return jsonify({"message": "Connexion réussie", "id": candidate.id}), 200
     except Exception as e:
+        db.session.rollback() # Rollback in case of error
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/api/current_candidate', methods=['GET'])
 def current_candidate():
@@ -909,7 +1009,8 @@ def register_recruiter():
             phoneNumber=data["phoneNumber"],
             address=data.get("address"),
             companyName=data["companyName"],
-            activity_domains=data.get("activity_domains", "")
+            activity_domains=data.get("activity_domains", ""),
+            rc=data["rc"]  
         )
         new_recruiter.set_password(data["password"])
 
@@ -961,6 +1062,7 @@ def register_recruiter():
 from flask import render_template
  # candidates who applied to certain job offers posted by a recruiter
 @app.route('/api/recruiter/applications', methods=['GET'])
+@recruiter_required
 def get_recruiter_applications():
     recruiter_id = session.get('user_id')
     print("Session data:", session)
@@ -1174,6 +1276,7 @@ from flask import request, jsonify, session
 
 
 @app.route('/api/sapplications', methods=['GET'])
+@admin_required
 def get_all_applications():
     try:
         # ✅ Get all job offers
@@ -1391,6 +1494,7 @@ def recruiter_profile():
         'selected_domains': selected_domains
     })
 @app.route('/api/recruiter/profile', methods=['GET'])
+@recruiter_required
 def get_recruiter_profile():
     recruiter_id = session.get('user_id')
     
@@ -1558,6 +1662,7 @@ def get_last_job_offers(recruiter_id):
 
 
 @app.route('/api/upload-profile-image', methods=['POST'])
+@candidate_required
 def upload_profile_image():
     print('abc')
 
@@ -1641,6 +1746,7 @@ def get_wecandidate_profile(id):
     })
 
 @app.route('/api/candidates/profile', methods=['GET'])
+@candidate_required
 def get_candidate_profile():
     print("Session data:", session)
 
@@ -2124,6 +2230,7 @@ import pdb
 
 # manar manar
 @app.route('/api/recruiter/job_offers/statisticsss', methods=['GET'])
+@recruiter_required
 def get_job_offers_statistics12():
     print("Session data:", session)  # Debug log
     recruiter_id = session.get('user_id')
@@ -2301,6 +2408,7 @@ def get_job_offerss1():
 
 
 @app.route('/api/job_offers', methods=['POST'])
+@recruiter_required
 def create_job_offer():
     title = request.form.get('title')
     location = request.form.get('location')
@@ -2628,6 +2736,7 @@ def ge123t_candidate_profile():
     })
 
 @app.route('/api/getapplications', methods=['GET'])
+@candidate_required
 def get_applicationsss():
     candidate_id = session.get('user_id')
     print("Session data:", session)
@@ -2756,6 +2865,7 @@ def allowed_file(filename):
 
 
 @app.route('/api/edit/candidate-profile', methods=['PUT'])
+@candidate_required
 def update_candidate_profile():
     candidate_id = session.get('user_id')
     data = request.json
@@ -2813,6 +2923,7 @@ with app.app_context():
     # edit candidate profile
 
 @app.route('/api/edit/candidate-profile', methods=['GET'])
+@candidate_required
 def get_candidate_profiles():
     candidate_id = session.get('user_id')
     print("Session data:", session)  # This will display the session in your terminal/logs
@@ -2840,54 +2951,56 @@ def get_candidate_profiles():
     'cv_filename': candidate.cv_filename
 })
 
+
+# In your routes.py
+
+from datetime import datetime, timedelta
+
 @app.route('/api/dashboardd')
+@admin_required
 def get_dashboard_data():
+    print(session)
     total_candidates = Candidate.query.count()
     total_recruiters = Recruiter.query.count()
     total_jobs = JobOffer.query.count()
 
-    # ✅ Calculate applications per week
-    from datetime import datetime, timedelta
     one_week_ago = datetime.utcnow() - timedelta(days=7)
     applications_this_week = Application.query.filter(Application.application_date >= one_week_ago).count()
 
-    # ✅ Calculate new applications today
-    today = datetime.utcnow().date()
-    new_applications_today = Application.query.filter(Application.application_date >= today).count()
+    today_start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    new_applications_today = Application.query.filter(Application.application_date >= today_start).count()
 
-    # ✅ Calculate average applications per offer
     total_applications = Application.query.count()
     avg_applications_per_offer = total_applications / total_jobs if total_jobs > 0 else 0
 
-    # ✅ Count job offers with applications
     offers_with_applications = db.session.query(JobOffer.id).join(Application, Application.job_offer_id == JobOffer.id).distinct().count()
-
-    # ✅ Count job offers without applications
     offers_without_applications = total_jobs - offers_with_applications
 
-    # ✅ Fetch recent applications
-    recent_apps = Application.query.order_by(Application.application_date.desc()).limit(5).all()
-    recent_applications = [
-        {
-            "name": Candidate.query.get(app.candidate_id).name if Candidate.query.get(app.candidate_id) else "Candidat inconnu",
-            "position": JobOffer.query.get(app.job_offer_id).title if JobOffer.query.get(app.job_offer_id) else "Poste non spécifié",
-            "application_date": app.application_date.strftime('%Y-%m-%d')
-        } for app in recent_apps
-    ]
+    # ✅ Get the number of currently connected candidates from the database
+    # You might want to define an "active" threshold, e.g., last activity within the last 5 minutes
+    active_threshold = datetime.utcnow() - timedelta(minutes=5)
+    connected_candidates_count = ActiveSession.query.filter(
+        ActiveSession.user_type == 'candidate',
+        ActiveSession.last_activity >= active_threshold
+    ).count()
 
     dashboard_data = {
         "total_candidates": total_candidates,
         "total_recruiters": total_recruiters,
         "total_job_offers": total_jobs,
-        "applications_this_week": applications_this_week,  # ✅ Now included
-        "new_applications_today": new_applications_today,  # ✅ Now included
-        "avg_applications_per_offer": round(avg_applications_per_offer, 2),  # ✅ Now included
-        "offers_with_applications": offers_with_applications,  # ✅ Now included
-        "offers_without_applications": offers_without_applications,  # ✅ Now included
-        "recent_applications": recent_applications
+        "applications_this_week": applications_this_week,
+        "new_applications_today": new_applications_today,
+        "avg_applications_per_offer": round(avg_applications_per_offer, 2),
+        "offers_with_applications": offers_with_applications,
+        "offers_without_applications": offers_without_applications,
+        "connected_candidates_count": connected_candidates_count
     }
 
     return jsonify(dashboard_data)
+
+# Your existing /api/candidates/connected can now be removed or repurposed
+# as the dashboardd endpoint provides the connected count.
+
 
 #! missing password
 # change password

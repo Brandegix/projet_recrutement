@@ -7,6 +7,7 @@ import GlobalSocket from "../GlobalSocket";
 import Modal from 'react-modal';
 import { FaComment, FaSpinner, FaEye, FaClock, FaBriefcase, FaMapMarkerAlt, FaCalendarAlt, FaTimes, FaComments } from 'react-icons/fa';
 import { IoClose } from 'react-icons/io5';
+import SEO from "../SEO";
 
 Modal.setAppElement('#root');
 
@@ -413,6 +414,9 @@ const CandidateApplications = () => {
 
     return (
         <>
+         <SEO
+        title="Candidatures"
+       /> 
             <style jsx>{`
                 @keyframes spin {
                     from { transform: rotate(0deg); }

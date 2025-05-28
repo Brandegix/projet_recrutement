@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import '../assets/css/AdminDashboard.css';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -19,33 +19,11 @@ const AdminDashboard = () => {
     const [showColorInputs, setShowColorInputs] = useState(false); // <-- toggle
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState(null);
+    const navigate = useNavigate(); // Initialize navigate
     // Couleurs personnalisables - Orange palette (from the first component)
     const [barColor, setBarColor] = useState('#ff8c42');
     const [pieColor1, setPieColor1] = useState('#ff6b1a');
     const [pieColor2, setPieColor2] = useState('#e55100');
-
-    useEffect(() => {
-        fetch(`${process.env.REACT_APP_API_URL}/api/stats`, {
-            method: "GET",
-            credentials: "include",
-        })
-            .then(res => res.json())
-            .then(data => {
-                setTotalCandidates(data.totalCandidates);
-                setTotalRecruiters(data.totalRecruiters);
-                setTotalJobs(data.totalJobs);
-                setRecentJobs(data.recentJobs);
-                setSystemStats(data.systemStats);
-                setTotalApplications(data.totalApplications);
-
-                // Set session info if available
-                if (data.user_id && data.user_type === "admin") {
-                    setUser({ id: data.user_id, type: data.user_type });
-                    setIsLoggedIn(true);
-                }
-            });
-    }, []);
-
 
     useEffect(() => {
         fetch(`${process.env.REACT_APP_API_URL}/api/session`, {
@@ -53,19 +31,41 @@ const AdminDashboard = () => {
         })
             .then(res => res.ok ? res.json() : Promise.reject("Not logged in"))
             .then(data => {
-                if (data?.isLoggedIn) {
+                if (data?.isLoggedIn && data.user?.role === 'admin') {
                     setIsLoggedIn(true);
                     setUser(data.user);
                 } else {
                     setIsLoggedIn(false);
                     setUser(null);
+                    // Optionally redirect non-admins
+                    navigate('/'); // Redirect to home or login page
                 }
             })
             .catch(() => {
                 setIsLoggedIn(false);
                 setUser(null);
+                navigate('/'); // Redirect if session check fails
             });
-    }, []);
+    }, [navigate]);
+
+    useEffect(() => {
+        if (isLoggedIn && user?.role === 'admin') {
+            fetch(`${process.env.REACT_APP_API_URL}/api/stats`, {
+                method: "GET",
+                credentials: "include",
+            })
+                .then(res => res.json())
+                .then(data => {
+                    setTotalCandidates(data.totalCandidates);
+                    setTotalRecruiters(data.totalRecruiters);
+                    setTotalJobs(data.totalJobs);
+                    setRecentJobs(data.recentJobs);
+                    setSystemStats(data.systemStats);
+                    setTotalApplications(data.totalApplications);
+                });
+        }
+    }, [isLoggedIn, user?.role]);
+
 
     const handleLogout = () => {
         fetch(`${process.env.REACT_APP_API_URL}/api/logout`, {
@@ -73,7 +73,7 @@ const AdminDashboard = () => {
             credentials: "include",
         })
             .then(res => res.ok ? res.json() : Promise.reject("Logout failed"))
-            .then(() => window.location.href = "/")
+            .then(() => navigate("/"))
             .catch(() => alert("Erreur lors de la déconnexion."));
     };
 
@@ -97,7 +97,9 @@ const AdminDashboard = () => {
             transition: 'all 0.3s ease',
             display: 'flex',
             flexDirection: 'column',
-            marginLeft: '260px', // Added margin to align with sidebar width
+            marginLeft: '260px',
+            width: '100%',
+            marginRight:'0px',
         },
         header: {
             padding: '20px 32px',
@@ -313,13 +315,26 @@ const AdminDashboard = () => {
         }
     ];
 
+    if (!isLoggedIn || user?.role !== 'admin') {
+        // You can return a loading state, a "not authorized" message, or redirect to another page
+        return <div>Accès refusé. Vous devez être administrateur pour voir cette page.</div>;
+        // Or, to redirect:
+        // useEffect(() => { navigate('/'); }, [navigate]);
+        // return null; // Render nothing while redirecting
+    }
+
     return (
         <div className={`dashboard-container ${darkMode ? 'dark-mode' : ''}`} style={{ display: 'flex', minHeight: '100vh', backgroundColor: darkMode ? '#1a1a1a' : '#ffffff', fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif", transition: 'all 0.3s ease' }}>
             <div className="sidebar">
                 <div className="sidebar-header"><h2>Casajobs.ma</h2></div>
                 <nav className="sidebar-nav">
                     <ul>
-                        <li className="active"><FiHome className="icon" /><span>Tableau de bord</span></li>
+                        <li >
+                            <FiHome className="icon" />
+                            <Link to="/Dashboard_admin">
+                                <span>Tableau de bord</span>
+                            </Link>
+                        </li>
                         <li>
                             <FiUsers className="icon" />
                             <Link to="/Candidatesadmin"><span>Gérer les candidats</span></Link>
@@ -332,7 +347,7 @@ const AdminDashboard = () => {
                             <FiClipboard className="icon" />
                             <Link to="/applicationss"><span>Candidats et leurs postulations</span></Link>
                         </li>
-                        <li>
+                        <li className="active">
                             <FiBarChart className="icon" />
                             <Link to="/AdminDashboard"><span>Statistiques</span></Link>
                         </li>
@@ -390,7 +405,8 @@ const AdminDashboard = () => {
                                 </svg>
                                 Personnaliser les couleurs des graphiques
                             </h3>
-                            
+
+
                             <button
                                 style={styles.toggleButton}
                                 onClick={() => setShowColorInputs(!showColorInputs)}

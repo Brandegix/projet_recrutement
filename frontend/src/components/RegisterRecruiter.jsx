@@ -13,6 +13,8 @@ const RegisterRecruteur = () => {
     const [companyName, setCompanyName] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const [rc, setRc] = useState('');
+
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -23,7 +25,7 @@ const RegisterRecruteur = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, password, name, email, phoneNumber, companyName }),
+                body: JSON.stringify({ username, password, name, email, phoneNumber, companyName, rc }),
             });
 
             const data = await response.json();
@@ -81,6 +83,16 @@ const RegisterRecruteur = () => {
                             required
                         />
                     </div>
+                    <div className="form-group">
+    <label>RC (Registre de Commerce)</label>
+    <input
+        type="text"
+        value={rc}
+        onChange={(e) => setRc(e.target.value)}
+        required
+    />
+</div>
+
                     <div className="form-group">
                         <label>Nom d'utilisateur</label>
                         <input

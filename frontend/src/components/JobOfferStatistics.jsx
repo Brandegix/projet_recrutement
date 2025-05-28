@@ -7,6 +7,8 @@ import {
     FaChartBar, FaCalendarAlt, FaUserCheck, FaToggleOn, FaToggleOff, FaSearch, FaEye
 } from 'react-icons/fa';
 import Footer from "../components/Footer";
+import SEO from "./SEO";
+
 
 const JobOfferStatistics = () => {
     const [statistics, setStatistics] = useState([]);
@@ -126,6 +128,9 @@ const JobOfferStatistics = () => {
     if (error) return (
         <div style={{ minHeight: '100vh', backgroundColor: '#f8f8f8', display: 'flex', flexDirection: 'column' }}>
             <Navbar />
+            <SEO
+        title="Statistiques"
+       /> 
             <div style={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
                 <div style={{ backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', borderLeft: '5px solid #f44336', overflow: 'hidden' }}>
                     <div style={{ padding: '20px' }}>
@@ -148,6 +153,9 @@ const JobOfferStatistics = () => {
     return (
         <div style={{ minHeight: '100vh', backgroundColor: '#f8f8f8' }}>
             <Navbar />
+            <SEO
+        title="Statistiques"
+       /> 
             <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
                 <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#333', marginBottom: '20px' }}>
                     Tableau de bord des Offres d'Emploi

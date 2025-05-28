@@ -57,8 +57,7 @@ const Navbar = () => {
     <nav className="nav-wrapper">
       <div className="nav-left">
         <div className="nav-logo">
-          <span className="nav-logo-white">C</span>asajobs.
-          <span className="nav-logo-orange">ma</span>
+          <span className="nav-logo-white">C</span>asajobs.<span className="nav-logo-orange">ma</span>
         </div>
 
         {/* Hamburger Menu Button */}
@@ -76,15 +75,17 @@ const Navbar = () => {
 
           {isLoggedIn && user ? (
             <>
-              <li>
-                {user.role === "recruiter" ? (
-                  <Link to="/RecruiterProfile" className="nav-username">{user.name}</Link>
-                ) : (
-                  <Link to="/candidate-profile" className="nav-username">{user.name}</Link>
-                )}
-              </li>
-              {user.role === "candidate" && (
-                <li><Link to="/applications">Mes candidatures</Link></li>
+              {user.role === "recruiter" ? (
+                <>
+                  <li><Link to="/RecruiterProfile" className="nav-username">{user.name}</Link></li>
+                  <li><Link to="/Subscribers">Newsletter</Link></li>
+                  <li><Link to="/job-offer-statistics">Statistiques</Link></li>
+                </>
+              ) : (
+                <>
+                  <li><Link to="/candidate-profile" className="nav-username">{user.name}</Link></li>
+                  <li><Link to="/applications">Mes candidatures</Link></li> {/* Merged line */}
+                </>
               )}
             </>
           ) : (
@@ -93,6 +94,7 @@ const Navbar = () => {
               <li><Link to="/ChoixRole2">Se connecter</Link></li>
             </>
           )}
+
         </ul>
 
         {isLoggedIn && user && (

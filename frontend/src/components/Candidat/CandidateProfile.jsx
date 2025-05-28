@@ -6,6 +6,7 @@ import candidatImage from '../../assets/images/choixRole/recruiter.jpg';
 import JobSearchAndOffers from "../JobSearchAndOffers";
 import { Link } from "react-router-dom";
 import JobCardss from "./JobCardss";
+import SEO from "../SEO";
 
 function CandidateProfile() {
   const [candidate, setCandidate] = useState(null);
@@ -423,6 +424,9 @@ function CandidateProfile() {
   return (
     <>
       <Navbar />
+      <SEO
+        title="Profile"
+       /> 
       <div style={styles.profilePage}>
         <div style={styles.profileContainer}>
           {/* Profile Header */}

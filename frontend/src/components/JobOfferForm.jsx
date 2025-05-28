@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import "../assets/css/JobOfferForm.css";
 import Navbar from "../components/Navbara";
 import Footer from "../components/Footer";
-
+import SEO from "./SEO";
 function JobOfferForm() {
     const [title, setTitle] = useState("");
     const [location, setLocation] = useState("");
@@ -70,6 +70,9 @@ function JobOfferForm() {
     return (
         <>
             <Navbar />
+            <SEO
+        title="Publier offre"
+       /> 
             <div className="job-offer-form-container">
                 <div className="form-header">
                     <h1>Publier une Nouvelle Offre d'Emploi</h1>

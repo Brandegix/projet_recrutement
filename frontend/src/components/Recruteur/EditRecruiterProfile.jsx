@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Navbara";
 import Footer from "../Footer";
-
+import SEO from "../SEO";
 function EditRecruiterProfile() {
     const [profile, setProfile] = useState({
         companyName: '',
@@ -55,6 +55,9 @@ function EditRecruiterProfile() {
     return (
         <div style={{ backgroundColor: '#f4f6f8', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}> {/* Removed alignItems: 'center' here */}
             <Navbar />
+            <SEO
+        title="Modifier profile"
+       /> 
             <div
                 style={{
                     backgroundColor: "#fff",
@@ -140,20 +143,57 @@ function EditRecruiterProfile() {
                             style={styles.textarea}
                         />
                     </div>
-                    <div style={{ width: '100%' }}>
-    <label htmlFor="public_profile" style={styles.label}>Afficher mon profil publiquement</label>
+                    <div style={{ width: '100%', marginBottom: '15px' }}>
+  <label
+    htmlFor="public_profile"
+    style={{
+      display: 'flex',
+      alignItems: 'center',
+      cursor: 'pointer',
+      gap: '10px',
+      fontWeight: 'bold',
+      color: '#333',
+    }}
+  >
     <input
-        type="checkbox"
-        id="public_profile"
-        name="public_profile"
-        checked={profile.public_profile}
-        onChange={(e) =>
-            setProfile({
-                ...profile,
-                public_profile: e.target.checked,
-            })
-        }
+      type="checkbox"
+      id="public_profile"
+      name="public_profile"
+      checked={profile.public_profile}
+      onChange={(e) =>
+        setProfile({
+          ...profile,
+          public_profile: e.target.checked,
+        })
+      }
+      style={{
+        position: 'absolute',
+        opacity: 0,
+        cursor: 'pointer',
+        height: 0,
+        width: 0,
+      }}
     />
+    <span
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '20px',
+        width: '20px',
+        backgroundColor: profile.public_profile ? '#ff6b00' : '#fff',
+        border: `2px solid ${profile.public_profile ? '#ff6b00' : '#ccc'}`,
+        borderRadius: '4px',
+        color: '#fff',
+        transition: 'all 0.2s ease',
+        fontSize: '14px',
+        fontWeight: 'bold',
+      }}
+    >
+      {profile.public_profile && '✓'}
+    </span>
+    Afficher mon profil publiquement
+  </label>
 </div>
 
                     <button type="submit" style={styles.button}>

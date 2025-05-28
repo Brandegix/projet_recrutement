@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import Navbar from "../Navbara";
 import Footer from "../Footer";
 import ApplicationChat from './ApplicationChat';
+import SEO from "../SEO";
 
 const RecruiterJobOffers = () => {
     const [offers, setOffers] = useState([]);
@@ -57,6 +58,9 @@ const RecruiterJobOffers = () => {
     return (
         <>
             <Navbar />
+            <SEO
+        title="Mes Offres"
+       /> 
             <div style={enhancedStyles.dashboard}>
                 <div style={enhancedStyles.header}>
                     <h1 style={enhancedStyles.h1}>Gestion des Offres</h1>

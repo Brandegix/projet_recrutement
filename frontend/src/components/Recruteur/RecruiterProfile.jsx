@@ -5,7 +5,7 @@ import Navbar from "../Navbara";
 import Footer from "../Footer";
 import candidatImage from '../../assets/images/choixRole/recruiter.jpg';
 import { Link } from "react-router-dom";
-
+import SEO from "../SEO";
 function RecruiterProfile() {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
@@ -154,27 +154,31 @@ function RecruiterProfile() {
       paddingBottom: '60px',
     },
     coverImageContainer: {
-      width: '100%',
-      marginBottom: '30px', // Add some space below the cover image
-      borderRadius: '0 0 15px 15px', // Optional: slightly round the bottom corners
-      overflow: 'hidden', // To contain the rounded corners
-    },
-    coverImage: {
-      width: '100%',
-      height: '250px', // Adjust the height as needed
-      objectFit: 'cover',
-    },
+      width: '100%',
+      marginBottom: '30px', // Add some space below the cover image
+      borderRadius: '0 0 15px 15px', // Optional: slightly round the bottom corners
+      overflow: 'hidden', // To contain the rounded corners
+    },
+    coverImage: {
+      width: '100%',
+      height: '250px', // Adjust the height as needed
+      objectFit: 'cover',
+    },
     profileContainer: {
       maxWidth: '1200px',
       margin: '0 auto',
       padding: '0 20px',
     },
     profileHeader: {
-      background: 'linear-gradient(135deg, #fff 0%, #f8f8f8 100%)',
+      background: profile?.cover_image
+        ? `linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.85) 60%, transparent 100%), url(${process.env.REACT_APP_API_URL}${profile.cover_image})`
+        : 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #ff6b35 100%)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
       borderRadius: '20px',
       padding: '40px',
       marginBottom: '30px',
-      boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
       border: '1px solid #f0f0f0',
       display: 'flex',
       alignItems: 'center',
@@ -221,7 +225,7 @@ function RecruiterProfile() {
     },
     companyName: {
       fontSize: '3rem',
-      fontWeight: '300',
+      fontWeight: '500',
       marginBottom: '0.5rem',
       background: 'linear-gradient(45deg, #ff6b35, #ff8c42)',
       WebkitBackgroundClip: 'text',
@@ -230,8 +234,8 @@ function RecruiterProfile() {
       letterSpacing: '-1px',
     },
     profileTitle: {
-      fontSize: '1.2rem',
-      color: '#666',
+      fontSize: '1.4rem',
+      color: 'white',
       marginBottom: '20px',
       fontWeight: '400',
     },
@@ -428,6 +432,9 @@ function RecruiterProfile() {
   if (error) return (
     <>
       <Navbar />
+      <SEO
+        title="Profile"
+       /> 
       <div style={styles.profilePage}>
         <div style={styles.profileContainer}>
           <p style={styles.error}>❌ Erreur : {error}</p>
@@ -440,6 +447,9 @@ function RecruiterProfile() {
   if (!profile) return (
     <>
       <Navbar />
+      <SEO
+        title="Profile"
+       /> 
       <div style={styles.profilePage}>
         <div style={styles.profileContainer}>
           <p style={styles.loading}>⏳ Chargement du profil...</p>
@@ -452,25 +462,12 @@ function RecruiterProfile() {
   return (
     <>
       <Navbar />
-      
+      <SEO
+        title="Profile"
+       /> 
 
       <div style={styles.profilePage}>
       <div style={styles.profileContainer}>
-
-{/* Cover Image */}
-{profile.cover_image && (
-  <img
-    src={`${process.env.REACT_APP_API_URL}${profile.cover_image}`}
-    alt="Cover"
-    style={{
-      width: '100%',
-      height: '200px',
-      objectFit: 'cover',
-      borderRadius: '15px',
-      marginBottom: '20px',
-    }}
-  />
-)}
 
 {/* Profile Header */}
 <div style={styles.profileHeader}>

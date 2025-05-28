@@ -115,7 +115,11 @@ const JobCard = ({ job }) => {
           color: '#aaaaaa',
           fontSize: '0.95rem',
           lineHeight: '1.6',
-          margin: '0 0 15px 0'
+          margin: '0 0 15px 0',
+          overflow: 'hidden', // Add this to prevent overflow
+          display: '-webkit-box',
+          WebkitLineClamp: 3, // Number of lines to show
+          WebkitBoxOrient: 'vertical',
         }}>
           {job.description}
         </p>
