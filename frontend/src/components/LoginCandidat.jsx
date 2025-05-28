@@ -183,7 +183,7 @@ function LoginCandidat() {
                     required
                     className={`form-input ${error ? "error" : ""} ${emailValid && email ? "valid" : ""}`}
                   />
-                  {emailValid && email && <FaCheckCircle className="validation-icon" />}
+                  
                 </div>
 
                 <div
@@ -204,7 +204,7 @@ function LoginCandidat() {
                     <span className="toggle-password" onClick={() => setShowPassword(!showPassword)}>
                       {showPassword ? <FaEyeSlash /> : <FaEye />}
                     </span>
-                    {passwordValid && password && <FaCheckCircle className="validation-icon" />}
+                    
                   </div>
                 </div>
 
@@ -461,7 +461,7 @@ function LoginCandidat() {
         color: #6b7280;
         transition: color 0.3s ease;
         z-index: 2;
-        margin-top: 30px;
+        margin-top: -8px;
 
       }
 

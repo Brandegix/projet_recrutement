@@ -120,10 +120,10 @@ const ChoixRole = () => {
                 <div className="role-icon-container candidat-icon">
                   <FaUserGraduate className="role-icon" />
                 </div>
-                <h3 className="role-name">Candidat</h3>
-                <p className="role-description">
+                {/* <h3 className="role-name">Candidat</h3> */}
+                {/* <p className="role-description">
                   Trouvez l'emploi de vos rêves et développez votre carrière
-                </p>
+                </p> */}
               </div>
               
               <div className="image-container">
@@ -162,10 +162,10 @@ const ChoixRole = () => {
                 <div className="role-icon-container recruteur-icon">
                   <FaBriefcase className="role-icon" />
                 </div>
-                <h3 className="role-name">Recruteur</h3>
+                {/* <h3 className="role-name">Recruteur</h3>
                 <p className="role-description">
                   Trouvez les meilleurs talents pour votre entreprise
-                </p>
+                </p> */}
               </div>
               
               <div className="image-container">
@@ -392,15 +392,18 @@ const ChoixRole = () => {
 
         .candidat-icon {
           background: linear-gradient(135deg, #ff8c00, #ffa500);
+           margin-left:190px;
         }
 
         .recruteur-icon {
           background: linear-gradient(135deg, #f56040, #ff6b6b);
+           margin-left:190px;
         }
 
         .role-icon {
           font-size: 1.75rem;
           color: white;
+         
         }
 
         .role-name {
