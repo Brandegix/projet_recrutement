@@ -1,4 +1,3 @@
-# Importation des modules nécessaires
 from flask import Flask, request, jsonify, session  # session est déjà importé ici
 import requests
 from flask_cors import CORS
@@ -15,7 +14,7 @@ from flask_session import Session
 from models import db, Candidate, Recruiter, JobOffer, Application
 from flask_socketio import SocketIO
 from middleware import role_required, socket_role_required, auth_required, socket_auth_required, ROLES, handle_error
-
+from job_matcher import calculate_skill_match
 
 
 app = Flask(__name__)
@@ -23,7 +22,17 @@ app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SECRET_KEY'] = 'your_secret_key'
 socketio = SocketIO(app, cors_allowed_origins="*", manage_session=False)  # Initialize SocketIO, allow CO
 # Initialisation de l'application Flask
+from flask_apscheduler import APScheduler
 
+scheduler = APScheduler()
+scheduler.init_app(app)
+scheduler.start()
+
+@scheduler.task('cron', id='job_matching', hour=9)  # Run daily at 9 AM
+def scheduled_job_matching():
+    """Daily job to check for matching jobs for all candidates"""
+    from job_notifier import check_for_matching_jobs
+    check_for_matching_jobs()
 
 
 
@@ -131,6 +140,7 @@ class Candidate(db.Model):
     cv_filename = db.Column(db.String(255))
     profile_image = db.Column(db.String(255))  # 🔧 AJOUT ICI
     reset_token = db.Column(db.String(255), nullable=True)  # ✅ Add this line
+    notification_enabled = db.Column(db.Boolean, default=True)
     def set_skills(self, skills_list):
         self.skills = json.dumps(skills_list)
 
@@ -154,28 +164,19 @@ class Recruiter(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     phoneNumber = db.Column(db.String(20), nullable=False)
     address = db.Column(db.String(255))
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
     companyName = db.Column(db.String(255), nullable=False)
     activity_domains = db.Column(db.String(255))
     description = db.Column(db.Text)
     profile_image = db.Column(db.String(255))  # <-- Ajout de la colonne pour l'image de profil
     reset_token = db.Column(db.String(255), nullable=True)  # ✅ Add this line
     subscription_active = db.Column(db.Boolean, default=False)  # ✅ Track subscription status
-    public_profile = db.Column(db.Boolean, default=False)  # Show on homepage if True
-    cover_image = db.Column(db.String(255))    # ✅ Cover picture (new column)
-
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
-
-
-class NewsletterSubscription(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), nullable=False)
-    recruiter_id = db.Column(db.Integer, db.ForeignKey('recruiters.id'), nullable=False)  # ✅ Table name
-    recruiter = db.relationship('Recruiter', backref=db.backref('newsletters', lazy=True))  # ✅ Class name
 
 # Modèle Subscription
 class Subscription(db.Model):
@@ -205,25 +206,8 @@ class JobOffer(db.Model):
     is_active = db.Column(db.Boolean, default=False) # Added the is_active field
     CountModification = db.Column(db.Integer, nullable=False, default=0)
     views = db.Column(db.Integer, default=0)  # Ajout du champ views
-    posted_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "title": self.title,
-            "company": self.company,
-            "location": self.location,
-            "experience": self.experience,
-            "description": self.description,
-            "skills": self.skills,
-            "salary": self.salary,
-            "type": self.type,
-            "recruiter_id": self.recruiter_id,
-            "logo": self.logo,
-            "is_active": self.is_active,
-            "CountModification": self.CountModification,
-            "views": self.views,
-            "posted_at": self.posted_at.isoformat() if self.posted_at else None,
-        }
+
+
 class SavedJob(db.Model):
     __tablename__ = 'saved_jobs'
 
@@ -255,14 +239,12 @@ class Admin(db.Model):
         
 
 
-
 # Define the Application model
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     candidate_id = db.Column(db.Integer, nullable=False)
     job_offer_id = db.Column(db.Integer, db.ForeignKey('JobOffer.id'), nullable=False)
     application_date = db.Column(db.DateTime, default=datetime.utcnow)
-    viewed = db.Column(db.Boolean, default=False)  # ✅ Add this field
 
     job_offer = db.relationship('JobOffer', backref='applications')  # ✅ Add this line
 
@@ -317,21 +299,6 @@ from flask import jsonify, session
 
 from flask import session, redirect, url_for
 
-
-@app.route('/api/newsletter/subscribe', methods=['POST'])
-def subscribe_to_newsletter():
-    data = request.get_json()
-    email = data.get('email')
-    recruiter_id = data.get('recruiter_id')
-
-    if not email or not recruiter_id:
-        return jsonify({'error': 'Missing email or recruiter ID'}), 400
-
-    new_subscription = NewsletterSubscription(email=email, recruiter_id=recruiter_id)
-    db.session.add(new_subscription)
-    db.session.commit()
-
-    return jsonify({'message': 'Subscription successful'}), 200
 
 
 
@@ -769,7 +736,8 @@ def register_candidate():
             phoneNumber=data["phoneNumber"],
             address=data.get("address"),
             dateOfBirth=dateOfBirth,
-            skills=skills_json
+            skills=skills_json,
+            notification_enabled=True 
         )
         new_candidate.set_password(data["password"])
 
@@ -873,9 +841,7 @@ def update_recruiter_profile():
     recruiter.companyName = data.get("companyName", recruiter.companyName)
     recruiter.description = data.get("description", recruiter.description)
     recruiter.phoneNumber = data.get("phoneNumber", recruiter.phoneNumber)
-    recruiter.public_profile = data.get("public_profile", recruiter.public_profile)
-   
-   
+
     db.session.commit()
 
     print(f"After update - Name: {recruiter.name}, Email: {recruiter.email}, Company: {recruiter.companyName}")
@@ -909,7 +875,9 @@ def register_recruiter():
             phoneNumber=data["phoneNumber"],
             address=data.get("address"),
             companyName=data["companyName"],
-            activity_domains=data.get("activity_domains", "")
+            activity_domains=data.get("activity_domains", ""),
+            latitude=data.get("latitude"),
+            longitude=data.get("longitude")
         )
         new_recruiter.set_password(data["password"])
 
@@ -999,13 +967,12 @@ def get_recruiter_applications():
             'candidate_id': app.candidate_id,
             'job_offer_id': app.job_offer_id,
             'application_date': app.application_date.strftime('%Y-%m-%d %H:%M'),
-            'viewed': app.viewed,
             'candidate': {
                 'username': candidate.username,
                 'name': candidate.name,
                 'email': candidate.email,
                 'phoneNumber': candidate.phoneNumber,
-                'cv_filename': candidate.cv_filename,
+                'cv_filename': candidate.cv_filename
 
             } if candidate else None,
             'job_offer': {
@@ -1172,7 +1139,23 @@ def uploaded_cv(cv_filename):
 
 from flask import request, jsonify, session
 
-
+@app.route('/api/recruiter-locations', methods=['GET'])
+def get_recruiter_locations():
+        recruiters = Recruiter.query.filter(
+            Recruiter.address.isnot(None),
+            Recruiter.address != ''
+        ).all()
+        
+        locations = []
+        for recruiter in recruiters:
+            locations.append({
+                'id': recruiter.id,
+                'name': recruiter.name,
+                'companyName': recruiter.companyName,
+                'address': recruiter.address
+            })
+        
+        return jsonify(locations)
 @app.route('/api/sapplications', methods=['GET'])
 def get_all_applications():
     try:
@@ -1242,7 +1225,8 @@ def get_all_applications():
     except Exception as e:
         print(f"Error retrieving applications: {e}")
         return jsonify({"message": "Failed to process applications."}), 500
-
+    
+    
 
 #  # candidates who applied to certain job offers posted by a recruiter
 # @app.route('/api/recruiter/applications', methods=['GET'])
@@ -1340,19 +1324,6 @@ def check_session():
         "user": user
     })
 
-
-
-# Marking application as viewed
-@app.route('/api/mark_as_viewed/<int:application_id>', methods=['POST'])
-def mark_as_viewed(application_id):
-    application = Application.query.get(application_id)
-    if not application:
-        return jsonify({'message': 'Application not found'}), 404
-
-    application.viewed = True
-    db.session.commit()
-    return jsonify({'message': 'Application marked as viewed'}), 200
-
 @app.route('/recruiter/profile', methods=['GET', 'POST'])
 def recruiter_profile():
     recruiter_id = session.get('user_id')
@@ -1433,129 +1404,10 @@ def get_recruiter_profile():
         'description': recruiter.description,
         'profile_image': recruiter.profile_image,
         'selected_domains': selected_domains,
-        'predefined_domains': predefined_domains,
-        'public_profile' : recruiter.public_profile ,
-                'cover_image' : recruiter.cover_image ,
-
-        
+        'predefined_domains': predefined_domains        
  # <-- ADD THIS
 
     })
-
-
-UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads', 'cover_images')
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-
-@app.route('/api/upload-cover-image-recruiter', methods=['POST'])
-def upload_cover_image():
-    recruiter_id = session.get('user_id')  # You can get it from auth if needed
-    file = request.files.get('cover_image')
-
-    if not file or not allowed_file1(file.filename):
-        return jsonify({'error': 'Invalid file'}), 400
-
-    filename = secure_filename(f"cover_{recruiter_id}_{file.filename}")
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    file.save(filepath)
-
-    recruiter = Recruiter.query.get(recruiter_id)
-    if not recruiter:
-     return jsonify({'error': 'Recruiter not found'}), 404
-
-    recruiter.cover_image = f"/uploads/cover_images/{filename}"
-    db.session.commit()
-
-
-
-    return jsonify({'cover_image': f"/uploads/cover_images/{filename}"}), 200
-
-# Serve uploaded images
-@app.route('/uploads/cover_images/<filename>')
-def uploaded_cover_image(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-@app.route('/api/recruiter/public-profile/<int:recruiter_id>', methods=['GET'])
-def get_specific_recruiter_profile(recruiter_id):
-    recruiter = Recruiter.query.get(recruiter_id)
-
-    # Static list of predefined domains
-    predefined_domains = ["Informatique", "Finance", "Marketing", "Design", "Droit"]
-    selected_domains = (
-        recruiter.activity_domains.split(",") if recruiter and recruiter.activity_domains else []
-    )
-
-    if not recruiter:
-        return render_template('error_general.html',
-            error_code='404',
-            error_title="Profil non trouvé",
-            error_message="Le profil du recruteur n'a pas été trouvé.",
-            error_details="Vérifiez l'ID du recruteur."
-        ), 404
-
-    # ✅ Static newsletters list (temporary for testing)
-    newsletters = [
-        {
-            "title": "Comment réussir votre entretien d'embauche",
-            "date": "2024-05-01",
-            "content": "Voici quelques conseils utiles pour vos entretiens...",
-        },
-        {
-            "title": "Les tendances du recrutement en 2025",
-            "date": "2024-05-15",
-            "content": "Explorez les nouvelles méthodes de recrutement...",
-        }
-    ]
-    
-    return jsonify({
-        'id': recruiter.id,
-        'name': recruiter.name,
-        'email': recruiter.email,
-        'companyName': recruiter.companyName,
-        'address': recruiter.address,
-        'phoneNumber': recruiter.phoneNumber,
-        'description': recruiter.description,
-        'profile_image': recruiter.profile_image,
-        'selected_domains': selected_domains,
-        'predefined_domains': predefined_domains,
-        'public_profile': recruiter.public_profile,
-        'cover_image': recruiter.cover_image,
-        'newsletters': newsletters,  # ✅ Added here
-    })
-
-@app.route('/api/recruiters/public', methods=['GET'])
-def get_public_recruiters():
-    public_recruiters = Recruiter.query.filter_by(public_profile=True).all()
-    print(public_recruiters)
-    # Convert to list of dicts for JSON serialization
-    result = [{
-        "id": r.id,
-        "name": r.name,
-        "title": r.description,
-        "company": r.companyName,
-        "phone_number": r.phoneNumber,
-
-        
-
-    } for r in public_recruiters]
-    return jsonify(result)
-
-
-
-@app.route('/api/recruiter/<int:recruiter_id>/last-job-offers', methods=['GET'])
-def get_last_job_offers(recruiter_id):
-    # Query last 3 job offers by recruiter ordered by posted date descending
-    job_offers = JobOffer.query.filter_by(recruiter_id=recruiter_id) \
-                               .order_by(JobOffer.posted_at.desc()) \
-                               .limit(3) \
-                               .all()
-    if not job_offers:
-        return jsonify({"message": "No job offers found for this recruiter."}), 404
-    print(job_offers)
-    return jsonify([job.to_dict() for job in job_offers])
-
-
 
 @app.route('/api/upload-profile-image', methods=['POST'])
 def upload_profile_image():
@@ -1684,6 +1536,7 @@ def get_candidate_profile():
         'dateOfBirth': candidate.dateOfBirth,
         'cv_filename': candidate.cv_filename,
         'profile_image': candidate.profile_image,
+        'notification_enabled': candidate.notification_enabled
     })
 
 
@@ -1764,22 +1617,25 @@ from datetime import datetime
 #     return jsonify(stats)
 @app.route('/api/stats', methods=['GET'])
 def get_recruiter_stats():
-   
-    print(session)
-    total_candidates = db.session.query(Candidate).count()
+    # Statistiques des candidats inscrits
+    candidates_count = db.session.query(Candidate).count()
 
-    total_recruiters = db.session.query(Recruiter).count()
-    total_jobs = db.session.query(JobOffer).count()
-    total_applications =db.session.query(Candidate).count()
-    print("total_applications:", total_applications)
+    # Statistiques des recruteurs inscrits
+    recruiters_count = db.session.query(Recruiter).count()
+
+    # Statistiques des postes ouverts
+    job_offers_count = db.session.query(JobOffer).count()
+
+    # Statistiques des candidatures envoyées
+    applications_count = db.session.query(Application).count()
 
     # Retourner les statistiques sous forme de JSON
-    return jsonify({
-        "totalCandidates": total_candidates,
-        "totalRecruiters": total_recruiters,
-        "totalJobs": total_jobs,
-        "totalApplications": total_applications  # ✅ Send application count
-    })
+    stats = [
+        {"label": "Candidats inscrits", "value": candidates_count},
+        {"label": "Recruteurs inscrits", "value": recruiters_count},
+        {"label": "Postes ouverts", "value": job_offers_count},
+        {"label": "Candidatures envoyées", "value": applications_count},
+    ]
     
     return jsonify(stats)
 #!    changement 
@@ -1912,7 +1768,7 @@ def recruiter_dashboard_graph():
 
     return jsonify({'image': image_base64})
 
-from flask import session, jsonify
+from flask import jsonify, session
 
 @app.route("/api/recruiter/me", methods=["GET"])
 def get_recruiter_id():
@@ -2350,6 +2206,9 @@ def create_job_offer():
     try:
         db.session.add(job_offer)
         db.session.commit()
+
+        notify_matching_candidates(job_offer)
+
         return jsonify({'message': 'Job offer created successfully'}), 201
     except Exception as e:
         db.session.rollback()
@@ -2360,7 +2219,285 @@ def create_job_offer():
             error_details=str(e)
         ), 500
 
+#-----------------------Start notification matching function
 
+def notify_matching_candidates(job_offer):
+    """Notify candidates with matching skills about a new job"""
+    try:
+        # Get candidates with notifications enabled
+        candidates = Candidate.query.filter_by(
+            notification_enabled=True  # Only check main notification toggle
+        ).all()
+        
+        print(f"Found {len(candidates)} candidates with notifications enabled")
+        
+        notification_count = 0
+        
+        for candidate in candidates:
+            # Calculate match
+            match_percentage, matching_skills = calculate_skill_match(candidate.skills, job_offer.skills)
+            print(f"Candidate {candidate.name}: {len(matching_skills)} matching skills with {job_offer.title}")
+            
+            # Only notify if AT LEAST 3 MATCHING SKILLS
+            if len(matching_skills) >= 3:
+                send_job_match_email(candidate, job_offer, match_percentage, matching_skills)
+                notification_count += 1
+                print(f"Email sent to {candidate.email}")
+            else:
+                print(f"Not enough matching skills ({len(matching_skills)}/3) for {candidate.name}")
+                
+        print(f"Sent notifications to {notification_count} candidates about job: {job_offer.title}")
+    except Exception as e:
+        print(f"Error sending job match notifications: {str(e)}")
+        import traceback
+        traceback.print_exc()
+
+def send_job_match_email(candidate, job_offer, match_percentage, matching_skills):
+    """Send email about matching job"""
+    try:
+        subject = f"New Job Opportunity Matching Your Skills - {job_offer.title}"
+        
+        html_content = f"""
+        <html>
+        <head>
+            <style>
+                body {{
+                    font-family: 'Arial', sans-serif;
+                    background-color: #ffffff;
+                    color: #222;
+                    padding: 20px;
+                }}
+                .container {{
+                    padding: 20px;
+                    max-width: 600px;
+                    margin: 0 auto;
+                }}
+                .header {{
+                    background-color: #E67E22;
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                    font-size: 24px;
+                    font-weight: bold;
+                    border-radius: 8px 8px 0 0;
+                }}
+                .match-info {{
+                    padding: 20px;
+                    background: #f9f9f9;
+                    border-radius: 0 0 8px 8px;
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                }}
+                .footer {{
+                    margin-top: 30px;
+                    font-size: 14px;
+                    color: #555;
+                    text-align: center;
+                    border-top: 2px solid #E67E22;
+                    padding-top: 15px;
+                }}
+                .info {{
+                    margin-bottom: 15px;
+                    padding: 10px;
+                    background: #fff;
+                    border-left: 5px solid #E67E22;
+                    border-radius: 6px;
+                }}
+                .button {{
+                    display: inline-block;
+                    background-color: #E67E22;
+                    color: white;
+                    padding: 10px 20px;
+                    text-decoration: none;
+                    border-radius: 4px;
+                    font-weight: bold;
+                    margin-top: 15px;
+                }}
+                .skills {{
+                    display: inline-block;
+                    background: #eee;
+                    padding: 2px 8px;
+                    margin: 2px;
+                    border-radius: 3px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">New Job Match Found!</div>
+                
+                <div class="match-info">
+                    <p>Hello {candidate.name},</p>
+                    <p>We found a new job offer that matches your skills!</p>
+                    
+                    <div class="info">
+                        <strong>Position:</strong> {job_offer.title}
+                    </div>
+                    <div class="info">
+                        <strong>Company:</strong> {job_offer.company}
+                    </div>
+                    <div class="info">
+                        <strong>Location:</strong> {job_offer.location}
+                    </div>
+                    <div class="info">
+                        <strong>Match:</strong> {match_percentage:.1f}%
+                    </div>
+                    <div class="info">
+                        <strong>Matching Skills:</strong>
+                        <p>{"".join('<span class="skills">' + skill + '</span> ' for skill in matching_skills)}</p>
+                    </div>
+                    
+                    <p>
+                        <a href="http://localhost:5000/job/{job_offer.id}" class="button">View Job Details</a>
+                    </p>
+                    
+                    <p>Good luck with your application!</p>
+                </div>
+                
+                <div class="footer">
+                    &copy; 2025 CasaJobs | Recrutement simplifié
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        msg = Message(
+            subject=subject,
+            recipients=[candidate.email],
+            html=html_content
+        )
+        
+        mail.send(msg)
+        print(f"Job match notification sent to {candidate.email}")
+        return True
+    except Exception as e:
+        print(f"Error sending email: {str(e)}")
+        return False
+#-------------------------End Notification matching function
+@app.route('/api/test-job-notifications/<int:job_id>', methods=['GET'])
+def test_job_notifications(job_id):
+    """Test sending notifications for a specific job offer"""
+    if 'user_id' not in session:
+        return jsonify({"error": "Not authenticated"}), 401
+        
+    job_offer = JobOffer.query.get(job_id)
+    if not job_offer:
+        return jsonify({"error": "Job offer not found"}), 404
+        
+    try:
+        notify_matching_candidates(job_offer)
+        return jsonify({"message": "Notification test completed. Check server logs for details."}), 200
+    except Exception as e:
+        return jsonify({"error": f"Error: {str(e)}"}), 500
+                    ######Omar's function Endpoints start
+#-------------------------Notification preference
+# Get notification settings
+@app.route('/api/candidate/notification-settings', methods=['GET'])
+def get_notification_settings():
+    candidate_id = session.get('user_id')
+    if not candidate_id:
+        return jsonify({"error": "Not authenticated"}), 401
+        
+    candidate = Candidate.query.get(candidate_id)
+    if not candidate:
+        return jsonify({"error": "Candidate not found"}), 404
+        
+    return jsonify({
+        "notification_enabled": candidate.notification_enabled
+    })
+
+# Update notification settings
+@app.route('/api/candidate/notification-settings', methods=['PUT'])
+def update_notification_settings():
+    candidate_id = session.get('user_id')
+    if not candidate_id:
+        return jsonify({"error": "Not authenticated"}), 401
+        
+    candidate = Candidate.query.get(candidate_id)
+    if not candidate:
+        return jsonify({"error": "Candidate not found"}), 404
+    
+    data = request.json
+    
+    # Update notification settings
+    candidate.notification_enabled = data.get('notification_enabled', candidate.notification_enabled)
+
+    db.session.commit()
+    
+    return jsonify({"message": "Notification settings updated successfully"})
+#-----------------------End Notifications preference
+                        ######Omar's function
+#-----------------------Test and Debug Endpoints for sending email
+
+# @app.route('/api/test-email', methods=['GET'])
+# def test_email():
+#     if 'user_id' not in session:
+#         return jsonify({"error": "Not authenticated"}), 401
+        
+#     candidate = Candidate.query.get(session['user_id'])
+#     if not candidate:
+#         return jsonify({"error": "Candidate not found"}), 404
+        
+#     try:
+#         msg = Message(
+#             subject="Test Email from CasaJobs",
+#             recipients=[candidate.email],
+#             html=f"""
+#             <html>
+#             <body>
+#                 <h2>Test Email</h2>
+#                 <p>Hello {candidate.name},</p>
+#                 <p>This is a test email to verify that the notification system is working correctly.</p>
+#                 <p>Your notification settings:</p>
+#                 <ul>
+#                     <li>Notification enabled: {candidate.notification_enabled}</li>
+#                 </ul>
+#                 <p>Best regards,<br>CasaJobs Team</p>
+#             </body>
+#             </html>
+#             """
+#         )
+#         mail.send(msg)
+#         return jsonify({"message": f"Test email sent successfully to {candidate.email}"}), 200
+#     except Exception as e:
+#         print(f"Error sending test email: {str(e)}")
+#         return jsonify({"error": f"Failed to send test email: {str(e)}"}), 500
+
+@app.route('/api/debug-job-matching', methods=['GET'])
+def debug_job_matching():
+    if 'user_id' not in session:
+        return jsonify({"error": "Not authenticated"}), 401
+        
+    candidate = Candidate.query.get(session['user_id'])
+    if not candidate:
+        return jsonify({"error": "Candidate not found"}), 404
+        
+    # Get all job offers
+    job_offers = JobOffer.query.all()
+    
+    matching_results = []
+    
+    for job in job_offers:
+        match_percentage, matching_skills = calculate_skill_match(candidate.skills, job.skills)
+        
+        matching_results.append({
+            'job_id': job.id,
+            'job_title': job.title,
+            'job_skills': job.skills,
+            'candidate_skills': candidate.skills,
+            'match_percentage': match_percentage,
+            'matching_skills': matching_skills,
+            'would_notify': len(matching_skills) >= 3 and candidate.notification_enabled
+        })
+    
+    return jsonify({
+        'candidate_skills': candidate.skills,
+        'notification_enabled': candidate.notification_enabled,
+        'skill_match_notifications': candidate.skill_match_notifications,
+        'matching_results': matching_results
+    })
+
+#-----------------------------End
 @app.route('/api/job_offersr', methods=['GET'])
 def get_all_job_offersr():
     offres = JobOffer.query.all()
@@ -2662,8 +2799,7 @@ def get_applicationsss():
                 'candidate_id': app.candidate_id,
                 'job_offer_id': app.job_offer_id,
                 'application_date': app.application_date.strftime('%Y-%m-%d %H:%M'),
-                'job_offer': offer_data,
-                'viewed': app.viewed, 
+                'job_offer': offer_data
             })
             print(applications_list)
 
@@ -2837,7 +2973,9 @@ def get_candidate_profiles():
     'phoneNumber': candidate.phoneNumber,
     'address': candidate.address,
     'dateOfBirth': candidate.dateOfBirth,
-    'cv_filename': candidate.cv_filename
+    'cv_filename': candidate.cv_filename,
+    'notification_enabled': getattr(candidate, 'notification_enabled', True)
+
 })
 
 @app.route('/api/dashboardd')
@@ -3372,7 +3510,7 @@ def handle_send_message(data):
         except Exception as e:
             print(f"Error sending email: {e}")
 
-
+#---------------------job offer candidature
 
 @socketio.on('subscribe_notifications')
 def handle_subscribe_notifications(data):
@@ -3457,7 +3595,13 @@ def get_messages():
 with app.app_context():
     try:
         db.create_all()
+        
         print("Tables créées avec succès")
+        admin = Admin(username='omar', email='bougarneomardev@gmail.com')
+        admin.set_password('123456')
+        db.session.add(admin)
+        db.session.commit()
+        print("Admin user inserted successfully.")
     except Exception as e:
         print(f"Erreur lors de la création des tables : {str(e)}")
 
