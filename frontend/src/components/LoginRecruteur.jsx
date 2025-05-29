@@ -1,153 +1,155 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
-import { useNavigate } from "react-router-dom"
-import axios from "axios"
-import { FaEye, FaEyeSlash, FaCheckCircle } from "react-icons/fa"
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function LoginRecruteur() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [emailFocused, setEmailFocused] = useState(false)
-  const [passwordFocused, setPasswordFocused] = useState(false)
-  const [emailValid, setEmailValid] = useState(false)
-  const [passwordValid, setPasswordValid] = useState(false)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [emailValid, setEmailValid] = useState(false);
+  const [passwordValid, setPasswordValid] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false); // State for "Se souvenir de moi"
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const loginBoxRef = useRef(null)
-  const emailInputGroupRef = useRef(null)
-  const passwordInputGroupRef = useRef(null)
-  const loginButtonRef = useRef(null)
+  const loginBoxRef = useRef(null);
+  const emailInputGroupRef = useRef(null);
+  const passwordInputGroupRef = useRef(null);
+  const loginButtonRef = useRef(null);
 
   useEffect(() => {
     // Animation d'entrée pour les éléments du formulaire
-    const elements = document.querySelectorAll(".login-form > *")
+    const elements = document.querySelectorAll(".login-form > *");
     elements.forEach((el, index) => {
-      el.style.opacity = "0"
-      el.style.transform = "translateY(30px)"
+      el.style.opacity = "0";
+      el.style.transform = "translateY(30px)";
       setTimeout(() => {
-        el.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)"
-        el.style.opacity = "1"
-        el.style.transform = "translateY(0)"
-      }, 150 * index)
-    })
+        el.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
+        el.style.opacity = "1";
+        el.style.transform = "translateY(0)";
+      }, 150 * index);
+    });
 
     // Animation du titre
-    const title = document.querySelector(".form-title")
+    const title = document.querySelector(".form-title");
     if (title) {
-      title.style.opacity = "0"
-      title.style.transform = "scale(0.8)"
+      title.style.opacity = "0";
+      title.style.transform = "scale(0.8)";
       setTimeout(() => {
-        title.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)"
-        title.style.opacity = "1"
-        title.style.transform = "scale(1)"
-      }, 200)
+        title.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
+        title.style.opacity = "1";
+        title.style.transform = "scale(1)";
+      }, 200);
     }
-  }, [])
+  }, []);
 
   // Validation email en temps réel
   useEffect(() => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    setEmailValid(emailRegex.test(email))
-  }, [email])
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setEmailValid(emailRegex.test(email));
+  }, [email]);
 
   // Validation mot de passe en temps réel
   useEffect(() => {
-    setPasswordValid(password.length >= 6)
-  }, [password])
+    setPasswordValid(password.length >= 6);
+  }, [password]);
 
   const handleLogin = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
     // Animation de chargement
     if (loginButtonRef.current) {
-      loginButtonRef.current.style.transform = "scale(0.98)"
+      loginButtonRef.current.style.transform = "scale(0.98)";
     }
 
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/recruiters/login`,
-        { email, password },
-        { withCredentials: true },
-      )
+        { email, password, remember: rememberMe }, // Include rememberMe
+        { withCredentials: true }
+      );
 
       // Animation de succès
       if (loginBoxRef.current) {
-        loginBoxRef.current.style.transform = "scale(1.02)"
-        loginBoxRef.current.style.boxShadow = "0 20px 40px rgba(34, 197, 94, 0.3)"
+        loginBoxRef.current.style.transform = "scale(1.02)";
+        loginBoxRef.current.style.boxShadow = "0 20px 40px rgba(34, 197, 94, 0.3)";
 
         setTimeout(() => {
-          loginBoxRef.current.style.transform = "scale(0.95)"
-          loginBoxRef.current.style.opacity = "0.8"
+          loginBoxRef.current.style.transform = "scale(0.95)";
+          loginBoxRef.current.style.opacity = "0.8";
           setTimeout(() => {
-            const userType = response.data.user_type
+            const userType = response.data.user_type;
             if (userType === "admin") {
-              navigate("/Dashboard_admin")
+              navigate("/Dashboard_admin");
             } else {
-              navigate("/RecruiterJobOffers")
+              navigate("/RecruiterJobOffers");
             }
-          }, 300)
-        }, 500)
+          }, 300);
+        }, 500);
       }
     } catch (error) {
-      console.error(error)
-      const message = error.response?.data?.error || "Email ou mot de passe incorrect"
-      setError(message)
+      console.error(error);
+      const message = error.response?.data?.error || "Email ou mot de passe incorrect";
+      setError(message);
 
       // Animation d'erreur améliorée
       if (loginBoxRef.current) {
-        loginBoxRef.current.style.animation = "shake 0.6s ease-in-out"
-        loginBoxRef.current.style.boxShadow = "0 10px 30px rgba(239, 68, 68, 0.3)"
+        loginBoxRef.current.style.animation = "shake 0.6s ease-in-out";
+        loginBoxRef.current.style.boxShadow = "0 10px 30px rgba(239, 68, 68, 0.3)";
 
         setTimeout(() => {
-          loginBoxRef.current.style.animation = ""
-          loginBoxRef.current.style.boxShadow = ""
-        }, 600)
+          loginBoxRef.current.style.animation = "";
+          loginBoxRef.current.style.boxShadow = "";
+        }, 600);
       }
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
       if (loginButtonRef.current) {
-        loginButtonRef.current.style.transform = "scale(1)"
+        loginButtonRef.current.style.transform = "scale(1)";
       }
     }
-  }
+  };
 
   const handleEmailFocus = () => {
-    setEmailFocused(true)
+    setEmailFocused(true);
     if (emailInputGroupRef.current) {
-      emailInputGroupRef.current.style.transform = "translateY(-2px)"
+      emailInputGroupRef.current.style.transform = "translateY(-2px)";
     }
-  }
+  };
 
   const handleEmailBlur = () => {
-    setEmailFocused(false)
+    setEmailFocused(false);
     if (emailInputGroupRef.current) {
-      emailInputGroupRef.current.style.transform = "translateY(0)"
+      emailInputGroupRef.current.style.transform = "translateY(0)";
     }
-  }
+  };
 
   const handlePasswordFocus = () => {
-    setPasswordFocused(true)
+    setPasswordFocused(true);
     if (passwordInputGroupRef.current) {
-      passwordInputGroupRef.current.style.transform = "translateY(-2px)"
+      passwordInputGroupRef.current.style.transform = "translateY(-2px)";
     }
-  }
+  };
 
   const handlePasswordBlur = () => {
-    setPasswordFocused(false)
+    setPasswordFocused(false);
     if (passwordInputGroupRef.current) {
-      passwordInputGroupRef.current.style.transform = "translateY(0)"
+      passwordInputGroupRef.current.style.transform = "translateY(0)";
     }
-  }
+  };
 
   return (
     <>
+      
       <div className="login-page">
         <div className="login-container">
           {/* Left Visual Section */}
@@ -173,6 +175,7 @@ function LoginRecruteur() {
               </div>
 
               <form onSubmit={handleLogin} className="login-form">
+                
                 <div
                   className={`input-group ${emailFocused ? "focused" : ""} ${emailValid && email ? "valid" : ""}`}
                   ref={emailInputGroupRef}
@@ -187,8 +190,10 @@ function LoginRecruteur() {
                     required
                     className={`form-input ${error ? "error" : ""} ${emailValid && email ? "valid" : ""}`}
                   />
+                  
                 </div>
 
+                
                 <div
                   className={`input-group ${passwordFocused ? "focused" : ""} ${passwordValid && password ? "valid" : ""}`}
                   ref={passwordInputGroupRef}
@@ -207,14 +212,53 @@ function LoginRecruteur() {
                     <span className="toggle-password" onClick={() => setShowPassword(!showPassword)}>
                       {showPassword ? <FaEyeSlash /> : <FaEye />}
                     </span>
-                   
+                    
                   </div>
                 </div>
 
+                {/* Styled "Se souvenir de moi" Checkbox */}
                 <div className="form-options">
-                  <label className="checkbox-container">
-                    <input type="checkbox" />
-                    <span className="checkmark"></span>
+                  <label
+                    className="checkbox-container"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      cursor: 'pointer',
+                      fontSize: '0.9rem',
+                      color: '#6b7280',
+                      gap: '10px',
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={() => setRememberMe(!rememberMe)}
+                      style={{
+                        position: 'absolute',
+                        opacity: 0,
+                        cursor: 'pointer',
+                        height: 0,
+                        width: 0,
+                      }}
+                    />
+                    <span
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        height: '20px',
+                        width: '20px',
+                        backgroundColor: rememberMe ? '#ff6b00' : '#fff',
+                        border: `2px solid ${rememberMe ? '#ff6b00' : '#ccc'}`,
+                        borderRadius: '4px',
+                        color: '#fff',
+                        transition: 'all 0.2s ease',
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {rememberMe && '✓'}
+                    </span>
                     Se souvenir de moi
                   </label>
                 </div>
@@ -245,12 +289,13 @@ function LoginRecruteur() {
                   )}
                 </button>
 
-                <div className="form-footer">
+                {/* Moved form footer content here */}
+                <div style={{ marginTop: '1rem' }}>
                   <a
                     href="#"
                     onClick={(e) => {
-                      e.preventDefault()
-                      navigate("/recruiter/request-reset")
+                      e.preventDefault();
+                      navigate("/recruiter/request-reset");
                     }}
                     className="forgot-password-link"
                   >
@@ -261,8 +306,8 @@ function LoginRecruteur() {
                     <a
                       href="#"
                       onClick={(e) => {
-                        e.preventDefault()
-                        navigate("/register/recruteur")
+                        e.preventDefault();
+                        navigate("/register/recruteur");
                       }}
                       className="register-link-text"
                     >
@@ -481,9 +526,7 @@ function LoginRecruteur() {
         }
 
         .form-options {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
+          margin-bottom: 1rem; /* Add margin below checkbox */
         }
 
         .checkbox-container {
@@ -492,11 +535,7 @@ function LoginRecruteur() {
           cursor: pointer;
           font-size: 0.9rem;
           color: #6b7280;
-          gap: 0px;
-        }
-
-        .checkbox-container input {
-          margin-right: 0.5rem;
+          gap: 10px;
         }
 
         .error-message {
@@ -543,7 +582,7 @@ function LoginRecruteur() {
           gap: 0.5rem;
           position: relative;
           overflow: hidden;
-          margin-left: 150px;
+          margin-left: 0; /* Reset left margin */
         }
 
         .login-button:hover:not(:disabled) {
@@ -579,9 +618,12 @@ function LoginRecruteur() {
         }
 
         .form-footer {
-          text-align: center;
-          margin-top: -150px;
-          margin-left: 210px;
+          margin-top: 1rem; /* Adjust top margin */
+          margin-left: 0; /* Reset left margin */
+          text-align: left; /* Align links to the left */
+          display: flex;
+          flex-direction: column; /* Stack the links vertically */
+          gap: 0.5rem; /* Space between links */
         }
 
         .forgot-password-link {
@@ -589,8 +631,8 @@ function LoginRecruteur() {
           text-decoration: none;
           font-size: 0.9rem;
           transition: color 0.3s ease;
-          display: block;
-          margin-bottom: 1rem;
+          display: inline-block; /* Behave like block for margin */
+          margin-bottom: 0; /* Handled by gap */
         }
 
         .forgot-password-link:hover {
@@ -625,23 +667,23 @@ function LoginRecruteur() {
             grid-template-columns: 1fr;
             grid-template-rows: 40vh 1fr;
           }
-          
+
           .visual-section {
             padding: 1rem;
           }
-          
+
           .visual-text h1 {
             font-size: 2rem;
           }
-          
+
           .visual-text p {
             font-size: 1rem;
           }
-          
+
           .form-section {
             padding: 1rem;
           }
-          
+
           .form-container {
             max-width: 100%;
           }
@@ -651,22 +693,22 @@ function LoginRecruteur() {
           .login-container {
             grid-template-rows: 30vh 1fr;
           }
-          
+
           .visual-text h1 {
             font-size: 1.5rem;
           }
-          
+
           .form-title {
             font-size: 1.5rem;
           }
-          
+
           input.form-input {
             margin-bottom: -20px;
           }
         }
       `}</style>
     </>
-  )
+  );
 }
 
-export default LoginRecruteur
+export default LoginRecruteur;
