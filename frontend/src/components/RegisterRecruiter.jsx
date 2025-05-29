@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
-import { FaUser, FaEnvelope, FaPhone, FaBuilding, FaLock, FaCheckCircle, FaMapMarkerAlt } from "react-icons/fa"
+import { FaUser, FaEnvelope, FaPhone, FaBuilding, FaLock, FaCheckCircle, FaMapMarkerAlt, FaFileContract } from "react-icons/fa"
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet"
 import "leaflet/dist/leaflet.css"
 import L from "leaflet"
@@ -335,6 +335,37 @@ const RegisterRecruteur = () => {
                 </div>
               </div>
 
+              <div className="form-row">
+  <div 
+    className={`input-group ${focusedFields.rc ? "focused" : ""} ${validations.rc && formData.rc ? "valid" : ""}`}
+    style={{ 
+      gridColumn: "1 / span 2", 
+      width: "60%",
+      justifySelf: "center",
+      margin: "0 auto"
+    }}
+  >
+    <label className="input-label">
+      <FaFileContract className="input-icon" />
+      RC
+      {validations.rc && formData.rc && <FaCheckCircle className="validation-icon" />}
+    </label>
+    <div className="input-container">
+      <input
+        type="text"
+        name="rc"
+        value={formData.rc || ""}
+        onChange={handleChange}
+        onFocus={() => handleFocus("rc")}
+        onBlur={() => handleBlur("rc")}
+        required
+        placeholder="Numéro de Registre du Commerce"
+        className={`form-input ${!validations.rc && formData.rc ? "input-invalid" : ""} ${validations.rc && formData.rc ? "input-valid" : ""}`}
+      />
+      <div className="input-border"></div>
+    </div>
+  </div>
+</div>
               {/* Map Component */}
               <div className="form-row">
                 <div 
