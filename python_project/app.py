@@ -1029,7 +1029,8 @@ def register_recruiter():
             address=data.get("address"),
             companyName=data["companyName"],
             activity_domains=data.get("activity_domains", ""),
-            rc=data["rc"]  
+            latitude=data.get("latitude"),
+            longitude=data.get("longitude")
         )
         new_recruiter.set_password(data["password"])
 

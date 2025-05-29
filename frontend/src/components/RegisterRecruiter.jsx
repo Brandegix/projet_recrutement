@@ -2,10 +2,21 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
-import { FaUser, FaEnvelope, FaPhone, FaBuilding, FaLock, FaCheckCircle } from "react-icons/fa"
+import { FaUser, FaEnvelope, FaPhone, FaBuilding, FaLock, FaCheckCircle, FaMapMarkerAlt } from "react-icons/fa"
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet"
+import "leaflet/dist/leaflet.css"
+import L from "leaflet"
 import "../assets/css/Login.css"
 import Footer from "../components/Footer"
 import Navbar from "../components/Navbara"
+
+// Fix Leaflet icon issue
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+});
 
 const RegisterRecruteur = () => {
   const [formData, setFormData] = useState({
@@ -15,9 +26,13 @@ const RegisterRecruteur = () => {
     email: "",
     phoneNumber: "",
     companyName: "",
+    address: "",
+    latitude: 33.573110,  // Default Casablanca
+    longitude: -7.589843,
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [position, setPosition] = useState([33.573110, -7.589843]) // Default Casablanca
   const [validations, setValidations] = useState({
     username: false,
     email: false,
@@ -25,11 +40,49 @@ const RegisterRecruteur = () => {
     name: false,
     phoneNumber: false,
     companyName: false,
+    address: false,
   })
   const [focusedFields, setFocusedFields] = useState({})
 
   const navigate = useNavigate()
   const registerCardRef = useRef(null)
+
+  // Location marker component for the map
+  function LocationMarker() {
+    useMapEvents({
+      click(e) {
+        setPosition([e.latlng.lat, e.latlng.lng])
+        // Update formData with new coordinates
+        setFormData(prev => ({
+          ...prev,
+          latitude: e.latlng.lat,
+          longitude: e.latlng.lng
+        }))
+        // Get address from coordinates
+        reverseGeocode(e.latlng.lat, e.latlng.lng)
+      },
+    })
+    return <Marker position={position} />
+  }
+
+  // Function to get address from coordinates
+  const reverseGeocode = async (lat, lng) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`
+      )
+      const data = await response.json()
+      
+      if (data && data.display_name) {
+        setFormData(prev => ({
+          ...prev,
+          address: data.display_name
+        }))
+      }
+    } catch (error) {
+      console.error("Error reverse geocoding:", error)
+    }
+  }
 
   useEffect(() => {
     const elements = document.querySelectorAll(".register-card > *")
@@ -68,6 +121,7 @@ const RegisterRecruteur = () => {
       name: formData.name.length >= 3,
       phoneNumber: phoneRegex.test(formData.phoneNumber),
       companyName: formData.companyName.length >= 2,
+      address: formData.address.length > 0,
     })
   }, [formData])
 
@@ -275,6 +329,47 @@ const RegisterRecruteur = () => {
                       required
                       placeholder="Nom de votre entreprise"
                       className={`form-input ${!validations.companyName && formData.companyName ? "input-invalid" : ""} ${validations.companyName && formData.companyName ? "input-valid" : ""}`}
+                    />
+                    <div className="input-border"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Map Component */}
+              <div className="form-row">
+                <div 
+                  className={`input-group map-group ${focusedFields.address ? "focused" : ""} ${validations.address && formData.address ? "valid" : ""}`}
+                  style={{ gridColumn: "1 / span 2" }}
+                >
+                  <label className="input-label">
+                    <FaMapMarkerAlt className="input-icon" />
+                    Localisation
+                    {validations.address && formData.address && <FaCheckCircle className="validation-icon" />}
+                  </label>
+                  <div className="map-container">
+                    <MapContainer 
+                      center={position} 
+                      zoom={13} 
+                      style={{ height: "300px", width: "100%" }}
+                    >
+                      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                      <LocationMarker />
+                    </MapContainer>
+                  </div>
+                  <small className="map-helper-text">
+                    Cliquez sur la carte pour sélectionner l'emplacement de votre entreprise
+                  </small>
+                  <div className="input-container">
+                    <input
+                      type="text"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      onFocus={() => handleFocus("address")}
+                      onBlur={() => handleBlur("address")}
+                      required
+                      placeholder="Adresse (cliquez sur la carte)"
+                      className={`form-input ${!validations.address && formData.address ? "input-invalid" : ""} ${validations.address && formData.address ? "input-valid" : ""}`}
                     />
                     <div className="input-border"></div>
                   </div>
@@ -686,6 +781,43 @@ const RegisterRecruteur = () => {
 
                 .input-group.focused .input-border {
                     width: 100%;
+                }
+
+                /* Map styling */
+                .map-group {
+                    margin-bottom: 0.5rem;
+                }
+                
+                .map-container {
+                    height: 300px;
+                    margin-bottom: 10px;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    border: 2px solid #e5e7eb;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                
+                .map-container:hover {
+                    border-color: #ff8c00;
+                    box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
+                }
+                
+                .map-helper-text {
+                    display: block;
+                    margin-bottom: 8px;
+                    color: #666;
+                    font-size: 0.8rem;
+                }
+                
+                /* Fix for Leaflet controls */
+                .leaflet-control-container .leaflet-top,
+                .leaflet-control-container .leaflet-bottom {
+                    z-index: 999 !important;
+                }
+                
+                .leaflet-container {
+                    font-family: inherit;
+                    border-radius: 12px;
                 }
 
                 .register-button {
