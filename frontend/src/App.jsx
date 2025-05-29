@@ -128,7 +128,7 @@ function App() {
   return (
     <Router>
  <SEO 
-        title="Default Site Title" 
+        title="Casajobs" 
         description="Default description for my app"
       />
   <ScrollToTop />  {/* ✅ good placement */}

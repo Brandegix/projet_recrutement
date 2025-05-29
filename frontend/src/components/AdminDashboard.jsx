@@ -7,6 +7,7 @@ import {
 } from 'recharts';
 import { FiHome, FiUsers, FiBriefcase, FiClipboard, FiBarChart ,FiLogOut} from 'react-icons/fi';
 import { Home, Users, Briefcase, Clipboard, BarChart3, LogOut, TrendingUp, Activity } from 'lucide-react'; // Importing Lucide icons
+import SEO from "./SEO";
 
 const AdminDashboard = () => {
     const [totalCandidates, setTotalCandidates] = useState(0);
@@ -324,7 +325,9 @@ const AdminDashboard = () => {
     }
 
     return (
+      
         <div className={`dashboard-container ${darkMode ? 'dark-mode' : ''}`} style={{ display: 'flex', minHeight: '100vh', backgroundColor: darkMode ? '#1a1a1a' : '#ffffff', fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif", transition: 'all 0.3s ease' }}>
+          
             <div className="sidebar">
                 <div className="sidebar-header"><h2>Casajobs.ma</h2></div>
                 <nav className="sidebar-nav">
@@ -364,7 +367,7 @@ const AdminDashboard = () => {
                     </ul>
                 </nav>
             </div>
-
+           
             <div style={styles.mainContent}>
                 <header style={styles.header}>
                     <h1 style={styles.headerTitle}>Statistiques</h1>

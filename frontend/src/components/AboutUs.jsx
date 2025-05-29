@@ -64,7 +64,7 @@ const AboutUs = () => {
     <>
       <Navbar />
        <SEO
-        title="About Our Website - Boostez votre avenir"
+        title="À propos"
         description="Trouvez des astuces pour réussir vos entretiens, améliorer votre CV et développer votre carrière."
         keywords="carrière, conseils, entretiens, CV, développement professionnel"
       /> 

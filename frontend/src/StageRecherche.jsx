@@ -95,7 +95,7 @@ const StageRecherche = () => {
     <>
       <Navbar />
       <SEO
-        title="Home Page - Boostez votre avenir"
+        title="Accueil"
         description="Trouvez des astuces pour réussir vos entretiens, améliorer votre CV et développer votre carrière."
         keywords="conseils carrière, réussir entretien, CV efficace, développement professionnel, formation, emploi, réseau professionnel"
       />
