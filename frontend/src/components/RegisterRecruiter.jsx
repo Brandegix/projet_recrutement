@@ -27,6 +27,7 @@ const RegisterRecruteur = () => {
     phoneNumber: "",
     companyName: "",
     address: "",
+    
     latitude: 33.573110,  // Default Casablanca
     longitude: -7.589843,
   })
@@ -341,6 +342,7 @@ const RegisterRecruteur = () => {
                   className={`input-group map-group ${focusedFields.address ? "focused" : ""} ${validations.address && formData.address ? "valid" : ""}`}
                   style={{ gridColumn: "1 / span 2" }}
                 >
+                    
                   <label className="input-label">
                     <FaMapMarkerAlt className="input-icon" />
                     Localisation
@@ -371,7 +373,9 @@ const RegisterRecruteur = () => {
                       placeholder="Adresse (cliquez sur la carte)"
                       className={`form-input ${!validations.address && formData.address ? "input-invalid" : ""} ${validations.address && formData.address ? "input-valid" : ""}`}
                     />
+                    
                     <div className="input-border"></div>
+                    
                   </div>
                 </div>
               </div>
