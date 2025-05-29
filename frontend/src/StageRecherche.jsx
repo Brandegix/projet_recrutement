@@ -173,6 +173,303 @@ const StageRecherche = () => {
             </div>
           </div>
         </section>
+         {/* Section Vidéo - Pourquoi nous choisir */}
+        <section
+          style={{
+            background: "linear-gradient(135deg, #0a0a0a 0%, #000000 100%)",
+            padding: "100px 0",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
+          {/* Éléments décoratifs d'arrière-plan */}
+          <div
+            style={{
+              position: "absolute",
+              top: "10%",
+              left: "-5%",
+              width: "200px",
+              height: "200px",
+              background: "radial-gradient(circle, rgba(255, 107, 53, 0.1) 0%, transparent 70%)",
+              borderRadius: "50%",
+              filter: "blur(40px)",
+            }}
+          ></div>
+          <div
+            style={{
+              position: "absolute",
+              bottom: "10%",
+              right: "-5%",
+              width: "300px",
+              height: "300px",
+              background: "radial-gradient(circle, rgba(255, 140, 66, 0.08) 0%, transparent 70%)",
+              borderRadius: "50%",
+              filter: "blur(60px)",
+            }}
+          ></div>
+
+          <div
+            style={{
+              maxWidth: "1200px",
+              margin: "0 auto",
+              padding: "0 20px",
+              textAlign: "center",
+              position: "relative",
+              zIndex: 2,
+            }}
+          >
+            {/* Badge décoratif */}
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                background: "linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(255, 140, 66, 0.1) 100%)",
+                border: "1px solid rgba(255, 107, 53, 0.3)",
+                borderRadius: "50px",
+                padding: "8px 20px",
+                marginBottom: "30px",
+                fontSize: "0.9rem",
+                color: "#ff6b35",
+                fontWeight: "500",
+              }}
+            >
+              <span
+                style={{
+                  width: "8px",
+                  height: "8px",
+                  background: "#ff6b35",
+                  borderRadius: "50%",
+                  animation: "pulse 2s infinite",
+                }}
+              ></span>
+              Découvrez notre approche
+            </div>
+
+            <h2
+              style={{
+                fontSize: "clamp(2rem, 4vw, 3.5rem)",
+                fontWeight: "700",
+                background: "linear-gradient(135deg, #ffffff 0%, #ff6b35 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                marginBottom: "20px",
+                lineHeight: "1.2",
+              }}
+            >
+              Pourquoi nous choisir ?
+            </h2>
+
+            <p
+              style={{
+                fontSize: "1.2rem",
+                color: "#cccccc",
+                maxWidth: "800px",
+                margin: "0 auto 60px",
+                lineHeight: "1.6",
+              }}
+            >
+              Découvrez comment nous transformons votre recherche d'emploi en une expérience unique et efficace
+            </p>
+
+            {/* Container vidéo avec design amélioré */}
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                maxWidth: "900px",
+                margin: "0 auto",
+                padding: "20px",
+                background: "linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(255, 140, 66, 0.05) 100%)",
+                borderRadius: "30px",
+                border: "1px solid rgba(255, 107, 53, 0.2)",
+              }}
+            >
+              {/* Effet de brillance */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: "0",
+                  left: "0",
+                  right: "0",
+                  height: "2px",
+                  background: "linear-gradient(90deg, transparent 0%, #ff6b35 50%, transparent 100%)",
+                  borderRadius: "30px 30px 0 0",
+                }}
+              ></div>
+
+              {/* Container vidéo interne */}
+              <div
+                style={{
+                  position: "relative",
+                  borderRadius: "20px",
+                  overflow: "hidden",
+                  boxShadow: "0 25px 50px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 107, 53, 0.1)",
+                  background: "#000000",
+                }}
+              >
+                {/* Overlay décoratif sur les coins */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "0",
+                    left: "0",
+                    width: "60px",
+                    height: "60px",
+                    background: "linear-gradient(135deg, rgba(255, 107, 53, 0.2) 0%, transparent 100%)",
+                    borderRadius: "0 0 60px 0",
+                    zIndex: 1,
+                  }}
+                ></div>
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "0",
+                    right: "0",
+                    width: "60px",
+                    height: "60px",
+                    background: "linear-gradient(225deg, rgba(255, 140, 66, 0.2) 0%, transparent 100%)",
+                    borderRadius: "0 0 0 60px",
+                    zIndex: 1,
+                  }}
+                ></div>
+
+                <video
+                  controls
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    display: "block",
+                    position: "relative",
+                    zIndex: 2,
+                  }}
+                  // poster="/path/to/your/video-poster.jpg"
+                >
+                  <source src="CASAJOB.mp4" type="video/mp4" />
+                  Votre navigateur ne supporte pas la lecture de vidéos.
+                </video>
+              </div>
+
+              {/* Indicateurs décoratifs */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "15px",
+                  marginTop: "25px",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    color: "#cccccc",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "12px",
+                      height: "12px",
+                      background: "linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)",
+                      borderRadius: "50%",
+                    }}
+                  ></div>
+                  Qualité HD
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    color: "#cccccc",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "12px",
+                      height: "12px",
+                      background: "linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)",
+                      borderRadius: "50%",
+                    }}
+                  ></div>
+                  Sous-titres disponibles
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    color: "#cccccc",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "12px",
+                      height: "12px",
+                      background: "linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)",
+                      borderRadius: "50%",
+                    }}
+                  ></div>
+                  2 min de lecture
+                </div>
+              </div>
+            </div>
+
+            {/* Call-to-action sous la vidéo */}
+            <div
+              style={{
+                marginTop: "50px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "20px",
+              }}
+            >
+              <p
+                style={{
+                  color: "#cccccc",
+                  fontSize: "1rem",
+                  margin: "0",
+                }}
+              >
+                Prêt à transformer votre carrière ?
+              </p>
+              <Link
+                to="/ContactUs"
+                style={{
+                  background: "linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)",
+                  color: "#ffffff",
+                  padding: "12px 30px",
+                  borderRadius: "50px",
+                  textDecoration: "none",
+                  fontWeight: "600",
+                  fontSize: "1rem",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  transition: "all 0.3s ease",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-2px)"
+                  e.currentTarget.style.boxShadow = "0 15px 30px rgba(255, 107, 53, 0.3)"
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)"
+                  e.currentTarget.style.boxShadow = "none"
+                }}
+              >
+                Commencer maintenant
+                <span style={{ fontSize: "0.9rem" }}>→</span>
+              </Link>
+            </div>
+          </div>
+        </section>
 
         {/* JobCards Section with Dark Background */}
         <div style={{
