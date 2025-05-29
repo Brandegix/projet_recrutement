@@ -154,6 +154,8 @@ class Recruiter(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     phoneNumber = db.Column(db.String(20), nullable=False)
     address = db.Column(db.String(255))
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
     companyName = db.Column(db.String(255), nullable=False)
     activity_domains = db.Column(db.String(255))
     description = db.Column(db.Text)
