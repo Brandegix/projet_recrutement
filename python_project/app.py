@@ -381,7 +381,24 @@ def subscribe_to_newsletter():
     db.session.commit()
 
     return jsonify({'message': 'Subscription successful'}), 200
-
+#Carte
+@app.route('/api/recruiter-locations', methods=['GET'])
+def get_recruiter_locations():
+        recruiters = Recruiter.query.filter(
+            Recruiter.address.isnot(None),
+            Recruiter.address != ''
+        ).all()
+        
+        locations = []
+        for recruiter in recruiters:
+            locations.append({
+                'id': recruiter.id,
+                'name': recruiter.name,
+                'companyName': recruiter.companyName,
+                'address': recruiter.address
+            })
+        
+        return jsonify(locations)
 
 @app.route('/api/newsletter/my-subscribers', methods=['GET'])
 @recruiter_required
