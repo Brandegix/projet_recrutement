@@ -1576,11 +1576,7 @@ def get_recruiter_profile():
         'selected_domains': selected_domains,
         'predefined_domains': predefined_domains,
         'public_profile' : recruiter.public_profile ,
-                'cover_image' : recruiter.cover_image ,
-
-        
- # <-- ADD THIS
-
+        'cover_image' : recruiter.cover_image 
     })
 
 

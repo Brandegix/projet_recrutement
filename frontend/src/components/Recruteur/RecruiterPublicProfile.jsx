@@ -85,9 +85,12 @@ function RecruiterPublicProfile() {
           <div
             style={{
               ...pageStyles.headerSection,
-              backgroundImage: profile.cover_image
-                ? `linear-gradient(135deg, rgba(0,0,0,0.9), rgba(255,107,53,0.2)), url(${process.env.REACT_APP_API_URL}${profile.cover_image})`
-                : 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #ff6b35 100%)'
+              background: profile?.cover_image
+        ? (() => {
+            console.log("Cover image URL in header:", profile.cover_image);
+            return `linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.85) 60%, transparent 100%), url(${profile.cover_image})`;
+          })()
+        : 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #ff6b35 100%)',
             }}
           >
             <div style={pageStyles.headerContent}>
