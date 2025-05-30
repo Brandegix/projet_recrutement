@@ -660,7 +660,7 @@ function CandidateProfile() {
                 <p style={{ margin: 0, fontSize: '0.95rem', color: '#555' }}>
                   <strong>CV actuel:</strong>{' '}
                   <a
-                    href={`${process.env.REACT_APP_API_URL}/uploads/${candidate.cv_filename}`}
+                    href={`${process.env.REACT_APP_API_URL}/uploads/cv/${candidate.cv_filename}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={styles.cvLink}
