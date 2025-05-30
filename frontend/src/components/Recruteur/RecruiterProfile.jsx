@@ -171,7 +171,10 @@ function RecruiterProfile() {
     },
     profileHeader: {
       background: profile?.cover_image
-        ? `linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.85) 60%, transparent 100%), url(${process.env.REACT_APP_API_URL}${profile.cover_image})`
+        ? (() => {
+            console.log("Cover image URL in header:", profile.cover_image);
+            return `linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.85) 60%, transparent 100%), url(${profile.cover_image})`;
+          })()
         : 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #ff6b35 100%)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
@@ -549,6 +552,8 @@ function RecruiterProfile() {
     onChange={handleCoverImageChange}
     id="coverImageUpload"
   />
+  
+
 </div>
 
           {/* Info Cards */}
