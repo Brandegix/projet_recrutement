@@ -1223,10 +1223,7 @@ def uploaded_profile_image(filename):
         # If it's already a full URL (from Cloudinary), redirect to it
         return redirect(filename)
     
-    # Otherwise, fall back to local file system for backward compatibility
-    upload_folder = os.path.join(os.getcwd(), 'uploads', 'profile_images')
-    return send_from_directory(upload_folder, filename)
-
+  
 # Recruiters profile image
 @app.route('/api/upload-profile-image-recruiter', methods=['POST'])
 def upload_profile_image_recruiter():

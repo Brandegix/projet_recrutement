@@ -190,7 +190,7 @@ function App() {
         <Route path="/JobOfferForm" element={<JobOfferForm />} />
         <Route path="/EditRecruiterProfile" element={<EditRecruiterProfile/>} />
         <Route path="/edit-offer/:offerId" element={<EditJobOfferForm />} />
-        <Route path="/AdminLogin" element={<AdminLogin />} />
+        <Route path="/d512e7c9-16fa-4151-95d9-3cacdeed3d9c-4b2f-8e1a-7c6d-admin9f0e-2a3b-4c5d-6e7f-1234-567log8-90ab-cdef-0123-in4567-89ab" element={<AdminLogin />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/ManageCandidates" element={<ManageCandidates />} />
         <Route path="/ManageRecruiters" element={<ManageRecruiters />} />
