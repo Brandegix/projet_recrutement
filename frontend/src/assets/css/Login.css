@@ -38,19 +38,19 @@
   color: #333;
 }
 
-.login-form .input-group {
+.login-form1 .input-group {
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
 }
 
-.login-form label {
+.login-form1 label {
   font-weight: 600;
   margin-bottom: 8px;
   color: #555;
 }
 
-.login-form input {
+.login-form1 input {
   padding: 12px 15px;
   border: 1px solid #ddd;
   border-radius: 10px;
@@ -59,7 +59,7 @@
   transition: border-color 0.3s;
 }
 
-.login-form input:focus {
+.login-form1 input:focus {
   border-color: #ff4400;
   box-shadow: 0 0 5px rgba(255, 68, 0, 0.3);
 }
@@ -104,7 +104,7 @@
     font-size: 20px;
   }
 
-  .login-form input {
+  .login-form1 input {
     font-size: 13px;
   }
 

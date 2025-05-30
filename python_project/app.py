@@ -15,7 +15,7 @@ from flask_session import Session
 from models import db, Candidate, Recruiter, JobOffer, Application
 from flask_socketio import SocketIO
 from middleware import role_required, socket_role_required, auth_required, socket_auth_required, ROLES, handle_error
-
+from job_matcher import calculate_skill_match
 
 
 app = Flask(__name__)
@@ -131,6 +131,8 @@ class Candidate(db.Model):
     cv_filename = db.Column(db.String(255))
     profile_image = db.Column(db.String(255))  # 🔧 AJOUT ICI
     reset_token = db.Column(db.String(255), nullable=True)  # ✅ Add this line
+    notification_enabled = db.Column(db.Boolean, default=True)
+    
     def set_skills(self, skills_list):
         self.skills = json.dumps(skills_list)
 
@@ -2479,6 +2481,9 @@ def create_job_offer():
     try:
         db.session.add(job_offer)
         db.session.commit()
+
+        notify_matching_candidates(job_offer)
+
         return jsonify({'message': 'Job offer created successfully'}), 201
     except Exception as e:
         db.session.rollback()
@@ -2488,6 +2493,161 @@ def create_job_offer():
             error_message="Une erreur est survenue lors de la création de l'offre.",
             error_details=str(e)
         ), 500
+
+#-----------------------Start notification matching function
+
+def notify_matching_candidates(job_offer):
+    """Notify candidates with matching skills about a new job"""
+    try:
+        # Get candidates with notifications enabled
+        candidates = Candidate.query.filter_by(
+            notification_enabled=True  # Only check main notification toggle
+        ).all()
+        
+        print(f"Found {len(candidates)} candidates with notifications enabled")
+        
+        notification_count = 0
+        
+        for candidate in candidates:
+            # Calculate match
+            match_percentage, matching_skills = calculate_skill_match(candidate.skills, job_offer.skills)
+            print(f"Candidate {candidate.name}: {len(matching_skills)} matching skills with {job_offer.title}")
+            
+            # Only notify if AT LEAST 3 MATCHING SKILLS
+            if len(matching_skills) >= 3:
+                send_job_match_email(candidate, job_offer, match_percentage, matching_skills)
+                notification_count += 1
+                print(f"Email sent to {candidate.email}")
+            else:
+                print(f"Not enough matching skills ({len(matching_skills)}/3) for {candidate.name}")
+                
+        print(f"Sent notifications to {notification_count} candidates about job: {job_offer.title}")
+    except Exception as e:
+        print(f"Error sending job match notifications: {str(e)}")
+        import traceback
+        traceback.print_exc()
+
+def send_job_match_email(candidate, job_offer, match_percentage, matching_skills):
+    """Send email about matching job"""
+    try:
+        subject = f"New Job Opportunity Matching Your Skills - {job_offer.title}"
+        
+        html_content = f"""
+        <html>
+        <head>
+            <style>
+                body {{
+                    font-family: 'Arial', sans-serif;
+                    background-color: #ffffff;
+                    color: #222;
+                    padding: 20px;
+                }}
+                .container {{
+                    padding: 20px;
+                    max-width: 600px;
+                    margin: 0 auto;
+                }}
+                .header {{
+                    background-color: #E67E22;
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                    font-size: 24px;
+                    font-weight: bold;
+                    border-radius: 8px 8px 0 0;
+                }}
+                .match-info {{
+                    padding: 20px;
+                    background: #f9f9f9;
+                    border-radius: 0 0 8px 8px;
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                }}
+                .footer {{
+                    margin-top: 30px;
+                    font-size: 14px;
+                    color: #555;
+                    text-align: center;
+                    border-top: 2px solid #E67E22;
+                    padding-top: 15px;
+                }}
+                .info {{
+                    margin-bottom: 15px;
+                    padding: 10px;
+                    background: #fff;
+                    border-left: 5px solid #E67E22;
+                    border-radius: 6px;
+                }}
+                .button {{
+                    display: inline-block;
+                    background-color: #E67E22;
+                    color: white;
+                    padding: 10px 20px;
+                    text-decoration: none;
+                    border-radius: 4px;
+                    font-weight: bold;
+                    margin-top: 15px;
+                }}
+                .skills {{
+                    display: inline-block;
+                    background: #eee;
+                    padding: 2px 8px;
+                    margin: 2px;
+                    border-radius: 3px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">New Job Match Found!</div>
+                
+                <div class="match-info">
+                    <p>Hello {candidate.name},</p>
+                    <p>We found a new job offer that matches your skills!</p>
+                    
+                    <div class="info">
+                        <strong>Position:</strong> {job_offer.title}
+                    </div>
+                    <div class="info">
+                        <strong>Company:</strong> {job_offer.company}
+                    </div>
+                    <div class="info">
+                        <strong>Location:</strong> {job_offer.location}
+                    </div>
+                    <div class="info">
+                        <strong>Match:</strong> {match_percentage:.1f}%
+                    </div>
+                    <div class="info">
+                        <strong>Matching Skills:</strong>
+                        <p>{"".join('<span class="skills">' + skill + '</span> ' for skill in matching_skills)}</p>
+                    </div>
+                    
+                    <p>
+                        <a href="http://localhost:5000/job/{job_offer.id}" class="button">View Job Details</a>
+                    </p>
+                    
+                    <p>Good luck with your application!</p>
+                </div>
+                
+                <div class="footer">
+                    &copy; 2025 CasaJobs | Recrutement simplifié
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        msg = Message(
+            subject=subject,
+            recipients=[candidate.email],
+            html=html_content
+        )
+        
+        mail.send(msg)
+        print(f"Job match notification sent to {candidate.email}")
+        return True
+    except Exception as e:
+        print(f"Error sending email: {str(e)}")
+        return False
 
 
 @app.route('/api/job_offersr', methods=['GET'])
@@ -2798,6 +2958,237 @@ def get_applicationsss():
             print(applications_list)
 
     return jsonify(applications_list)
+
+#-------------------------Notification preference
+# Get notification settings
+@app.route('/api/candidate/notification-settings', methods=['GET'])
+def get_notification_settings():
+    candidate_id = session.get('user_id')
+    if not candidate_id:
+        return jsonify({"error": "Not authenticated"}), 401
+        
+    candidate = Candidate.query.get(candidate_id)
+    if not candidate:
+        return jsonify({"error": "Candidate not found"}), 404
+        
+    return jsonify({
+        "notification_enabled": candidate.notification_enabled
+    })
+
+# Update notification settings
+@app.route('/api/candidate/notification-settings', methods=['PUT'])
+def update_notification_settings():
+    candidate_id = session.get('user_id')
+    if not candidate_id:
+        return jsonify({"error": "Not authenticated"}), 401
+        
+    candidate = Candidate.query.get(candidate_id)
+    if not candidate:
+        return jsonify({"error": "Candidate not found"}), 404
+    
+    data = request.json
+    
+    # Update notification settings
+    candidate.notification_enabled = data.get('notification_enabled', candidate.notification_enabled)
+
+    db.session.commit()
+    
+    return jsonify({"message": "Notification settings updated successfully"})
+#-----------------------End Notifications preference
+                        ######Omar's function
+#-----------------------Test and Debug Endpoints for sending email
+
+# @app.route('/api/test-email', methods=['GET'])
+# def test_email():
+#     if 'user_id' not in session:
+#         return jsonify({"error": "Not authenticated"}), 401
+        
+#     candidate = Candidate.query.get(session['user_id'])
+#     if not candidate:
+#         return jsonify({"error": "Candidate not found"}), 404
+        
+#     try:
+#         msg = Message(
+#             subject="Test Email from CasaJobs",
+#             recipients=[candidate.email],
+#             html=f"""
+#             <html>
+#             <body>
+#                 <h2>Test Email</h2>
+#                 <p>Hello {candidate.name},</p>
+#                 <p>This is a test email to verify that the notification system is working correctly.</p>
+#                 <p>Your notification settings:</p>
+#                 <ul>
+#                     <li>Notification enabled: {candidate.notification_enabled}</li>
+#                 </ul>
+#                 <p>Best regards,<br>CasaJobs Team</p>
+#             </body>
+#             </html>
+#             """
+#         )
+#         mail.send(msg)
+#         return jsonify({"message": f"Test email sent successfully to {candidate.email}"}), 200
+#     except Exception as e:
+#         print(f"Error sending test email: {str(e)}")
+#         return jsonify({"error": f"Failed to send test email: {str(e)}"}), 500
+
+
+
+
+def notify_matching_candidates(job_offer):
+    """Notify candidates with matching skills about a new job"""
+    try:
+        # Get candidates with notifications enabled
+        candidates = Candidate.query.filter_by(
+            notification_enabled=True  # Only check main notification toggle
+        ).all()
+        
+        print(f"Found {len(candidates)} candidates with notifications enabled")
+        
+        notification_count = 0
+        
+        for candidate in candidates:
+            # Calculate match
+            match_percentage, matching_skills = calculate_skill_match(candidate.skills, job_offer.skills)
+            print(f"Candidate {candidate.name}: {len(matching_skills)} matching skills with {job_offer.title}")
+            
+            # Only notify if AT LEAST 3 MATCHING SKILLS
+            if len(matching_skills) >= 3:
+                send_job_match_email(candidate, job_offer, match_percentage, matching_skills)
+                notification_count += 1
+                print(f"Email sent to {candidate.email}")
+            else:
+                print(f"Not enough matching skills ({len(matching_skills)}/3) for {candidate.name}")
+                
+        print(f"Sent notifications to {notification_count} candidates about job: {job_offer.title}")
+    except Exception as e:
+        print(f"Error sending job match notifications: {str(e)}")
+        import traceback
+        traceback.print_exc()
+
+def send_job_match_email(candidate, job_offer, match_percentage, matching_skills):
+    """Send email about matching job"""
+    try:
+        subject = f"New Job Opportunity Matching Your Skills - {job_offer.title}"
+        
+        html_content = f"""
+        <html>
+        <head>
+            <style>
+                body {{
+                    font-family: 'Arial', sans-serif;
+                    background-color: #ffffff;
+                    color: #222;
+                    padding: 20px;
+                }}
+                .container {{
+                    padding: 20px;
+                    max-width: 600px;
+                    margin: 0 auto;
+                }}
+                .header {{
+                    background-color: #E67E22;
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                    font-size: 24px;
+                    font-weight: bold;
+                    border-radius: 8px 8px 0 0;
+                }}
+                .match-info {{
+                    padding: 20px;
+                    background: #f9f9f9;
+                    border-radius: 0 0 8px 8px;
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                }}
+                .footer {{
+                    margin-top: 30px;
+                    font-size: 14px;
+                    color: #555;
+                    text-align: center;
+                    border-top: 2px solid #E67E22;
+                    padding-top: 15px;
+                }}
+                .info {{
+                    margin-bottom: 15px;
+                    padding: 10px;
+                    background: #fff;
+                    border-left: 5px solid #E67E22;
+                    border-radius: 6px;
+                }}
+                .button {{
+                    display: inline-block;
+                    background-color: #E67E22;
+                    color: white;
+                    padding: 10px 20px;
+                    text-decoration: none;
+                    border-radius: 4px;
+                    font-weight: bold;
+                    margin-top: 15px;
+                }}
+                .skills {{
+                    display: inline-block;
+                    background: #eee;
+                    padding: 2px 8px;
+                    margin: 2px;
+                    border-radius: 3px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">New Job Match Found!</div>
+                
+                <div class="match-info">
+                    <p>Hello {candidate.name},</p>
+                    <p>We found a new job offer that matches your skills!</p>
+                    
+                    <div class="info">
+                        <strong>Position:</strong> {job_offer.title}
+                    </div>
+                    <div class="info">
+                        <strong>Company:</strong> {job_offer.company}
+                    </div>
+                    <div class="info">
+                        <strong>Location:</strong> {job_offer.location}
+                    </div>
+                    <div class="info">
+                        <strong>Match:</strong> {match_percentage:.1f}%
+                    </div>
+                    <div class="info">
+                        <strong>Matching Skills:</strong>
+                        <p>{"".join(f'<span class="skills">{{skill}}</span> ' for skill in matching_skills)}</p>
+                    </div>
+                    
+                    <p>
+                        <a href="http://localhost:5000/job/{job_offer.id}" class="button">View Job Details</a>
+                    </p>
+                    
+                    <p>Good luck with your application!</p>
+                </div>
+                
+                <div class="footer">
+                    &copy; 2025 CasaJobs | Recrutement simplifié
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        msg = Message(
+            subject=subject,
+            recipients=[candidate.email],
+            html=html_content
+        )
+        
+        mail.send(msg)
+        print(f"Job match notification sent to {candidate.email}")
+        return True
+    except Exception as e:
+        print(f"Error sending email: {str(e)}")
+        return False
+
+
 
 
 # Number of applications per candidate
@@ -3506,7 +3897,21 @@ def handle_send_message(data):
         except Exception as e:
             print(f"Error sending email: {e}")
 
-
+@app.route('/api/test-job-notifications/<int:job_id>', methods=['GET'])
+def test_job_notifications(job_id):
+    """Test sending notifications for a specific job offer"""
+    if 'user_id' not in session:
+        return jsonify({"error": "Not authenticated"}), 401
+        
+    job_offer = JobOffer.query.get(job_id)
+    if not job_offer:
+        return jsonify({"error": "Job offer not found"}), 404
+        
+    try:
+        notify_matching_candidates(job_offer)
+        return jsonify({"message": "Notification test completed. Check server logs for details."}), 200
+    except Exception as e:
+        return jsonify({"error": f"Error: {str(e)}"}), 500
 
 @socketio.on('subscribe_notifications')
 def handle_subscribe_notifications(data):
