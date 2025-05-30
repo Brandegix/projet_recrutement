@@ -16,8 +16,11 @@ from models import db, Candidate, Recruiter, JobOffer, Application
 from flask_socketio import SocketIO
 from middleware import role_required, socket_role_required, auth_required, socket_auth_required, ROLES, handle_error
 from job_matcher import calculate_skill_match
-
-
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+from cloudinary.utils import cloudinary_url
+from flask import redirect
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -25,7 +28,13 @@ socketio = SocketIO(app, cors_allowed_origins="*", manage_session=False)  # Init
 # Initialisation de l'application Flask
 
 
-
+# Replace your existing cloudinary.config block
+cloudinary.config(
+    cloud_name = "dkpzxzvpo",
+    api_key = "825771398219969",
+    api_secret = "cpmf2RcIpxub6r0J0TCJAvFCeuc",  # Replace with your actual secret
+    secure = True
+)
 
 # Configuration des erreurs
 @app.errorhandler(401)
@@ -1209,25 +1218,20 @@ def allowed_file1(filename):
 
 @app.route('/uploads/profile_images/<path:filename>')
 def uploaded_profile_image(filename):
-    # Ensure this path matches where the files are being saved
+    # Check if the filename is actually a Cloudinary URL
+    if filename.startswith(('http://', 'https://')):
+        # If it's already a full URL (from Cloudinary), redirect to it
+        return redirect(filename)
+    
+    # Otherwise, fall back to local file system for backward compatibility
     upload_folder = os.path.join(os.getcwd(), 'uploads', 'profile_images')
     return send_from_directory(upload_folder, filename)
 
 # Recruiters profile image
 @app.route('/api/upload-profile-image-recruiter', methods=['POST'])
 def upload_profile_image_recruiter():
-    print('abc')
-
-    print('Request files:', request.files)
-    file = request.files.get('profile_image')
-    print('File:', file)
-    print('Filename:', file.filename)
-    print('Allowed file?', allowed_file1(file.filename))
-    print("File Extension:", file.filename.rsplit('.', 1)[1].lower())
-
     recruiter_id = session.get('user_id')
-    print("Session :", session)
-
+    print("Cloudinary config:", cloudinary.config().cloud_name, cloudinary.config().api_key)  # ✅ DEBUG LINE
     if not recruiter_id:
         return jsonify({'message': 'Recruiter not logged in'}), 401
 
@@ -1239,23 +1243,26 @@ def upload_profile_image_recruiter():
         return jsonify({'message': 'No selected file'}), 400
 
     if file and allowed_file1(file.filename):
-        filename = secure_filename(file.filename)
-        new_filename = f"recruiter_{recruiter_id}_{filename}"
-        save_path = os.path.join(UPLOAD_FOLDER1, new_filename)
-
-        # ➕ Créer le dossier s'il n'existe pas
-        os.makedirs(os.path.dirname(save_path), exist_ok=True)
-
-        file.save(save_path)
-
-        # 🔁 Mise à jour dans la base de données
+        # Upload to Cloudinary
+        upload_result = cloudinary.uploader.upload(
+            file,
+            folder=f"recruiters/profile_images",
+            public_id=f"recruiter_{recruiter_id}_{int(datetime.now().timestamp())}",
+            overwrite=True
+        )
+        
+        # Get the secure URL from the result
+        image_url = upload_result['secure_url']
+        
+        # Update database with Cloudinary URL
         recruiter = Recruiter.query.get(recruiter_id)
-        recruiter.profile_image = new_filename
-        print(recruiter.profile_image)
-
+        recruiter.profile_image = image_url
         db.session.commit()
 
-        return jsonify({'message': 'Profile image uploaded successfully', 'filename': recruiter.profile_image}), 200
+        return jsonify({
+            'message': 'Profile image uploaded successfully', 
+            'filename': image_url
+        }), 200
 
     return jsonify({'message': 'Invalid file type'}), 400
 
@@ -1289,11 +1296,21 @@ def get_job_offers_statistics():
 
 
 
+def allowed_file(filename):
+    allowed_extensions = {'pdf', 'doc', 'docx'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 @app.route('/uploads/cv/<path:cv_filename>')
 def uploaded_cv(cv_filename):
-    # Ensure this path matches where the files are being saved
+    # Check if the filename is actually a Cloudinary URL
+    if cv_filename.startswith(('http://', 'https://')):
+        # If it's already a full URL (from Cloudinary), redirect to it
+        return redirect(cv_filename)
+    
+    # Otherwise, fall back to local file system for backward compatibility
     upload_folder = os.path.join(os.getcwd(), 'uploads')
     return send_from_directory(upload_folder, cv_filename)
+
+
 
 from flask import request, jsonify, session
 
@@ -1578,31 +1595,55 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/api/upload-cover-image-recruiter', methods=['POST'])
 def upload_cover_image():
-    recruiter_id = session.get('user_id')  # You can get it from auth if needed
-    file = request.files.get('cover_image')
+    recruiter_id = session.get('user_id')
+    
+    if not recruiter_id:
+        return jsonify({'message': 'Recruiter not logged in'}), 401
 
-    if not file or not allowed_file1(file.filename):
-        return jsonify({'error': 'Invalid file'}), 400
+    if 'cover_image' not in request.files:
+        return jsonify({'message': 'No file part'}), 400
 
-    filename = secure_filename(f"cover_{recruiter_id}_{file.filename}")
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    file.save(filepath)
+    file = request.files['cover_image']
+    if file.filename == '':
+        return jsonify({'message': 'No selected file'}), 400
 
-    recruiter = Recruiter.query.get(recruiter_id)
-    if not recruiter:
-     return jsonify({'error': 'Recruiter not found'}), 404
+    if file and allowed_file1(file.filename):
+        # Upload to Cloudinary
+        upload_result = cloudinary.uploader.upload(
+            file,
+            folder=f"recruiters/cover_images",
+            public_id=f"cover_{recruiter_id}_{int(datetime.now().timestamp())}",
+            overwrite=True
+        )
+        
+        # Get the secure URL from the result
+        image_url = upload_result['secure_url']
+        
+        # Update database with Cloudinary URL
+        recruiter = Recruiter.query.get(recruiter_id)
+        if not recruiter:
+            return jsonify({'error': 'Recruiter not found'}), 404
+            
+        recruiter.cover_image = image_url
+        db.session.commit()
 
-    recruiter.cover_image = f"/uploads/cover_images/{filename}"
-    db.session.commit()
+        return jsonify({
+            'message': 'Cover image uploaded successfully', 
+            'cover_image': image_url
+        }), 200
 
-
-
-    return jsonify({'cover_image': f"/uploads/cover_images/{filename}"}), 200
+    return jsonify({'message': 'Invalid file type'}), 400
 
 # Serve uploaded images
 @app.route('/uploads/cover_images/<filename>')
 def uploaded_cover_image(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    # Check if the filename is actually a Cloudinary URL
+    if filename.startswith(('http://', 'https://')):
+        # If it's already a full URL (from Cloudinary), redirect to it
+        return redirect(filename)
+    
+    # Otherwise, fall back to local file system for backward compatibility
+    # return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 @app.route('/api/recruiter/public-profile/<int:recruiter_id>', methods=['GET'])
 def get_specific_recruiter_profile(recruiter_id):
     recruiter = Recruiter.query.get(recruiter_id)
@@ -1687,19 +1728,9 @@ def get_last_job_offers(recruiter_id):
 @app.route('/api/upload-profile-image', methods=['POST'])
 @candidate_required
 def upload_profile_image():
-    print('abc')
-
-    print('Request files:', request.files)
-    file = request.files.get('profile_image')
-    print('File:', file)
-    print('Filename:', file.filename)
-    print('Allowed file?', allowed_file1(file.filename))
-    print("File Extension:", file.filename.rsplit('.', 1)[1].lower())
-
     candidate_id = session.get('user_id')
-    print("Session :", session)
-
-
+    print("Cloudinary config:", cloudinary.config().cloud_name, cloudinary.config().api_key)  # Debug line
+    
     if not candidate_id:
         return jsonify({'message': 'Candidate not logged in'}), 401
 
@@ -1711,22 +1742,28 @@ def upload_profile_image():
         return jsonify({'message': 'No selected file'}), 400
 
     if file and allowed_file1(file.filename):
-        filename = secure_filename(file.filename)
-        save_path = os.path.join(UPLOAD_FOLDER1, f"candidate_{candidate_id}_{filename}")
-        file.save(save_path)
-
-        # Now update your Candidate database record with the filename
+        # Upload to Cloudinary
+        upload_result = cloudinary.uploader.upload(
+            file,
+            folder=f"candidates/profile_images",
+            public_id=f"candidate_{candidate_id}_{int(datetime.now().timestamp())}",
+            overwrite=True
+        )
+        
+        # Get the secure URL from the result
+        image_url = upload_result['secure_url']
+        
+        # Update database with Cloudinary URL
         candidate = Candidate.query.get(candidate_id)
-        candidate.profile_image = f"candidate_{candidate_id}_{filename}"
-        print(candidate.profile_image)  # Check if it's correctly set
-
+        candidate.profile_image = image_url
         db.session.commit()
 
-        return jsonify({'message': 'Profile image uploaded successfully', 'filename': candidate.profile_image}), 200
+        return jsonify({
+            'message': 'Profile image uploaded successfully', 
+            'filename': image_url
+        }), 200
 
     return jsonify({'message': 'Invalid file type'}), 400
-
-
 
     # static profile
 
@@ -3245,6 +3282,7 @@ CORS(app, resources={r"/api/upload-cv/*": {"origins": "http://localhost:3000"}},
 def upload_cv():
     candidate_id = session.get('user_id')
     print("Session data:", session)
+    
     if 'cv' not in request.files:
         return jsonify({'error': 'No file part'}), 400
 
@@ -3253,24 +3291,30 @@ def upload_cv():
         return jsonify({'error': 'No selected file'}), 400
 
     if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        app.config['UPLOAD_FOLDER'] = 'uploads/'  # make sure this folder exists
-        upload_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(upload_path)
-
-        # Save filename in database
+        # Upload to Cloudinary with resource_type="auto" for documents
+        upload_result = cloudinary.uploader.upload(
+            file,
+            folder="candidates/cv",
+            resource_type="auto",  # Auto-detect file type (important for PDFs/DOCs)
+            public_id=f"cv_{candidate_id}_{int(datetime.now().timestamp())}",
+            overwrite=True
+        )
+        
+        # Get the secure URL from the result
+        cv_url = upload_result['secure_url']
+        
+        # Save URL in database
         candidate = Candidate.query.get(candidate_id)
         if candidate:
-            candidate.cv_filename = filename
+            candidate.cv_filename = cv_url  # Store the full URL
             db.session.commit()
 
-        return jsonify({'message': 'File uploaded successfully'}), 200
+        return jsonify({
+            'message': 'File uploaded successfully',
+            'url': cv_url
+        }), 200
 
     return jsonify({'error': 'Invalid file type'}), 400
-
-def allowed_file(filename):
-    allowed_extensions = {'pdf', 'doc', 'docx'}
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 
 
@@ -3601,8 +3645,6 @@ def notify_recruiter(job_offer_id):
         job_offer = JobOffer.query.get(application.job_offer_id)
         recruiter = Recruiter.query.get(job_offer.recruiter_id)
 
-        cv_path = f"uploads/{candidate.cv_filename}"
-
         # Email content with new fields
         subject = f"Nouvelle candidature pour le poste: {job_offer.title}"
         html_body = f"""
@@ -3680,12 +3722,47 @@ def notify_recruiter(job_offer_id):
 
         msg = Message(subject=subject, recipients=[recruiter.email], html=html_body)
 
-        # Attach CV
-        with open(cv_path, 'rb') as cv_file:
-            msg.attach(filename=candidate.cv_filename, content_type='application/pdf', data=cv_file.read())
+        # Check if CV is stored in Cloudinary or locally
+        cv_filename = candidate.cv_filename
+        if cv_filename.startswith(('http://', 'https://')):
+            # For Cloudinary URLs - download the file first
+            try:
+                import requests
+                response = requests.get(cv_filename)
+                if response.status_code == 200:
+                    # Extract the actual filename from the URL or use a generic one
+                    file_ext = cv_filename.split('.')[-1] if '.' in cv_filename else 'pdf'
+                    attachment_filename = f"CV_{candidate.name}.{file_ext}"
+                    
+                    # Attach the downloaded content to the email
+                    msg.attach(
+                        filename=attachment_filename,
+                        content_type='application/pdf',
+                        data=response.content
+                    )
+                else:
+                    print(f"Failed to download CV from Cloudinary: {response.status_code}")
+                    # Include a message in the email that the CV couldn't be attached
+                    html_body += "<p style='color:red'>Note: Le CV n'a pas pu être joint à cet email.</p>"
+                    msg.html = html_body
+            except Exception as e:
+                print(f"Error downloading CV from Cloudinary: {e}")
+                # Include a message in the email that the CV couldn't be attached
+                html_body += "<p style='color:red'>Note: Le CV n'a pas pu être joint à cet email.</p>"
+                msg.html = html_body
+        else:
+            # For local files (legacy support)
+            try:
+                cv_path = f"uploads/{cv_filename}"
+                with open(cv_path, 'rb') as cv_file:
+                    msg.attach(filename=cv_filename, content_type='application/pdf', data=cv_file.read())
+            except FileNotFoundError:
+                print(f"CV file not found: {cv_path}")
+                # Include a message in the email that the CV couldn't be attached
+                html_body += "<p style='color:red'>Note: Le CV n'a pas pu être joint à cet email.</p>"
+                msg.html = html_body
 
         mail.send(msg)
-
         return jsonify({"message": "Recruiter notified successfully."}), 200
 
     except Exception as e:

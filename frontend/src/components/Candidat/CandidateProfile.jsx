@@ -660,15 +660,16 @@ function CandidateProfile() {
                 <p style={{ margin: 0, fontSize: '0.95rem', color: '#555' }}>
                   <strong>CV actuel:</strong>{' '}
                   <a
-                    href={`${process.env.REACT_APP_API_URL}/uploads/${candidate.cv_filename}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={styles.cvLink}
-                    onMouseEnter={(e) => e.target.style.color = '#e55a2b'}
-                    onMouseLeave={(e) => e.target.style.color = '#ff6b35'}
-                  >
-                    {candidate.cv_filename}
-                  </a>
+                      href={candidate.cv_filename?.startsWith('http') 
+                        ? candidate.cv_filename  // Direct link to Cloudinary URL
+                        : `${process.env.REACT_APP_API_URL}/uploads/cv/${candidate.cv_filename}`} // Local path
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {candidate.cv_filename?.startsWith('http') 
+                        ? 'View CV' 
+                        : candidate.cv_filename}
+                    </a>
                 </p>
               </div>
             ) : (
