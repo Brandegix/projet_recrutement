@@ -620,7 +620,7 @@ function CandidateProfile() {
 
           {/* CV Upload Section */}
           <div style={styles.cvSection}>
-            <h4 style={styles.cardTitle}> Téléchargez votre CV</h4>
+            <h4 style={styles.cardTitle}> Téléchargez votre CV  (format PDF)</h4>
             
             <form onSubmit={handleCvUpload} style={styles.cvForm}>
               <input
@@ -660,15 +660,15 @@ function CandidateProfile() {
                 <p style={{ margin: 0, fontSize: '0.95rem', color: '#555' }}>
                   <strong>CV actuel:</strong>{' '}
                   <a
-                    href={`${process.env.REACT_APP_API_URL}/uploads/cv/${candidate.cv_filename}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={styles.cvLink}
-                    onMouseEnter={(e) => e.target.style.color = '#e55a2b'}
-                    onMouseLeave={(e) => e.target.style.color = '#ff6b35'}
-                  >
-                    {candidate.cv_filename}
-                  </a>
+  href={candidate.cv_filename}
+  download // Forces download instead of opening
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  Voir CV
+</a>
+
+
                 </p>
               </div>
             ) : (

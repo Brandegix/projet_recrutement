@@ -34,7 +34,7 @@ export default function CarteComponent() {
     const fetchRecruiters = async () => {
       try {
         // Get recruiters from API
-        const response = await axios.get('http://localhost:5000/api/recruiter-locations');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/recruiter-locations`);
         console.log('Fetched recruiters:', response.data);
         
         // Add a delay function to respect Nominatim rate limits

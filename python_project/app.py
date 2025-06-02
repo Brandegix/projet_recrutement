@@ -597,7 +597,7 @@ def get_job_with_logo(id):
             "salary": job.salary,
             "type": job.type,
             "recruiter_id": job.recruiter_id,
-            "logo": f"http://localhost:5000/uploads/profile_images/{profile_image}" if profile_image else None
+            "logo": f"{request.host_url}uploads/profile_images/{profile_image}"
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -1292,12 +1292,22 @@ def get_job_offers_statistics():
     })
 
 
+from flask import request, redirect, send_from_directory
+import os
 
 def allowed_file(filename):
     allowed_extensions = {'pdf', 'doc', 'docx'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
-@app.route('/uploads/cv/<path:cv_filename>')
-def uploaded_cv(cv_filename):
+
+@app.route('/uploads/cv/', methods=['GET'])
+@app.route('/uploads/cv/<path:cv_filename>', methods=['GET'])
+def uploaded_cv(cv_filename=None):
+    # If no filename in path, check query parameter
+    if cv_filename is None:
+        cv_filename = request.args.get('url')
+        if not cv_filename:
+            return "CV filename not provided", 400
+    
     # Check if the filename is actually a Cloudinary URL
     if cv_filename.startswith(('http://', 'https://')):
         # If it's already a full URL (from Cloudinary), redirect to it
@@ -1305,10 +1315,13 @@ def uploaded_cv(cv_filename):
     
     # Otherwise, fall back to local file system for backward compatibility
     upload_folder = os.path.join(os.getcwd(), 'uploads')
+    
+    # Check if file exists
+    file_path = os.path.join(upload_folder, cv_filename)
+    if not os.path.exists(file_path):
+        return "CV file not found", 404
+    
     return send_from_directory(upload_folder, cv_filename)
-
-
-
 from flask import request, jsonify, session
 
 
@@ -2652,7 +2665,7 @@ def send_job_match_email(candidate, job_offer, match_percentage, matching_skills
                     </div>
                     
                     <p>
-                        <a href="http://localhost:5000/job/{job_offer.id}" class="button">View Job Details</a>
+<a href="{{ url_for('job_detail', job_id=job_offer.id) }}" class="button">View Job Details</a>
                     </p>
                     
                     <p>Good luck with your application!</p>
@@ -2748,7 +2761,7 @@ def get_job_offers_with_logos():
             "salary": offer.JobOffer.salary,
             "type": offer.JobOffer.type,
             "recruiter_id": offer.JobOffer.recruiter_id,
-            "logo": f"http://localhost:5000/uploads/profile_images/{offer.profile_image}" if offer.profile_image else None
+            "logo": f"{request.host_url}uploads/profile_images/{profile_image}"
         } for offer in offers]
 
         return jsonify(offers_list)
@@ -3191,7 +3204,7 @@ def send_job_match_email(candidate, job_offer, match_percentage, matching_skills
                     </div>
                     
                     <p>
-                        <a href="http://localhost:5000/job/{job_offer.id}" class="button">View Job Details</a>
+<a href="{{ url_for('job_detail', job_id=job_offer.id) }}" class="button">View Job Details</a>
                     </p>
                     
                     <p>Good luck with your application!</p>
