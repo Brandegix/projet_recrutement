@@ -61,18 +61,24 @@ def after_request(response):
     return response
 
 # Configuration de la clé secrète pour les sessions
-app.secret_key = 'mysupersecretkey'  # Clé secrète pour les sessions
+app.secret_key = os.getenv("SECRET_KEY")  # Load secret from env variable
+
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-app.config["SESSION_COOKIE_SECURE"] = False
+app.config["SESSION_COOKIE_SECURE"] = True  # True for HTTPS in production
+
 
 
 
 # Configuration de la session
-app.config['SECRET_KEY'] = 'votre_clé_secrète'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')  # e.g. set SECRET_KEY in your .env or server env
 app.config['SESSION_TYPE'] = 'filesystem'  # Ou 'redis', si vous utilisez Redis pour stocker la session
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)  # Expire après 7 jours
 # Configuration CORS plus complète
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, 
+import os
+
+frontend_origin = os.getenv("FRONTEND_ORIGIN", "http://localhost:3000")  # fallback for dev
+
+CORS(app, resources={r"/*": {"origins": frontend_origin}},
      supports_credentials=True,
      allow_headers=["Content-Type", "Authorization"],
      methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -379,6 +385,23 @@ def recruiter_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
+def create_admin(username, email, password):
+    """Creates an admin user inside Flask's application context."""
+    with app.app_context():  # Ensure this runs inside the Flask context
+        admin = Admin(
+            username=username, 
+            email=email, 
+            password_hash=generate_password_hash(password)
+        )
+
+        db.session.add(admin)
+        db.session.commit()
+
+        print(f"Admin account for {username} created successfully!")
+
+
+#create_admin("admin", "oaboussafi@gmail.com", "adminpass123")
  # newsletter
 @app.route('/api/newsletter/subscribe', methods=['POST'])
 def subscribe_to_newsletter():
@@ -923,7 +946,7 @@ def register_candidate():
     Votre identifiant : <strong>{data["username"]}</strong></p>
     <p>Vous pouvez maintenant vous connecter et compléter votre profil.</p>
     <p>
-      <a href="http://localhost:3000/login/candidat" 
+html_candidat_link = f'<a href="{frontend_origin}/login/candidat">'
          style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; 
                 color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
         Se connecter
@@ -1067,7 +1090,7 @@ def register_recruiter():
     Votre identifiant : <strong>{data["username"]}</strong></p>
     <p>Vous pouvez maintenant vous connecter et commencer à publier des offres.</p>
     <p>
-      <a href="http://localhost:3000/login/recruteur" 
+html_recruteur_link = f'<a href="{frontend_origin}/login/recruteur">'
          style="display: inline-block; padding: 10px 20px; background-color: #007BFF; 
                 color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
         Se connecter
@@ -2381,7 +2404,7 @@ def toggle_job_offer(offer_id):
     print(offer_id)
     if request.method == 'OPTIONS':
         response = jsonify({'message': 'CORS preflight passed'})
-        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+        response.headers.add("Access-Control-Allow-Origin", FRONTEND_URL)
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         response.headers.add("Access-Control-Allow-Credentials", "true")
@@ -3282,7 +3305,6 @@ def get_applications_number():
 
 
 # Apply CORS to your specific route
-CORS(app, resources={r"/api/upload-cv/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
   
 @app.route('/api/upload-cv', methods=['POST'])
 def upload_cv():
