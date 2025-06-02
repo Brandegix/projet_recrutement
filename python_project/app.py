@@ -24,7 +24,6 @@ from flask import redirect
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SECRET_KEY'] = 'your_secret_key'
-socketio = SocketIO(app, cors_allowed_origins="*", manage_session=False)  # Initialize SocketIO, allow CO
 # Initialisation de l'application Flask
 
 
@@ -87,7 +86,12 @@ CORS(app, resources={r"/*": {"origins": frontend_origin}},
 
 #  CORS pour permettre les requêtes depuis le frontend React
 # Enable CORS for Socket.IO connections as well
-socketio = SocketIO(app, cors_allowed_origins=frontend_origin)
+
+#  CORS pour permettre les requêtes depuis le frontend React
+socketio = SocketIO(app,
+                    cors_allowed_origins=[frontend_origin],
+                    manage_session=True,  # or True if you want SocketIO to handle sessions
+                    async_mode='threading')  # or 'eventlet' depending on your setup
 # Configuration de la base de données MySQL
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:QLVqCaLumwJhfnaGBsIpSvfCnOiptOvO@turntable.proxy.rlwy.net:30938/railway?charset=utf8mb4'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -3805,7 +3809,6 @@ def notify_recruiter(job_offer_id):
 from flask import Flask, session, jsonify, request
 from flask_socketio import SocketIO, emit, join_room, leave_room
 # Initialize SocketIO
-socketio = SocketIO(app, cors_allowed_origins="*")  # Customize allowed origins as necessary
 
 # ──────────────── Flask REST API routes ────────────────
 
