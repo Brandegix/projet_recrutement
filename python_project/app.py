@@ -88,7 +88,7 @@ CORS(app, resources={r"/*": {"origins": frontend_origin}},
 #  CORS pour permettre les requêtes depuis le frontend React
 
 # Configuration de la base de données MySQL
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:your_password@turntable.proxy.rlwy.net:port/railway?charset=utf8mb4'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:QLVqCaLumwJhfnaGBsIpSvfCnOiptOvO@mysql.railway.internal:3306/railway'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     'pool_recycle': 299,
