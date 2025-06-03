@@ -336,7 +336,7 @@ const handleSavedJob = (jobId) => {
                 onApply={handleApply} 
                 isApplied={appliedJobs.includes(job.id)}
                 onSave={handleSaveJob}
-                isSaved={savedJobs.includes(job.id)}              />
+                            />
             ))}
           </div>
         )}
