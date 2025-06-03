@@ -2409,7 +2409,7 @@ def toggle_job_offer(offer_id):
     print(offer_id)
     if request.method == 'OPTIONS':
         response = jsonify({'message': 'CORS preflight passed'})
-        response.headers.add("Access-Control-Allow-Origin", FRONTEND_URL)
+        response.headers.add("Access-Control-Allow-Origin", frontend_origin)
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
         response.headers.add("Access-Control-Allow-Credentials", "true")
