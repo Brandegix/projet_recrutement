@@ -125,8 +125,8 @@ app.config.update(
     PERMANENT_SESSION_LIFETIME=timedelta(days=1),
     SESSION_COOKIE_NAME='jobs_session',
     SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SECURE=False,  # True en production avec HTTPS
-    SESSION_COOKIE_SAMESITE='Lax',
+    SESSION_COOKIE_SECURE = True, # True en production avec HTTPS
+    SESSION_COOKIE_SAMESITE = 'None',
     SESSION_REFRESH_EACH_REQUEST=True
 )
 
