@@ -3265,7 +3265,7 @@ def send_job_match_email(candidate, job_offer, match_percentage, matching_skills
 # Number of applications per candidate
 @app.route('/api/getapplicationsCount', methods=['GET'])
 def get_applications_number():
-    candidate_id = session.get('candidate_id')
+    candidate_id = session.get('user_id')
     print("Session data:", session)  # Pour le debug
 
     if not candidate_id:
