@@ -1,6 +1,5 @@
 # Importation des modules nécessaires
-import eventlet
-eventlet.monkey_patch()
+
 from flask import Flask, request, jsonify, session  # session est déjà importé ici
 import requests
 from flask_cors import CORS
@@ -95,7 +94,7 @@ CORS(app, resources={r"/*": {"origins": frontend_origin}},
 socketio = SocketIO(app,
                     cors_allowed_origins=[frontend_origin],
                     manage_session=True,  # or True if you want SocketIO to handle sessions
-                    async_mode='eventlet')  # or 'eventlet' depending on your setup
+                    async_mode='threading')  # or 'eventlet' depending on your setup
 # Configuration de la base de données MySQL
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:QLVqCaLumwJhfnaGBsIpSvfCnOiptOvO@turntable.proxy.rlwy.net:30938/railway?charset=utf8mb4'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
