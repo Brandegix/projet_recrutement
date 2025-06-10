@@ -1,4 +1,6 @@
 # Importation des modules nécessaires
+import eventlet
+eventlet.monkey_patch()
 from flask import Flask, request, jsonify, session  # session est déjà importé ici
 import requests
 from flask_cors import CORS
@@ -21,8 +23,7 @@ import cloudinary.uploader
 import cloudinary.api
 from cloudinary.utils import cloudinary_url
 from flask import redirect
-import eventlet
-eventlet.monkey_patch()
+
 
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'filesystem'
