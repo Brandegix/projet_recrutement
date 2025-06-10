@@ -21,6 +21,9 @@ import cloudinary.uploader
 import cloudinary.api
 from cloudinary.utils import cloudinary_url
 from flask import redirect
+import eventlet
+eventlet.monkey_patch()
+
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -91,7 +94,7 @@ CORS(app, resources={r"/*": {"origins": frontend_origin}},
 socketio = SocketIO(app,
                     cors_allowed_origins=[frontend_origin],
                     manage_session=True,  # or True if you want SocketIO to handle sessions
-                    async_mode='threading')  # or 'eventlet' depending on your setup
+                    async_mode='eventlet')  # or 'eventlet' depending on your setup
 # Configuration de la base de données MySQL
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:QLVqCaLumwJhfnaGBsIpSvfCnOiptOvO@turntable.proxy.rlwy.net:30938/railway?charset=utf8mb4'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
