@@ -71,7 +71,7 @@ import CandidateApplicationChat from './components/Candidat/CandidateApplication
 import GlobalSocket from './components/GlobalSocket.jsx';
 import JobDetail from './components/JobDetail';
 import CVsExamples from './components/CVsExamples';
-import React, { useEffect } from 'react';
+import React from 'react';
 import socket from './socket';
 import SavedJobOffers from  './components/Candidat/SavedJobOffers';
 import ChatBot from './components/Chatbot/Chatbot.jsx'
