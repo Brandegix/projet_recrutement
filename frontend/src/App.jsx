@@ -90,10 +90,9 @@ import ChatBot from './components/Chatbot/Chatbot.jsx'
 import Loading from './components/Loading';
 
 function App() {
-  
+  const [isLoading, setIsLoading] = useState(true);
 
- const [isLoading, setIsLoading] = useState(true);
-
+  // Always call useEffect
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -102,9 +101,6 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  if (isLoading) {
-    return <Loading message="🚀 Initialisation de CasaJobs..." />;
-  }
   useEffect(() => {
     if ("Notification" in window) {
       Notification.requestPermission().then((permission) => {
@@ -112,13 +108,11 @@ function App() {
       });
     }
   }, []);
-  
-  
+
   useEffect(() => {
-    socket.connect(); // 🔌 Connect globally
+    socket.connect();
 
     socket.on("receive_message", (msg) => {
-      // ✅ Only show notification if the message is not sent by the current user
       const currentUserId = sessionStorage.getItem('user_id');
       const currentUserType = sessionStorage.getItem('user_type');
 
@@ -140,6 +134,11 @@ function App() {
       });
     }
   };
+
+  // ✅ Render conditionally, but AFTER hooks
+  if (isLoading) {
+    return <Loading message="🚀 Initialisation de CasaJobs..." />;
+  }
  // Runs when pathname changes
   return (
     <Router>
