@@ -7,10 +7,7 @@ import Loading from './components/Loading'; // ✅ Import Loading component
 import SEO from './components/SEO';
 import ScrollToTop from './components/ScrollToTop'; // adjust path if needed
 import GlobalSocket from './components/GlobalSocket.jsx';
-
-// ✅ Lazy load navbar and chatbot
-const Navbar = lazy(() => import('./components/Navbar')); // Add navbar lazy loading
-const ChatBot = lazy(() => import('./components/Chatbot/Chatbot.jsx'))
+import ChatBot from './components/Chatbot/Chatbot.jsx'
 
 // ✅ Lazy load components for better performance
 const JobOfferStatistics = lazy(() => import("./components/JobOfferStatistics"));
@@ -99,9 +96,6 @@ const AppRoutes = () => {
         description="Default description for my app"
       />
       <ScrollToTop />  {/* ✅ good placement */}
-      <Suspense fallback={<Loading message="Chargement de la navigation..." />}>
-        <Navbar />
-      </Suspense>
       <Suspense fallback={<Loading message="Chargement de la page..." />}>
         <Routes>
           <Route path="/ContactUs" element={<ContactUs />} />
@@ -191,9 +185,7 @@ const AppRoutes = () => {
           <Route path="/Subscribers" element={<RecruiterNewsletterSubscribers />} />
         </Routes>
       </Suspense>
-      <Suspense fallback={<div style={{position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000}}><Loading message="Chargement du chat..." /></div>}>
-        <ChatBot />
-      </Suspense>
+      <ChatBot />
     </>
   );
 };
