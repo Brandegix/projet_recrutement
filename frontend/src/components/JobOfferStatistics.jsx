@@ -115,16 +115,7 @@ const JobOfferStatistics = () => {
         { name: 'Enregistrés', value: globalTotals.saved },
     ];
 
-    if (loading) return (
-        <div style={{ minHeight: '100vh', backgroundColor: '#f8f8f8', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <Navbar />
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ borderTop: '4px solid #ff9800', borderBottom: '4px solid #ff9800', borderRadius: '50%', width: '50px', height: '50px', animation: 'spin 2s linear infinite' }}></div>
-                <p style={{ marginTop: '20px', color: '#555', fontWeight: 'bold' }}>Chargement des statistiques...</p>
-            </div>
-        </div>
-    );
-
+    // Removed the loading page - now it just shows error if there's an error
     if (error) return (
         <div style={{ minHeight: '100vh', backgroundColor: '#f8f8f8', display: 'flex', flexDirection: 'column' }}>
             <Navbar />
@@ -161,7 +152,7 @@ const JobOfferStatistics = () => {
                     Tableau de bord des Offres d'Emploi
                 </h1>
 
-                {/* Key Metrics Section */}
+                {/* Key Metrics Section - Show loading state within content */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '30px' }}>
                     <div style={{ backgroundColor: '#fff', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', borderRadius: '8px', padding: '20px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
@@ -170,7 +161,9 @@ const JobOfferStatistics = () => {
                             </div>
                             <p style={{ color: '#555', fontWeight: 'bold' }}>Candidatures</p>
                         </div>
-                        <p style={{ fontSize: '28px', fontWeight: 'bold', color: '#f57c00' }}>{globalTotals.applications}</p>
+                        <p style={{ fontSize: '28px', fontWeight: 'bold', color: '#f57c00' }}>
+                            {loading ? '...' : globalTotals.applications}
+                        </p>
                     </div>
                     <div style={{ backgroundColor: '#fff', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', borderRadius: '8px', padding: '20px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
@@ -179,7 +172,9 @@ const JobOfferStatistics = () => {
                             </div>
                             <p style={{ color: '#555', fontWeight: 'bold' }}>Vues</p>
                         </div>
-                        <p style={{ fontSize: '28px', fontWeight: 'bold', color: '#f57c00' }}>{globalTotals.views}</p>
+                        <p style={{ fontSize: '28px', fontWeight: 'bold', color: '#f57c00' }}>
+                            {loading ? '...' : globalTotals.views}
+                        </p>
                     </div>
                     <div style={{ backgroundColor: '#fff', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', borderRadius: '8px', padding: '20px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
@@ -188,7 +183,9 @@ const JobOfferStatistics = () => {
                             </div>
                             <p style={{ color: '#555', fontWeight: 'bold' }}>Enregistrés</p>
                         </div>
-                        <p style={{ fontSize: '28px', fontWeight: 'bold', color: '#f57c00' }}>{globalTotals.saved}</p>
+                        <p style={{ fontSize: '28px', fontWeight: 'bold', color: '#f57c00' }}>
+                            {loading ? '...' : globalTotals.saved}
+                        </p>
                     </div>
                 </div>
 
@@ -201,21 +198,26 @@ const JobOfferStatistics = () => {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         style={{ width: '100%', padding: '10px 15px', borderColor: '#ddd', borderRadius: '5px', outline: 'none' }}
+        disabled={loading}
     />
 </div>
 
                     <div style={{ borderBottom: '1px solid #eee', paddingBottom: '15px', marginBottom: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: '#333' }}>Répartition Globale</h2>
+                        <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: '#333' }}>
+                            {loading ? 'Chargement...' : 'Répartition Globale'}
+                        </h2>
                         <div>
                             <button
                                 onClick={() => setViewType('pie')}
-                                style={{ padding: '8px 15px', border: 'none', borderRadius: '5px', cursor: 'pointer', marginRight: '10px', backgroundColor: viewType === 'pie' ? '#ff9800' : '#f8f9fa', color: viewType === 'pie' ? '#fff' : '#555', fontWeight: 'bold', transition: 'background-color 0.3s ease, color 0.3s ease', marginBottom:  '10px'}}
+                                disabled={loading}
+                                style={{ padding: '8px 15px', border: 'none', borderRadius: '5px', cursor: loading ? 'not-allowed' : 'pointer', marginRight: '10px', backgroundColor: viewType === 'pie' ? '#ff9800' : '#f8f9fa', color: viewType === 'pie' ? '#fff' : '#555', fontWeight: 'bold', transition: 'background-color 0.3s ease, color 0.3s ease', marginBottom:  '10px', opacity: loading ? 0.6 : 1}}
                             >
                                 Circulaire
                             </button>
                             <button
                                 onClick={() => setViewType('bar')}
-                                style={{ padding: '8px 15px', border: 'none', borderRadius: '5px', cursor: 'pointer', backgroundColor: viewType === 'bar' ? '#ff9800' : '#f8f9fa', color: viewType === 'bar' ? '#fff' : '#555', fontWeight: 'bold', transition: 'background-color 0.3s ease, color 0.3s ease' }}
+                                disabled={loading}
+                                style={{ padding: '8px 15px', border: 'none', borderRadius: '5px', cursor: loading ? 'not-allowed' : 'pointer', backgroundColor: viewType === 'bar' ? '#ff9800' : '#f8f9fa', color: viewType === 'bar' ? '#fff' : '#555', fontWeight: 'bold', transition: 'background-color 0.3s ease, color 0.3s ease', opacity: loading ? 0.6 : 1 }}
                             >
                                 Barres
                             </button>
@@ -223,37 +225,43 @@ const JobOfferStatistics = () => {
                     </div>
 
                     <div style={{ width: '100%', height: '350px' }}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            {viewType === 'pie' ? (
-                                <PieChart>
-                                    <Pie
-                                        data={pieData}
-                                        cx="50%"
-                                        cy="50%"
-                                        innerRadius={70}
-                                        outerRadius={120}
-                                        dataKey="value"
-                                        nameKey="name"
-                                        labelLine={false}
-                                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                                    >
-                                        {pieData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip />
-                                    <Legend layout="horizontal" verticalAlign="bottom" align="center" />
-                                </PieChart>
-                            ) : (
-                                <BarChart data={barData} margin={{ top: 15, right: 30, left: 20, bottom: 5 }}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#ddd" />
-                                    <XAxis dataKey="name" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Bar dataKey="value" fill="#ff9800" barSize={20} /> {/* Smaller bars */}
-                                </BarChart>
-                            )}
-                        </ResponsiveContainer>
+                        {loading ? (
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#555' }}>
+                                <p>Chargement des données...</p>
+                            </div>
+                        ) : (
+                            <ResponsiveContainer width="100%" height="100%">
+                                {viewType === 'pie' ? (
+                                    <PieChart>
+                                        <Pie
+                                            data={pieData}
+                                            cx="50%"
+                                            cy="50%"
+                                            innerRadius={70}
+                                            outerRadius={120}
+                                            dataKey="value"
+                                            nameKey="name"
+                                            labelLine={false}
+                                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                                        >
+                                            {pieData.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip />
+                                        <Legend layout="horizontal" verticalAlign="bottom" align="center" />
+                                    </PieChart>
+                                ) : (
+                                    <BarChart data={barData} margin={{ top: 15, right: 30, left: 20, bottom: 5 }}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#ddd" />
+                                        <XAxis dataKey="name" />
+                                        <YAxis />
+                                        <Tooltip />
+                                        <Bar dataKey="value" fill="#ff9800" barSize={20} /> {/* Smaller bars */}
+                                    </BarChart>
+                                )}
+                            </ResponsiveContainer>
+                        )}
                     </div>
                 </div>
 
@@ -272,7 +280,13 @@ const JobOfferStatistics = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredStatistics.length === 0 ? (
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={7} style={{ padding: '15px', textAlign: 'center', color: '#777' }}>
+                                        Chargement des offres...
+                                    </td>
+                                </tr>
+                            ) : filteredStatistics.length === 0 ? (
                                 <tr>
                                     <td colSpan={7} style={{ padding: '15px', textAlign: 'center', color: '#777' }}>
                                         {searchTerm ? 'Aucune offre trouvée.' : 'Liste des offres vide.'}
