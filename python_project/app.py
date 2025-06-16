@@ -97,10 +97,13 @@ CORS(app, resources={r"/*": {"origins": frontend_origin}},
 
 #  CORS pour permettre les requêtes depuis le frontend React
 
-socketio = SocketIO(app,
-                    cors_allowed_origins=[frontend_origin],
-                    manage_session=True,
-                    async_mode='eventlet')  # <-- changement ici
+socketio = SocketIO(
+    app,
+    cors_allowed_origins=["https://www.casajobs.ma"],
+    async_mode='eventlet',
+    manage_session=True
+)
+
 # Configuration de la base de données MySQL
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:QLVqCaLumwJhfnaGBsIpSvfCnOiptOvO@turntable.proxy.rlwy.net:30938/railway?charset=utf8mb4'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
