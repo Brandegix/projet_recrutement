@@ -50,7 +50,7 @@ import AboutUs from './components/AboutUs';
 import ScrollToTop from './components/ScrollToTop'; // adjust path if needed
 
 
-
+//does this work now
 import RecruiterPublicProfile from './components/Recruteur/RecruiterPublicProfile';
 
 import RecruiterNewsletterSubscribers from './components/Recruteur/RecruiterNewsletterSubscribers';
