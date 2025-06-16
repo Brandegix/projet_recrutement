@@ -87,8 +87,24 @@ import React, { useEffect } from 'react';
 import socket from './socket';
 import SavedJobOffers from  './components/Candidat/SavedJobOffers';
 import ChatBot from './components/Chatbot/Chatbot.jsx'
-function App() {
+import Loading from './components/Loading';
 
+function App() {
+  
+
+ const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <Loading message="🚀 Initialisation de CasaJobs..." />;
+  }
   useEffect(() => {
     if ("Notification" in window) {
       Notification.requestPermission().then((permission) => {
