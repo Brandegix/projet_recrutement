@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { FaUser, FaClock, FaMicrophone } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
 import JobOfferStatistics from "./components/JobOfferStatistics";
 // ✅ Pages principales de l'application
 import StageRecherche from "./StageRecherche";
@@ -46,23 +47,12 @@ import Applications from './components/Applications';
 import Dashboard_admin from './components/Dashboard_admin';
 import Candidatesadmin from './components/Candidatesadmin';
 import AboutUs from './components/AboutUs';
-
 import ScrollToTop from './components/ScrollToTop'; // adjust path if needed
-
-
-//does this work now
 import RecruiterPublicProfile from './components/Recruteur/RecruiterPublicProfile';
-
 import RecruiterNewsletterSubscribers from './components/Recruteur/RecruiterNewsletterSubscribers';
-
 import ContactUs from './components/ContactUs';
-
-
 import JobOfferApplications from './components/Recruteur/JobOfferApplications';
-
 import SEO from './components/SEO';
-
-
 import VerifyOtp from './components/VerifyOtp';
 import ResetPassword from  './components/ResetPassword';
 import RequestResetCandidat from "./components/RequestResetCandidat";
@@ -72,9 +62,7 @@ import RequestResetAdmin from "./components/RequestResetAdmin";
 import VerifyOtpAdmin from "./components/VerifyOtpAdmin";
 import ResetPasswordAdmin from "./components/ResetPasswordAdmin";
 import RequestResetRecruteur from "./components/RequestResetRecruteur"; // ✅ Import the component
-
 import RecruiterProfiless from "./components/RecruiterProfiless.jsx"; // Import the new component
-
 import CandidateProfileView from "./components/CandidateProfileView.jsx";
 import CandidateSearchFilter from "./components/CandidateSearchFilter";
 import Chat from './components/Chat';
@@ -83,83 +71,42 @@ import CandidateApplicationChat from './components/Candidat/CandidateApplication
 import GlobalSocket from './components/GlobalSocket.jsx';
 import JobDetail from './components/JobDetail';
 import CVsExamples from './components/CVsExamples';
-import React, { useEffect , useState } from 'react';
+import React, { useEffect } from 'react';
 import socket from './socket';
 import SavedJobOffers from  './components/Candidat/SavedJobOffers';
 import ChatBot from './components/Chatbot/Chatbot.jsx'
-import Loading from './components/Loading';
+import Loading from './components/Loading'; // ✅ Import Loading component
 
-function App() {
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Always call useEffect
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, []);
+// Create a wrapper to monitor location changes and handle loading
+const AppRoutes = () => {
+  const location = useLocation();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if ("Notification" in window) {
-      Notification.requestPermission().then((permission) => {
-        console.log("Notification permission:", permission);
-      });
-    }
-  }, []);
+    setLoading(true);
+    const timeout = setTimeout(() => setLoading(false), 400); // Delay for smoother UX
+    return () => clearTimeout(timeout);
+  }, [location.pathname]);
 
-  useEffect(() => {
-    socket.connect();
-
-    socket.on("receive_message", (msg) => {
-      const currentUserId = sessionStorage.getItem('user_id');
-      const currentUserType = sessionStorage.getItem('user_type');
-
-      if (msg.user_id.toString() !== currentUserId || msg.user_type !== currentUserType) {
-        showNotification(msg);
-      }
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
-  const showNotification = (msg) => {
-    if ("Notification" in window && Notification.permission === "granted") {
-      new Notification("New Message!", {
-        body: `${msg.user}: ${msg.message}`,
-        icon: "/notification-icon.png",
-      });
-    }
-  };
-
-  // ✅ Render conditionally, but AFTER hooks
-  if (isLoading) {
-    return <Loading message="🚀 Initialisation de CasaJobs..." />;
-  }
- // Runs when pathname changes
   return (
-    <Router>
- <SEO 
+    <>
+      {loading && <Loading />}
+      <SEO 
         title="Casajobs" 
         description="Default description for my app"
       />
-  <ScrollToTop />  {/* ✅ good placement */}
-  <Routes>
-        
-      <Route path="/ContactUs" element={<ContactUs />} />
-      <Route path="/verify-otp" element={<VerifyOtp />} />
-<Route path="/reset-password" element={<ResetPassword />} />
-<Route path="/candidate/request-reset" element={<RequestResetCandidat />} />
+      <ScrollToTop />  {/* ✅ good placement */}
+      <Routes>
+        <Route path="/ContactUs" element={<ContactUs />} />
+        <Route path="/verify-otp" element={<VerifyOtp />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/candidate/request-reset" element={<RequestResetCandidat />} />
         <Route path="/candidate/verify-otp" element={<VerifyOtpCandidat />} />
         <Route path="/candidate/reset-password" element={<ResetPasswordCandidat />} />
         <Route path="/admin/request-reset" element={<RequestResetAdmin />} />
         <Route path="/admin/verify-otp" element={<VerifyOtpAdmin />} />
         <Route path="/admin/reset-password" element={<ResetPasswordAdmin />} />
         <Route path="/about-us" element={<AboutUs />} />
-
         <Route path="/recruiter/request-reset" element={<RequestResetRecruteur />} /> {/* ✅ Add this new route */}
 
         {/* Pages principales */}
@@ -211,37 +158,75 @@ function App() {
         <Route path="/ManageRecruiters" element={<ManageRecruiters />} />
         <Route path="/ManageJobs" element={<ManageJobs />} />
         <Route path="/edit-recruiter/:id" element={<EditRecruiter />} />
-<Route path="/edit-candidate/:id" element={<EditCandidate />} />
-<Route path="/edit-job/:id" element={<EditJobOffer />} />
-<Route path="/applicationss" element={<Applications />} />
-<Route path="/Dashboard_admin" element={<Dashboard_admin />} />
-<Route path="/Candidatesadmin" element={<Candidatesadmin />} />
+        <Route path="/edit-candidate/:id" element={<EditCandidate />} />
+        <Route path="/edit-job/:id" element={<EditJobOffer />} />
+        <Route path="/applicationss" element={<Applications />} />
+        <Route path="/Dashboard_admin" element={<Dashboard_admin />} />
+        <Route path="/Candidatesadmin" element={<Candidatesadmin />} />
 
+        <Route path="/recruiter/candidate/:id" element={<CandidateProfileView />} />
+        <Route path="/recruiter/candidate-search" component={CandidateSearchFilter} />
 
-<Route path="/recruiter/candidate/:id" element={<CandidateProfileView />} />
-<Route path="/recruiter/candidate-search" component={CandidateSearchFilter} />
+        <Route path="/recruiter-profile" element={<RecruiterProfiless />} />
+        <Route path="/chat" element={<Chat />} />
+        <Route path="/ApplicationChat" element={<ApplicationChat />} />
+        <Route path="/CandidateApplicationChat" element={<CandidateApplicationChat />} />
+        <Route path="/GlobalSocket" element={<GlobalSocket />} />
+        <Route path="/offres/:id" element={<JobDetail />} />
+        <Route path="/CVsExamples" element={<CVsExamples />} />
+        <Route path="/SavedJobOffers" element={<SavedJobOffers />} />
 
-<Route path="/recruiter-profile" element={<RecruiterProfiless />} />
-<Route path="/chat" element={<Chat />} />
-<Route path="/ApplicationChat" element={<ApplicationChat />} />
-<Route path="/CandidateApplicationChat" element={<CandidateApplicationChat />} />
-<Route path="/GlobalSocket" element={<GlobalSocket />} />
-<Route path="/offres/:id" element={<JobDetail />} />
-<Route path="/CVsExamples" element={<CVsExamples />} />
-<Route path="/SavedJobOffers" element={<SavedJobOffers />} />
+        <Route path="/job-offer-statistics" element={<JobOfferStatistics />} />
+        <Route path="/recruiter/job-offers/:offerId/applications" element={<JobOfferApplications />} />
 
-<Route path="/job-offer-statistics" element={<JobOfferStatistics />} />
-<Route path="/recruiter/job-offers/:offerId/applications" element={<JobOfferApplications />} />
+        <Route path="/recruiters/:id" element={<RecruiterPublicProfile />} />
 
-<Route path="/recruiters/:id" element={<RecruiterPublicProfile />} />
-
-<Route path="/Subscribers" element={<RecruiterNewsletterSubscribers />} />
-
-
-
-
+        <Route path="/Subscribers" element={<RecruiterNewsletterSubscribers />} />
       </Routes>
       <ChatBot />
+    </>
+  );
+};
+
+function App() {
+  useEffect(() => {
+    if ("Notification" in window) {
+      Notification.requestPermission().then((permission) => {
+        console.log("Notification permission:", permission);
+      });
+    }
+  }, []);
+  
+  useEffect(() => {
+    socket.connect(); // 🔌 Connect globally
+
+    socket.on("receive_message", (msg) => {
+      // ✅ Only show notification if the message is not sent by the current user
+      const currentUserId = sessionStorage.getItem('user_id');
+      const currentUserType = sessionStorage.getItem('user_type');
+
+      if (msg.user_id.toString() !== currentUserId || msg.user_type !== currentUserType) {
+        showNotification(msg);
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  const showNotification = (msg) => {
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification("New Message!", {
+        body: `${msg.user}: ${msg.message}`,
+        icon: "/notification-icon.png",
+      });
+    }
+  };
+
+  return (
+    <Router>
+      <AppRoutes />
     </Router>
   );
 }
