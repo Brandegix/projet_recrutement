@@ -47,9 +47,13 @@ const CandidateApplications = () => {
             .then((res) => res.json())
             .then((data) => {
                 console.log("📑 Applications loaded:", data);
-                setApplications(data);
+                
+                // Ensure data is an array
+                const applicationsArray = Array.isArray(data) ? data : [];
+                setApplications(applicationsArray);
 
-                data.forEach((application) => {
+                // Only process if we have applications
+                applicationsArray.forEach((application) => {
                     fetch(
                         `${process.env.REACT_APP_API_URL}/api/application/${application.id}/recruiter-started`,
                         {
@@ -72,7 +76,11 @@ const CandidateApplications = () => {
                         );
                 });
             })
-            .catch((err) => console.error("❌ Error loading applications:", err))
+            .catch((err) => {
+                console.error("❌ Error loading applications:", err);
+                // Set empty array on error
+                setApplications([]);
+            })
             .finally(() => setLoading(false));
     }, []);
 
@@ -156,9 +164,7 @@ const CandidateApplications = () => {
             maxWidth: '600px',
             margin: '0 auto',
             lineHeight: '1.6',
-            color: '#000000',  // or simply 'black'
-        
-        
+            color: '#000000',
         },
         statsBar: {
             display: 'flex',
@@ -408,8 +414,10 @@ const CandidateApplications = () => {
         },
     };
 
-    const totalApplications = applications.length;
-    const viewedApplications = applications.filter(app => app.viewed).length;
+    // Ensure applications is always an array before calculating stats
+    const applicationsArray = Array.isArray(applications) ? applications : [];
+    const totalApplications = applicationsArray.length;
+    const viewedApplications = applicationsArray.filter(app => app.viewed).length;
     const activeChats = Object.values(recruiterStartedMap).filter(Boolean).length;
 
     return (
@@ -466,7 +474,7 @@ const CandidateApplications = () => {
                                 <div style={styles.loadingText}>Chargement de vos candidatures...</div>
                             </div>
                         </div>
-                    ) : applications.length === 0 ? (
+                    ) : applicationsArray.length === 0 ? (
                         <div style={styles.emptyState}>
                             <FaBriefcase style={styles.emptyIcon} />
                             <h3 style={styles.emptyTitle}>Aucune candidature pour le moment</h3>
@@ -476,7 +484,7 @@ const CandidateApplications = () => {
                         </div>
                     ) : (
                         <div style={styles.applicationGrid}>
-                            {applications.map((application) => (
+                            {applicationsArray.map((application) => (
                                 <div 
                                     key={application.id} 
                                     style={styles.applicationCard}
