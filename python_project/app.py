@@ -1,8 +1,8 @@
 # Importation des modules nécessaires
-
-from flask_socketio import SocketIO
 import eventlet
 eventlet.monkey_patch()
+from flask_socketio import SocketIO
+
 
 from flask import Flask, request, jsonify, session  # session est déjà importé ici
 import requests
@@ -85,11 +85,13 @@ import os
 
 frontend_origin = os.getenv("FRONTEND_ORIGIN", "http://localhost:3000")  # fallback for dev
 
-CORS(app, resources={r"/*": {"origins": frontend_origin}},
+CORS(app,
+     origins=["https://www.casajobs.ma"],
      supports_credentials=True,
+     expose_headers=["Set-Cookie"],
      allow_headers=["Content-Type", "Authorization"],
-     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-     expose_headers=["Set-Cookie"])
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+
 
 
 #  CORS pour permettre les requêtes depuis le frontend React
