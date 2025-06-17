@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaMapMarkerAlt, FaBriefcase, FaBookmark, FaRegBookmark } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaBriefcase, FaBookmark, FaRegBookmark, FaChevronLeft, FaChevronRight, FaEllipsisH, FaHeart, FaArrowRight } from 'react-icons/fa';
 import "../../assets/css/JobCards.css";
 import Footer from '../../components/Footer';
 import { useNavigate } from 'react-router-dom';
@@ -144,6 +144,396 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
         >
           {isSaved ? <FaBookmark /> : <FaRegBookmark />}
         </button>
+      </div>
+    </div>
+  );
+};
+
+// Enhanced Pagination Component
+const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
+  const getVisiblePages = () => {
+    const delta = 2;
+    const range = [];
+    const rangeWithDots = [];
+
+    for (
+      let i = Math.max(2, currentPage - delta);
+      i <= Math.min(totalPages - 1, currentPage + delta);
+      i++
+    ) {
+      range.push(i);
+    }
+
+    if (currentPage - delta > 2) {
+      rangeWithDots.push(1, '...');
+    } else {
+      rangeWithDots.push(1);
+    }
+
+    rangeWithDots.push(...range);
+
+    if (currentPage + delta < totalPages - 1) {
+      rangeWithDots.push('...', totalPages);
+    } else {
+      rangeWithDots.push(totalPages);
+    }
+
+    return rangeWithDots;
+  };
+
+  if (totalPages <= 1) return null;
+
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '8px',
+      marginTop: '40px',
+      padding: '24px',
+      background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+      borderRadius: '16px',
+      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+      border: '1px solid rgba(0, 0, 0, 0.04)'
+    }}>
+      {/* Previous Button */}
+      <button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '12px 16px',
+          fontSize: '0.9rem',
+          fontWeight: '600',
+          border: 'none',
+          backgroundColor: currentPage === 1 ? '#f1f3f4' : '#ffffff',
+          color: currentPage === 1 ? '#9aa0a6' : '#fc8e20',
+          borderRadius: '12px',
+          cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          boxShadow: currentPage === 1 ? 'none' : '0 2px 8px rgba(252, 142, 32, 0.15)',
+          transform: 'translateY(0)',
+          opacity: currentPage === 1 ? 0.5 : 1
+        }}
+        onMouseEnter={(e) => {
+          if (currentPage !== 1) {
+            e.target.style.backgroundColor = 'rgba(252, 142, 32, 0.08)';
+            e.target.style.transform = 'translateY(-2px)';
+            e.target.style.boxShadow = '0 4px 12px rgba(252, 142, 32, 0.2)';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (currentPage !== 1) {
+            e.target.style.backgroundColor = '#ffffff';
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = '0 2px 8px rgba(252, 142, 32, 0.15)';
+          }
+        }}
+      >
+        <FaChevronLeft size={12} />
+        <span>Précédent</span>
+      </button>
+
+      {/* Page Numbers */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+        {getVisiblePages().map((page, index) => (
+          page === '...' ? (
+            <div
+              key={`dots-${index}`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '40px',
+                height: '40px',
+                color: '#9aa0a6',
+                fontSize: '1rem'
+              }}
+            >
+              <FaEllipsisH size={12} />
+            </div>
+          ) : (
+            <button
+              key={page}
+              onClick={() => onPageChange(page)}
+              style={{
+                width: '40px',
+                height: '40px',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                border: 'none',
+                backgroundColor: currentPage === page 
+                  ? '#fc8e20' 
+                  : '#ffffff',
+                color: currentPage === page ? '#ffffff' : '#374151',
+                borderRadius: '10px',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: currentPage === page 
+                  ? '0 4px 12px rgba(252, 142, 32, 0.4)' 
+                  : '0 2px 4px rgba(0, 0, 0, 0.05)',
+                transform: 'translateY(0)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              onMouseEnter={(e) => {
+                if (currentPage !== page) {
+                  e.target.style.backgroundColor = 'rgba(252, 142, 32, 0.1)';
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.12)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (currentPage !== page) {
+                  e.target.style.backgroundColor = '#ffffff';
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.05)';
+                }
+              }}
+            >
+              {page}
+            </button>
+          )
+        ))}
+      </div>
+
+      {/* Next Button */}
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '12px 16px',
+          fontSize: '0.9rem',
+          fontWeight: '600',
+          border: 'none',
+          backgroundColor: currentPage === totalPages ? '#f1f3f4' : '#ffffff',
+          color: currentPage === totalPages ? '#9aa0a6' : '#fc8e20',
+          borderRadius: '12px',
+          cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          boxShadow: currentPage === totalPages ? 'none' : '0 2px 8px rgba(252, 142, 32, 0.15)',
+          transform: 'translateY(0)',
+          opacity: currentPage === totalPages ? 0.5 : 1
+        }}
+        onMouseEnter={(e) => {
+          if (currentPage !== totalPages) {
+            e.target.style.backgroundColor = 'rgba(252, 142, 32, 0.08)';
+            e.target.style.transform = 'translateY(-2px)';
+            e.target.style.boxShadow = '0 4px 12px rgba(252, 142, 32, 0.2)';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (currentPage !== totalPages) {
+            e.target.style.backgroundColor = '#ffffff';
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = '0 2px 8px rgba(252, 142, 32, 0.15)';
+          }
+        }}
+      >
+        <span>Suivant</span>
+        <FaChevronRight size={12} />
+      </button>
+    </div>
+  );
+};
+
+// Enhanced Saved Jobs Section
+const SavedJobsSection = () => {
+  return (
+    <div style={{
+      margin: '60px 0 40px 0',
+      display: 'flex',
+      justifyContent: 'center'
+    }}>
+      <div style={{
+        position: 'relative',
+        background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+        borderRadius: '24px',
+        padding: '40px',
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.1)',
+        border: '1px solid rgba(252, 142, 32, 0.1)',
+        maxWidth: '600px',
+        width: '100%',
+        overflow: 'hidden',
+        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.transform = 'translateY(-8px)';
+        e.target.style.boxShadow = '0 30px 80px rgba(0, 0, 0, 0.15)';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.transform = 'translateY(0)';
+        e.target.style.boxShadow = '0 20px 60px rgba(0, 0, 0, 0.1)';
+      }}
+      >
+        {/* Decorative Elements */}
+        <div style={{
+          position: 'absolute',
+          top: '-30%',
+          right: '-20%',
+          width: '300px',
+          height: '300px',
+          background: 'radial-gradient(circle, rgba(252, 142, 32, 0.08) 0%, rgba(255, 123, 0, 0.03) 70%, transparent 100%)',
+          borderRadius: '50%',
+          zIndex: '0'
+        }}></div>
+        
+        <div style={{
+          position: 'absolute',
+          bottom: '-20%',
+          left: '-15%',
+          width: '200px',
+          height: '200px',
+          background: 'radial-gradient(circle, rgba(252, 142, 32, 0.05) 0%, transparent 70%)',
+          borderRadius: '50%',
+          zIndex: '0'
+        }}></div>
+
+        {/* Floating Elements */}
+        <div style={{
+          position: 'absolute',
+          top: '20px',
+          right: '30px',
+          width: '60px',
+          height: '60px',
+          background: 'linear-gradient(135deg, rgba(252, 142, 32, 0.1) 0%, rgba(255, 123, 0, 0.05) 100%)',
+          borderRadius: '50%',
+          zIndex: '0',
+          animation: 'float 6s ease-in-out infinite'
+        }}></div>
+
+        <div style={{ position: 'relative', zIndex: '1', textAlign: 'center' }}>
+          {/* Icon */}
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '80px',
+            height: '80px',
+            background: 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)',
+            borderRadius: '20px',
+            marginBottom: '24px',
+            boxShadow: '0 12px 32px rgba(252, 142, 32, 0.3)',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: '0',
+              left: '0',
+              right: '0',
+              bottom: '0',
+              background: 'linear-gradient(45deg, rgba(255, 255, 255, 0.2) 0%, transparent 50%)',
+              borderRadius: '20px'
+            }}></div>
+            <FaHeart style={{ color: 'white', fontSize: '28px', zIndex: '1' }} />
+          </div>
+          
+          {/* Title */}
+          <h2 style={{
+            margin: '0 0 12px 0',
+            fontSize: '1.75rem',
+            fontWeight: '700',
+            color: '#1a202c',
+            letterSpacing: '-0.025em',
+            lineHeight: '1.2'
+          }}>
+            Vos Offres Favorites
+          </h2>
+          
+          {/* Subtitle */}
+          <p style={{
+            margin: '0 0 32px 0',
+            fontSize: '1.1rem',
+            color: '#64748b',
+            lineHeight: '1.6',
+            fontWeight: '400',
+            maxWidth: '400px',
+            marginLeft: 'auto',
+            marginRight: 'auto'
+          }}>
+            Retrouvez facilement toutes les opportunités qui vous intéressent dans votre espace personnalisé
+          </p>
+          
+          {/* CTA Button */}
+          <Link 
+            to="/SavedJobOffers" 
+            style={{ 
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '12px',
+              color: 'white',
+              textDecoration: 'none',
+              fontSize: '1.1rem',
+              fontWeight: '600',
+              padding: '16px 32px',
+              background: 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)',
+              borderRadius: '16px',
+              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: '0 8px 25px rgba(252, 142, 32, 0.35)',
+              border: 'none',
+              letterSpacing: '0.01em',
+              position: 'relative',
+              overflow: 'hidden',
+              transform: 'translateY(0)'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'translateY(-3px) scale(1.02)';
+              e.target.style.boxShadow = '0 15px 40px rgba(252, 142, 32, 0.4)';
+              e.target.style.background = 'linear-gradient(135deg, #ff7b00 0%, #fc8e20 100%)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0) scale(1)';
+              e.target.style.boxShadow = '0 8px 25px rgba(252, 142, 32, 0.35)';
+              e.target.style.background = 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)';
+            }}
+          >
+            {/* Button shine effect */}
+            <div style={{
+              position: 'absolute',
+              top: '0',
+              left: '-100%',
+              width: '100%',
+              height: '100%',
+              background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+              transition: 'left 0.6s'
+            }}></div>
+            
+            <span style={{ position: 'relative', zIndex: '1' }}>Consulter mes favoris</span>
+            <FaArrowRight 
+              style={{ 
+                fontSize: '16px', 
+                transition: 'transform 0.3s ease',
+                position: 'relative',
+                zIndex: '1'
+              }} 
+            />
+          </Link>
+
+          {/* Stats or additional info */}
+          <div style={{
+            marginTop: '32px',
+            padding: '20px',
+            background: 'rgba(252, 142, 32, 0.05)',
+            borderRadius: '12px',
+            border: '1px solid rgba(252, 142, 32, 0.1)'
+          }}>
+            <p style={{
+              margin: '0',
+              fontSize: '0.9rem',
+              color: '#64748b',
+              fontWeight: '500'
+            }}>
+              💡 <strong>Astuce :</strong> Sauvegardez les offres qui vous intéressent pour les retrouver plus tard et ne manquer aucune opportunité !
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
