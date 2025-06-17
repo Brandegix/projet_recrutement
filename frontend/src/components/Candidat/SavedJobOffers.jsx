@@ -15,52 +15,7 @@ const JobCard = ({job, onApply, isApplied, onSave, isSaved }) => {
   const handleViewDetails = () => {
     navigate(`/offres/${job.id}`);
   };
-const ReadMoreText = ({ text, maxLength = 150 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  
-  if (!text) return <p style={{ color: '#aaa', fontSize: '0.9rem' }}>Aucune description fournie</p>;
-  
-  if (text.length <= maxLength) return <p style={{ color: '#aaa', fontSize: '0.9rem' }}>{text}</p>;
-  
-  return (
-    <div>
-      <p style={{ color: '#aaa', fontSize: '0.9rem', marginBottom: '8px' }}>
-        {isExpanded ? text : `${text.slice(0, maxLength)}...`}
-      </p>
-      <button 
-        onClick={() => setIsExpanded(!isExpanded)}
-        style={{
-          background: 'none',
-          border: 'none',
-          color: '#ff6b35',
-          fontSize: '0.8rem',
-          cursor: 'pointer',
-          padding: 0,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '4px',
-          fontWeight: '600'
-        }}
-      >
-        {isExpanded ? (
-          <>
-            <span>Voir moins</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="18 15 12 9 6 15"></polyline>
-            </svg>
-          </>
-        ) : (
-          <>
-            <span>Lire la suite</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </>
-        )}
-      </button>
-    </div>
-  );
-};
+
   return (
   <div className="job-card">
     <div className="job-header">
@@ -81,7 +36,7 @@ const ReadMoreText = ({ text, maxLength = 150 }) => {
     <div className="job-body">
       <p><FaMapMarkerAlt /> {job.location}</p>
       <p><FaBriefcase /> {job.experience}</p>
-      <<ReadMoreText text={job.description} maxLength={150} />
+      <p>{job.description}</p>
       <div className="skills">
         {job.skills && job.skills.map((skill, index) => (
           <span key={index}>{skill}</span>
