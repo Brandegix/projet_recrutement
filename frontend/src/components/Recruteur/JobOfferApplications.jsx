@@ -5,6 +5,8 @@ import Footer from '../Footer';
 import ApplicationChat from './ApplicationChat';
 import Modal from 'react-modal';
 
+// No longer importing a separate Loading component
+
 Modal.setAppElement('#root');
 
 const JobOfferApplications = () => {
@@ -12,7 +14,7 @@ const JobOfferApplications = () => {
     const [applications, setApplications] = useState([]);
     const [filteredApplications, setFilteredApplications] = useState([]);
     const [offer, setOffer] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true); // State for loading
     const [error, setError] = useState(null);
     const [user, setUser] = useState(null);
     const [isChatModalOpen, setIsChatModalOpen] = useState(false);
@@ -21,39 +23,40 @@ const JobOfferApplications = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        setIsLoading(true);
+        setIsLoading(true); // Start loading when component mounts or offerId changes
+        setError(null); // Clear previous errors
 
-        // Fetch recruiter profile
-        fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/profile`, { method: 'GET', credentials: 'include' })
-            .then(res => {
-                if (!res.ok) throw new Error("Failed to fetch recruiter profile");
-                return res.json();
-            })
-            .then(userData => setUser(userData))
-            .catch(err => console.error("Error fetching recruiter profile:", err));
+        const fetchAllData = async () => {
+            try {
+                // Fetch recruiter profile
+                const userResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/profile`, { method: 'GET', credentials: 'include' });
+                if (!userResponse.ok) throw new Error("Failed to fetch recruiter profile");
+                const userData = await userResponse.json();
+                setUser(userData);
 
-        // Fetch all applications for the recruiter
-        fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/applications`, { method: 'GET', credentials: 'include' })
-            .then(response => {
-                if (!response.ok) throw new Error("Failed to fetch applications");
-                return response.json();
-            })
-            .then(allApplications => {
+                // Fetch all applications for the recruiter
+                const applicationsResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/applications`, { method: 'GET', credentials: 'include' });
+                if (!applicationsResponse.ok) throw new Error("Failed to fetch applications");
+                const allApplications = await applicationsResponse.json();
                 const filteredByOffer = allApplications.filter(app => app.job_offer_id === parseInt(offerId));
                 setApplications(filteredByOffer);
-                setFilteredApplications(filteredByOffer); // Initialize filtered list
-            })
-            .catch(err => setError("Failed to load applications."))
-            .finally(() => setIsLoading(false));
+                setFilteredApplications(filteredByOffer);
 
-        // Fetch job offer details
-        fetch(`${process.env.REACT_APP_API_URL}/api/job_offers/${offerId}`)
-            .then(response => {
-                if (!response.ok) throw new Error("Failed to fetch job offer details");
-                return response.json();
-            })
-            .then(data => setOffer(data))
-            .catch(err => console.error("Error fetching job offer:", err));
+                // Fetch job offer details
+                const offerResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/job_offers/${offerId}`);
+                if (!offerResponse.ok) throw new Error("Failed to fetch job offer details");
+                const offerData = await offerResponse.json();
+                setOffer(offerData);
+
+            } catch (err) {
+                console.error("Error during data fetching:", err);
+                setError("Failed to load applications or job offer details. Please try again.");
+            } finally {
+                setIsLoading(false); // End loading regardless of success or failure
+            }
+        };
+
+        fetchAllData();
 
     }, [offerId]);
 
@@ -108,12 +111,73 @@ const JobOfferApplications = () => {
         }
     };
 
+    // Inline Loading Component logic
+    const renderLoading = (message) => {
+        const loadingStyles = {
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: 'calc(100vh - 120px)', // Adjust for navbar/footer
+            backgroundColor: '#F8F9FA', // Matches the premium background
+            color: '#343A40', // Dark grey text
+            fontSize: '1.4em',
+            fontWeight: '600',
+            textAlign: 'center',
+            padding: '20px',
+        };
+
+        const spinnerStyles = {
+            border: '6px solid #E0E0E0',
+            borderTop: '6px solid #FF6B35', // Orange spinner
+            borderRadius: '50%',
+            width: '60px',
+            height: '60px',
+            animation: 'spin 1s linear infinite',
+            marginBottom: '20px',
+        };
+
+        // Inject keyframes if not already present (simplified for direct integration)
+        useEffect(() => {
+            if (!document.getElementById('spin-keyframes')) {
+                const style = document.createElement('style');
+                style.id = 'spin-keyframes';
+                style.innerHTML = `
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }, []);
+
+
+        return (
+            <div style={loadingStyles}>
+                <div style={spinnerStyles}></div>
+                <p>{message}</p>
+            </div>
+        );
+    };
+
+
+    // Render the loading state if isLoading is true
     if (isLoading) {
-        return <div style={jobAppStyles.loading}>Chargement des candidatures...</div>;
+        return renderLoading("Chargement des candidatures...");
     }
 
+    // Keep error handling separate if it's a persistent error
     if (error) {
-        return <div style={jobAppStyles.error}>{error}</div>;
+        return (
+            <>
+                <Navbar />
+                <div style={jobAppStyles.applicationsContainer}>
+                    <div style={jobAppStyles.error}>{error}</div>
+                </div>
+                <Footer />
+            </>
+        );
     }
 
     return (
@@ -239,7 +303,7 @@ const JobOfferApplications = () => {
     );
 };
 
-// Start of jobAppStyles object (this replaces your existing jobAppStyles)
+// Start of jobAppStyles object (this remains the same as the previous premium version)
 const jobAppStyles = {
     // --- Page Container & General Layout ---
     applicationsContainer: {
@@ -395,7 +459,7 @@ const jobAppStyles = {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        fontSize: '1.2em', // **Adjusted: Smaller font size for the initial**
+        fontSize: '1.2em', // Adjusted: Smaller font size for the initial
         fontWeight: 'bold',
         marginRight: '25px', // More margin
         flexShrink: 0,
@@ -458,19 +522,8 @@ const jobAppStyles = {
         width: '100%',
         fontWeight: '600',
     },
-    loading: {
-        textAlign: 'center',
-        marginTop: '60px',
-        color: '#495057',
-        fontSize: '1.3em',
-        padding: '30px',
-        backgroundColor: '#FFFFFF',
-        borderRadius: '15px',
-        boxShadow: '0 5px 15px rgba(0,0,0,0.08)',
-        maxWidth: '650px',
-        width: '100%',
-        fontWeight: '600',
-    },
+    // The `loading` style object is no longer directly used here,
+    // as it's handled by the dedicated Loading component.
     error: {
         textAlign: 'center',
         marginTop: '60px',
