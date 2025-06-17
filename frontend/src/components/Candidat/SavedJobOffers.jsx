@@ -53,7 +53,6 @@ const JobCard = ({job, onApply, isApplied, onSave, isSaved }) => {
           <p className="company-name">{job.company}</p>
           <div className="job-meta">
             <span className="job-type-badge">{job.type}</span>
-            <span className="job-posted"><FaClock size={12} /> Il y a 2 jours</span>
           </div>
         </div>
         <button 
