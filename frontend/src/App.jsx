@@ -78,82 +78,75 @@ const CVsExamples = lazy(() => import('./components/CVsExamples'));
 const SavedJobOffers = lazy(() => import('./components/Candidat/SavedJobOffers'));
 
 // Create a wrapper to monitor location changes and handle loading
+// Improved AppRoutes component with better loading logic
 const AppRoutes = () => {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
-  const [pageReady, setPageReady] = useState(false);
 
   useEffect(() => {
     setLoading(true);
-    setPageReady(false);
     
-    // Use requestAnimationFrame to wait for the next render cycle
-    const handlePageLoad = () => {
-      requestAnimationFrame(() => {
-        // Wait for two animation frames to ensure DOM is fully rendered
-        requestAnimationFrame(() => {
-          // Additional check: wait for images and other resources
-          const images = document.querySelectorAll('img');
-          const imagePromises = Array.from(images).map(img => {
-            if (img.complete) return Promise.resolve();
-            return new Promise(resolve => {
-              img.onload = resolve;
-              img.onerror = resolve; // Resolve even if image fails to load
-            });
-          });
-
-          Promise.all(imagePromises).then(() => {
-            // Add a small delay to ensure navbar animations are complete
-            setTimeout(() => {
-              setPageReady(true);
-              setLoading(false);
-            }, 300);
+    // Simple timeout-based approach with resource checks
+    const handlePageLoad = async () => {
+      try {
+        // Wait for React to finish rendering
+        await new Promise(resolve => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(resolve);
           });
         });
-      });
+
+        // Check for critical images only (not all images)
+        const criticalImages = document.querySelectorAll('img[data-critical], .hero img, .logo img');
+        const imagePromises = Array.from(criticalImages).map(img => {
+          if (img.complete) return Promise.resolve();
+          return new Promise(resolve => {
+            const timeout = setTimeout(() => resolve(), 2000); // 2s timeout per image
+            img.onload = () => {
+              clearTimeout(timeout);
+              resolve();
+            };
+            img.onerror = () => {
+              clearTimeout(timeout);
+              resolve(); // Continue even if image fails
+            };
+          });
+        });
+
+        // Wait for critical images with overall timeout
+        await Promise.race([
+          Promise.all(imagePromises),
+          new Promise(resolve => setTimeout(resolve, 3000)) // Max 3s wait
+        ]);
+
+        // Small delay for smooth transition
+        setTimeout(() => {
+          setLoading(false);
+        }, 200);
+
+      } catch (error) {
+        console.error('Loading error:', error);
+        // Always stop loading even if there's an error
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
+      }
     };
 
     handlePageLoad();
   }, [location.pathname]);
 
-  // Alternative approach using Intersection Observer to wait for navbar
+  // Fallback: Force stop loading after maximum time
   useEffect(() => {
     if (!loading) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && entry.target.classList.contains('navbar')) {
-          // Navbar is visible and rendered
-          setTimeout(() => {
-            setPageReady(true);
-            setLoading(false);
-          }, 200);
-        }
-      });
-    });
-
-    // Try to observe navbar after a short delay
-    const checkForNavbar = () => {
-      const navbar = document.querySelector('.navbar, nav, [role="navigation"]');
-      if (navbar) {
-        observer.observe(navbar);
-      } else {
-        // Navbar not found, use fallback timeout
-        setTimeout(() => {
-          setPageReady(true);
-          setLoading(false);
-        }, 800);
-      }
-    };
-
-    const timeout = setTimeout(checkForNavbar, 100);
     
-    return () => {
-      clearTimeout(timeout);
-      observer.disconnect();
-    };
-  }, [loading, location.pathname]);
+    const maxLoadingTime = setTimeout(() => {
+      console.warn('Force stopping loading after 5 seconds');
+      setLoading(false);
+    }, 5000); // Maximum 5 seconds loading
 
+    return () => clearTimeout(maxLoadingTime);
+  }, [loading]);
   return (
     <>
       {loading && <Loading />}
