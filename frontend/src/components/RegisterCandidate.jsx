@@ -2,21 +2,24 @@
 
 import { useState, useEffect, useRef } from "react"
 import {
-  FaUser,
-  FaEnvelope,
-  FaPhone,
-  FaLock,
-  FaCheckCircle,
-  FaUserGraduate,
-  FaArrowRight,
-  FaArrowLeft,
-  FaInfoCircle,
-  FaGraduationCap,
-  FaPlus,
-  FaTrash,
-  FaEye,
-  FaEyeSlash,
-} from "react-icons/fa"
+  User,
+  Mail,
+  Phone,
+  Lock,
+  CheckCircle,
+  ArrowRight,
+  ArrowLeft,
+  Info,
+  GraduationCap,
+  Plus,
+  Trash2,
+  Eye,
+  SlashIcon as EyeSlash,
+  Sparkles,
+  Target,
+  Award,
+  Zap,
+} from "lucide-react"
 
 function RegisterCandidate() {
   const [formData, setFormData] = useState({
@@ -149,23 +152,23 @@ function RegisterCandidate() {
     }
   }
 
-  // Composant Input réutilisable
-  const InputField = ({
-    name,
-    type = "text",
-    placeholder,
-    icon: Icon,
-    label,
-    required = true,
-    showPasswordToggle = false,
-  }) => {
+  const progress = ((currentStep - 1) / 2) * 100
+
+  const getSkillLevel = (level) => {
+    if (level >= 90) return { label: "Expert", color: "#8b5cf6", bg: "rgba(139, 92, 246, 0.1)" }
+    if (level >= 70) return { label: "Avancé", color: "#06b6d4", bg: "rgba(6, 182, 212, 0.1)" }
+    if (level >= 50) return { label: "Intermédiaire", color: "#10b981", bg: "rgba(16, 185, 129, 0.1)" }
+    if (level >= 30) return { label: "Débutant", color: "#f59e0b", bg: "rgba(245, 158, 11, 0.1)" }
+    return { label: "Novice", color: "#ef4444", bg: "rgba(239, 68, 68, 0.1)" }
+  }
+
+  const InputField = ({ name, type = "text", placeholder, icon: Icon, label, required = true }) => {
     const isValid = validations[name] && formData[name]
     const isInvalid = !validations[name] && formData[name]
     const isFocused = focusedField === name
 
     const getValidationMessage = () => {
       if (!isInvalid) return ""
-
       switch (name) {
         case "email":
           return "Format d'email invalide"
@@ -191,12 +194,12 @@ function RegisterCandidate() {
             <span className="label-text">{label}</span>
             {required && <span className="required">*</span>}
           </div>
-          {isValid && <FaCheckCircle className="validation-success" />}
+          {isValid && <CheckCircle className="validation-success" />}
         </label>
 
         <div className="input-wrapper">
           <input
-            type={showPasswordToggle && showPassword ? "text" : type}
+            type={name === "password" && showPassword ? "text" : type}
             name={name}
             value={formData[name]}
             onChange={handleChange}
@@ -207,13 +210,13 @@ function RegisterCandidate() {
             className="input-control"
           />
 
-          {showPasswordToggle && (
+          {name === "password" && (
             <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
+              {showPassword ? <EyeSlash /> : <Eye />}
             </button>
           )}
 
-          <div className="input-border" />
+          <div className="input-glow" />
         </div>
 
         {isInvalid && <div className="validation-error">{getValidationMessage()}</div>}
@@ -221,87 +224,19 @@ function RegisterCandidate() {
     )
   }
 
-  // Composant Skill réutilisable
-  const SkillField = ({ skill, index, onUpdate, onRemove, canRemove }) => {
-    const getSkillLevel = (level) => {
-      if (level >= 80) return { label: "Expert", color: "#10b981" }
-      if (level >= 60) return { label: "Avancé", color: "#3b82f6" }
-      if (level >= 40) return { label: "Intermédiaire", color: "#f59e0b" }
-      if (level >= 20) return { label: "Débutant", color: "#ef4444" }
-      return { label: "Novice", color: "#6b7280" }
-    }
-
-    const skillLevel = getSkillLevel(skill.level)
-
-    return (
-      <div className="skill-field">
-        <div className="skill-inputs">
-          <div className="skill-name-input">
-            <input
-              type="text"
-              placeholder="Nom de la compétence (ex: JavaScript, Marketing...)"
-              value={skill.name}
-              onChange={(e) => onUpdate(index, "name", e.target.value)}
-              className="skill-input"
-            />
-          </div>
-
-          <div className="skill-level-input">
-            <input
-              type="number"
-              placeholder="0-100"
-              value={skill.level}
-              onChange={(e) => onUpdate(index, "level", e.target.value)}
-              min="0"
-              max="100"
-              className="skill-input level-input"
-            />
-            <div className="skill-level-info">
-              <span className="level-label" style={{ color: skillLevel.color }}>
-                {skillLevel.label}
-              </span>
-              <span className="level-percentage">{skill.level}%</span>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            className="remove-skill"
-            onClick={() => onRemove(index)}
-            disabled={!canRemove}
-            title="Supprimer cette compétence"
-          >
-            <FaTrash />
-          </button>
-        </div>
-
-        {skill.name && (
-          <div className="skill-progress">
-            <div className="progress-track">
-              <div
-                className="progress-fill"
-                style={{
-                  width: `${skill.level}%`,
-                  backgroundColor: skillLevel.color,
-                }}
-              />
-            </div>
-          </div>
-        )}
-      </div>
-    )
-  }
-
-  const progress = ((currentStep - 1) / 2) * 100
-
   return (
     <div className="register-page">
-      {/* Background décoratif */}
-      <div className="background-decoration">
-        <div className="floating-shape shape-1" />
-        <div className="floating-shape shape-2" />
-        <div className="floating-shape shape-3" />
-        <div className="grid-overlay" />
+      {/* Background Effects */}
+      <div className="background-effects">
+        <div className="gradient-orb orb-1" />
+        <div className="gradient-orb orb-2" />
+        <div className="gradient-orb orb-3" />
+        <div className="mesh-gradient" />
+        <div className="floating-particles">
+          {[...Array(20)].map((_, i) => (
+            <div key={i} className={`particle particle-${i + 1}`} />
+          ))}
+        </div>
       </div>
 
       <div className="register-container">
@@ -309,159 +244,263 @@ function RegisterCandidate() {
           {/* Header */}
           <div className="register-header">
             <div className="icon-container">
-              <FaUserGraduate className="main-icon" />
+              <div className="icon-bg">
+                <GraduationCap className="main-icon" />
+              </div>
+              <div className="icon-ring" />
             </div>
-            <h1 className="register-title">Inscription Candidat</h1>
-            <p className="register-subtitle">Créez votre compte pour trouver votre prochain emploi</p>
+            <h1 className="register-title">
+              <span className="title-gradient">Rejoignez-nous</span>
+              <br />
+              <span className="title-sub">Candidat Talentueux</span>
+            </h1>
+            <p className="register-subtitle">
+              Créez votre profil professionnel et découvrez des opportunités qui vous correspondent
+            </p>
           </div>
 
-          {/* Progress Indicator */}
+          {/* Progress */}
           <div className="progress-section">
-            <div className="progress-bar">
+            <div className="progress-track">
               <div className="progress-fill" style={{ width: `${progress}%` }} />
+              <div className="progress-glow" style={{ left: `${progress}%` }} />
             </div>
-            <div className="steps-indicator">
+            <div className="steps-container">
               {[
-                { number: 1, label: "Connexion", icon: FaLock },
-                { number: 2, label: "Profil", icon: FaUser },
-                { number: 3, label: "Compétences", icon: FaGraduationCap },
+                { number: 1, label: "Connexion", icon: Lock },
+                { number: 2, label: "Profil", icon: User },
+                { number: 3, label: "Compétences", icon: Award },
               ].map((step) => (
                 <div
                   key={step.number}
-                  className={`step ${currentStep >= step.number ? "active" : ""} ${currentStep > step.number ? "completed" : ""}`}
+                  className={`step-item ${currentStep >= step.number ? "active" : ""} ${currentStep > step.number ? "completed" : ""}`}
                 >
-                  <div className="step-number">{currentStep > step.number ? <FaCheckCircle /> : step.number}</div>
+                  <div className="step-circle">
+                    {currentStep > step.number ? (
+                      <CheckCircle className="step-check" />
+                    ) : (
+                      <step.icon className="step-icon" />
+                    )}
+                  </div>
                   <span className="step-label">{step.label}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Error Message */}
+          {/* Error Alert */}
           {error && (
             <div className="error-alert">
-              <FaInfoCircle className="error-icon" />
-              <span>{error}</span>
+              <div className="error-icon-wrapper">
+                <Info className="error-icon" />
+              </div>
+              <div className="error-content">
+                <h4 className="error-title">Attention</h4>
+                <p className="error-message">{error}</p>
+              </div>
             </div>
           )}
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="register-form">
-            {/* Étape 1: Connexion */}
+            {/* Step 1: Login */}
             {currentStep === 1 && (
-              <div className="form-step active">
+              <div className="form-step">
                 <div className="step-header">
-                  <FaLock className="step-icon" />
-                  <h3 className="step-title">Informations de connexion</h3>
+                  <div className="step-icon-wrapper">
+                    <Lock className="step-header-icon" />
+                  </div>
+                  <div className="step-info">
+                    <h3 className="step-title">Informations de connexion</h3>
+                    <p className="step-description">Créez vos identifiants de connexion sécurisés</p>
+                  </div>
                 </div>
 
                 <div className="form-grid">
-                  <InputField name="username" placeholder="Votre identifiant" icon={FaUser} label="Nom d'utilisateur" />
+                  <InputField
+                    name="username"
+                    placeholder="Votre identifiant unique"
+                    icon={User}
+                    label="Nom d'utilisateur"
+                  />
                   <InputField
                     name="email"
                     type="email"
                     placeholder="votre@email.com"
-                    icon={FaEnvelope}
+                    icon={Mail}
                     label="Adresse email"
                   />
                   <InputField
                     name="password"
                     type="password"
-                    placeholder="••••••••"
-                    icon={FaLock}
+                    placeholder="••••••••••"
+                    icon={Lock}
                     label="Mot de passe"
-                    showPasswordToggle={true}
                   />
                 </div>
 
                 <div className="form-actions">
                   <div></div>
                   <button type="button" className="btn btn-primary" onClick={nextStep}>
-                    <span>Suivant</span>
-                    <FaArrowRight />
+                    <span>Continuer</span>
+                    <ArrowRight className="btn-icon" />
                   </button>
                 </div>
               </div>
             )}
 
-            {/* Étape 2: Profil */}
+            {/* Step 2: Profile */}
             {currentStep === 2 && (
-              <div className="form-step active">
+              <div className="form-step">
                 <div className="step-header">
-                  <FaUser className="step-icon" />
-                  <h3 className="step-title">Informations personnelles</h3>
+                  <div className="step-icon-wrapper">
+                    <User className="step-header-icon" />
+                  </div>
+                  <div className="step-info">
+                    <h3 className="step-title">Informations personnelles</h3>
+                    <p className="step-description">Complétez votre profil avec vos informations de contact</p>
+                  </div>
                 </div>
 
                 <div className="form-grid">
-                  <InputField name="name" placeholder="Votre nom complet" icon={FaUser} label="Nom complet" />
+                  <InputField name="name" placeholder="Votre nom complet" icon={User} label="Nom complet" />
                   <InputField
                     name="phoneNumber"
                     type="tel"
                     placeholder="0123456789"
-                    icon={FaPhone}
+                    icon={Phone}
                     label="Numéro de téléphone"
                   />
                 </div>
 
                 <div className="form-actions">
                   <button type="button" className="btn btn-secondary" onClick={prevStep}>
-                    <FaArrowLeft />
-                    <span>Précédent</span>
+                    <ArrowLeft className="btn-icon" />
+                    <span>Retour</span>
                   </button>
                   <button type="button" className="btn btn-primary" onClick={nextStep}>
-                    <span>Suivant</span>
-                    <FaArrowRight />
+                    <span>Continuer</span>
+                    <ArrowRight className="btn-icon" />
                   </button>
                 </div>
               </div>
             )}
 
-            {/* Étape 3: Compétences */}
+            {/* Step 3: Skills */}
             {currentStep === 3 && (
-              <div className="form-step active">
+              <div className="form-step">
                 <div className="step-header">
-                  <FaGraduationCap className="step-icon" />
-                  <h3 className="step-title">Vos compétences</h3>
+                  <div className="step-icon-wrapper">
+                    <Award className="step-header-icon" />
+                  </div>
+                  <div className="step-info">
+                    <h3 className="step-title">Vos compétences</h3>
+                    <p className="step-description">Mettez en valeur vos talents et votre expertise</p>
+                  </div>
                 </div>
 
-                <div className="skills-info">
-                  <FaInfoCircle className="info-icon" />
-                  <p>Ajoutez vos compétences et évaluez votre niveau de maîtrise (0-100)</p>
+                <div className="skills-info-card">
+                  <div className="info-icon-wrapper">
+                    <Sparkles className="info-icon" />
+                  </div>
+                  <div className="info-content">
+                    <h4 className="info-title">Conseil</h4>
+                    <p className="info-text">Évaluez honnêtement votre niveau pour chaque compétence (0-100)</p>
+                  </div>
                 </div>
 
                 <div className="skills-container">
-                  {skills.map((skill, index) => (
-                    <SkillField
-                      key={index}
-                      skill={skill}
-                      index={index}
-                      onUpdate={handleSkillChange}
-                      onRemove={removeSkill}
-                      canRemove={skills.length > 1}
-                    />
-                  ))}
+                  {skills.map((skill, index) => {
+                    const skillLevel = getSkillLevel(skill.level)
+                    return (
+                      <div key={index} className="skill-card">
+                        <div className="skill-inputs">
+                          <div className="skill-name-input">
+                            <input
+                              type="text"
+                              placeholder="Ex: JavaScript, Marketing Digital, Photoshop..."
+                              value={skill.name}
+                              onChange={(e) => handleSkillChange(index, "name", e.target.value)}
+                              className="skill-input"
+                            />
+                          </div>
 
-                  <button type="button" className="btn btn-outline add-skill" onClick={addSkill}>
-                    <FaPlus />
-                    <span>Ajouter une compétence</span>
+                          <div className="skill-level-input">
+                            <input
+                              type="number"
+                              placeholder="0-100"
+                              value={skill.level}
+                              onChange={(e) => handleSkillChange(index, "level", e.target.value)}
+                              min="0"
+                              max="100"
+                              className="skill-input level-input"
+                            />
+                            <div
+                              className="skill-badge"
+                              style={{ backgroundColor: skillLevel.bg, color: skillLevel.color }}
+                            >
+                              <Target className="badge-icon" />
+                              <span>{skillLevel.label}</span>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            className="remove-skill-btn"
+                            onClick={() => removeSkill(index)}
+                            disabled={skills.length === 1}
+                          >
+                            <Trash2 className="remove-icon" />
+                          </button>
+                        </div>
+
+                        {skill.name && skill.level > 0 && (
+                          <div className="skill-progress">
+                            <div className="progress-bar-bg">
+                              <div
+                                className="progress-bar-fill"
+                                style={{
+                                  width: `${skill.level}%`,
+                                  backgroundColor: skillLevel.color,
+                                }}
+                              />
+                            </div>
+                            <div className="skill-stats">
+                              <span className="skill-name-display">{skill.name}</span>
+                              <span className="skill-percentage">{skill.level}%</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+
+                  <button type="button" className="add-skill-btn" onClick={addSkill}>
+                    <div className="add-skill-icon">
+                      <Plus className="plus-icon" />
+                    </div>
+                    <div className="add-skill-content">
+                      <span className="add-skill-title">Ajouter une compétence</span>
+                      <span className="add-skill-subtitle">Enrichissez votre profil</span>
+                    </div>
                   </button>
                 </div>
 
                 <div className="form-actions">
                   <button type="button" className="btn btn-secondary" onClick={prevStep}>
-                    <FaArrowLeft />
-                    <span>Précédent</span>
+                    <ArrowLeft className="btn-icon" />
+                    <span>Retour</span>
                   </button>
                   <button type="submit" disabled={loading} className={`btn btn-success ${loading ? "loading" : ""}`}>
                     {loading ? (
                       <>
                         <div className="spinner" />
-                        <span>Inscription en cours...</span>
+                        <span>Création en cours...</span>
                       </>
                     ) : (
                       <>
-                        <span>S'inscrire</span>
-                        <FaCheckCircle />
+                        <Zap className="btn-icon" />
+                        <span>Créer mon compte</span>
                       </>
                     )}
                   </button>
@@ -472,8 +511,8 @@ function RegisterCandidate() {
 
           {/* Footer */}
           <div className="form-footer">
-            <p>
-              Déjà inscrit ?
+            <p className="footer-text">
+              Déjà membre ?
               <a href="/login/candidat" className="login-link">
                 Se connecter
               </a>
@@ -492,14 +531,14 @@ function RegisterCandidate() {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+          background: #0a0a0f;
           padding: 2rem 1rem;
           position: relative;
           overflow: hidden;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        .background-decoration {
+        .background-effects {
           position: absolute;
           top: 0;
           left: 0;
@@ -509,79 +548,144 @@ function RegisterCandidate() {
           z-index: 1;
         }
 
-        .grid-overlay {
+        .mesh-gradient {
           position: absolute;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
-          background-image: 
-            linear-gradient(rgba(255, 140, 0, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 140, 0, 0.1) 1px, transparent 1px);
-          background-size: 50px 50px;
-          animation: gridMove 20s linear infinite;
+          background: 
+            radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+          animation: meshMove 20s ease-in-out infinite;
         }
 
-        @keyframes gridMove {
-          0% { transform: translate(0, 0); }
-          100% { transform: translate(50px, 50px); }
+        @keyframes meshMove {
+          0%, 100% { transform: scale(1) rotate(0deg); }
+          50% { transform: scale(1.1) rotate(180deg); }
         }
 
-        .floating-shape {
+        .gradient-orb {
           position: absolute;
           border-radius: 50%;
-          background: linear-gradient(45deg, rgba(255, 140, 0, 0.1), rgba(255, 140, 0, 0.05));
-          animation: float 6s ease-in-out infinite;
+          filter: blur(40px);
+          animation: orbFloat 8s ease-in-out infinite;
         }
 
-        .shape-1 {
-          width: 120px;
-          height: 120px;
-          top: 15%;
+        .orb-1 {
+          width: 300px;
+          height: 300px;
+          background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+          top: 10%;
           left: 10%;
           animation-delay: 0s;
         }
 
-        .shape-2 {
-          width: 80px;
-          height: 80px;
-          top: 70%;
-          right: 15%;
+        .orb-2 {
+          width: 200px;
+          height: 200px;
+          background: linear-gradient(45deg, #10b981, #f59e0b);
+          top: 60%;
+          right: 10%;
           animation-delay: 2s;
         }
 
-        .shape-3 {
-          width: 100px;
-          height: 100px;
-          bottom: 20%;
-          left: 20%;
+        .orb-3 {
+          width: 250px;
+          height: 250px;
+          background: linear-gradient(45deg, #ef4444, #8b5cf6);
+          bottom: 10%;
+          left: 30%;
           animation-delay: 4s;
         }
 
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-20px) rotate(180deg); }
+        @keyframes orbFloat {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(30px, -30px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
         }
+
+        .floating-particles {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+        }
+
+        .particle {
+          position: absolute;
+          width: 4px;
+          height: 4px;
+          background: rgba(255, 255, 255, 0.6);
+          border-radius: 50%;
+          animation: particleFloat 15s linear infinite;
+        }
+
+        .particle:nth-child(odd) {
+          background: rgba(139, 92, 246, 0.6);
+        }
+
+        .particle:nth-child(even) {
+          background: rgba(6, 182, 212, 0.6);
+        }
+
+        @keyframes particleFloat {
+          0% {
+            transform: translateY(100vh) translateX(0);
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(-100px) translateX(100px);
+            opacity: 0;
+          }
+        }
+
+        .particle-1 { left: 10%; animation-delay: 0s; }
+        .particle-2 { left: 20%; animation-delay: 1s; }
+        .particle-3 { left: 30%; animation-delay: 2s; }
+        .particle-4 { left: 40%; animation-delay: 3s; }
+        .particle-5 { left: 50%; animation-delay: 4s; }
+        .particle-6 { left: 60%; animation-delay: 5s; }
+        .particle-7 { left: 70%; animation-delay: 6s; }
+        .particle-8 { left: 80%; animation-delay: 7s; }
+        .particle-9 { left: 90%; animation-delay: 8s; }
+        .particle-10 { left: 15%; animation-delay: 9s; }
+        .particle-11 { left: 25%; animation-delay: 10s; }
+        .particle-12 { left: 35%; animation-delay: 11s; }
+        .particle-13 { left: 45%; animation-delay: 12s; }
+        .particle-14 { left: 55%; animation-delay: 13s; }
+        .particle-15 { left: 65%; animation-delay: 14s; }
+        .particle-16 { left: 75%; animation-delay: 15s; }
+        .particle-17 { left: 85%; animation-delay: 16s; }
+        .particle-18 { left: 95%; animation-delay: 17s; }
+        .particle-19 { left: 5%; animation-delay: 18s; }
+        .particle-20 { left: 95%; animation-delay: 19s; }
 
         .register-container {
           position: relative;
           z-index: 100;
           width: 100%;
-          max-width: 800px;
+          max-width: 900px;
         }
 
         .register-card {
-          background: rgba(255, 255, 255, 0.98);
+          background: rgba(255, 255, 255, 0.02);
           backdrop-filter: blur(20px);
-          border-radius: 24px;
+          border-radius: 32px;
           padding: 3rem;
+          border: 1px solid rgba(255, 255, 255, 0.1);
           box-shadow: 
-            0 25px 50px rgba(0, 0, 0, 0.3),
-            0 0 0 1px rgba(255, 140, 0, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
+            0 25px 50px rgba(0, 0, 0, 0.5),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
           position: relative;
           overflow: hidden;
-          animation: slideUp 0.6s ease-out;
+          animation: cardSlideUp 0.8s ease-out;
         }
 
         .register-card::before {
@@ -590,9 +694,9 @@ function RegisterCandidate() {
           top: 0;
           left: 0;
           right: 0;
-          height: 3px;
-          background: linear-gradient(90deg, transparent, #ff8c00, transparent);
-          animation: shimmer 2s ease-in-out infinite;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.8), transparent);
+          animation: shimmer 3s ease-in-out infinite;
         }
 
         @keyframes shimmer {
@@ -600,10 +704,10 @@ function RegisterCandidate() {
           100% { transform: translateX(100%); }
         }
 
-        @keyframes slideUp {
+        @keyframes cardSlideUp {
           from {
             opacity: 0;
-            transform: translateY(30px) scale(0.95);
+            transform: translateY(50px) scale(0.95);
           }
           to {
             opacity: 1;
@@ -613,164 +717,243 @@ function RegisterCandidate() {
 
         .register-header {
           text-align: center;
-          margin-bottom: 2.5rem;
+          margin-bottom: 3rem;
         }
 
         .icon-container {
-          display: inline-flex;
+          position: relative;
+          display: inline-block;
+          margin-bottom: 2rem;
+        }
+
+        .icon-bg {
+          width: 100px;
+          height: 100px;
+          background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+          border-radius: 50%;
+          display: flex;
           align-items: center;
           justify-content: center;
-          width: 80px;
-          height: 80px;
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
-          border-radius: 50%;
-          margin-bottom: 1.5rem;
-          box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3);
           position: relative;
+          z-index: 2;
         }
 
-        .icon-container::after {
-          content: '';
+        .icon-ring {
           position: absolute;
-          top: -2px;
-          left: -2px;
-          right: -2px;
-          bottom: -2px;
-          background: linear-gradient(45deg, #ff8c00, transparent, #ff8c00);
+          top: -10px;
+          left: -10px;
+          width: 120px;
+          height: 120px;
+          border: 2px solid rgba(139, 92, 246, 0.3);
           border-radius: 50%;
-          z-index: -1;
-          animation: rotate 3s linear infinite;
+          animation: ringPulse 2s ease-in-out infinite;
         }
 
-        @keyframes rotate {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+        @keyframes ringPulse {
+          0%, 100% { transform: scale(1); opacity: 0.3; }
+          50% { transform: scale(1.1); opacity: 0.6; }
         }
 
         .main-icon {
-          width: 2rem;
-          height: 2rem;
+          width: 2.5rem;
+          height: 2.5rem;
           color: white;
         }
 
         .register-title {
-          font-size: 2.5rem;
-          font-weight: 800;
-          color: #1a1a1a;
-          margin: 0 0 0.5rem 0;
-          background: linear-gradient(135deg, #1a1a1a, #333);
+          font-size: 3rem;
+          font-weight: 900;
+          margin: 0 0 1rem 0;
+          line-height: 1.1;
+        }
+
+        .title-gradient {
+          background: linear-gradient(135deg, #8b5cf6, #06b6d4);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
         }
 
+        .title-sub {
+          color: rgba(255, 255, 255, 0.8);
+          font-weight: 600;
+        }
+
         .register-subtitle {
-          color: #666;
+          color: rgba(255, 255, 255, 0.6);
           font-size: 1.1rem;
           margin: 0;
+          max-width: 500px;
+          margin: 0 auto;
           line-height: 1.6;
         }
 
         .progress-section {
-          margin-bottom: 2.5rem;
+          margin-bottom: 3rem;
         }
 
-        .progress-bar {
-          height: 8px;
-          background-color: #e5e7eb;
-          border-radius: 4px;
-          margin-bottom: 1.5rem;
+        .progress-track {
+          height: 6px;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 3px;
+          margin-bottom: 2rem;
+          position: relative;
           overflow: hidden;
         }
 
         .progress-fill {
           height: 100%;
-          background: linear-gradient(90deg, #ff8c00, #ff6b35);
-          border-radius: 4px;
-          transition: width 0.5s ease;
+          background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+          border-radius: 3px;
+          transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
         }
 
-        .steps-indicator {
+        .progress-fill::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+          animation: progressShimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes progressShimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+
+        .progress-glow {
+          position: absolute;
+          top: -2px;
+          width: 10px;
+          height: 10px;
+          background: #06b6d4;
+          border-radius: 50%;
+          box-shadow: 0 0 20px #06b6d4;
+          transform: translateX(-50%);
+          transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .steps-container {
           display: flex;
           justify-content: space-between;
           align-items: center;
         }
 
-        .step {
+        .step-item {
           display: flex;
           flex-direction: column;
           align-items: center;
           flex: 1;
         }
 
-        .step-number {
-          width: 40px;
-          height: 40px;
+        .step-circle {
+          width: 50px;
+          height: 50px;
           border-radius: 50%;
-          background-color: #e5e7eb;
-          color: #6b7280;
+          background: rgba(255, 255, 255, 0.05);
+          border: 2px solid rgba(255, 255, 255, 0.1);
           display: flex;
           align-items: center;
           justify-content: center;
-          font-weight: 700;
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.75rem;
           transition: all 0.3s ease;
-          font-size: 0.9rem;
         }
 
-        .step.active .step-number {
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
-          color: white;
-          box-shadow: 0 5px 15px rgba(255, 140, 0, 0.3);
+        .step-item.active .step-circle {
+          background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+          border-color: transparent;
+          box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
           transform: scale(1.1);
         }
 
-        .step.completed .step-number {
-          background: #10b981;
+        .step-item.completed .step-circle {
+          background: linear-gradient(135deg, #10b981, #059669);
+          border-color: transparent;
+        }
+
+        .step-icon, .step-check {
+          width: 1.2rem;
+          height: 1.2rem;
+          color: rgba(255, 255, 255, 0.6);
+        }
+
+        .step-item.active .step-icon,
+        .step-item.completed .step-check {
           color: white;
         }
 
         .step-label {
-          font-size: 0.85rem;
-          color: #6b7280;
+          font-size: 0.9rem;
+          color: rgba(255, 255, 255, 0.5);
           font-weight: 500;
           transition: all 0.3s ease;
         }
 
-        .step.active .step-label {
-          color: #ff8c00;
+        .step-item.active .step-label {
+          color: #8b5cf6;
           font-weight: 700;
         }
 
-        .step.completed .step-label {
+        .step-item.completed .step-label {
           color: #10b981;
           font-weight: 600;
         }
 
         .error-alert {
           display: flex;
-          align-items: center;
-          gap: 0.75rem;
+          align-items: flex-start;
+          gap: 1rem;
           margin-bottom: 2rem;
-          padding: 1rem 1.25rem;
+          padding: 1.25rem;
           background: rgba(239, 68, 68, 0.1);
           border: 1px solid rgba(239, 68, 68, 0.2);
-          border-radius: 12px;
-          color: #dc2626;
-          font-weight: 500;
-          animation: errorSlide 0.3s ease-out;
+          border-radius: 16px;
+          animation: errorSlide 0.4s ease-out;
+        }
+
+        .error-icon-wrapper {
+          width: 40px;
+          height: 40px;
+          background: rgba(239, 68, 68, 0.2);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
         }
 
         .error-icon {
-          width: 1.25rem;
-          height: 1.25rem;
-          flex-shrink: 0;
+          width: 1.2rem;
+          height: 1.2rem;
+          color: #ef4444;
+        }
+
+        .error-content {
+          flex: 1;
+        }
+
+        .error-title {
+          font-size: 1rem;
+          font-weight: 700;
+          color: #ef4444;
+          margin: 0 0 0.25rem 0;
+        }
+
+        .error-message {
+          font-size: 0.9rem;
+          color: rgba(239, 68, 68, 0.8);
+          margin: 0;
+          line-height: 1.4;
         }
 
         @keyframes errorSlide {
           from {
             opacity: 0;
-            transform: translateY(-10px);
+            transform: translateY(-20px);
           }
           to {
             opacity: 1;
@@ -783,13 +966,13 @@ function RegisterCandidate() {
         }
 
         .form-step {
-          animation: fadeIn 0.5s ease-out;
+          animation: stepFadeIn 0.6s ease-out;
         }
 
-        @keyframes fadeIn {
+        @keyframes stepFadeIn {
           from {
             opacity: 0;
-            transform: translateX(20px);
+            transform: translateX(30px);
           }
           to {
             opacity: 1;
@@ -800,48 +983,61 @@ function RegisterCandidate() {
         .step-header {
           display: flex;
           align-items: center;
-          margin-bottom: 2rem;
-          padding-bottom: 1rem;
-          border-bottom: 2px solid #f3f4f6;
-          position: relative;
+          gap: 1.5rem;
+          margin-bottom: 2.5rem;
+          padding: 1.5rem;
+          background: rgba(255, 255, 255, 0.02);
+          border-radius: 20px;
+          border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .step-header::after {
-          content: '';
-          position: absolute;
-          bottom: -2px;
-          left: 0;
-          width: 80px;
-          height: 2px;
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
+        .step-icon-wrapper {
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
         }
 
-        .step-icon {
+        .step-header-icon {
           width: 1.5rem;
           height: 1.5rem;
-          color: #ff8c00;
-          margin-right: 0.75rem;
+          color: white;
+        }
+
+        .step-info {
+          flex: 1;
         }
 
         .step-title {
-          font-size: 1.4rem;
+          font-size: 1.5rem;
           font-weight: 700;
-          color: #1a1a1a;
+          color: white;
+          margin: 0 0 0.5rem 0;
+        }
+
+        .step-description {
+          font-size: 1rem;
+          color: rgba(255, 255, 255, 0.6);
           margin: 0;
+          line-height: 1.5;
         }
 
         .form-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
           gap: 2rem;
-          margin-bottom: 2.5rem;
+          margin-bottom: 3rem;
         }
 
         .input-field {
           display: flex;
           flex-direction: column;
           gap: 0.75rem;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: all 0.3s ease;
         }
 
         .input-field.focused {
@@ -853,7 +1049,7 @@ function RegisterCandidate() {
           align-items: center;
           justify-content: space-between;
           font-weight: 600;
-          color: #374151;
+          color: rgba(255, 255, 255, 0.8);
           font-size: 0.95rem;
         }
 
@@ -866,7 +1062,7 @@ function RegisterCandidate() {
         .label-icon {
           width: 1.1rem;
           height: 1.1rem;
-          color: #ff8c00;
+          color: #8b5cf6;
         }
 
         .label-text {
@@ -892,26 +1088,26 @@ function RegisterCandidate() {
 
         .input-control {
           width: 100%;
-          padding: 1rem 1.25rem;
-          border: 2px solid #e5e7eb;
-          border-radius: 12px;
+          padding: 1.25rem 1.5rem;
+          border: 2px solid rgba(255, 255, 255, 0.1);
+          border-radius: 16px;
           font-size: 1rem;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          background: rgba(255, 255, 255, 0.9);
+          transition: all 0.3s ease;
+          background: rgba(255, 255, 255, 0.05);
           backdrop-filter: blur(10px);
-          color: #1a1a1a;
+          color: white;
           font-family: inherit;
         }
 
         .input-control::placeholder {
-          color: #9ca3af;
+          color: rgba(255, 255, 255, 0.4);
         }
 
         .input-control:focus {
           outline: none;
-          border-color: #ff8c00;
-          box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
-          background: rgba(255, 255, 255, 1);
+          border-color: #8b5cf6;
+          box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+          background: rgba(255, 255, 255, 0.08);
         }
 
         .input-field.valid .input-control {
@@ -929,30 +1125,30 @@ function RegisterCandidate() {
           right: 1rem;
           background: none;
           border: none;
-          color: #6b7280;
+          color: rgba(255, 255, 255, 0.5);
           cursor: pointer;
-          padding: 0.25rem;
-          border-radius: 4px;
+          padding: 0.5rem;
+          border-radius: 8px;
           transition: all 0.3s ease;
         }
 
         .password-toggle:hover {
-          color: #ff8c00;
-          background: rgba(255, 140, 0, 0.1);
+          color: #8b5cf6;
+          background: rgba(139, 92, 246, 0.1);
         }
 
-        .input-border {
+        .input-glow {
           position: absolute;
           bottom: 0;
           left: 0;
           width: 0;
           height: 2px;
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
-          transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+          transition: width 0.3s ease;
           border-radius: 1px;
         }
 
-        .input-field.focused .input-border {
+        .input-field.focused .input-glow {
           width: 100%;
         }
 
@@ -969,55 +1165,76 @@ function RegisterCandidate() {
           to { opacity: 1; }
         }
 
-        .skills-info {
+        .skills-info-card {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
-          background: rgba(255, 140, 0, 0.1);
-          padding: 1rem;
-          border-radius: 12px;
+          gap: 1rem;
+          background: rgba(139, 92, 246, 0.1);
+          padding: 1.25rem;
+          border-radius: 16px;
           margin-bottom: 2rem;
-          border: 1px solid rgba(255, 140, 0, 0.2);
+          border: 1px solid rgba(139, 92, 246, 0.2);
         }
 
-        .info-icon {
-          color: #ff8c00;
-          width: 1.2rem;
-          height: 1.2rem;
+        .info-icon-wrapper {
+          width: 40px;
+          height: 40px;
+          background: rgba(139, 92, 246, 0.2);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           flex-shrink: 0;
         }
 
-        .skills-info p {
+        .info-icon {
+          width: 1.2rem;
+          height: 1.2rem;
+          color: #8b5cf6;
+        }
+
+        .info-content {
+          flex: 1;
+        }
+
+        .info-title {
+          font-size: 1rem;
+          font-weight: 700;
+          color: #8b5cf6;
+          margin: 0 0 0.25rem 0;
+        }
+
+        .info-text {
+          font-size: 0.9rem;
+          color: rgba(255, 255, 255, 0.7);
           margin: 0;
-          font-size: 0.95rem;
-          color: #4b5563;
-          line-height: 1.5;
+          line-height: 1.4;
         }
 
         .skills-container {
-          margin-bottom: 2.5rem;
+          margin-bottom: 3rem;
         }
 
-        .skill-field {
+        .skill-card {
           margin-bottom: 1.5rem;
           padding: 1.5rem;
-          background: rgba(255, 255, 255, 0.5);
-          border-radius: 16px;
-          border: 1px solid rgba(255, 255, 255, 0.3);
+          background: rgba(255, 255, 255, 0.02);
+          border-radius: 20px;
+          border: 1px solid rgba(255, 255, 255, 0.05);
           transition: all 0.3s ease;
-          animation: skillSlide 0.3s ease-out;
+          animation: skillSlide 0.4s ease-out;
         }
 
-        .skill-field:hover {
-          background: rgba(255, 255, 255, 0.7);
+        .skill-card:hover {
+          background: rgba(255, 255, 255, 0.05);
           transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         @keyframes skillSlide {
           from {
             opacity: 0;
-            transform: translateY(10px);
+            transform: translateY(20px);
           }
           to {
             opacity: 1;
@@ -1041,51 +1258,54 @@ function RegisterCandidate() {
         }
 
         .skill-input {
-          padding: 0.875rem 1rem;
-          border: 2px solid #e5e7eb;
-          border-radius: 8px;
+          padding: 1rem;
+          border: 2px solid rgba(255, 255, 255, 0.1);
+          border-radius: 12px;
           font-size: 0.95rem;
           transition: all 0.3s ease;
-          background: rgba(255, 255, 255, 0.9);
-          color: #1a1a1a;
+          background: rgba(255, 255, 255, 0.05);
+          color: white;
           font-family: inherit;
+        }
+
+        .skill-input::placeholder {
+          color: rgba(255, 255, 255, 0.4);
         }
 
         .skill-input:focus {
           outline: none;
-          border-color: #ff8c00;
-          box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
-          background: rgba(255, 255, 255, 1);
+          border-color: #8b5cf6;
+          box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+          background: rgba(255, 255, 255, 0.08);
         }
 
         .level-input {
           text-align: center;
         }
 
-        .skill-level-info {
+        .skill-badge {
           display: flex;
-          justify-content: space-between;
           align-items: center;
+          gap: 0.25rem;
+          padding: 0.5rem 0.75rem;
+          border-radius: 8px;
           font-size: 0.8rem;
-        }
-
-        .level-label {
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.05em;
         }
 
-        .level-percentage {
-          font-weight: 700;
-          color: #374151;
+        .badge-icon {
+          width: 0.8rem;
+          height: 0.8rem;
         }
 
-        .remove-skill {
+        .remove-skill-btn {
           background: rgba(239, 68, 68, 0.1);
           border: 1px solid rgba(239, 68, 68, 0.2);
           color: #ef4444;
-          padding: 0.75rem;
-          border-radius: 8px;
+          padding: 1rem;
+          border-radius: 12px;
           cursor: pointer;
           transition: all 0.3s ease;
           display: flex;
@@ -1094,35 +1314,41 @@ function RegisterCandidate() {
           height: fit-content;
         }
 
-        .remove-skill:hover:not(:disabled) {
+        .remove-skill-btn:hover:not(:disabled) {
           background: rgba(239, 68, 68, 0.2);
           transform: scale(1.05);
         }
 
-        .remove-skill:disabled {
-          opacity: 0.5;
+        .remove-skill-btn:disabled {
+          opacity: 0.3;
           cursor: not-allowed;
         }
 
-        .skill-progress {
-          margin-top: 0.5rem;
+        .remove-icon {
+          width: 1rem;
+          height: 1rem;
         }
 
-        .progress-track {
+        .skill-progress {
+          margin-top: 1rem;
+        }
+
+        .progress-bar-bg {
           height: 8px;
-          background-color: #e5e7eb;
+          background: rgba(255, 255, 255, 0.1);
           border-radius: 4px;
           overflow: hidden;
+          margin-bottom: 0.75rem;
         }
 
-        .progress-fill {
+        .progress-bar-fill {
           height: 100%;
           border-radius: 4px;
-          transition: all 0.5s ease;
+          transition: all 0.6s ease;
           position: relative;
         }
 
-        .progress-fill::after {
+        .progress-bar-fill::after {
           content: '';
           position: absolute;
           top: 0;
@@ -1130,86 +1356,161 @@ function RegisterCandidate() {
           right: 0;
           bottom: 0;
           background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-          animation: progressShimmer 2s ease-in-out infinite;
+          animation: skillShimmer 2s ease-in-out infinite;
         }
 
-        @keyframes progressShimmer {
+        @keyframes skillShimmer {
           0% { transform: translateX(-100%); }
           100% { transform: translateX(100%); }
+        }
+
+        .skill-stats {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .skill-name-display {
+          font-size: 0.9rem;
+          color: rgba(255, 255, 255, 0.8);
+          font-weight: 600;
+        }
+
+        .skill-percentage {
+          font-size: 0.9rem;
+          font-weight: 700;
+          color: white;
+        }
+
+        .add-skill-btn {
+          width: 100%;
+          background: rgba(255, 255, 255, 0.02);
+          border: 2px dashed rgba(255, 255, 255, 0.2);
+          color: rgba(255, 255, 255, 0.6);
+          padding: 1.5rem;
+          border-radius: 16px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          font-family: inherit;
+        }
+
+        .add-skill-btn:hover {
+          background: rgba(139, 92, 246, 0.1);
+          border-color: rgba(139, 92, 246, 0.3);
+          color: #8b5cf6;
+          transform: translateY(-2px);
+        }
+
+        .add-skill-icon {
+          width: 40px;
+          height: 40px;
+          background: rgba(139, 92, 246, 0.2);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .plus-icon {
+          width: 1.2rem;
+          height: 1.2rem;
+        }
+
+        .add-skill-content {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.25rem;
+        }
+
+        .add-skill-title {
+          font-size: 1rem;
+          font-weight: 600;
+        }
+
+        .add-skill-subtitle {
+          font-size: 0.85rem;
+          opacity: 0.7;
         }
 
         .form-actions {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-top: 2.5rem;
+          margin-top: 3rem;
           gap: 1rem;
         }
 
         .btn {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          padding: 1rem 2rem;
-          border-radius: 12px;
+          gap: 0.75rem;
+          padding: 1.25rem 2rem;
+          border-radius: 16px;
           font-weight: 700;
           font-size: 1rem;
           cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: all 0.3s ease;
           border: none;
           font-family: inherit;
           position: relative;
           overflow: hidden;
         }
 
+        .btn::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          transition: left 0.6s ease;
+        }
+
+        .btn:hover::before {
+          left: 100%;
+        }
+
         .btn-primary {
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
+          background: linear-gradient(135deg, #8b5cf6, #06b6d4);
           color: white;
-          box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
+          box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
         }
 
         .btn-primary:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(255, 140, 0, 0.4);
+          transform: translateY(-3px);
+          box-shadow: 0 12px 35px rgba(139, 92, 246, 0.4);
         }
 
         .btn-secondary {
-          background: rgba(107, 114, 128, 0.1);
-          border: 2px solid rgba(107, 114, 128, 0.2);
-          color: #6b7280;
+          background: rgba(255, 255, 255, 0.05);
+          border: 2px solid rgba(255, 255, 255, 0.1);
+          color: rgba(255, 255, 255, 0.8);
         }
 
         .btn-secondary:hover {
-          background: rgba(107, 114, 128, 0.2);
+          background: rgba(255, 255, 255, 0.1);
           transform: translateY(-2px);
         }
 
         .btn-success {
           background: linear-gradient(135deg, #10b981, #059669);
           color: white;
-          box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+          box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
         }
 
         .btn-success:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-outline {
-          background: transparent;
-          border: 2px solid #ff8c00;
-          color: #ff8c00;
-        }
-
-        .btn-outline:hover {
-          background: #ff8c00;
-          color: white;
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(255, 140, 0, 0.3);
+          transform: translateY(-3px);
+          box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
         }
 
         .btn:disabled {
-          opacity: 0.7;
+          opacity: 0.6;
           cursor: not-allowed;
           transform: none;
         }
@@ -1218,10 +1519,18 @@ function RegisterCandidate() {
           pointer-events: none;
         }
 
-        .add-skill {
-          width: 100%;
-          justify-content: center;
-          margin-top: 1rem;
+        .btn-icon {
+          width: 1.2rem;
+          height: 1.2rem;
+          transition: transform 0.3s ease;
+        }
+
+        .btn:hover .btn-icon {
+          transform: translateX(3px);
+        }
+
+        .btn-secondary:hover .btn-icon {
+          transform: translateX(-3px);
         }
 
         .spinner {
@@ -1240,28 +1549,28 @@ function RegisterCandidate() {
 
         .form-footer {
           text-align: center;
-          margin-top: 2rem;
+          margin-top: 3rem;
           padding-top: 2rem;
-          border-top: 1px solid #e5e7eb;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .form-footer p {
-          color: #6b7280;
-          font-size: 0.95rem;
+        .footer-text {
+          color: rgba(255, 255, 255, 0.6);
+          font-size: 1rem;
           margin: 0;
         }
 
         .login-link {
-          color: #ff8c00;
+          color: #8b5cf6;
           text-decoration: none;
-          font-weight: 600;
+          font-weight: 700;
           margin-left: 0.5rem;
           transition: all 0.3s ease;
           position: relative;
         }
 
         .login-link:hover {
-          color: #ff6b35;
+          color: #06b6d4;
         }
 
         .login-link::after {
@@ -1271,7 +1580,7 @@ function RegisterCandidate() {
           left: 0;
           width: 0;
           height: 2px;
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
+          background: linear-gradient(90deg, #8b5cf6, #06b6d4);
           transition: width 0.3s ease;
         }
 
@@ -1289,17 +1598,24 @@ function RegisterCandidate() {
           }
 
           .register-title {
-            font-size: 2rem;
+            font-size: 2.5rem;
           }
 
-          .icon-container {
-            width: 60px;
-            height: 60px;
+          .icon-bg {
+            width: 80px;
+            height: 80px;
+          }
+
+          .icon-ring {
+            width: 100px;
+            height: 100px;
+            top: -10px;
+            left: -10px;
           }
 
           .main-icon {
-            width: 1.5rem;
-            height: 1.5rem;
+            width: 2rem;
+            height: 2rem;
           }
 
           .form-grid {
@@ -1312,7 +1628,7 @@ function RegisterCandidate() {
             gap: 1rem;
           }
 
-          .remove-skill {
+          .remove-skill-btn {
             justify-self: end;
             width: fit-content;
           }
@@ -1327,17 +1643,23 @@ function RegisterCandidate() {
             justify-content: center;
           }
 
-          .steps-indicator {
+          .steps-container {
             gap: 0.5rem;
           }
 
-          .step-number {
-            width: 35px;
-            height: 35px;
+          .step-circle {
+            width: 45px;
+            height: 45px;
           }
 
           .step-label {
             font-size: 0.8rem;
+          }
+
+          .step-header {
+            flex-direction: column;
+            text-align: center;
+            gap: 1rem;
           }
         }
 
@@ -1347,25 +1669,25 @@ function RegisterCandidate() {
           }
 
           .register-title {
-            font-size: 1.75rem;
+            font-size: 2rem;
           }
 
           .step-title {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
           }
 
           .input-control {
-            padding: 0.875rem 1rem;
-          }
-
-          .skill-field {
             padding: 1rem;
           }
 
-          .skill-level-info {
+          .skill-card {
+            padding: 1rem;
+          }
+
+          .skill-badge {
             flex-direction: column;
-            align-items: center;
             gap: 0.25rem;
+            text-align: center;
           }
         }
       `}</style>
