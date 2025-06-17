@@ -1,94 +1,121 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaMapMarkerAlt, FaBriefcase ,FaBookmark, FaRegBookmark} from 'react-icons/fa';
+import { FaMapMarkerAlt, FaBriefcase, FaBookmark, FaRegBookmark, FaClock, FaBuilding, FaHeart, FaRegHeart } from 'react-icons/fa';
 import "../../assets/css/JobCards.css";
 import Footer from '../../components/Footer';
 import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
 import Navbar from "../Navbara";
 
-
-
-const JobCard = ({job, onApply, isApplied, onSave, isSaved }) => {
+const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
   const navigate = useNavigate();
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleViewDetails = () => {
     navigate(`/offres/${job.id}`);
   };
 
   return (
-  <div className="job-card">
-    <div className="job-header">
-      <div className="job-logo">
-  <img
-    src={job.logo ? job.logo : ""}
-    alt={job.logo ? "Logo de l'entreprise" : ""}
-  />
-  <h3>{job.title}</h3> {/* Title now directly under the logo */}
-</div>
+    <div 
+      className={`modern-job-card ${isHovered ? 'hovered' : ''}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="job-card-header">
+        <div className="company-logo-section">
+          <div className="logo-container">
+            <img
+              src={job.logo || "https://dummyimage.com/60x60/4f46e5/ffffff.png&text=?"}
+              alt="Company logo"
+              className="company-logo"
+            />
+          </div>
+          <div className="job-title-section">
+            <h3 className="job-title">{job.title}</h3>
+            <div className="company-info">
+              <FaBuilding className="company-icon" />
+              <p className="company-name">{job.company}</p>
+            </div>
+          </div>
+        </div>
+        <div className="job-badge-container">
+          <span className="job-type-badge">{job.type}</span>
+          <button 
+            className={`save-heart-btn ${isSaved ? 'saved' : ''}`}
+            onClick={() => onSave(job.id)} 
+            title={isSaved ? "Retirer des sauvegardés" : "Sauvegarder l'offre"}
+          >
+            {isSaved ? <FaHeart /> : <FaRegHeart />}
+          </button>
+        </div>
+      </div>
 
-<div className="job-info">
-  <p>{job.company}</p>
-  <span className="badge">{job.type}</span>
-</div>
+      <div className="job-card-body">
+        <div className="job-meta-info">
+          <div className="meta-item">
+            <FaMapMarkerAlt className="meta-icon location-icon" />
+            <span>{job.location}</span>
+          </div>
+          <div className="meta-item">
+            <FaBriefcase className="meta-icon experience-icon" />
+            <span>{job.experience}</span>
+          </div>
+          <div className="meta-item">
+            <FaClock className="meta-icon time-icon" />
+            <span>Il y a 2 jours</span>
+          </div>
+        </div>
 
-    </div>
-    <div className="job-body">
-      <p><FaMapMarkerAlt /> {job.location}</p>
-      <p><FaBriefcase /> {job.experience}</p>
-      <p>{job.description}</p>
-      <div className="skills">
-        {job.skills && job.skills.map((skill, index) => (
-          <span key={index}>{skill}</span>
-        ))}
+        <p className="job-description">{job.description}</p>
+
+        {job.skills && job.skills.length > 0 && (
+          <div className="skills-container">
+            {job.skills.slice(0, 4).map((skill, index) => (
+              <span key={index} className="skill-tag">{skill}</span>
+            ))}
+            {job.skills.length > 4 && (
+              <span className="skill-tag more-skills">+{job.skills.length - 4}</span>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="job-card-footer">
+        <div className="salary-section">
+          <strong className="salary-amount">{job.salary}</strong>
+        </div>
+        <div className="action-buttons">
+          {isApplied ? (
+            <button className="applied-button" disabled>
+              ✓ Déjà postulé
+            </button>
+          ) : (
+            <button className="apply-button" onClick={handleViewDetails}>
+              Postuler maintenant
+            </button>
+          )}
+        </div>
       </div>
     </div>
-    <div className="job-footer">
-      <strong>{job.salary}</strong>
-      {isApplied ? (
-        <button className="applied-btn" disabled>Déjà postulé</button>
-      ) : (
-        <div className="button-group">
-        <button className="view-details-btn" onClick={handleViewDetails}>Postuler</button>
-      </div>
-
-      )}
-      <button 
-          className="save-btn" 
-          onClick={() => onSave(job.id)} 
-          title={isSaved ? "Retirer des sauvegardés" : "Sauvegarder l'offre"}
-          style={{marginLeft: '10px', width:  '60px'}}
-        >
-          {isSaved ? <FaBookmark color="gold" /> : <FaRegBookmark />}
-        </button>
-    </div>
-  </div>
-);
-
+  );
 };
-const SavedJobOffers = (job, onApply, isApplied, onSave, isSaved) => {
+
+const SavedJobOffers = () => {
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [candidateId, setCandidateId] = useState(null);
-  const [selectedPoste, setSelectedPoste] = useState('');
-  const [selectedLieu, setSelectedLieu] = useState('');
-  const [selectedSalaire, setSelectedSalaire] = useState('');
-  const [selectedDomaine, setSelectedDomaine] = useState('');
-  const [appliedJobs, setAppliedJobs] = useState([]); // Store IDs of jobs already applied to
-  const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 10;
-  const [searchTerm, setSearchTerm] = useState('');
+  const [appliedJobs, setAppliedJobs] = useState([]);
   const [candidate, setCandidate] = useState(null);
-  const [savedJobs, setSavedJobs] = useState([]); // Store IDs of saved jobs
+  const [savedJobs, setSavedJobs] = useState([]);
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/je`)
-    .then(response => {
+      .then(response => {
         const updatedJobs = response.data.map(job => ({
           ...job,
-          logo: job.logo || "https://dummyimage.com/80x80/000/fff.png&text=No+Logo"
+          logo: job.logo || "https://dummyimage.com/80x80/4f46e5/ffffff.png&text=?"
         }));
         setJobs(updatedJobs);
         setFilteredJobs(updatedJobs);
@@ -100,78 +127,51 @@ const SavedJobOffers = (job, onApply, isApplied, onSave, isSaved) => {
         setLoading(false);
       });
   }, []);
-  
 
-  // After you get candidateId and set it somewhere (your existing useEffect)
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_API_URL}/api/saved-jobs`, { withCredentials: true })
-    .then(response => {
-        const savedJobIds = response.data.map(job => job.id);
-        setSavedJobs(savedJobIds);
-        console.log(savedJobs);
-      })
-      .catch(error => {
-        console.error("Erreur lors du chargement des jobs sauvegardés:", error);
-      });
+    if (candidateId) {
+      axios.get(`${process.env.REACT_APP_API_URL}/api/saved-jobs`, { withCredentials: true })
+        .then(response => {
+          const savedJobIds = response.data.map(job => job.id);
+          setSavedJobs(savedJobIds);
+        })
+        .catch(error => {
+          console.error("Erreur lors du chargement des jobs sauvegardés:", error);
+        });
+    }
   }, [candidateId]);
-const handleSavedJob = (jobId) => {
-  fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
-  })
-  .then(res => {
-    if (!res.ok) throw new Error('Failed to save job');
-    return res.json();
-  })
-  .then(data => {
-    setSavedJobs(prev =>
-      prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId]
-    );
-  })
-  .catch(error => {
-    console.error('Erreur sauvegarde de l\'offre :', error);
-    alert("Impossible de sauvegarder l'offre pour le moment.");
-  });
-};
 
-    // Fetch candidate & applications
-    useEffect(() => {
-      fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { credentials: 'include' })
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { credentials: 'include' })
       .then(res => res.json())
-        .then(data => {
-          setCandidate(data);
-          setCandidateId(data.id);
-  
-          // Then get applied jobs
-          return fetch(`${process.env.REACT_APP_API_URL}/api/getapplications`, {
-            credentials: 'include'
-          });
-        })
-        .then(res => res.json())
-        .then(applications => {
-          const appliedJobIds = applications.map(app => app.job_offer_id);
-          setAppliedJobs(appliedJobIds);
-        })
-        .catch(err => console.error("Erreur candidate ou applications:", err));
-    }, []);
-  
+      .then(data => {
+        setCandidate(data);
+        setCandidateId(data.id);
 
-    const handleSaveJob = (jobId) => {
-      // Send POST request to backend to save job
-      fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+        return fetch(`${process.env.REACT_APP_API_URL}/api/getapplications`, {
+          credentials: 'include'
+        });
       })
+      .then(res => res.json())
+      .then(applications => {
+        const appliedJobIds = applications.map(app => app.job_offer_id);
+        setAppliedJobs(appliedJobIds);
+      })
+      .catch(err => console.error("Erreur candidate ou applications:", err));
+  }, []);
+
+  const handleSaveJob = (jobId) => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+    })
       .then(res => {
         if (!res.ok) throw new Error('Failed to save job');
         return res.json();
       })
       .then(data => {
-        // If job was saved before, API might toggle it, so toggle locally as well
         setSavedJobs(prev =>
           prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId]
         );
@@ -180,87 +180,90 @@ const handleSavedJob = (jobId) => {
         console.error('Erreur sauvegarde de l\'offre :', error);
         alert("Impossible de sauvegarder l'offre pour le moment.");
       });
-    };
-  const handleSearch = () => {
-    const results = jobs.filter(job =>
-      (selectedPoste === '' || job.title.toLowerCase().includes(selectedPoste.toLowerCase())) &&
-      (selectedLieu === '' || job.location.toLowerCase().includes(selectedLieu.toLowerCase())) &&
-      (selectedSalaire === '' || job.salary.toLowerCase().includes(selectedSalaire.toLowerCase())) &&
-      (selectedDomaine === '' || job.type.toLowerCase().includes(selectedDomaine.toLowerCase())) &&
-      (
-        searchTerm === '' ||
-        job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.company.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+  };
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Chargement de vos offres sauvegardées...</p>
+        </div>
+        <Footer />
+      </>
     );
-    setFilteredJobs(results);
-    setCurrentPage(1);
-  };
-  
-  const handleApply = (jobId) => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/applications`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
-    })
-      .then(response => response.json())
-      .then(data => {
-        alert("Votre candidature a été soumise avec succès !");
-        setAppliedJobs(prev => [...prev, jobId]);  // Mark job as applied
-        setFilteredJobs(prev => prev.filter(job => job.id !== jobId));
+  }
 
-        fetch(`${process.env.REACT_APP_API_URL}/api/notify-recruiter/${jobId}`, {
-          method: 'POST',
-          credentials: 'include'
-        })
-          .then(res => res.json())
-          .then(response => console.log("Recruiter notified:", response))
-          .catch(err => console.error("Erreur notification recruteur:", err));
-      })
-      .catch(error => {
-        console.error('Erreur postulation :', error);
-        alert("Erreur lors de la soumission de la candidature.");
-      });
-  };
+  if (error) {
+    return (
+      <>
+        <Navbar />
+        <div className="error-container">
+          <div className="error-icon">⚠️</div>
+          <h3>Erreur de chargement</h3>
+          <p>Impossible de charger vos offres sauvegardées. Veuillez réessayer plus tard.</p>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const indexOfLastJob = currentPage * jobsPerPage;
-  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-  const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
-  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
-
-  if (loading) return <p>Chargement des offres...</p>;
-  if (error) return <p>Erreur de chargement des offres. Vérifiez le backend.</p>;
   const savedJobOffers = jobs.filter(job => savedJobs.includes(job.id));
 
   return (
     <>
       <Navbar />
-      <h2 style={{ marginTop: "40px" }}>Offres sauvegardées</h2>
-      <div className="offers-wrapper">
-    <div className="offers-grid">
-      {savedJobOffers.length === 0 ? (
-        <p>Aucune offre sauvegardée.</p>
-      ) : (
-        savedJobOffers.map(job => (
-          <JobCard
-            key={job.id}
-            job={job}
-            onApply={() => {}} // Optional: disable apply or reuse
-            isApplied={appliedJobs.includes(job.id)}
-            onSave={handleSaveJob}
-            isSaved={savedJobs.includes(job.id)}
-          />
-        ))
-      )}
+      <div className="saved-offers-page">
+        <div className="page-header">
+          <div className="header-content">
+            <h1 className="page-title">
+              <FaBookmark className="title-icon" />
+              Mes offres sauvegardées
+            </h1>
+            <p className="page-subtitle">
+              Retrouvez toutes les offres d'emploi que vous avez sauvegardées
+            </p>
+            <div className="stats-bar">
+              <span className="stat-item">
+                <strong>{savedJobOffers.length}</strong> offre{savedJobOffers.length !== 1 ? 's' : ''} sauvegardée{savedJobOffers.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+          </div>
         </div>
-      
-    </div>
-    <Footer/></>
+
+        <div className="content-container">
+          {savedJobOffers.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">
+                <FaRegBookmark />
+              </div>
+              <h3>Aucune offre sauvegardée</h3>
+              <p>Vous n'avez pas encore sauvegardé d'offres d'emploi.</p>
+              <p>Explorez nos offres et sauvegardez celles qui vous intéressent !</p>
+              <Link to="/offres" className="browse-offers-btn">
+                Parcourir les offres
+              </Link>
+            </div>
+          ) : (
+            <div className="saved-jobs-grid">
+              {savedJobOffers.map(job => (
+                <JobCard
+                  key={job.id}
+                  job={job}
+                  onApply={() => {}}
+                  isApplied={appliedJobs.includes(job.id)}
+                  onSave={handleSaveJob}
+                  isSaved={savedJobs.includes(job.id)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+      <Footer />
+    </>
   );
 };
 
 export default SavedJobOffers;
-
