@@ -14,6 +14,10 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
     navigate(`/offres/${job.id}`);
   };
 
+  // Debug: Log the job data to see what skills look like
+  console.log('Job data:', job);
+  console.log('Skills:', job.skills);
+
   return (
     <div className="job-card">
       <div className="job-header">
@@ -31,35 +35,73 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
         </div>
       </div>
       
-     <div className="job-body">
-    <p><FaMapMarkerAlt /> {job.location}</p>
-    <p><FaBriefcase /> {job.experience}</p>
-    <p style={{
-        fontSize: '0.95rem',
-        lineHeight: '1.6',
-        margin: '0 0 15px 0',
-        overflow: 'hidden',
-        display: '-webkit-box',
-        WebkitLineClamp: 3,
-        WebkitBoxOrient: 'vertical',
-    }}>
-        {job.description}
-    </p>
-    {/* ADD THESE INLINE STYLES HERE */}
-    <div className="skills" style={{
-        marginTop: '15px', // Add some space above the skills
-        display: 'flex',   // Arrange skill tags in a row
-        flexWrap: 'wrap',  // Allow skill tags to wrap to the next line
-        gap: '8px',        // Space between individual skill tags
-        maxHeight: 'none', // Ensure the container isn't restricted
-        opacity: '1',      // Make sure it's fully visible
-        overflow: 'visible' // Ensure content isn't hidden
-    }}>
-        {job.skills && job.skills.map((skill, index) => (
-            <span key={index}>{skill}</span>
-        ))}
-    </div>
-</div>
+      <div className="job-body">
+        <p><FaMapMarkerAlt /> {job.location}</p>
+        <p><FaBriefcase /> {job.experience}</p>
+        <p style={{
+            fontSize: '0.95rem',
+            lineHeight: '1.6',
+            margin: '0 0 15px 0',
+            overflow: 'hidden',
+            display: '-webkit-box',
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: 'vertical',
+        }}>
+            {job.description}
+        </p>
+        
+        {/* Fixed Skills Section */}
+        {job.skills && job.skills.length > 0 && (
+          <div className="skills-container" style={{
+              marginTop: '15px',
+              marginBottom: '10px'
+          }}>
+            <div className="skills" style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '8px',
+                alignItems: 'flex-start'
+            }}>
+              {job.skills.map((skill, index) => (
+                <span 
+                  key={index} 
+                  className="skill-tag"
+                  style={{
+                    backgroundColor: '#f0f0f0',
+                    color: '#333',
+                    padding: '4px 8px',
+                    borderRadius: '12px',
+                    fontSize: '0.8rem',
+                    fontWeight: '500',
+                    border: '1px solid #ddd',
+                    whiteSpace: 'nowrap',
+                    display: 'inline-block'
+                  }}
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {/* Debug: Show skills data */}
+        {(!job.skills || job.skills.length === 0) && (
+          <div style={{ 
+            marginTop: '15px', 
+            padding: '8px', 
+            backgroundColor: '#fff3cd', 
+            border: '1px solid #ffeaa7',
+            borderRadius: '4px',
+            fontSize: '0.8rem',
+            color: '#856404'
+          }}>
+            Debug: No skills data available for this job
+            {job.skills && <div>Skills array exists but is empty: {JSON.stringify(job.skills)}</div>}
+            {!job.skills && <div>Skills property does not exist</div>}
+          </div>
+        )}
+      </div>
       
       <div className="job-footer">
         <strong>{job.salary}</strong>
@@ -157,7 +199,6 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
     </div>
   );
 };
-
 // Enhanced Pagination Component
 const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
   const getVisiblePages = () => {
