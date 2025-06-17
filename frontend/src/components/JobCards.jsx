@@ -1,16 +1,208 @@
 import React, { useState, useEffect } from 'react';
-import { FaMapMarkerAlt, FaBriefcase, FaSearch, FaFilter } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaBriefcase, FaSearch, FaFilter, FaChevronLeft, FaChevronRight, FaEllipsisH } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+
+// Enhanced Pagination Component
+const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
+  const getVisiblePages = () => {
+    const delta = 2;
+    const range = [];
+    const rangeWithDots = [];
+
+    for (
+      let i = Math.max(2, currentPage - delta);
+      i <= Math.min(totalPages - 1, currentPage + delta);
+      i++
+    ) {
+      range.push(i);
+    }
+
+    if (currentPage - delta > 2) {
+      rangeWithDots.push(1, '...');
+    } else {
+      rangeWithDots.push(1);
+    }
+
+    rangeWithDots.push(...range);
+
+    if (currentPage + delta < totalPages - 1) {
+      rangeWithDots.push('...', totalPages);
+    } else {
+      rangeWithDots.push(totalPages);
+    }
+
+    return rangeWithDots;
+  };
+
+  if (totalPages <= 1) return null;
+
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '8px',
+      marginTop: '40px',
+      padding: '24px',
+      background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
+      borderRadius: '16px',
+      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+      border: '1px solid #333'
+    }}>
+      {/* Previous Button */}
+      <button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '12px 16px',
+          fontSize: '0.9rem',
+          fontWeight: '600',
+          border: 'none',
+          backgroundColor: currentPage === 1 ? '#333' : 'rgba(255, 107, 53, 0.1)',
+          color: currentPage === 1 ? '#666' : '#ff6b35',
+          borderRadius: '12px',
+          cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          boxShadow: currentPage === 1 ? 'none' : '0 2px 8px rgba(255, 107, 53, 0.15)',
+          transform: 'translateY(0)',
+          opacity: currentPage === 1 ? 0.5 : 1
+        }}
+        onMouseEnter={(e) => {
+          if (currentPage !== 1) {
+            e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
+            e.target.style.transform = 'translateY(-2px)';
+            e.target.style.boxShadow = '0 4px 12px rgba(255, 107, 53, 0.3)';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (currentPage !== 1) {
+            e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = '0 2px 8px rgba(255, 107, 53, 0.15)';
+          }
+        }}
+      >
+        <FaChevronLeft size={12} />
+        <span>Précédent</span>
+      </button>
+
+      {/* Page Numbers */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+        {getVisiblePages().map((page, index) => (
+          page === '...' ? (
+            <div
+              key={`dots-${index}`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '40px',
+                height: '40px',
+                color: '#666',
+                fontSize: '1rem'
+              }}
+            >
+              <FaEllipsisH size={12} />
+            </div>
+          ) : (
+            <button
+              key={page}
+              onClick={() => onPageChange(page)}
+              style={{
+                width: '40px',
+                height: '40px',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                border: 'none',
+                backgroundColor: currentPage === page 
+                  ? '#ff6b35' 
+                  : 'rgba(255, 255, 255, 0.05)',
+                color: currentPage === page ? '#ffffff' : '#cccccc',
+                borderRadius: '10px',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: currentPage === page 
+                  ? '0 4px 12px rgba(255, 107, 53, 0.4)' 
+                  : '0 2px 4px rgba(0, 0, 0, 0.2)',
+                transform: 'translateY(0)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              onMouseEnter={(e) => {
+                if (currentPage !== page) {
+                  e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 4px 8px rgba(255, 107, 53, 0.3)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (currentPage !== page) {
+                  e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
+                }
+              }}
+            >
+              {page}
+            </button>
+          )
+        ))}
+      </div>
+
+      {/* Next Button */}
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '12px 16px',
+          fontSize: '0.9rem',
+          fontWeight: '600',
+          border: 'none',
+          backgroundColor: currentPage === totalPages ? '#333' : 'rgba(255, 107, 53, 0.1)',
+          color: currentPage === totalPages ? '#666' : '#ff6b35',
+          borderRadius: '12px',
+          cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          boxShadow: currentPage === totalPages ? 'none' : '0 2px 8px rgba(255, 107, 53, 0.15)',
+          transform: 'translateY(0)',
+          opacity: currentPage === totalPages ? 0.5 : 1
+        }}
+        onMouseEnter={(e) => {
+          if (currentPage !== totalPages) {
+            e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
+            e.target.style.transform = 'translateY(-2px)';
+            e.target.style.boxShadow = '0 4px 12px rgba(255, 107, 53, 0.3)';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (currentPage !== totalPages) {
+            e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = '0 2px 8px rgba(255, 107, 53, 0.15)';
+          }
+        }}
+      >
+        <span>Suivant</span>
+        <FaChevronRight size={12} />
+      </button>
+    </div>
+  );
+};
 
 const JobCard = ({ job }) => {
   const navigate = useNavigate();
   const handleApplyClick = () => {
     navigate('/login/candidat');
-
   };
 
-  
   return (
     <div style={{
       background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
@@ -116,9 +308,9 @@ const JobCard = ({ job }) => {
           fontSize: '0.95rem',
           lineHeight: '1.6',
           margin: '0 0 15px 0',
-          overflow: 'hidden', // Add this to prevent overflow
+          overflow: 'hidden',
           display: '-webkit-box',
-          WebkitLineClamp: 3, // Number of lines to show
+          WebkitLineClamp: 3,
           WebkitBoxOrient: 'vertical',
         }}>
           {job.description}
@@ -187,12 +379,10 @@ function JobCards() {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const indexOfLastJob = currentPage * jobsPerPage;
-
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
   const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
   const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
-   
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -228,7 +418,7 @@ function JobCards() {
       (selectedPoste === '' || job.title.toLowerCase().includes(selectedPoste.toLowerCase())) &&
       (selectedLieu === '' || job.location.toLowerCase().includes(selectedLieu.toLowerCase())) &&
       (selectedSalaire === '' || job.salary.toLowerCase().includes(selectedSalaire.toLowerCase())) &&
-      (selectedDomaine === '' || job.type.toLowerCase().includes(selectedDomaine.toLowerCase()))
+      (selectedDomaine === '' || job.type.toLowerCase().includes(selectedDomaine.toLowerCase())) &&
       (
         searchTerm === '' ||
         job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -245,215 +435,215 @@ function JobCards() {
 
   return (
     <>
-    {/* Search Section */}
-    <div style={{
-          background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
-          border: '1px solid #333',
-          borderRadius: '20px',
-          padding: '30px',
-          marginBottom: '40px'
+      {/* Search Section */}
+      <div style={{
+        background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
+        border: '1px solid #333',
+        borderRadius: '20px',
+        padding: '30px',
+        marginBottom: '40px'
+      }}>
+        {/* Search Bar */}
+        <div style={{ position: 'relative', marginBottom: '25px' }}>
+          <FaSearch style={{
+            position: 'absolute',
+            left: '20px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            color: '#ff6b35',
+            fontSize: '1.1rem'
+          }} />
+          <input
+            type="text"
+            placeholder="Rechercher une offre d'emploi..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '15px 20px 15px 50px',
+              borderRadius: '25px',
+              border: '1px solid #444',
+              background: 'rgba(255, 255, 255, 0.05)',
+              color: '#ffffff',
+              fontSize: '1rem',
+              outline: 'none',
+              transition: 'all 0.3s ease',
+              boxSizing: 'border-box'
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#ff6b35';
+              e.target.style.boxShadow = '0 0 0 3px rgba(255, 107, 53, 0.1)';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = '#444';
+              e.target.style.boxShadow = 'none';
+            }}
+          />
+        </div>
+
+        {/* Filters */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '20px',
+          marginBottom: '20px'
         }}>
-      {/* Search Bar */}
-      <div style={{ position: 'relative', marginBottom: '25px' }}>
-            <FaSearch style={{
-              position: 'absolute',
-              left: '20px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: '#ff6b35',
-              fontSize: '1.1rem'
-            }} />
-            <input
-              type="text"
-              placeholder="Rechercher une offre d'emploi..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+          <div>
+            <label style={{
+              display: 'block',
+              color: '#cccccc',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              marginBottom: '8px'
+            }}>
+              Poste
+            </label>
+            <select 
+              value={selectedPoste} 
+              onChange={(e) => setSelectedPoste(e.target.value)}
               style={{
                 width: '100%',
-                padding: '15px 20px 15px 50px',
-                borderRadius: '25px',
+                padding: '12px 15px',
+                borderRadius: '12px',
                 border: '1px solid #444',
                 background: 'rgba(255, 255, 255, 0.05)',
                 color: '#ffffff',
-                fontSize: '1rem',
-                outline: 'none',
-                transition: 'all 0.3s ease',
-                boxSizing: 'border-box'
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = '#ff6b35';
-                e.target.style.boxShadow = '0 0 0 3px rgba(255, 107, 53, 0.1)';
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = '#444';
-                e.target.style.boxShadow = 'none';
-              }}
-            />
-          </div>
-
-          {/* Filters */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '20px',
-            marginBottom: '20px'
-          }}>
-            <div>
-              <label style={{
-                display: 'block',
-                color: '#cccccc',
-                fontSize: '0.9rem',
-                fontWeight: '600',
-                marginBottom: '8px'
-              }}>
-                Poste
-              </label>
-              <select 
-                value={selectedPoste} 
-                onChange={(e) => setSelectedPoste(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 15px',
-                  borderRadius: '12px',
-                  border: '1px solid #444',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  color: '#ffffff',
-                  fontSize: '0.95rem',
-                  outline: 'none'
-                }}
-              >
-                <option value="">Tous les postes</option>
-                {[...new Set(jobs.map(job => job.title))].map((poste, index) => (
-                  <option key={index} value={poste}>{poste}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label style={{
-                display: 'block',
-                color: '#cccccc',
-                fontSize: '0.9rem',
-                fontWeight: '600',
-                marginBottom: '8px'
-              }}>
-                Lieu
-              </label>
-              <select 
-                value={selectedLieu} 
-                onChange={(e) => setSelectedLieu(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 15px',
-                  borderRadius: '12px',
-                  border: '1px solid #444',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  color: '#ffffff',
-                  fontSize: '0.95rem',
-                  outline: 'none'
-                }}
-              >
-                <option value="">Toutes les villes</option>
-                {[...new Set(jobs.map(job => job.location))].map((lieu, index) => (
-                  <option key={index} value={lieu}>{lieu}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label style={{
-                display: 'block',
-                color: '#cccccc',
-                fontSize: '0.9rem',
-                fontWeight: '600',
-                marginBottom: '8px'
-              }}>
-                Salaire
-              </label>
-              <select 
-                value={selectedSalaire} 
-                onChange={(e) => setSelectedSalaire(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 15px',
-                  borderRadius: '12px',
-                  border: '1px solid #444',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  color: '#ffffff',
-                  fontSize: '0.95rem',
-                  outline: 'none'
-                }}
-              >
-                <option value="">Tous les salaires</option>
-                {[...new Set(jobs.map(job => job.salary))].map((salaire, index) => (
-                  <option key={index} value={salaire}>{salaire}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label style={{
-                display: 'block',
-                color: '#cccccc',
-                fontSize: '0.9rem',
-                fontWeight: '600',
-                marginBottom: '8px'
-              }}>
-                Type
-              </label>
-              <select 
-                value={selectedDomaine} 
-                onChange={(e) => setSelectedDomaine(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 15px',
-                  borderRadius: '12px',
-                  border: '1px solid #444',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  color: '#ffffff',
-                  fontSize: '0.95rem',
-                  outline: 'none'
-                }}
-              >
-                <option value="">Tous les types</option>
-                {[...new Set(jobs.map(job => job.type))].map((domaine, index) => (
-                  <option key={index} value={domaine}>{domaine}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div style={{ textAlign: 'center' }}>
-            <button 
-              onClick={handleSearch}
-              style={{
-                background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
-                color: '#ffffff',
-                border: 'none',
-                padding: '12px 30px',
-                borderRadius: '25px',
-                fontSize: '1rem',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '10px'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 10px 25px rgba(255, 107, 53, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
+                fontSize: '0.95rem',
+                outline: 'none'
               }}
             >
-              <FaFilter />
-              Rechercher
-            </button>
+              <option value="">Tous les postes</option>
+              {[...new Set(jobs.map(job => job.title))].map((poste, index) => (
+                <option key={index} value={poste}>{poste}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label style={{
+              display: 'block',
+              color: '#cccccc',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              marginBottom: '8px'
+            }}>
+              Lieu
+            </label>
+            <select 
+              value={selectedLieu} 
+              onChange={(e) => setSelectedLieu(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 15px',
+                borderRadius: '12px',
+                border: '1px solid #444',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: '#ffffff',
+                fontSize: '0.95rem',
+                outline: 'none'
+              }}
+            >
+              <option value="">Toutes les villes</option>
+              {[...new Set(jobs.map(job => job.location))].map((lieu, index) => (
+                <option key={index} value={lieu}>{lieu}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label style={{
+              display: 'block',
+              color: '#cccccc',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              marginBottom: '8px'
+            }}>
+              Salaire
+            </label>
+            <select 
+              value={selectedSalaire} 
+              onChange={(e) => setSelectedSalaire(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 15px',
+                borderRadius: '12px',
+                border: '1px solid #444',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: '#ffffff',
+                fontSize: '0.95rem',
+                outline: 'none'
+              }}
+            >
+              <option value="">Tous les salaires</option>
+              {[...new Set(jobs.map(job => job.salary))].map((salaire, index) => (
+                <option key={index} value={salaire}>{salaire}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label style={{
+              display: 'block',
+              color: '#cccccc',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              marginBottom: '8px'
+            }}>
+              Type
+            </label>
+            <select 
+              value={selectedDomaine} 
+              onChange={(e) => setSelectedDomaine(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 15px',
+                borderRadius: '12px',
+                border: '1px solid #444',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: '#ffffff',
+                fontSize: '0.95rem',
+                outline: 'none'
+              }}
+            >
+              <option value="">Tous les types</option>
+              {[...new Set(jobs.map(job => job.type))].map((domaine, index) => (
+                <option key={index} value={domaine}>{domaine}</option>
+              ))}
+            </select>
           </div>
         </div>
+
+        <div style={{ textAlign: 'center' }}>
+          <button 
+            onClick={handleSearch}
+            style={{
+              background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
+              color: '#ffffff',
+              border: 'none',
+              padding: '12px 30px',
+              borderRadius: '25px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '10px'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 10px 25px rgba(255, 107, 53, 0.3)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            <FaFilter />
+            Rechercher
+          </button>
+        </div>
+      </div>
 
       {/* Job Cards Display */}
       <div className="offers-wrapper">
@@ -461,76 +651,19 @@ function JobCards() {
           <p className="empty-message">Aucune offre disponible pour le moment.</p>
         ) : (
           <div className="offers-grid">
-          {currentJobs.map((job) => (
-            <JobCard key={job.id} job={job} />
-          ))}
-        </div>
-        
+            {currentJobs.map((job) => (
+              <JobCard key={job.id} job={job} />
+            ))}
+          </div>
         )}
       </div>
-      <div
-  className="pagination"
-  style={{
-    display: 'flex',
-    gap: '0.25rem',
-    marginTop: '1rem',
-    justifyContent: 'center',
-  }}
->
-  <button
-    onClick={() => paginate(currentPage - 1)}
-    disabled={currentPage === 1}
-    style={{
-      padding: '0.25rem 0.5rem',
-      fontSize: '0.75rem',
-      border: '1px solid #ccc',
-      backgroundColor: '#f8f9fa',
-      borderRadius: '4px',
-      width:'70px',
-      cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-      opacity: currentPage === 1 ? 0.6 : 1,
-    }}
-  >
-    Précédent
-  </button>
 
-  {[...Array(totalPages)].map((_, idx) => (
-    <button
-      key={idx}
-      onClick={() => paginate(idx + 1)}
-      style={{
-        padding: '0.25rem 0.5rem',
-        fontSize: '0.75rem',
-        border: '1px solid #ccc',
-        backgroundColor: currentPage === idx + 1 ? '#007bff' : '#f8f9fa',
-        color: currentPage === idx + 1 ? 'white' : 'black',
-        borderRadius: '4px',
-        width:'70px',
-        cursor: 'pointer',
-      }}
-    >
-      {idx + 1}
-    </button>
-  ))}
-
-  <button
-    onClick={() => paginate(currentPage + 1)}
-    disabled={currentPage === totalPages}
-    style={{
-      padding: '0.25rem 0.5rem',
-      fontSize: '0.75rem',
-      border: 'none',
-      backgroundColor: '#f8f9fa',
-      borderRadius: '4px',
-      width:'70px',
-      cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-      opacity: currentPage === totalPages ? 0.6 : 1,
-    }}
-  >
-    Suivant
-  </button>
-</div>
-
+      {/* Enhanced Pagination */}
+      <PaginationComponent 
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={paginate}
+      />
     </>
   );
 }
