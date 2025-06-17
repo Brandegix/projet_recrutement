@@ -243,10 +243,10 @@ const JobOfferApplications = () => {
 const jobAppStyles = {
     // --- Page Container & General Layout ---
     applicationsContainer: {
-        fontFamily: 'Arial, sans-serif', // Modern, clean font
-        padding: '40px 20px',
-        backgroundColor: '#FFFFFF', // White background
-        minHeight: 'calc(100vh - 120px)', // Adjust for Navbar/Footer height
+        fontFamily: 'Roboto, sans-serif', // More modern font
+        padding: '50px 20px', // Increased padding for more breathing room
+        backgroundColor: '#F8F9FA', // Light gray background for a premium feel
+        minHeight: 'calc(100vh - 120px)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -255,100 +255,108 @@ const jobAppStyles = {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '30px',
+        marginBottom: '40px', // More space below header
         width: '100%',
         maxWidth: '1000px',
-        flexWrap: 'wrap', // Allow wrapping on smaller screens
+        flexWrap: 'wrap',
         gap: '20px',
     },
     h1: {
-        color: '#000000', // Black
-        fontSize: '2.2em',
-        fontWeight: '700', // Bolder for headings
+        color: '#212529', // Darker black for text
+        fontSize: '2.5em', // Slightly larger for impact
+        fontWeight: '700',
         margin: 0,
-        flexGrow: 1, // Allow title to take available space
+        flexGrow: 1,
+        letterSpacing: '-0.02em', // Subtle letter spacing for premium look
     },
 
     // --- Buttons & Links ---
     backButtonLink: {
         backgroundColor: '#FF6B35', // Orange
-        color: '#FFFFFF', // White text
+        color: '#FFFFFF',
         border: 'none',
-        padding: '12px 25px',
+        padding: '12px 28px', // Slightly more padding
         borderRadius: '8px',
         cursor: 'pointer',
         fontSize: '1em',
         textDecoration: 'none',
-        transition: 'background-color 0.3s ease, transform 0.2s ease',
-        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+        transition: 'background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)', // Softer, more pronounced shadow
         display: 'inline-block',
+        fontWeight: '600',
     },
     backButtonLinkHover: {
-        backgroundColor: '#E55A2B', // Darker orange on hover
+        backgroundColor: '#E55A2B',
         transform: 'translateY(-2px)',
+        boxShadow: '0 6px 15px rgba(0, 0, 0, 0.2)', // More shadow on hover
     },
     cvLink: {
-        color: '#FF6B35', // Orange
+        color: '#FF6B35',
         textDecoration: 'none',
         fontWeight: 'bold',
         transition: 'color 0.3s ease',
+        borderBottom: '1px solid transparent', // Subtle underline effect
     },
     cvLinkHover: {
-        color: '#E55A2B', // Darker orange on hover
+        color: '#E55A2B',
+        borderBottom: '1px solid #E55A2B', // Underline appears on hover
     },
     contactButton: {
-        backgroundColor: '#FF6B35', // Orange
-        color: '#FFFFFF', // White text
+        backgroundColor: '#FF6B35',
+        color: '#FFFFFF',
         border: 'none',
-        padding: '10px 20px',
+        padding: '10px 22px', // Slightly adjusted padding
         borderRadius: '8px',
         cursor: 'pointer',
         fontSize: '0.95em',
-        transition: 'background-color 0.3s ease, transform 0.2s ease',
-        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+        transition: 'background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Softer shadow
         fontWeight: '600',
     },
     contactButtonHover: {
-        backgroundColor: '#E55A2B', // Darker orange on hover
+        backgroundColor: '#E55A2B',
         transform: 'translateY(-1px)',
+        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.15)',
     },
     closeChatButton: {
-        backgroundColor: '#000000', // Black
-        color: '#FFFFFF', // White text
+        backgroundColor: '#212529', // Darker black
+        color: '#FFFFFF',
         border: 'none',
-        padding: '12px 25px',
+        padding: '12px 28px',
         borderRadius: '8px',
         cursor: 'pointer',
         fontSize: '1em',
-        marginTop: '20px',
-        transition: 'background-color 0.3s ease, transform 0.2s ease',
-        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+        marginTop: '25px', // More margin
+        transition: 'background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        fontWeight: '600',
     },
     closeChatButtonHover: {
-        backgroundColor: '#333333', // Slightly lighter black/dark gray on hover
+        backgroundColor: '#343A40', // Slightly lighter dark gray on hover
         transform: 'translateY(-2px)',
+        boxShadow: '0 6px 15px rgba(0, 0, 0, 0.2)',
     },
 
     // --- Search Bar ---
     searchContainer: {
         width: '100%',
         maxWidth: '1000px',
-        marginBottom: '25px',
+        marginBottom: '30px', // More space
     },
     searchInput: {
         width: '100%',
-        padding: '12px 15px',
-        borderRadius: '8px',
-        border: '1px solid #E0E0E0',
+        padding: '14px 20px', // Increased padding
+        borderRadius: '10px', // Slightly more rounded
+        border: '1px solid #CED4DA', // Softer border color
         boxSizing: 'border-box',
         fontSize: '1em',
-        color: '#333333', // Dark gray for text
-        boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)',
+        color: '#495057', // Darker gray for text
+        boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.06)', // Deeper inset shadow
         transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
     },
     searchInputFocus: {
-        borderColor: '#FF6B35', // Orange border on focus
-        boxShadow: '0 0 8px rgba(255, 107, 53, 0.2)',
+        borderColor: '#FF6B35',
+        boxShadow: '0 0 0 3px rgba(255, 107, 53, 0.25)', // More prominent focus ring
     },
 
     // --- Application List & Items ---
@@ -357,114 +365,122 @@ const jobAppStyles = {
         maxWidth: '1000px',
     },
     applicationItem: {
-        backgroundColor: '#FFFFFF', // White
-        padding: '25px',
-        borderRadius: '12px',
-        boxShadow: '0 5px 15px rgba(0, 0, 0, 0.08)',
-        marginBottom: '20px',
+        backgroundColor: '#FFFFFF',
+        padding: '30px', // More padding
+        borderRadius: '15px', // More rounded corners
+        boxShadow: '0 8px 20px rgba(0, 0, 0, 0.08)', // Larger, softer shadow
+        marginBottom: '25px', // More space between items
         display: 'flex',
-        flexDirection: 'column', // Stack on small screens, then row
-        gap: '20px',
-        border: '1px solid #F0F0F0',
-        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-        transform: 'translateY(0)', // Default transform for reset
+        flexDirection: 'column',
+        gap: '25px',
+        border: '1px solid #E9ECEF', // Very light border
+        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+        transform: 'translateY(0)',
     },
     applicationItemHover: {
-        transform: 'translateY(-3px)',
-        boxShadow: '0 8px 20px rgba(0, 0, 0, 0.12)',
+        transform: 'translateY(-5px)', // More pronounced lift
+        boxShadow: '0 12px 25px rgba(0, 0, 0, 0.15)', // Darker, larger shadow on hover
     },
     applicantInfo: {
         display: 'flex',
         alignItems: 'center',
-        flexGrow: 1, // Allows it to take up more space
+        flexGrow: 1,
     },
     applicantAvatar: {
-        backgroundColor: '#FF6B35', // Orange background
-        color: '#000000', // Black text for contrast
-        width: '60px',
-        height: '60px',
+        backgroundColor: '#FF6B35',
+        color: '#FFFFFF', // White text for stronger contrast
+        width: '55px', // Slightly smaller avatar
+        height: '55px',
         borderRadius: '50%',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        fontSize: '1.8em', // Larger initial
+        fontSize: '1.2em', // **Adjusted: Smaller font size for the initial**
         fontWeight: 'bold',
-        marginRight: '20px',
+        marginRight: '25px', // More margin
         flexShrink: 0,
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Subtle shadow for depth
     },
-    applicantDetails: {},
+    applicantDetails: {
+        flexGrow: 1, // Allows details to fill space
+    },
     applicantName: {
-        color: '#000000', // Black
-        fontSize: '1.6em',
+        color: '#212529', // Darker black
+        fontSize: '1.8em', // Slightly larger name
         fontWeight: '700',
-        marginBottom: '5px',
+        marginBottom: '8px', // More space below name
     },
     applicantContact: {
-        fontSize: '0.95em',
-        color: '#333333', // Dark gray
+        fontSize: '1em', // Slightly larger text
+        color: '#495057', // Darker gray
         display: 'flex',
         flexWrap: 'wrap',
-        gap: '10px 20px', // Spacing between contact items
+        gap: '12px 25px', // Increased spacing
     },
     contactItem: {
-        marginBottom: '0', // Reset margin from previous style
+        display: 'flex', // Ensures consistent layout for each item
+        alignItems: 'center',
     },
     applicationActions: {
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-end', // Align buttons/date to the right
-        gap: '10px',
+        alignItems: 'flex-end',
+        gap: '15px', // Increased space between actions
     },
     applicationDate: {
-        color: '#333333', // Dark gray
-        fontSize: '0.9em',
+        color: '#495057', // Darker gray
+        fontSize: '0.95em', // Slightly larger font
         fontWeight: '600',
+        opacity: 0.8, // Slightly softer date text
     },
     viewedTag: {
-        marginLeft: '10px',
-        color: '#FF6B35', // Orange for "Vu"
+        marginLeft: '15px',
+        color: '#FF6B35',
         fontWeight: 'bold',
         fontSize: '0.9em',
-        backgroundColor: '#FFF5E5', // Light orange background for the tag
-        padding: '5px 10px',
-        borderRadius: '5px',
+        backgroundColor: '#FFF5E5',
+        padding: '6px 12px', // Slightly more padding
+        borderRadius: '6px', // Slightly more rounded
+        boxShadow: '0 1px 3px rgba(0,0,0,0.05)', // Subtle shadow for the tag
     },
 
     // --- Empty State, Loading, Error ---
     noApplications: {
         textAlign: 'center',
-        marginTop: '50px',
-        color: '#333333', // Dark gray
-        fontSize: '1.2em',
-        padding: '20px',
+        marginTop: '60px', // More margin
+        color: '#495057',
+        fontSize: '1.3em', // Slightly larger
+        padding: '30px', // More padding
         backgroundColor: '#FFFFFF',
-        borderRadius: '10px',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-        maxWidth: '600px',
+        borderRadius: '15px',
+        boxShadow: '0 5px 15px rgba(0,0,0,0.08)',
+        maxWidth: '650px', // Slightly wider
         width: '100%',
+        fontWeight: '600',
     },
     loading: {
         textAlign: 'center',
-        marginTop: '50px',
-        color: '#333333',
-        fontSize: '1.2em',
-        padding: '20px',
+        marginTop: '60px',
+        color: '#495057',
+        fontSize: '1.3em',
+        padding: '30px',
         backgroundColor: '#FFFFFF',
-        borderRadius: '10px',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-        maxWidth: '600px',
+        borderRadius: '15px',
+        boxShadow: '0 5px 15px rgba(0,0,0,0.08)',
+        maxWidth: '650px',
         width: '100%',
+        fontWeight: '600',
     },
     error: {
         textAlign: 'center',
-        marginTop: '50px',
-        color: '#FFFFFF', // White text on orange error
-        fontSize: '1.2em',
-        backgroundColor: '#FF6B35', // Orange background for error
-        padding: '20px',
-        borderRadius: '10px',
-        boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-        maxWidth: '600px',
+        marginTop: '60px',
+        color: '#FFFFFF',
+        fontSize: '1.3em',
+        backgroundColor: '#DC3545', // A standard, slightly more subdued error red
+        padding: '30px',
+        borderRadius: '15px',
+        boxShadow: '0 8px 20px rgba(0,0,0,0.15)',
+        maxWidth: '650px',
         width: '100%',
         fontWeight: 'bold',
     },
@@ -472,7 +488,7 @@ const jobAppStyles = {
     // --- Modal Styles ---
     chatModal: {
         overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.7)', // Darker overlay
+            backgroundColor: 'rgba(33, 37, 41, 0.8)', // Darker, slightly softer overlay
             zIndex: 1050,
         },
         content: {
@@ -482,25 +498,26 @@ const jobAppStyles = {
             bottom: 'auto',
             marginRight: '-50%',
             transform: 'translate(-50%, -50%)',
-            padding: '30px',
-            borderRadius: '12px',
-            maxWidth: '650px', // Slightly wider modal
+            padding: '40px', // More padding
+            borderRadius: '15px',
+            maxWidth: '700px', // Wider modal for chat
             width: '90%',
-            borderColor: '#E0E0E0',
-            maxHeight: '85vh', // Increased max height
+            border: 'none', // No border for a cleaner look
+            maxHeight: '90vh', // Increased max height
             overflow: 'auto',
             zIndex: 1051,
-            backgroundColor: '#FFFFFF', // White modal background
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+            backgroundColor: '#FFFFFF',
+            boxShadow: '0 15px 40px rgba(0, 0, 0, 0.3)', // Deeper, softer shadow
         }
     },
     modalTitle: {
-        color: '#000000', // Black
-        fontSize: '1.8em',
+        color: '#212529',
+        fontSize: '2em', // Larger title
         fontWeight: '700',
-        marginBottom: '20px',
-        borderBottom: '2px solid #FF6B35', // Orange underline
-        paddingBottom: '10px',
+        marginBottom: '25px', // More space below title
+        borderBottom: '3px solid #FF6B35', // Thicker orange underline
+        paddingBottom: '12px',
+        letterSpacing: '-0.02em',
     },
 };
 // End of jobAppStyles object
