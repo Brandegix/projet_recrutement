@@ -547,46 +547,120 @@ const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
         </button>
       </div>
 
+      {/* Premium Saved Jobs Section */}
       <div style={{ 
-        textAlign: "center", 
-        marginTop: "30px",
-        padding: "20px",
-        background: "linear-gradient(135deg, rgba(252, 142, 32, 0.1) 0%, rgba(255, 123, 0, 0.1) 100%)",
-        borderRadius: "12px",
-        border: "2px solid rgba(252, 142, 32, 0.2)"
+        display: 'flex',
+        justifyContent: 'center',
+        marginTop: '40px',
+        marginBottom: '20px'
       }}>
-        <Link 
-          to="/SavedJobOffers" 
-          style={{ 
-            color: '#fc8e20', 
-            textDecoration: 'none',
-            fontSize: '1.1rem',
-            fontWeight: '600',
-            padding: '12px 24px',
-            border: '2px solid #fc8e20',
-            borderRadius: '8px',
-            background: 'white',
-            display: 'inline-block',
-            transition: 'all 0.3s ease',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.background = 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)';
-            e.target.style.color = 'white';
-            e.target.style.transform = 'translateY(-2px)';
-            e.target.style.boxShadow = '0 4px 8px rgba(252, 142, 32, 0.3)';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.background = 'white';
-            e.target.style.color = '#fc8e20';
-            e.target.style.transform = 'translateY(0)';
-            e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
-          }}
-        >
-          Consulter les offres d'emploi sauvegardées
-        </Link>
+        <div style={{
+          position: 'relative',
+          background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+          borderRadius: '16px',
+          padding: '24px 32px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+          border: '1px solid rgba(252, 142, 32, 0.15)',
+          maxWidth: '500px',
+          width: '100%',
+          textAlign: 'center',
+          overflow: 'hidden'
+        }}>
+          {/* Decorative background element */}
+          <div style={{
+            position: 'absolute',
+            top: '-50%',
+            right: '-20%',
+            width: '200px',
+            height: '200px',
+            background: 'linear-gradient(135deg, rgba(252, 142, 32, 0.08) 0%, rgba(255, 123, 0, 0.05) 100%)',
+            borderRadius: '50%',
+            zIndex: '0'
+          }}></div>
+          
+          <div style={{ position: 'relative', zIndex: '1' }}>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '48px',
+              height: '48px',
+              background: 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)',
+              borderRadius: '12px',
+              marginBottom: '16px',
+              boxShadow: '0 4px 12px rgba(252, 142, 32, 0.3)'
+            }}>
+              <FaBookmark style={{ color: 'white', fontSize: '20px' }} />
+            </div>
+            
+            <h3 style={{
+              margin: '0 0 8px 0',
+              fontSize: '1.25rem',
+              fontWeight: '700',
+              color: '#2c3e50',
+              letterSpacing: '-0.02em'
+            }}>
+              Offres Sauvegardées
+            </h3>
+            
+            <p style={{
+              margin: '0 0 24px 0',
+              fontSize: '0.95rem',
+              color: '#64748b',
+              lineHeight: '1.5',
+              fontWeight: '400'
+            }}>
+              Accédez rapidement à toutes vos offres d'emploi favorites
+            </p>
+            
+            <Link 
+              to="/SavedJobOffers" 
+              style={{ 
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                color: 'white',
+                textDecoration: 'none',
+                fontSize: '1rem',
+                fontWeight: '600',
+                padding: '14px 28px',
+                background: 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)',
+                borderRadius: '12px',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: '0 4px 12px rgba(252, 142, 32, 0.35)',
+                border: 'none',
+                letterSpacing: '0.02em',
+                position: 'relative',
+                overflow: 'hidden'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'translateY(-2px) scale(1.02)';
+                e.target.style.boxShadow = '0 8px 25px rgba(252, 142, 32, 0.4)';
+                e.target.style.background = 'linear-gradient(135deg, #ff7b00 0%, #fc8e20 100%)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'translateY(0) scale(1)';
+                e.target.style.boxShadow = '0 4px 12px rgba(252, 142, 32, 0.35)';
+                e.target.style.background = 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)';
+              }}
+            >
+              <span>Consulter mes favoris</span>
+              <svg 
+                width="16" 
+                height="16" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+                style={{ transition: 'transform 0.3s ease' }}
+              >
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </Link>
+          </div>
+        </div>
       </div>
     </>
   );
