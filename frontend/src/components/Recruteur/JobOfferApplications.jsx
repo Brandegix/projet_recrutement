@@ -25,7 +25,7 @@ const JobOfferApplications = () => {
 
         // Fetch recruiter profile
         fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/profile`, { method: 'GET', credentials: 'include' })
-        .then(res => {
+            .then(res => {
                 if (!res.ok) throw new Error("Failed to fetch recruiter profile");
                 return res.json();
             })
@@ -34,7 +34,7 @@ const JobOfferApplications = () => {
 
         // Fetch all applications for the recruiter
         fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/applications`, { method: 'GET', credentials: 'include' })
-        .then(response => {
+            .then(response => {
                 if (!response.ok) throw new Error("Failed to fetch applications");
                 return response.json();
             })
@@ -48,7 +48,7 @@ const JobOfferApplications = () => {
 
         // Fetch job offer details
         fetch(`${process.env.REACT_APP_API_URL}/api/job_offers/${offerId}`)
-        .then(response => {
+            .then(response => {
                 if (!response.ok) throw new Error("Failed to fetch job offer details");
                 return response.json();
             })
@@ -83,32 +83,32 @@ const JobOfferApplications = () => {
 
     const markAsViewed = async (applicationId) => {
         try {
-          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/mark_as_viewed/${applicationId}`, {
-            method: 'POST',
-            credentials: 'include',
-          });
-      
-          if (!response.ok) {
-            throw new Error('Failed to mark application as viewed');
-          }
-      
-          // Update state: mark the application as viewed locally
-          setApplications(prevApps =>
-            prevApps.map(app =>
-              app.id === applicationId ? { ...app, viewed: true } : app
-            )
-          );
-      
-          setFilteredApplications(prevApps =>
-            prevApps.map(app =>
-              app.id === applicationId ? { ...app, viewed: true } : app
-            )
-          );
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/mark_as_viewed/${applicationId}`, {
+                method: 'POST',
+                credentials: 'include',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to mark application as viewed');
+            }
+
+            // Update state: mark the application as viewed locally
+            setApplications(prevApps =>
+                prevApps.map(app =>
+                    app.id === applicationId ? { ...app, viewed: true } : app
+                )
+            );
+
+            setFilteredApplications(prevApps =>
+                prevApps.map(app =>
+                    app.id === applicationId ? { ...app, viewed: true } : app
+                )
+            );
         } catch (error) {
-          console.error(error);
+            console.error(error);
         }
-      };
-      
+    };
+
     if (isLoading) {
         return <div style={jobAppStyles.loading}>Chargement des candidatures...</div>;
     }
@@ -122,8 +122,13 @@ const JobOfferApplications = () => {
             <Navbar />
             <div style={jobAppStyles.applicationsContainer}>
                 <div style={jobAppStyles.header}>
-                    <h1 style={jobAppStyles.h1}>Candidatures pour "{offer?.title}"</h1>
-                    <Link to="/RecruiterJobOffers" style={jobAppStyles.backButtonLink}>
+                    <h1 style={jobAppStyles.h1}>Candidatures pour " {offer?.title} "</h1>
+                    <Link
+                        to="/RecruiterJobOffers"
+                        style={jobAppStyles.backButtonLink}
+                        onMouseEnter={(e) => e.target.style.backgroundColor = jobAppStyles.backButtonLinkHover.backgroundColor}
+                        onMouseLeave={(e) => e.target.style.backgroundColor = jobAppStyles.backButtonLink.backgroundColor}
+                    >
                         Retour aux offres
                     </Link>
                 </div>
@@ -146,7 +151,7 @@ const JobOfferApplications = () => {
                             <div key={app.id} style={jobAppStyles.applicationItem}>
                                 <div style={jobAppStyles.applicantInfo}>
                                     <div style={jobAppStyles.applicantAvatar}>
-                                        {app.candidate?.name?.charAt(0) || "?"}
+                                        {app.candidate?.name?.charAt(0).toUpperCase() || "?"}
                                     </div>
                                     <div style={jobAppStyles.applicantDetails}>
                                         <h4 style={jobAppStyles.applicantName}>{app.candidate?.name}</h4>
@@ -154,62 +159,42 @@ const JobOfferApplications = () => {
                                             <div style={jobAppStyles.contactItem}>Email: {app.candidate?.email || "N/A"}</div>
                                             <div style={jobAppStyles.contactItem}>Téléphone: {app.candidate?.phoneNumber || "N/A"}</div>
                                             <div style={jobAppStyles.contactItem}>
-                                            CV: <a
-  href={`${process.env.REACT_APP_API_URL}/uploads/cv/${app.candidate?.cv_filename}`}
-  target="_blank"
-  rel="noopener noreferrer"
-  style={jobAppStyles.cvLink}
-  onClick={() => markAsViewed(app.id)}
->
-  Voir CV
-</a>
-
+                                                CV: <a
+                                                    href={`${process.env.REACT_APP_API_URL}/uploads/cv/${app.candidate?.cv_filename}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    style={jobAppStyles.cvLink}
+                                                    onClick={() => markAsViewed(app.id)}
+                                                    onMouseEnter={(e) => e.target.style.color = jobAppStyles.cvLinkHover.color}
+                                                    onMouseLeave={(e) => e.target.style.color = jobAppStyles.cvLink.color}
+                                                >
+                                                    Voir CV
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div style={{ 
-  display: "flex", 
-  alignItems: "center", 
-  gap: "15px", 
-  padding: "10px", 
-  border: "1px solid #ddd", 
-  borderRadius: "8px", 
-  backgroundColor: "#f9f9f9" 
-}}>
-  <div style={{ fontSize: "14px", fontWeight: "bold", color: "#555" }}>
-    Reçu le {formatDate(app.application_date)}
-  </div>
+                                <div style={jobAppStyles.applicationActions}>
+                                    <div style={jobAppStyles.applicationDate}>
+                                        Reçu le {formatDate(app.application_date)}
+                                    </div>
 
-  <button
-    style={{ 
-      ...jobAppStyles.contactButton, 
-      padding: "8px 15px", 
-      backgroundColor: "#007bff", 
-      color: "#fff", 
-      borderRadius: "5px", 
-      cursor: "pointer", 
-      transition: "background 0.3s" 
-    }}
-    onClick={() => openChatModal(app.id)}
-    onMouseOver={(e) => e.target.style.backgroundColor = "#0056b3"}
-    onMouseOut={(e) => e.target.style.backgroundColor = "#007bff"}
-  >
-    Contacter
-  </button>
+                                    <button
+                                        style={jobAppStyles.contactButton}
+                                        onClick={() => openChatModal(app.id)}
+                                        onMouseEnter={(e) => e.target.style.backgroundColor = jobAppStyles.contactButtonHover.backgroundColor}
+                                        onMouseLeave={(e) => e.target.style.backgroundColor = jobAppStyles.contactButton.backgroundColor}
+                                    >
+                                        Contacter
+                                    </button>
 
-  {/* Mark as Viewed button (if not already viewed) */}
-  
-  {/* Show "Vu" label if already viewed */}
-  {app.viewed && (
-    <span style={{ marginLeft: "10px", color: "#28a745", fontWeight: "bold", fontSize: "14px" }}>
-      Vu ✔
-    </span>
-  )}
-</div>
-
-
+                                    {app.viewed && (
+                                        <span style={jobAppStyles.viewedTag}>
+                                            Vu ✔
+                                        </span>
+                                    )}
                                 </div>
+                            </div>
                         ))}
                     </div>
                 )}
@@ -229,65 +214,286 @@ const JobOfferApplications = () => {
                         applicationId={chatApplicationId}
                     />
                 )}
-                <button onClick={closeChatModal} style={jobAppStyles.closeChatButton}>Fermer le chat</button>
+                <button
+                    onClick={closeChatModal}
+                    style={jobAppStyles.closeChatButton}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = jobAppStyles.closeChatButtonHover.backgroundColor}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = jobAppStyles.closeChatButton.backgroundColor}
+                >
+                    Fermer le chat
+                </button>
             </Modal>
         </>
     );
 };
 
+---
+
+## Styles (jobAppStyles object)
+
+```javascript
 const jobAppStyles = {
-    applicationsContainer: { fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif', padding: '30px', backgroundColor: '#f4f4f4', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' },
-    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', width: '90%', maxWidth: '1200px' },
-    h1: { color: '#333', fontSize: '2.4em', fontWeight: '500' },
+    // --- Page Container & General Layout ---
+    applicationsContainer: {
+        fontFamily: 'Arial, sans-serif', // Modern, clean font
+        padding: '40px 20px',
+        backgroundColor: '#FFFFFF', // White background
+        minHeight: 'calc(100vh - 120px)', // Adjust for Navbar/Footer height
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    header: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '30px',
+        width: '100%',
+        maxWidth: '1000px',
+        flexWrap: 'wrap', // Allow wrapping on smaller screens
+        gap: '20px',
+    },
+    h1: {
+        color: '#000000', // Black
+        fontSize: '2.2em',
+        fontWeight: '700', // Bolder for headings
+        margin: 0,
+        flexGrow: 1, // Allow title to take available space
+    },
+
+    // --- Buttons & Links ---
     backButtonLink: {
-        backgroundColor: '#6c757d',
-        color: 'white',
+        backgroundColor: '#FF6B35', // Orange
+        color: '#FFFFFF', // White text
         border: 'none',
-        padding: '10px 18px',
+        padding: '12px 25px',
         borderRadius: '8px',
         cursor: 'pointer',
         fontSize: '1em',
         textDecoration: 'none',
-        transition: 'background-color 0.3s ease-in-out',
-        width: 'auto', // Adjust width to content
-        textAlign: 'center',
+        transition: 'background-color 0.3s ease, transform 0.2s ease',
+        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
         display: 'inline-block',
-        height: 'auto',
     },
-    backButtonLinkHover: { backgroundColor: '#5a6268' },
-    searchContainer: { width: '90%', maxWidth: '1200px', marginBottom: '20px' },
-    searchInput: { width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box', fontSize: '1em' },
-    applicationList: { width: '90%', maxWidth: '1200px' },
-    applicationItem: { backgroundColor: 'white', padding: '20px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid #e0e0e0' },
-    applicantInfo: { display: 'flex', alignItems: 'center' },
-    applicantAvatar: { backgroundColor: '#ff8f00', color: 'white', width: '50px', height: '50px', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1.2em', marginRight: '15px' },
+    backButtonLinkHover: {
+        backgroundColor: '#E55A2B', // Darker orange on hover
+        transform: 'translateY(-2px)',
+    },
+    cvLink: {
+        color: '#FF6B35', // Orange
+        textDecoration: 'none',
+        fontWeight: 'bold',
+        transition: 'color 0.3s ease',
+    },
+    cvLinkHover: {
+        color: '#E55A2B', // Darker orange on hover
+    },
+    contactButton: {
+        backgroundColor: '#FF6B35', // Orange
+        color: '#FFFFFF', // White text
+        border: 'none',
+        padding: '10px 20px',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        fontSize: '0.95em',
+        transition: 'background-color 0.3s ease, transform 0.2s ease',
+        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+        fontWeight: '600',
+    },
+    contactButtonHover: {
+        backgroundColor: '#E55A2B', // Darker orange on hover
+        transform: 'translateY(-1px)',
+    },
+    closeChatButton: {
+        backgroundColor: '#000000', // Black
+        color: '#FFFFFF', // White text
+        border: 'none',
+        padding: '12px 25px',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        fontSize: '1em',
+        marginTop: '20px',
+        transition: 'background-color 0.3s ease, transform 0.2s ease',
+        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+    },
+    closeChatButtonHover: {
+        backgroundColor: '#333333', // Slightly lighter black/dark gray on hover
+        transform: 'translateY(-2px)',
+    },
+
+    // --- Search Bar ---
+    searchContainer: {
+        width: '100%',
+        maxWidth: '1000px',
+        marginBottom: '25px',
+    },
+    searchInput: {
+        width: '100%',
+        padding: '12px 15px',
+        borderRadius: '8px',
+        border: '1px solid #E0E0E0',
+        boxSizing: 'border-box',
+        fontSize: '1em',
+        color: '#333333',
+        boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)',
+        transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+    },
+    searchInputFocus: {
+        borderColor: '#FF6B35', // Orange border on focus
+        boxShadow: '0 0 8px rgba(255, 107, 53, 0.2)',
+    },
+
+    // --- Application List & Items ---
+    applicationList: {
+        width: '100%',
+        maxWidth: '1000px',
+    },
+    applicationItem: {
+        backgroundColor: '#FFFFFF', // White
+        padding: '25px',
+        borderRadius: '12px',
+        boxShadow: '0 5px 15px rgba(0, 0, 0, 0.08)',
+        marginBottom: '20px',
+        display: 'flex',
+        flexDirection: 'column', // Stack on small screens, then row
+        gap: '20px',
+        border: '1px solid #F0F0F0',
+        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+    },
+    applicationItemHover: {
+        transform: 'translateY(-3px)',
+        boxShadow: '0 8px 20px rgba(0, 0, 0, 0.12)',
+    },
+    applicantInfo: {
+        display: 'flex',
+        alignItems: 'center',
+        flexGrow: 1, // Allows it to take up more space
+    },
+    applicantAvatar: {
+        backgroundColor: '#FF6B35', // Orange background
+        color: '#000000', // Black text for contrast
+        width: '60px',
+        height: '60px',
+        borderRadius: '50%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize: '1.8em', // Larger initial
+        fontWeight: 'bold',
+        marginRight: '20px',
+        flexShrink: 0,
+    },
     applicantDetails: {},
-    applicantName: { color: '#333', fontSize: '1.4em', fontWeight: '500', marginBottom: '5px' },
-    applicantContact: { fontSize: '0.95em', color: '#555' },
-    contactItem: { marginBottom: '3px' },
-    cvLink: { color: '#ff8f00', textDecoration: 'none', fontWeight: 'bold' },
-    applicationActions: { textAlign: 'right' },
-    applicationDate: { color: '#777', fontSize: '0.9em', marginBottom: '10px' },
-    contactButton: { backgroundColor: '#ff8f00', color: 'white', border: 'none', padding: '10px 15px', borderRadius: '8px', cursor: 'pointer', fontSize: '1em', transition: 'background-color 0.3s ease-in-out' },
-    contactButtonHover: { backgroundColor: '#e65100' },
-    noApplications: { textAlign: 'center', marginTop: '30px', color: '#777', fontSize: '1.1em' },
-    loading: { textAlign: 'center', marginTop: '30px', color: '#777', fontSize: '1.1em' },
-    error: { textAlign: 'center', marginTop: '30px', color: '#d32f2f', fontSize: '1.1em', backgroundColor: '#ffebee', padding: '15px', borderRadius: '8px' },
+    applicantName: {
+        color: '#000000', // Black
+        fontSize: '1.6em',
+        fontWeight: '700',
+        marginBottom: '5px',
+    },
+    applicantContact: {
+        fontSize: '0.95em',
+        color: '#333333', // Dark gray
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '10px 20px', // Spacing between contact items
+    },
+    contactItem: {
+        marginBottom: '0', // Reset margin from previous style
+    },
+    applicationActions: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-end', // Align buttons/date to the right
+        gap: '10px',
+    },
+    applicationDate: {
+        color: '#333333', // Dark gray
+        fontSize: '0.9em',
+        fontWeight: '600',
+    },
+    viewedTag: {
+        marginLeft: '10px',
+        color: '#FF6B35', // Orange for "Vu"
+        fontWeight: 'bold',
+        fontSize: '0.9em',
+        backgroundColor: '#FFF5E5', // Light orange background
+        padding: '5px 10px',
+        borderRadius: '5px',
+    },
+
+    // --- Empty State, Loading, Error ---
+    noApplications: {
+        textAlign: 'center',
+        marginTop: '50px',
+        color: '#333333', // Dark gray
+        fontSize: '1.2em',
+        padding: '20px',
+        backgroundColor: '#FFFFFF',
+        borderRadius: '10px',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+        maxWidth: '600px',
+        width: '100%',
+    },
+    loading: {
+        textAlign: 'center',
+        marginTop: '50px',
+        color: '#333333',
+        fontSize: '1.2em',
+        padding: '20px',
+        backgroundColor: '#FFFFFF',
+        borderRadius: '10px',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+        maxWidth: '600px',
+        width: '100%',
+    },
+    error: {
+        textAlign: 'center',
+        marginTop: '50px',
+        color: '#000000', // Black text for error
+        fontSize: '1.2em',
+        backgroundColor: '#FF6B35', // Orange background for error
+        color: '#FFFFFF', // White text on orange
+        padding: '20px',
+        borderRadius: '10px',
+        boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+        maxWidth: '600px',
+        width: '100%',
+        fontWeight: 'bold',
+    },
+
+    // --- Modal Styles ---
     chatModal: {
-        overlay: { backgroundColor: 'rgba(0, 0, 0, 0.6)', zIndex: 1050 }, /* Added zIndex to the overlay */
+        overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.7)', // Darker overlay
+            zIndex: 1050,
+        },
         content: {
-            top: '50%', left: '50%', right: 'auto', bottom: 'auto',
-            marginRight: '-50%', transform: 'translate(-50%, -50%)',
-            padding: '20px', borderRadius: '12px', maxWidth: '600px', width: '90%',
-            borderColor: '#e0e0e0',
-            maxHeight: '80vh', // Limit the maximum height
-            overflow: 'auto', // Enable scrolling if content overflows
-            zIndex: 1051, /* Added zIndex to the content */
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            padding: '30px',
+            borderRadius: '12px',
+            maxWidth: '650px', // Slightly wider modal
+            width: '90%',
+            borderColor: '#E0E0E0',
+            maxHeight: '85vh', // Increased max height
+            overflow: 'auto',
+            zIndex: 1051,
+            backgroundColor: '#FFFFFF', // White modal background
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
         }
     },
-    modalTitle: { color: '#333', fontSize: '1.6em', fontWeight: '500', marginBottom: '15px' },
-    closeChatButton: { backgroundColor: '#6c757d', color: 'white', border: 'none', padding: '10px 18px', borderRadius: '8px', cursor: 'pointer', fontSize: '1em', marginTop: '15px' },
-    closeChatButtonHover: { backgroundColor: '#5a6268' },
+    modalTitle: {
+        color: '#000000', // Black
+        fontSize: '1.8em',
+        fontWeight: '700',
+        marginBottom: '20px',
+        borderBottom: '2px solid #FF6B35', // Orange underline
+        paddingBottom: '10px',
+    },
 };
 
 export default JobOfferApplications;
