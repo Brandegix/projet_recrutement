@@ -862,15 +862,18 @@ function RegisterCandidate() {
           position: relative;
         }
 
-        .form-input {
-          width: 100%;
-          padding: 0.75rem 1rem;
-          border: 2px solid #e5e7eb;
-          border-radius: 8px;
-          font-size: 1rem;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          background: rgba(255, 255, 255, 0.8);
-        }
+.form-input {
+  width: 100%;
+  max-width: 400px; /* Ajoutez cette ligne pour limiter la largeur */
+  margin: 0 auto; /* Centre les inputs */
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(255, 255, 255, 0.8);
+  display: block; /* Assure que margin: 0 auto fonctionne */
+}
 
         .form-input:focus {
           outline: none;
