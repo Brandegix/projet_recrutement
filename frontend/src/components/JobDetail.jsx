@@ -86,10 +86,7 @@ const JobDetail = () => {
     // still work if the original image fails.
 
     const handleApply = (jobId) => {
-        if (!candidateId) {
-            alert("Impossible de postuler sans être connecté. Veuillez rafraîchir la page ou vous connecter.");
-            return;
-        }
+       
 
         fetch(`${process.env.REACT_APP_API_URL}/api/applications`, {
             method: 'POST',
