@@ -602,7 +602,7 @@ const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
   const [selectedDomaine, setSelectedDomaine] = useState('');
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 10;
+  const jobsPerPage = 3;
   const [searchTerm, setSearchTerm] = useState('');
   const [candidate, setCandidate] = useState(null);
   const [savedJobs, setSavedJobs] = useState([]);
