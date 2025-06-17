@@ -107,25 +107,24 @@ export default function OptimizedCarteComponent() {
       try {
         setLoading(true);
         
-        // Simulate API call - replace with your actual API
-        const mockRecruiters = [
-          { id: 1, companyName: "TechCorp", name: "Ahmed Benali", address: "Casablanca, Maroc" },
-          { id: 2, companyName: "DataSoft", name: "Fatima Zahra", address: "Rabat, Maroc" },
-          { id: 3, companyName: "WebAgency", name: "Youssef Alami", address: "Marrakech, Maroc" },
-          { id: 4, companyName: "StartupHub", name: "Laila Benjelloun", address: "Agadir, Maroc" },
-          { id: 5, companyName: "ConsultingPro", name: "Omar Tazi", address: "Tanger, Maroc" }
-        ];
+        // Fetch recruiters from your actual API
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/recruiter-locations`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const recruitersData = await response.json();
+        console.log('Fetched recruiters:', recruitersData);
 
         // Set initial progress
         setGeocodingProgress({ 
           current: 0, 
-          total: mockRecruiters.filter(r => r.address && r.address.trim() !== '').length 
+          total: recruitersData.filter(r => r.address && r.address.trim() !== '').length 
         });
-
-        console.log('Fetched recruiters:', mockRecruiters);
         
         // Process geocoding in batches
-        const geocodedRecruiters = await processGeocodingBatch(mockRecruiters);
+        const geocodedRecruiters = await processGeocodingBatch(recruitersData);
         
         console.log('Recruiters with coordinates:', geocodedRecruiters);
         setRecruiters(geocodedRecruiters);
