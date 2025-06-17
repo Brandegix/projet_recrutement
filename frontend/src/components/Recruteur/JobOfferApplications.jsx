@@ -80,7 +80,6 @@ const JobOfferApplications = () => {
         setChatApplicationId(null);
     };
 
-
     const markAsViewed = async (applicationId) => {
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/api/mark_as_viewed/${applicationId}`, {
@@ -140,7 +139,6 @@ const JobOfferApplications = () => {
                         value={searchName}
                         onChange={(e) => setSearchName(e.target.value)}
                         style={jobAppStyles.searchInput}
-                        // Added focus styles dynamically
                         onFocus={(e) => e.target.style.borderColor = jobAppStyles.searchInputFocus.borderColor}
                         onBlur={(e) => e.target.style.borderColor = jobAppStyles.searchInput.borderColor}
                     />
@@ -159,8 +157,8 @@ const JobOfferApplications = () => {
                                     e.currentTarget.style.boxShadow = jobAppStyles.applicationItemHover.boxShadow;
                                 }}
                                 onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = jobAppStyles.applicationItem.transform; // Reset
-                                    e.currentTarget.style.boxShadow = jobAppStyles.applicationItem.boxShadow; // Reset
+                                    e.currentTarget.style.transform = jobAppStyles.applicationItem.transform;
+                                    e.currentTarget.style.boxShadow = jobAppStyles.applicationItem.boxShadow;
                                 }}
                             >
                                 <div style={jobAppStyles.applicantInfo}>
@@ -241,11 +239,7 @@ const JobOfferApplications = () => {
     );
 };
 
----
-
-## Styles (jobAppStyles object)
-
-```javascript
+// Start of jobAppStyles object (this replaces your existing jobAppStyles)
 const jobAppStyles = {
     // --- Page Container & General Layout ---
     applicationsContainer: {
@@ -509,5 +503,6 @@ const jobAppStyles = {
         paddingBottom: '10px',
     },
 };
+// End of jobAppStyles object
 
 export default JobOfferApplications;
