@@ -693,6 +693,7 @@ const SavedJobsSection = () => {
         </div>
       </div>
     </div>
+ 
   );
 };
 
