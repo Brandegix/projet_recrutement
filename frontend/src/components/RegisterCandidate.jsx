@@ -14,7 +14,7 @@ import {
   Plus,
   Trash2,
   Eye,
-  SlashIcon as EyeSlash,
+  EyeOff,
   Sparkles,
   Target,
   Award,
@@ -155,11 +155,11 @@ function RegisterCandidate() {
   const progress = ((currentStep - 1) / 2) * 100
 
   const getSkillLevel = (level) => {
-    if (level >= 90) return { label: "Expert", color: "#8b5cf6", bg: "rgba(139, 92, 246, 0.1)" }
-    if (level >= 70) return { label: "Avancé", color: "#06b6d4", bg: "rgba(6, 182, 212, 0.1)" }
-    if (level >= 50) return { label: "Intermédiaire", color: "#10b981", bg: "rgba(16, 185, 129, 0.1)" }
-    if (level >= 30) return { label: "Débutant", color: "#f59e0b", bg: "rgba(245, 158, 11, 0.1)" }
-    return { label: "Novice", color: "#ef4444", bg: "rgba(239, 68, 68, 0.1)" }
+    if (level >= 90) return { label: "Expert", color: "#f97316", bg: "rgba(249, 115, 22, 0.1)" }
+    if (level >= 70) return { label: "Avancé", color: "#fb923c", bg: "rgba(251, 146, 60, 0.1)" }
+    if (level >= 50) return { label: "Intermédiaire", color: "#fdba74", bg: "rgba(253, 186, 116, 0.1)" }
+    if (level >= 30) return { label: "Débutant", color: "#ffedd5", bg: "rgba(255, 237, 213, 0.1)" }
+    return { label: "Novice", color: "#fff7ed", bg: "rgba(255, 247, 237, 0.1)" }
   }
 
   const InputField = ({ name, type = "text", placeholder, icon: Icon, label, required = true }) => {
@@ -212,7 +212,7 @@ function RegisterCandidate() {
 
           {name === "password" && (
             <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
-              {showPassword ? <EyeSlash /> : <Eye />}
+              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           )}
 
@@ -555,9 +555,9 @@ function RegisterCandidate() {
           width: 100%;
           height: 100%;
           background: 
-            radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            radial-gradient(circle at 20% 80%, rgba(249, 115, 22, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255, 237, 213, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(251, 146, 60, 0.2) 0%, transparent 50%);
           animation: meshMove 20s ease-in-out infinite;
         }
 
@@ -576,7 +576,7 @@ function RegisterCandidate() {
         .orb-1 {
           width: 300px;
           height: 300px;
-          background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+          background: linear-gradient(45deg, #f97316, #fdba74);
           top: 10%;
           left: 10%;
           animation-delay: 0s;
@@ -585,7 +585,7 @@ function RegisterCandidate() {
         .orb-2 {
           width: 200px;
           height: 200px;
-          background: linear-gradient(45deg, #10b981, #f59e0b);
+          background: linear-gradient(45deg, #fb923c, #fff7ed);
           top: 60%;
           right: 10%;
           animation-delay: 2s;
@@ -594,7 +594,7 @@ function RegisterCandidate() {
         .orb-3 {
           width: 250px;
           height: 250px;
-          background: linear-gradient(45deg, #ef4444, #8b5cf6);
+          background: linear-gradient(45deg, #ea580c, #fb923c);
           bottom: 10%;
           left: 30%;
           animation-delay: 4s;
@@ -622,11 +622,11 @@ function RegisterCandidate() {
         }
 
         .particle:nth-child(odd) {
-          background: rgba(139, 92, 246, 0.6);
+          background: rgba(249, 115, 22, 0.6);
         }
 
         .particle:nth-child(even) {
-          background: rgba(6, 182, 212, 0.6);
+          background: rgba(253, 186, 116, 0.6);
         }
 
         @keyframes particleFloat {
@@ -675,14 +675,14 @@ function RegisterCandidate() {
         }
 
         .register-card {
-          background: rgba(255, 255, 255, 0.02);
+          background: rgba(255, 255, 255, 0.95);
           backdrop-filter: blur(20px);
           border-radius: 32px;
           padding: 3rem;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(249, 115, 22, 0.2);
           box-shadow: 
-            0 25px 50px rgba(0, 0, 0, 0.5),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            0 25px 50px rgba(0, 0, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.6);
           position: relative;
           overflow: hidden;
           animation: cardSlideUp 0.8s ease-out;
@@ -695,7 +695,7 @@ function RegisterCandidate() {
           left: 0;
           right: 0;
           height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.8), transparent);
+          background: linear-gradient(90deg, transparent, rgba(249, 115, 22, 0.8), transparent);
           animation: shimmer 3s ease-in-out infinite;
         }
 
@@ -729,7 +729,7 @@ function RegisterCandidate() {
         .icon-bg {
           width: 100px;
           height: 100px;
-          background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+          background: linear-gradient(135deg, #f97316, #fdba74);
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -744,7 +744,7 @@ function RegisterCandidate() {
           left: -10px;
           width: 120px;
           height: 120px;
-          border: 2px solid rgba(139, 92, 246, 0.3);
+          border: 2px solid rgba(249, 115, 22, 0.3);
           border-radius: 50%;
           animation: ringPulse 2s ease-in-out infinite;
         }
@@ -765,22 +765,23 @@ function RegisterCandidate() {
           font-weight: 900;
           margin: 0 0 1rem 0;
           line-height: 1.1;
+          color: #0f172a;
         }
 
         .title-gradient {
-          background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+          background: linear-gradient(135deg, #f97316, #fdba74);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
         }
 
         .title-sub {
-          color: rgba(255, 255, 255, 0.8);
+          color: #334155;
           font-weight: 600;
         }
 
         .register-subtitle {
-          color: rgba(255, 255, 255, 0.6);
+          color: #64748b;
           font-size: 1.1rem;
           margin: 0;
           max-width: 500px;
@@ -794,7 +795,7 @@ function RegisterCandidate() {
 
         .progress-track {
           height: 6px;
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(249, 115, 22, 0.1);
           border-radius: 3px;
           margin-bottom: 2rem;
           position: relative;
@@ -803,7 +804,7 @@ function RegisterCandidate() {
 
         .progress-fill {
           height: 100%;
-          background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+          background: linear-gradient(90deg, #f97316, #fdba74);
           border-radius: 3px;
           transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
@@ -830,9 +831,9 @@ function RegisterCandidate() {
           top: -2px;
           width: 10px;
           height: 10px;
-          background: #06b6d4;
+          background: #fdba74;
           border-radius: 50%;
-          box-shadow: 0 0 20px #06b6d4;
+          box-shadow: 0 0 20px #f97316;
           transform: translateX(-50%);
           transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -854,8 +855,8 @@ function RegisterCandidate() {
           width: 50px;
           height: 50px;
           border-radius: 50%;
-          background: rgba(255, 255, 255, 0.05);
-          border: 2px solid rgba(255, 255, 255, 0.1);
+          background: rgba(249, 115, 22, 0.05);
+          border: 2px solid rgba(249, 115, 22, 0.1);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -864,21 +865,21 @@ function RegisterCandidate() {
         }
 
         .step-item.active .step-circle {
-          background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+          background: linear-gradient(135deg, #f97316, #fdba74);
           border-color: transparent;
-          box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+          box-shadow: 0 8px 25px rgba(249, 115, 22, 0.4);
           transform: scale(1.1);
         }
 
         .step-item.completed .step-circle {
-          background: linear-gradient(135deg, #10b981, #059669);
+          background: linear-gradient(135deg, #15803d, #22c55e);
           border-color: transparent;
         }
 
         .step-icon, .step-check {
           width: 1.2rem;
           height: 1.2rem;
-          color: rgba(255, 255, 255, 0.6);
+          color: #64748b;
         }
 
         .step-item.active .step-icon,
@@ -888,18 +889,18 @@ function RegisterCandidate() {
 
         .step-label {
           font-size: 0.9rem;
-          color: rgba(255, 255, 255, 0.5);
+          color: #64748b;
           font-weight: 500;
           transition: all 0.3s ease;
         }
 
         .step-item.active .step-label {
-          color: #8b5cf6;
+          color: #f97316;
           font-weight: 700;
         }
 
         .step-item.completed .step-label {
-          color: #10b981;
+          color: #15803d;
           font-weight: 600;
         }
 
@@ -986,15 +987,15 @@ function RegisterCandidate() {
           gap: 1.5rem;
           margin-bottom: 2.5rem;
           padding: 1.5rem;
-          background: rgba(255, 255, 255, 0.02);
+          background: rgba(249, 115, 22, 0.05);
           border-radius: 20px;
-          border: 1px solid rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(249, 115, 22, 0.1);
         }
 
         .step-icon-wrapper {
           width: 60px;
           height: 60px;
-          background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+          background: linear-gradient(135deg, #f97316, #fdba74);
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -1015,13 +1016,13 @@ function RegisterCandidate() {
         .step-title {
           font-size: 1.5rem;
           font-weight: 700;
-          color: white;
+          color: #0f172a;
           margin: 0 0 0.5rem 0;
         }
 
         .step-description {
           font-size: 1rem;
-          color: rgba(255, 255, 255, 0.6);
+          color: #64748b;
           margin: 0;
           line-height: 1.5;
         }
@@ -1049,7 +1050,7 @@ function RegisterCandidate() {
           align-items: center;
           justify-content: space-between;
           font-weight: 600;
-          color: rgba(255, 255, 255, 0.8);
+          color: #334155;
           font-size: 0.95rem;
         }
 
@@ -1062,7 +1063,7 @@ function RegisterCandidate() {
         .label-icon {
           width: 1.1rem;
           height: 1.1rem;
-          color: #8b5cf6;
+          color: #f97316;
         }
 
         .label-text {
@@ -1077,7 +1078,7 @@ function RegisterCandidate() {
         .validation-success {
           width: 1.1rem;
           height: 1.1rem;
-          color: #10b981;
+          color: #15803d;
         }
 
         .input-wrapper {
@@ -1089,30 +1090,30 @@ function RegisterCandidate() {
         .input-control {
           width: 100%;
           padding: 1.25rem 1.5rem;
-          border: 2px solid rgba(255, 255, 255, 0.1);
+          border: 2px solid rgba(249, 115, 22, 0.2);
           border-radius: 16px;
           font-size: 1rem;
           transition: all 0.3s ease;
-          background: rgba(255, 255, 255, 0.05);
-          backdrop-filter: blur(10px);
-          color: white;
+          background: white;
+          color: #0f172a;
           font-family: inherit;
+          z-index: 1;
         }
 
         .input-control::placeholder {
-          color: rgba(255, 255, 255, 0.4);
+          color: #94a3b8;
         }
 
         .input-control:focus {
           outline: none;
-          border-color: #8b5cf6;
-          box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
-          background: rgba(255, 255, 255, 0.08);
+          border-color: #f97316;
+          box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+          background: white;
         }
 
         .input-field.valid .input-control {
-          border-color: #10b981;
-          background: rgba(16, 185, 129, 0.05);
+          border-color: #15803d;
+          background: rgba(22, 163, 74, 0.05);
         }
 
         .input-field.invalid .input-control {
@@ -1125,16 +1126,17 @@ function RegisterCandidate() {
           right: 1rem;
           background: none;
           border: none;
-          color: rgba(255, 255, 255, 0.5);
+          color: #94a3b8;
           cursor: pointer;
           padding: 0.5rem;
           border-radius: 8px;
           transition: all 0.3s ease;
+          z-index: 2;
         }
 
         .password-toggle:hover {
-          color: #8b5cf6;
-          background: rgba(139, 92, 246, 0.1);
+          color: #f97316;
+          background: rgba(249, 115, 22, 0.1);
         }
 
         .input-glow {
@@ -1143,7 +1145,7 @@ function RegisterCandidate() {
           left: 0;
           width: 0;
           height: 2px;
-          background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+          background: linear-gradient(90deg, #f97316, #fdba74);
           transition: width 0.3s ease;
           border-radius: 1px;
         }
@@ -1169,17 +1171,17 @@ function RegisterCandidate() {
           display: flex;
           align-items: center;
           gap: 1rem;
-          background: rgba(139, 92, 246, 0.1);
+          background: rgba(249, 115, 22, 0.1);
           padding: 1.25rem;
           border-radius: 16px;
           margin-bottom: 2rem;
-          border: 1px solid rgba(139, 92, 246, 0.2);
+          border: 1px solid rgba(249, 115, 22, 0.2);
         }
 
         .info-icon-wrapper {
           width: 40px;
           height: 40px;
-          background: rgba(139, 92, 246, 0.2);
+          background: rgba(249, 115, 22, 0.2);
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -1190,7 +1192,7 @@ function RegisterCandidate() {
         .info-icon {
           width: 1.2rem;
           height: 1.2rem;
-          color: #8b5cf6;
+          color: #f97316;
         }
 
         .info-content {
@@ -1200,13 +1202,13 @@ function RegisterCandidate() {
         .info-title {
           font-size: 1rem;
           font-weight: 700;
-          color: #8b5cf6;
+          color: #f97316;
           margin: 0 0 0.25rem 0;
         }
 
         .info-text {
           font-size: 0.9rem;
-          color: rgba(255, 255, 255, 0.7);
+          color: #334155;
           margin: 0;
           line-height: 1.4;
         }
@@ -1218,17 +1220,19 @@ function RegisterCandidate() {
         .skill-card {
           margin-bottom: 1.5rem;
           padding: 1.5rem;
-          background: rgba(255, 255, 255, 0.02);
+          background: white;
           border-radius: 20px;
-          border: 1px solid rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(249, 115, 22, 0.1);
           transition: all 0.3s ease;
           animation: skillSlide 0.4s ease-out;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
         .skill-card:hover {
-          background: rgba(255, 255, 255, 0.05);
+          background: white;
           transform: translateY(-2px);
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 10px 30px rgba(249, 115, 22, 0.1);
+          border-color: rgba(249, 115, 22, 0.2);
         }
 
         @keyframes skillSlide {
@@ -1259,24 +1263,24 @@ function RegisterCandidate() {
 
         .skill-input {
           padding: 1rem;
-          border: 2px solid rgba(255, 255, 255, 0.1);
+          border: 2px solid rgba(249, 115, 22, 0.2);
           border-radius: 12px;
           font-size: 0.95rem;
           transition: all 0.3s ease;
-          background: rgba(255, 255, 255, 0.05);
-          color: white;
+          background: white;
+          color: #0f172a;
           font-family: inherit;
         }
 
         .skill-input::placeholder {
-          color: rgba(255, 255, 255, 0.4);
+          color: #94a3b8;
         }
 
         .skill-input:focus {
           outline: none;
-          border-color: #8b5cf6;
-          box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-          background: rgba(255, 255, 255, 0.08);
+          border-color: #f97316;
+          box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+          background: white;
         }
 
         .level-input {
@@ -1335,7 +1339,7 @@ function RegisterCandidate() {
 
         .progress-bar-bg {
           height: 8px;
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(249, 115, 22, 0.1);
           border-radius: 4px;
           overflow: hidden;
           margin-bottom: 0.75rem;
@@ -1372,21 +1376,21 @@ function RegisterCandidate() {
 
         .skill-name-display {
           font-size: 0.9rem;
-          color: rgba(255, 255, 255, 0.8);
+          color: #334155;
           font-weight: 600;
         }
 
         .skill-percentage {
           font-size: 0.9rem;
           font-weight: 700;
-          color: white;
+          color: #0f172a;
         }
 
         .add-skill-btn {
           width: 100%;
-          background: rgba(255, 255, 255, 0.02);
-          border: 2px dashed rgba(255, 255, 255, 0.2);
-          color: rgba(255, 255, 255, 0.6);
+          background: white;
+          border: 2px dashed rgba(249, 115, 22, 0.2);
+          color: #64748b;
           padding: 1.5rem;
           border-radius: 16px;
           cursor: pointer;
@@ -1398,16 +1402,16 @@ function RegisterCandidate() {
         }
 
         .add-skill-btn:hover {
-          background: rgba(139, 92, 246, 0.1);
-          border-color: rgba(139, 92, 246, 0.3);
-          color: #8b5cf6;
+          background: rgba(249, 115, 22, 0.05);
+          border-color: rgba(249, 115, 22, 0.3);
+          color: #f97316;
           transform: translateY(-2px);
         }
 
         .add-skill-icon {
           width: 40px;
           height: 40px;
-          background: rgba(139, 92, 246, 0.2);
+          background: rgba(249, 115, 22, 0.2);
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -1477,36 +1481,37 @@ function RegisterCandidate() {
         }
 
         .btn-primary {
-          background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+          background: linear-gradient(135deg, #f97316, #fdba74);
           color: white;
-          box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+          box-shadow: 0 8px 25px rgba(249, 115, 22, 0.3);
         }
 
         .btn-primary:hover {
           transform: translateY(-3px);
-          box-shadow: 0 12px 35px rgba(139, 92, 246, 0.4);
+          box-shadow: 0 12px 35px rgba(249, 115, 22, 0.4);
         }
 
         .btn-secondary {
-          background: rgba(255, 255, 255, 0.05);
-          border: 2px solid rgba(255, 255, 255, 0.1);
-          color: rgba(255, 255, 255, 0.8);
+          background: white;
+          border: 2px solid rgba(249, 115, 22, 0.2);
+          color: #334155;
         }
 
         .btn-secondary:hover {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(249, 115, 22, 0.05);
           transform: translateY(-2px);
+          border-color: rgba(249, 115, 22, 0.3);
         }
 
         .btn-success {
-          background: linear-gradient(135deg, #10b981, #059669);
+          background: linear-gradient(135deg, #15803d, #22c55e);
           color: white;
-          box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+          box-shadow: 0 8px 25px rgba(22, 163, 74, 0.3);
         }
 
         .btn-success:hover:not(:disabled) {
           transform: translateY(-3px);
-          box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
+          box-shadow: 0 12px 35px rgba(22, 163, 74, 0.4);
         }
 
         .btn:disabled {
@@ -1551,17 +1556,17 @@ function RegisterCandidate() {
           text-align: center;
           margin-top: 3rem;
           padding-top: 2rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          border-top: 1px solid rgba(249, 115, 22, 0.1);
         }
 
         .footer-text {
-          color: rgba(255, 255, 255, 0.6);
+          color: #64748b;
           font-size: 1rem;
           margin: 0;
         }
 
         .login-link {
-          color: #8b5cf6;
+          color: #f97316;
           text-decoration: none;
           font-weight: 700;
           margin-left: 0.5rem;
@@ -1570,7 +1575,7 @@ function RegisterCandidate() {
         }
 
         .login-link:hover {
-          color: #06b6d4;
+          color: #ea580c;
         }
 
         .login-link::after {
@@ -1580,7 +1585,7 @@ function RegisterCandidate() {
           left: 0;
           width: 0;
           height: 2px;
-          background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+          background: linear-gradient(90deg, #f97316, #fdba74);
           transition: width 0.3s ease;
         }
 
