@@ -1,11 +1,11 @@
 import React from 'react';
 import { useEffect, useRef, useState } from "react";
-// import "../../assets/css/r.css"; // Removed import of external CSS
 import Navbar from "../Navbara";
 import Footer from "../Footer";
 import candidatImage from '../../assets/images/choixRole/recruiter.jpg';
 import { Link } from "react-router-dom";
 import SEO from "../SEO";
+
 function RecruiterProfile() {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
@@ -68,8 +68,8 @@ function RecruiterProfile() {
         setError(err.message);
       });
 
-      fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/job_offers_statistics`, {
-        method: "GET",
+    fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/job_offers_statistics`, {
+      method: "GET",
       credentials: "include",
     })
       .then((res) => {
@@ -89,10 +89,10 @@ function RecruiterProfile() {
   const handleCoverImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-  
+
     const formData = new FormData();
     formData.append("cover_image", file);
-  
+
     fetch(`${process.env.REACT_APP_API_URL}/api/upload-cover-image-recruiter`, {
       method: "POST",
       body: formData,
@@ -115,7 +115,7 @@ function RecruiterProfile() {
         alert("Échec du téléchargement de l'image de couverture");
       });
   };
-  
+
   const handleAddDomain = () => {
     if (newDomain.trim() === "") return;
     const updatedDomains = [...domains, { name: newDomain, selected: true }];
@@ -172,9 +172,9 @@ function RecruiterProfile() {
     profileHeader: {
       background: profile?.cover_image
         ? (() => {
-            console.log("Cover image URL in header:", profile.cover_image);
-            return `linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.85) 60%, transparent 100%), url(${profile.cover_image})`;
-          })()
+          console.log("Cover image URL in header:", profile.cover_image);
+          return `linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.85) 60%, transparent 100%), url(${profile.cover_image})`;
+        })()
         : 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #ff6b35 100%)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
@@ -386,13 +386,13 @@ function RecruiterProfile() {
       color: '#fff',
       boxShadow: '0 4px 15px rgba(255, 107, 53, 0.2)',
     },
-   saveButton: {
-  backgroundColor: '#ff6b35', // This is an vibrant orange
-  color: '#fff', // White text for contrast
-  boxShadow: '0 4px 15px rgba(255, 107, 53, 0.2)', // Orange-tinted shadow
-  width: '100%',
-  justifyContent: 'center',
-},
+    saveButton: {
+      backgroundColor: '#ff6b35', // Keep this color
+      color: '#fff',
+      boxShadow: '0 4px 15px rgba(255, 107, 53, 0.2)',
+      width: '100%',
+      justifyContent: 'center',
+    },
     viewJobsLink: {
       textAlign: 'center',
       marginTop: '40px',
@@ -437,7 +437,7 @@ function RecruiterProfile() {
       <Navbar />
       <SEO
         title="Profile"
-       /> 
+      />
       <div style={styles.profilePage}>
         <div style={styles.profileContainer}>
           <p style={styles.error}>❌ Erreur : {error}</p>
@@ -452,7 +452,7 @@ function RecruiterProfile() {
       <Navbar />
       <SEO
         title="Profile"
-       /> 
+      />
       <div style={styles.profilePage}>
         <div style={styles.profileContainer}>
           <p style={styles.loading}>⏳ Chargement du profil...</p>
@@ -467,13 +467,13 @@ function RecruiterProfile() {
       <Navbar />
       <SEO
         title="Profile"
-       /> 
+      />
 
       <div style={styles.profilePage}>
-      <div style={styles.profileContainer}>
+        <div style={styles.profileContainer}>
 
-{/* Profile Header */}
-<div style={styles.profileHeader}>
+          {/* Profile Header */}
+          <div style={styles.profileHeader}>
             <div
               style={styles.profilePicture}
               onMouseEnter={() => setIsHovering(true)}
@@ -482,8 +482,8 @@ function RecruiterProfile() {
               <img
                 src={
                   profile.profile_image
-                  ? `${process.env.REACT_APP_API_URL}/uploads/profile_images/${profile.profile_image}`
-                  : candidatImage
+                    ? `${process.env.REACT_APP_API_URL}/uploads/profile_images/${profile.profile_image}`
+                    : candidatImage
                 }
                 alt="Recruiter Profile"
                 style={{
@@ -514,8 +514,8 @@ function RecruiterProfile() {
                 {profile.companyName || "Entreprise Anonyme"}
               </h2>
               <p style={styles.profileTitle}>Profil de l'entreprise</p>
-              <Link 
-                to="/EditRecruiterProfile" 
+              <Link
+                to="/EditRecruiterProfile"
                 style={styles.editLink}
                 onMouseEnter={(e) => {
                   e.target.style.backgroundColor = '#ff6b35';
@@ -528,7 +528,7 @@ function RecruiterProfile() {
                   e.target.style.transform = 'translateY(0)';
                 }}
               >
-                 Modifier le profil
+                Modifier le profil
               </Link>
             </div>
           </div>
@@ -541,24 +541,22 @@ function RecruiterProfile() {
             </p>
           </div>
 
-{/* COVER IMAGE Upload Section */}
-<div style={{ marginBottom: '20px' }}>
-  <label htmlFor="coverImageUpload" style={{ fontWeight: 'bold', marginBottom: '10px', display: 'block' }}>
-    Upload Cover Image:
-  </label>
-  <input
-    type="file"
-    accept="image/*"
-    onChange={handleCoverImageChange}
-    id="coverImageUpload"
-  />
-  
-
-</div>
+          {/* COVER IMAGE Upload Section */}
+          <div style={{ marginBottom: '20px' }}>
+            <label htmlFor="coverImageUpload" style={{ fontWeight: 'bold', marginBottom: '10px', display: 'block' }}>
+              Upload Cover Image:
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleCoverImageChange}
+              id="coverImageUpload"
+            />
+          </div>
 
           {/* Info Cards */}
           <div style={styles.cardsContainer}>
-            <div 
+            <div
               style={styles.card}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-5px)';
@@ -592,7 +590,7 @@ function RecruiterProfile() {
               </div>
             </div>
 
-            <div 
+            <div
               style={styles.card}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-5px)';
@@ -625,8 +623,8 @@ function RecruiterProfile() {
             <div style={styles.domainsList}>
               {domains.length > 0 ? (
                 domains.map((domain, i) => (
-                  <label 
-                    key={i} 
+                  <label
+                    key={i}
                     style={{
                       ...styles.domainItem,
                       backgroundColor: domain.selected ? '#fff5f0' : '#fafafa',
@@ -672,8 +670,8 @@ function RecruiterProfile() {
                 onFocus={(e) => e.target.style.borderColor = '#ff6b35'}
                 onBlur={(e) => e.target.style.borderColor = '#f0f0f0'}
               />
-              <button 
-                onClick={handleAddDomain} 
+              <button
+                onClick={handleAddDomain}
                 style={{
                   ...styles.button,
                   ...styles.addButton,
@@ -689,35 +687,33 @@ function RecruiterProfile() {
                   e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 107, 53, 0.2)';
                 }}
               >
-                 Ajouter
+                Ajouter
               </button>
             </div>
 
-            <button 
-              onClick={handleSaveDomains} 
+            <button
+              onClick={handleSaveDomains}
               style={{
                 ...styles.button,
                 ...styles.saveButton,
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#218838';
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(40, 167, 69, 0.4)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 107, 53, 0.4)'; // Kept the shadow change
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#28a745';
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 15px rgba(40, 167, 69, 0.2)';
+                e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 107, 53, 0.2)'; // Kept the shadow change
               }}
             >
-               Sauvegarder les domaines
+              Sauvegarder les domaines
             </button>
           </div>
-          
+
           {/* View Jobs Link */}
           <div style={styles.viewJobsLink}>
-            <Link 
-              to="/RecruiterJobOffers" 
+            <Link
+              to="/RecruiterJobOffers"
               style={styles.viewJobsButton}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = '#e55a2b';
@@ -730,7 +726,7 @@ function RecruiterProfile() {
                 e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 107, 53, 0.3)';
               }}
             >
-               Voir mes offres d'emploi
+              Voir mes offres d'emploi
             </Link>
           </div>
         </div>
