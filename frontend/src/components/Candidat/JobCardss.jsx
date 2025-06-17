@@ -31,26 +31,35 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
         </div>
       </div>
       
-      <div className="job-body">
-        <p><FaMapMarkerAlt /> {job.location}</p>
-        <p><FaBriefcase /> {job.experience}</p>
-        <p style={{
-          fontSize: '0.95rem',
-          lineHeight: '1.6',
-          margin: '0 0 15px 0',
-          overflow: 'hidden',
-          display: '-webkit-box',
-          WebkitLineClamp: 3,
-          WebkitBoxOrient: 'vertical',
-        }}>
-          {job.description}
-        </p>
-        <div className="skills">
-          {job.skills && job.skills.map((skill, index) => (
+     <div className="job-body">
+    <p><FaMapMarkerAlt /> {job.location}</p>
+    <p><FaBriefcase /> {job.experience}</p>
+    <p style={{
+        fontSize: '0.95rem',
+        lineHeight: '1.6',
+        margin: '0 0 15px 0',
+        overflow: 'hidden',
+        display: '-webkit-box',
+        WebkitLineClamp: 3,
+        WebkitBoxOrient: 'vertical',
+    }}>
+        {job.description}
+    </p>
+    {/* ADD THESE INLINE STYLES HERE */}
+    <div className="skills" style={{
+        marginTop: '15px', // Add some space above the skills
+        display: 'flex',   // Arrange skill tags in a row
+        flexWrap: 'wrap',  // Allow skill tags to wrap to the next line
+        gap: '8px',        // Space between individual skill tags
+        maxHeight: 'none', // Ensure the container isn't restricted
+        opacity: '1',      // Make sure it's fully visible
+        overflow: 'visible' // Ensure content isn't hidden
+    }}>
+        {job.skills && job.skills.map((skill, index) => (
             <span key={index}>{skill}</span>
-          ))}
-        </div>
-      </div>
+        ))}
+    </div>
+</div>
       
       <div className="job-footer">
         <strong>{job.salary}</strong>
