@@ -3,200 +3,6 @@ import { FaMapMarkerAlt, FaBriefcase, FaSearch, FaFilter, FaChevronLeft, FaChevr
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-// Enhanced Pagination Component
-const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
-  const getVisiblePages = () => {
-    const delta = 2;
-    const range = [];
-    const rangeWithDots = [];
-
-    for (
-      let i = Math.max(2, currentPage - delta);
-      i <= Math.min(totalPages - 1, currentPage + delta);
-      i++
-    ) {
-      range.push(i);
-    }
-
-    if (currentPage - delta > 2) {
-      rangeWithDots.push(1, '...');
-    } else {
-      rangeWithDots.push(1);
-    }
-
-    rangeWithDots.push(...range);
-
-    if (currentPage + delta < totalPages - 1) {
-      rangeWithDots.push('...', totalPages);
-    } else {
-      rangeWithDots.push(totalPages);
-    }
-
-    return rangeWithDots;
-  };
-
-  if (totalPages <= 1) return null;
-
-  return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: '8px',
-      marginTop: '40px',
-      padding: '24px',
-      background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
-      borderRadius: '16px',
-      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-      border: '1px solid #333'
-    }}>
-      {/* Previous Button */}
-      <button
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          padding: '12px 16px',
-          fontSize: '0.9rem',
-          fontWeight: '600',
-          border: 'none',
-          backgroundColor: currentPage === 1 ? '#333' : 'rgba(255, 107, 53, 0.1)',
-          color: currentPage === 1 ? '#666' : '#ff6b35',
-          borderRadius: '12px',
-          cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          boxShadow: currentPage === 1 ? 'none' : '0 2px 8px rgba(255, 107, 53, 0.15)',
-          transform: 'translateY(0)',
-          opacity: currentPage === 1 ? 0.5 : 1
-        }}
-        onMouseEnter={(e) => {
-          if (currentPage !== 1) {
-            e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
-            e.target.style.transform = 'translateY(-2px)';
-            e.target.style.boxShadow = '0 4px 12px rgba(255, 107, 53, 0.3)';
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (currentPage !== 1) {
-            e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
-            e.target.style.transform = 'translateY(0)';
-            e.target.style.boxShadow = '0 2px 8px rgba(255, 107, 53, 0.15)';
-          }
-        }}
-      >
-        <FaChevronLeft size={12} />
-        <span>Précédent</span>
-      </button>
-
-      {/* Page Numbers */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-        {getVisiblePages().map((page, index) => (
-          page === '...' ? (
-            <div
-              key={`dots-${index}`}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '40px',
-                height: '40px',
-                color: '#666',
-                fontSize: '1rem'
-              }}
-            >
-              <FaEllipsisH size={12} />
-            </div>
-          ) : (
-            <button
-              key={page}
-              onClick={() => onPageChange(page)}
-              style={{
-                width: '40px',
-                height: '40px',
-                fontSize: '0.9rem',
-                fontWeight: '600',
-                border: 'none',
-                backgroundColor: currentPage === page 
-                  ? '#ff6b35' 
-                  : 'rgba(255, 255, 255, 0.05)',
-                color: currentPage === page ? '#ffffff' : '#cccccc',
-                borderRadius: '10px',
-                cursor: 'pointer',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                boxShadow: currentPage === page 
-                  ? '0 4px 12px rgba(255, 107, 53, 0.4)' 
-                  : '0 2px 4px rgba(0, 0, 0, 0.2)',
-                transform: 'translateY(0)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-              onMouseEnter={(e) => {
-                if (currentPage !== page) {
-                  e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
-                  e.target.style.transform = 'translateY(-2px)';
-                  e.target.style.boxShadow = '0 4px 8px rgba(255, 107, 53, 0.3)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (currentPage !== page) {
-                  e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
-                }
-              }}
-            >
-              {page}
-            </button>
-          )
-        ))}
-      </div>
-
-      {/* Next Button */}
-      <button
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          padding: '12px 16px',
-          fontSize: '0.9rem',
-          fontWeight: '600',
-          border: 'none',
-          backgroundColor: currentPage === totalPages ? '#333' : 'rgba(255, 107, 53, 0.1)',
-          color: currentPage === totalPages ? '#666' : '#ff6b35',
-          borderRadius: '12px',
-          cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          boxShadow: currentPage === totalPages ? 'none' : '0 2px 8px rgba(255, 107, 53, 0.15)',
-          transform: 'translateY(0)',
-          opacity: currentPage === totalPages ? 0.5 : 1
-        }}
-        onMouseEnter={(e) => {
-          if (currentPage !== totalPages) {
-            e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
-            e.target.style.transform = 'translateY(-2px)';
-            e.target.style.boxShadow = '0 4px 12px rgba(255, 107, 53, 0.3)';
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (currentPage !== totalPages) {
-            e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
-            e.target.style.transform = 'translateY(0)';
-            e.target.style.boxShadow = '0 2px 8px rgba(255, 107, 53, 0.15)';
-          }
-        }}
-      >
-        <span>Suivant</span>
-        <FaChevronRight size={12} />
-      </button>
-    </div>
-  );
-};
-
 const JobCard = ({ job }) => {
   const navigate = useNavigate();
   const handleApplyClick = () => {
@@ -658,12 +464,193 @@ function JobCards() {
         )}
       </div>
 
-      {/* Enhanced Pagination */}
-      <PaginationComponent 
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={paginate}
-      />
+      {/* Enhanced Pagination - Integrated directly */}
+      {totalPages > 1 && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          marginTop: '40px',
+          padding: '24px',
+          background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
+          borderRadius: '16px',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+          border: '1px solid #333'
+        }}>
+          {/* Previous Button */}
+          <button
+            onClick={() => paginate(currentPage - 1)}
+            disabled={currentPage === 1}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '12px 16px',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              border: 'none',
+              backgroundColor: currentPage === 1 ? '#333' : 'rgba(255, 107, 53, 0.1)',
+              color: currentPage === 1 ? '#666' : '#ff6b35',
+              borderRadius: '12px',
+              cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: currentPage === 1 ? 'none' : '0 2px 8px rgba(255, 107, 53, 0.15)',
+              transform: 'translateY(0)',
+              opacity: currentPage === 1 ? 0.5 : 1
+            }}
+            onMouseEnter={(e) => {
+              if (currentPage !== 1) {
+                e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 4px 12px rgba(255, 107, 53, 0.3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (currentPage !== 1) {
+                e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 2px 8px rgba(255, 107, 53, 0.15)';
+              }
+            }}
+          >
+            <FaChevronLeft size={12} />
+            <span>Précédent</span>
+          </button>
+
+          {/* Page Numbers */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            {(() => {
+              const delta = 2;
+              const range = [];
+              const rangeWithDots = [];
+
+              for (
+                let i = Math.max(2, currentPage - delta);
+                i <= Math.min(totalPages - 1, currentPage + delta);
+                i++
+              ) {
+                range.push(i);
+              }
+
+              if (currentPage - delta > 2) {
+                rangeWithDots.push(1, '...');
+              } else {
+                rangeWithDots.push(1);
+              }
+
+              rangeWithDots.push(...range);
+
+              if (currentPage + delta < totalPages - 1) {
+                rangeWithDots.push('...', totalPages);
+              } else {
+                rangeWithDots.push(totalPages);
+              }
+
+              return rangeWithDots.map((page, index) => (
+                page === '...' ? (
+                  <div
+                    key={`dots-${index}`}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '40px',
+                      height: '40px',
+                      color: '#666',
+                      fontSize: '1rem'
+                    }}
+                  >
+                    <FaEllipsisH size={12} />
+                  </div>
+                ) : (
+                  <button
+                    key={page}
+                    onClick={() => paginate(page)}
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      border: 'none',
+                      backgroundColor: currentPage === page 
+                        ? '#ff6b35' 
+                        : 'rgba(255, 255, 255, 0.05)',
+                      color: currentPage === page ? '#ffffff' : '#cccccc',
+                      borderRadius: '10px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      boxShadow: currentPage === page 
+                        ? '0 4px 12px rgba(255, 107, 53, 0.4)' 
+                        : '0 2px 4px rgba(0, 0, 0, 0.2)',
+                      transform: 'translateY(0)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (currentPage !== page) {
+                        e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
+                        e.target.style.transform = 'translateY(-2px)';
+                        e.target.style.boxShadow = '0 4px 8px rgba(255, 107, 53, 0.3)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (currentPage !== page) {
+                        e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                        e.target.style.transform = 'translateY(0)';
+                        e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
+                      }
+                    }}
+                  >
+                    {page}
+                  </button>
+                )
+              ));
+            })()}
+          </div>
+
+          {/* Next Button */}
+          <button
+            onClick={() => paginate(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '12px 16px',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              border: 'none',
+              backgroundColor: currentPage === totalPages ? '#333' : 'rgba(255, 107, 53, 0.1)',
+              color: currentPage === totalPages ? '#666' : '#ff6b35',
+              borderRadius: '12px',
+              cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: currentPage === totalPages ? 'none' : '0 2px 8px rgba(255, 107, 53, 0.15)',
+              transform: 'translateY(0)',
+              opacity: currentPage === totalPages ? 0.5 : 1
+            }}
+            onMouseEnter={(e) => {
+              if (currentPage !== totalPages) {
+                e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 4px 12px rgba(255, 107, 53, 0.3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (currentPage !== totalPages) {
+                e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 2px 8px rgba(255, 107, 53, 0.15)';
+              }
+            }}
+          >
+            <span>Suivant</span>
+            <FaChevronRight size={12} />
+          </button>
+        </div>
+      )}
     </>
   );
 }
