@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaMapMarkerAlt, FaBriefcase, FaBookmark, FaRegBookmark, FaChevronLeft, FaChevronRight, FaEllipsisH, FaHeart, FaArrowRight, FaSearch, FaFilter } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaBriefcase, FaBookmark, FaRegBookmark, FaChevronLeft, FaChevronRight, FaEllipsisH, FaHeart, FaArrowRight } from 'react-icons/fa';
+import "../../assets/css/JobCards.css";
+import Footer from '../../components/Footer';
 import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
+import SavedJobOffers from './SavedJobOffers';
 
 const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
   const navigate = useNavigate();
@@ -11,228 +14,68 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
     navigate(`/offres/${job.id}`);
   };
 
-  return (
-    <div style={{
-      background: 'linear-gradient(145deg, #ffffff 0%, #fafafa 100%)',
-      borderRadius: '20px',
-      padding: '28px',
-      marginBottom: '24px',
-      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
-      border: '1px solid rgba(255, 140, 0, 0.1)',
-      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-      position: 'relative',
-      overflow: 'hidden'
-    }}
-    onMouseEnter={(e) => {
-      e.target.style.transform = 'translateY(-8px)';
-      e.target.style.boxShadow = '0 20px 60px rgba(0, 0, 0, 0.15)';
-      e.target.style.borderColor = 'rgba(255, 140, 0, 0.3)';
-    }}
-    onMouseLeave={(e) => {
-      e.target.style.transform = 'translateY(0)';
-      e.target.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.08)';
-      e.target.style.borderColor = 'rgba(255, 140, 0, 0.1)';
-    }}
-    >
-      {/* Decorative Orange Accent */}
-      <div style={{
-        position: 'absolute',
-        top: '0',
-        right: '0',
-        width: '100px',
-        height: '4px',
-        background: 'linear-gradient(90deg, #ff8c00 0%, #ffa500 100%)',
-        borderRadius: '0 20px 0 20px'
-      }}></div>
+  // Debug: Log the job data to see what skills look like
+  console.log('Job data:', job);
+  console.log('Skills:', job.skills);
 
-      {/* Header Section */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'flex-start',
-        justifyContent: 'space-between',
-        marginBottom: '24px'
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '16px',
-          flex: '1'
-        }}>
-          <div style={{
-            width: '60px',
-            height: '60px',
-            borderRadius: '16px',
-            background: job.logo 
-              ? `url(${job.logo}) center/cover` 
-              : 'linear-gradient(135deg, #ff8c00 0%, #ffa500 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontSize: '24px',
-            fontWeight: 'bold',
-            boxShadow: '0 4px 16px rgba(255, 140, 0, 0.3)'
-          }}>
-            {!job.logo && job.company.charAt(0).toUpperCase()}
-          </div>
-          
-          <div>
-            <h3 style={{
-              margin: '0 0 4px 0',
-              fontSize: '1.4rem',
-              fontWeight: '700',
-              color: '#1a1a1a',
-              lineHeight: '1.3',
-              letterSpacing: '-0.02em'
-            }}>
-              {job.title}
-            </h3>
-            <p style={{
-              margin: '0',
-              fontSize: '1.1rem',
-              color: '#666',
-              fontWeight: '500'
-            }}>
-              {job.company}
-            </p>
-          </div>
+  return (
+    <div className="job-card">
+      <div className="job-header">
+        <div className="job-logo">
+          <img
+            src={job.logo ? job.logo : ""}
+            alt={job.logo ? "Logo de l'entreprise" : ""}
+          />
+          <h3>{job.title}</h3>
         </div>
 
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px'
-        }}>
-          <span style={{
-            background: 'linear-gradient(135deg, #ff8c00 0%, #ffa500 100%)',
-            color: 'white',
-            padding: '6px 14px',
-            borderRadius: '20px',
-            fontSize: '0.85rem',
-            fontWeight: '600',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            boxShadow: '0 2px 8px rgba(255, 140, 0, 0.3)'
-          }}>
-            {job.type}
-          </span>
-          
-          <button 
-            style={{
-              width: '44px',
-              height: '44px',
-              border: '2px solid #ff8c00',
-              borderRadius: '12px',
-              background: isSaved ? 'linear-gradient(135deg, #ff8c00 0%, #ffa500 100%)' : 'white',
-              color: isSaved ? 'white' : '#ff8c00',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '1rem',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-            }}
-            onClick={() => onSave(job.id, isSaved)} 
-            title={isSaved ? "Retirer des sauvegardés" : "Sauvegarder l'offre"}
-            onMouseEnter={(e) => {
-              if (!isSaved) {
-                e.target.style.background = 'rgba(255, 140, 0, 0.1)';
-              }
-              e.target.style.transform = 'scale(1.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = isSaved ? 'linear-gradient(135deg, #ff8c00 0%, #ffa500 100%)' : 'white';
-              e.target.style.transform = 'scale(1)';
-            }}
-          >
-            {isSaved ? <FaBookmark /> : <FaRegBookmark />}
-          </button>
+        <div className="job-info">
+          <p>{job.company}</p>
+          <span className="badge">{job.type}</span>
         </div>
       </div>
-
-      {/* Job Details */}
-      <div style={{
-        marginBottom: '24px'
-      }}>
-        <div style={{
-          display: 'flex',
-          gap: '24px',
-          marginBottom: '16px',
-          flexWrap: 'wrap'
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            color: '#555',
-            fontSize: '0.95rem',
-            fontWeight: '500'
-          }}>
-            <FaMapMarkerAlt style={{ color: '#ff8c00' }} />
-            {job.location}
-          </div>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            color: '#555',
-            fontSize: '0.95rem',
-            fontWeight: '500'
-          }}>
-            <FaBriefcase style={{ color: '#ff8c00' }} />
-            {job.experience}
-          </div>
-        </div>
-        
+      
+      <div className="job-body">
+        <p><FaMapMarkerAlt /> {job.location}</p>
+        <p><FaBriefcase /> {job.experience}</p>
         <p style={{
-          fontSize: '1rem',
-          lineHeight: '1.6',
-          margin: '0 0 20px 0',
-          color: '#444',
-          overflow: 'hidden',
-          display: '-webkit-box',
-          WebkitLineClamp: 3,
-          WebkitBoxOrient: 'vertical',
+            fontSize: '0.95rem',
+            lineHeight: '1.6',
+            margin: '0 0 15px 0',
+            overflow: 'hidden',
+            display: '-webkit-box',
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: 'vertical',
         }}>
-          {job.description}
+            {job.description}
         </p>
         
-        {/* Skills Section */}
+        {/* Fixed Skills Section */}
         {job.skills && job.skills.length > 0 && (
-          <div style={{
-            marginBottom: '20px'
+          <div className="skills-container" style={{
+              marginTop: '15px',
+              marginBottom: '10px'
           }}>
-            <div style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '8px',
-              alignItems: 'flex-start'
+            <div className="skills" style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '8px',
+                alignItems: 'flex-start'
             }}>
               {job.skills.map((skill, index) => (
                 <span 
                   key={index} 
+                  className="skill-tag"
                   style={{
-                    background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-                    color: '#2c3e50',
-                    padding: '6px 12px',
-                    borderRadius: '16px',
+                    backgroundColor: '#f0f0f0',
+                    color: '#333',
+                    padding: '4px 8px',
+                    borderRadius: '12px',
                     fontSize: '0.8rem',
-                    fontWeight: '600',
-                    border: '1px solid #dee2e6',
+                    fontWeight: '500',
+                    border: '1px solid #ddd',
                     whiteSpace: 'nowrap',
-                    display: 'inline-block',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.background = 'linear-gradient(135deg, #ff8c00 0%, #ffa500 100%)';
-                    e.target.style.color = 'white';
-                    e.target.style.borderColor = '#ff8c00';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)';
-                    e.target.style.color = '#2c3e50';
-                    e.target.style.borderColor = '#dee2e6';
+                    display: 'inline-block'
                   }}
                 >
                   {skill}
@@ -241,81 +84,117 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
             </div>
           </div>
         )}
+        
+        {/* Debug: Show skills data - Remove this after debugging */}
+        {(!job.skills || job.skills.length === 0) && (
+          <div style={{ 
+            marginTop: '15px', 
+            padding: '8px', 
+            backgroundColor: '#fff3cd', 
+            border: '1px solid #ffeaa7',
+            borderRadius: '4px',
+            fontSize: '0.8rem',
+            color: '#856404'
+          }}>
+            Debug: No skills data available for this job
+            {job.skills && <div>Skills array exists but is empty: {JSON.stringify(job.skills)}</div>}
+            {!job.skills && <div>Skills property does not exist</div>}
+          </div>
+        )}
       </div>
       
-      {/* Footer Section */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingTop: '24px',
-        borderTop: '2px solid #f8f9fa'
-      }}>
-        <div style={{
-          fontSize: '1.3rem',
-          fontWeight: '700',
-          color: '#1a1a1a',
-          letterSpacing: '-0.02em'
-        }}>
-          {job.salary}
-        </div>
-        
+      <div className="job-footer">
+        <strong>{job.salary}</strong>
         {isApplied ? (
           <button 
             style={{
               background: 'linear-gradient(135deg, #6c757d 0%, #5a6268 100%)',
               color: 'white',
               border: 'none',
-              padding: '14px 28px',
-              borderRadius: '12px',
-              fontSize: '0.95rem',
+              padding: '12px 20px',
+              borderRadius: '8px',
+              fontSize: '0.9rem',
               fontWeight: '600',
               cursor: 'not-allowed',
-              opacity: '0.8',
+              opacity: '0.7',
               textTransform: 'uppercase',
               letterSpacing: '0.5px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
             }}
             disabled
           >
             Déjà postulé
           </button>
         ) : (
-          <button 
-            style={{
-              background: 'linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%)',
-              color: 'white',
-              border: '2px solid #ff8c00',
-              padding: '14px 28px',
-              borderRadius: '12px',
-              fontSize: '0.95rem',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-              boxShadow: '0 4px 16px rgba(26, 26, 26, 0.2)',
-              transform: 'translateY(0)',
-              position: 'relative',
-              overflow: 'hidden'
-            }}
-            onClick={handleViewDetails}
-            onMouseEnter={(e) => {
-              e.target.style.background = 'linear-gradient(135deg, #ff8c00 0%, #ffa500 100%)';
-              e.target.style.borderColor = '#ff8c00';
-              e.target.style.transform = 'translateY(-2px)';
-              e.target.style.boxShadow = '0 8px 24px rgba(255, 140, 0, 0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = 'linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%)';
-              e.target.style.borderColor = '#ff8c00';
-              e.target.style.transform = 'translateY(0)';
-              e.target.style.boxShadow = '0 4px 16px rgba(26, 26, 26, 0.2)';
-            }}
-          >
-            Postuler Maintenant
-          </button>
+          <div className="button-group">
+            <button 
+              style={{
+                background: 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)',
+                color: 'white',
+                border: 'none',
+                padding: '12px 20px',
+                borderRadius: '8px',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+                boxShadow: '0 3px 6px rgba(252, 142, 32, 0.3)',
+                transform: 'translateY(0)',
+              }}
+              className="view-details-btn" 
+              onClick={handleViewDetails}
+              onMouseEnter={(e) => {
+                e.target.style.background = 'linear-gradient(135deg, #ff7b00 0%, #fc8e20 100%)';
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 5px 12px rgba(252, 142, 32, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)';
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 3px 6px rgba(252, 142, 32, 0.3)';
+              }}
+            >
+              Postuler
+            </button>
+          </div>
         )}
+        
+        <button 
+          style={{
+            marginLeft: '12px',
+            width: '50px',
+            height: '45px',
+            border: '2px solid #fc8e20',
+            borderRadius: '8px',
+            background: isSaved ? 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)' : 'white',
+            color: isSaved ? 'white' : '#fc8e20',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1.1rem',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+          }}
+          onClick={() => onSave(job.id, isSaved)} 
+          title={isSaved ? "Retirer des sauvegardés" : "Sauvegarder l'offre"}
+          onMouseEnter={(e) => {
+            if (!isSaved) {
+              e.target.style.background = 'rgba(252, 142, 32, 0.1)';
+            }
+            e.target.style.transform = 'translateY(-1px)';
+            e.target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.background = isSaved ? 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)' : 'white';
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+          }}
+        >
+          {isSaved ? <FaBookmark /> : <FaRegBookmark />}
+        </button>
       </div>
     </div>
   );
@@ -360,13 +239,13 @@ const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: '12px',
-      marginTop: '48px',
-      padding: '32px',
+      gap: '8px',
+      marginTop: '40px',
+      padding: '24px',
       background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
-      borderRadius: '24px',
-      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-      border: '1px solid rgba(255, 140, 0, 0.1)'
+      borderRadius: '16px',
+      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+      border: '1px solid rgba(0, 0, 0, 0.04)'
     }}>
       {/* Previous Button */}
       <button
@@ -375,43 +254,41 @@ const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '10px',
-          padding: '14px 20px',
-          fontSize: '0.95rem',
+          gap: '8px',
+          padding: '12px 16px',
+          fontSize: '0.9rem',
           fontWeight: '600',
-          border: '2px solid #ff8c00',
+          border: 'none',
           backgroundColor: currentPage === 1 ? '#f1f3f4' : '#ffffff',
-          color: currentPage === 1 ? '#9aa0a6' : '#1a1a1a',
-          borderRadius: '16px',
+          color: currentPage === 1 ? '#9aa0a6' : '#fc8e20',
+          borderRadius: '12px',
           cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          boxShadow: currentPage === 1 ? 'none' : '0 4px 12px rgba(255, 140, 0, 0.2)',
+          boxShadow: currentPage === 1 ? 'none' : '0 2px 8px rgba(252, 142, 32, 0.15)',
           transform: 'translateY(0)',
           opacity: currentPage === 1 ? 0.5 : 1
         }}
         onMouseEnter={(e) => {
           if (currentPage !== 1) {
-            e.target.style.backgroundColor = '#ff8c00';
-            e.target.style.color = 'white';
+            e.target.style.backgroundColor = 'rgba(252, 142, 32, 0.08)';
             e.target.style.transform = 'translateY(-2px)';
-            e.target.style.boxShadow = '0 8px 20px rgba(255, 140, 0, 0.3)';
+            e.target.style.boxShadow = '0 4px 12px rgba(252, 142, 32, 0.2)';
           }
         }}
         onMouseLeave={(e) => {
           if (currentPage !== 1) {
             e.target.style.backgroundColor = '#ffffff';
-            e.target.style.color = '#1a1a1a';
             e.target.style.transform = 'translateY(0)';
-            e.target.style.boxShadow = '0 4px 12px rgba(255, 140, 0, 0.2)';
+            e.target.style.boxShadow = '0 2px 8px rgba(252, 142, 32, 0.15)';
           }
         }}
       >
-        <FaChevronLeft size={14} />
+        <FaChevronLeft size={12} />
         <span>Précédent</span>
       </button>
 
       {/* Page Numbers */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
         {getVisiblePages().map((page, index) => (
           page === '...' ? (
             <div
@@ -420,34 +297,34 @@ const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '44px',
-                height: '44px',
+                width: '40px',
+                height: '40px',
                 color: '#9aa0a6',
                 fontSize: '1rem'
               }}
             >
-              <FaEllipsisH size={14} />
+              <FaEllipsisH size={12} />
             </div>
           ) : (
             <button
               key={page}
               onClick={() => onPageChange(page)}
               style={{
-                width: '44px',
-                height: '44px',
-                fontSize: '0.95rem',
-                fontWeight: '700',
-                border: '2px solid #ff8c00',
+                width: '40px',
+                height: '40px',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                border: 'none',
                 backgroundColor: currentPage === page 
-                  ? '#ff8c00' 
+                  ? '#fc8e20' 
                   : '#ffffff',
-                color: currentPage === page ? '#ffffff' : '#1a1a1a',
-                borderRadius: '14px',
+                color: currentPage === page ? '#ffffff' : '#374151',
+                borderRadius: '10px',
                 cursor: 'pointer',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 boxShadow: currentPage === page 
-                  ? '0 6px 16px rgba(255, 140, 0, 0.4)' 
-                  : '0 2px 8px rgba(0, 0, 0, 0.05)',
+                  ? '0 4px 12px rgba(252, 142, 32, 0.4)' 
+                  : '0 2px 4px rgba(0, 0, 0, 0.05)',
                 transform: 'translateY(0)',
                 display: 'flex',
                 alignItems: 'center',
@@ -455,18 +332,16 @@ const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
               }}
               onMouseEnter={(e) => {
                 if (currentPage !== page) {
-                  e.target.style.backgroundColor = '#ff8c00';
-                  e.target.style.color = 'white';
+                  e.target.style.backgroundColor = 'rgba(252, 142, 32, 0.1)';
                   e.target.style.transform = 'translateY(-2px)';
-                  e.target.style.boxShadow = '0 6px 16px rgba(255, 140, 0, 0.3)';
+                  e.target.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.12)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (currentPage !== page) {
                   e.target.style.backgroundColor = '#ffffff';
-                  e.target.style.color = '#1a1a1a';
                   e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.05)';
+                  e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.05)';
                 }
               }}
             >
@@ -483,110 +358,119 @@ const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '10px',
-          padding: '14px 20px',
-          fontSize: '0.95rem',
+          gap: '8px',
+          padding: '12px 16px',
+          fontSize: '0.9rem',
           fontWeight: '600',
-          border: '2px solid #ff8c00',
+          border: 'none',
           backgroundColor: currentPage === totalPages ? '#f1f3f4' : '#ffffff',
-          color: currentPage === totalPages ? '#9aa0a6' : '#1a1a1a',
-          borderRadius: '16px',
+          color: currentPage === totalPages ? '#9aa0a6' : '#fc8e20',
+          borderRadius: '12px',
           cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          boxShadow: currentPage === totalPages ? 'none' : '0 4px 12px rgba(255, 140, 0, 0.2)',
+          boxShadow: currentPage === totalPages ? 'none' : '0 2px 8px rgba(252, 142, 32, 0.15)',
           transform: 'translateY(0)',
           opacity: currentPage === totalPages ? 0.5 : 1
         }}
         onMouseEnter={(e) => {
           if (currentPage !== totalPages) {
-            e.target.style.backgroundColor = '#ff8c00';
-            e.target.style.color = 'white';
+            e.target.style.backgroundColor = 'rgba(252, 142, 32, 0.08)';
             e.target.style.transform = 'translateY(-2px)';
-            e.target.style.boxShadow = '0 8px 20px rgba(255, 140, 0, 0.3)';
+            e.target.style.boxShadow = '0 4px 12px rgba(252, 142, 32, 0.2)';
           }
         }}
         onMouseLeave={(e) => {
           if (currentPage !== totalPages) {
             e.target.style.backgroundColor = '#ffffff';
-            e.target.style.color = '#1a1a1a';
             e.target.style.transform = 'translateY(0)';
-            e.target.style.boxShadow = '0 4px 12px rgba(255, 140, 0, 0.2)';
+            e.target.style.boxShadow = '0 2px 8px rgba(252, 142, 32, 0.15)';
           }
         }}
       >
         <span>Suivant</span>
-        <FaChevronRight size={14} />
+        <FaChevronRight size={12} />
       </button>
     </div>
   );
 };
 
-// Premium Saved Jobs Section
+// Enhanced Saved Jobs Section
 const SavedJobsSection = () => {
   return (
     <div style={{
-      margin: '80px 0 60px 0',
+      margin: '60px 0 40px 0',
       display: 'flex',
-      justifyContent: 'center',
-      padding: '0 20px'
+      justifyContent: 'center'
     }}>
       <div style={{
         position: 'relative',
-        background: 'linear-gradient(145deg, #1a1a1a 0%, #2c2c2c 100%)',
-        borderRadius: '32px',
-        padding: '48px',
-        boxShadow: '0 24px 80px rgba(0, 0, 0, 0.25)',
-        border: '2px solid #ff8c00',
-        maxWidth: '700px',
+        background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+        borderRadius: '24px',
+        padding: '40px',
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.1)',
+        border: '1px solid rgba(252, 142, 32, 0.1)',
+        maxWidth: '600px',
         width: '100%',
         overflow: 'hidden',
         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
       }}
       onMouseEnter={(e) => {
-        e.target.style.transform = 'translateY(-12px)';
-        e.target.style.boxShadow = '0 40px 120px rgba(0, 0, 0, 0.3)';
+        e.target.style.transform = 'translateY(-8px)';
+        e.target.style.boxShadow = '0 30px 80px rgba(0, 0, 0, 0.15)';
       }}
       onMouseLeave={(e) => {
         e.target.style.transform = 'translateY(0)';
-        e.target.style.boxShadow = '0 24px 80px rgba(0, 0, 0, 0.25)';
+        e.target.style.boxShadow = '0 20px 60px rgba(0, 0, 0, 0.1)';
       }}
       >
-        {/* Animated Orange Glow */}
+        {/* Decorative Elements */}
         <div style={{
           position: 'absolute',
-          top: '-50%',
-          right: '-30%',
-          width: '400px',
-          height: '400px',
-          background: 'radial-gradient(circle, rgba(255, 140, 0, 0.15) 0%, rgba(255, 165, 0, 0.08) 50%, transparent 100%)',
+          top: '-30%',
+          right: '-20%',
+          width: '300px',
+          height: '300px',
+          background: 'radial-gradient(circle, rgba(252, 142, 32, 0.08) 0%, rgba(255, 123, 0, 0.03) 70%, transparent 100%)',
           borderRadius: '50%',
-          zIndex: '0',
-          animation: 'pulse 4s ease-in-out infinite'
+          zIndex: '0'
         }}></div>
         
         <div style={{
           position: 'absolute',
-          bottom: '-30%',
-          left: '-20%',
-          width: '300px',
-          height: '300px',
-          background: 'radial-gradient(circle, rgba(255, 140, 0, 0.1) 0%, transparent 70%)',
+          bottom: '-20%',
+          left: '-15%',
+          width: '200px',
+          height: '200px',
+          background: 'radial-gradient(circle, rgba(252, 142, 32, 0.05) 0%, transparent 70%)',
           borderRadius: '50%',
           zIndex: '0'
         }}></div>
 
+        {/* Floating Elements */}
+        <div style={{
+          position: 'absolute',
+          top: '20px',
+          right: '30px',
+          width: '60px',
+          height: '60px',
+          background: 'linear-gradient(135deg, rgba(252, 142, 32, 0.1) 0%, rgba(255, 123, 0, 0.05) 100%)',
+          borderRadius: '50%',
+          zIndex: '0',
+          animation: 'float 6s ease-in-out infinite'
+        }}></div>
+
         <div style={{ position: 'relative', zIndex: '1', textAlign: 'center' }}>
-          {/* Premium Icon */}
+          {/* Icon */}
           <div style={{
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '100px',
-            height: '100px',
-            background: 'linear-gradient(135deg, #ff8c00 0%, #ffa500 100%)',
-            borderRadius: '28px',
-            marginBottom: '32px',
-            boxShadow: '0 16px 48px rgba(255, 140, 0, 0.4)',
+            width: '80px',
+            height: '80px',
+            background: 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)',
+            borderRadius: '20px',
+            marginBottom: '24px',
+            boxShadow: '0 12px 32px rgba(252, 142, 32, 0.3)',
             position: 'relative',
             overflow: 'hidden'
           }}>
@@ -597,35 +481,35 @@ const SavedJobsSection = () => {
               right: '0',
               bottom: '0',
               background: 'linear-gradient(45deg, rgba(255, 255, 255, 0.2) 0%, transparent 50%)',
-              borderRadius: '28px'
+              borderRadius: '20px'
             }}></div>
-            <FaHeart style={{ color: 'white', fontSize: '36px', zIndex: '1' }} />
+            <FaHeart style={{ color: 'white', fontSize: '28px', zIndex: '1' }} />
           </div>
           
           {/* Title */}
           <h2 style={{
-            margin: '0 0 16px 0',
-            fontSize: '2.2rem',
-            fontWeight: '800',
-            color: 'white',
-            letterSpacing: '-0.03em',
-            lineHeight: '1.1'
+            margin: '0 0 12px 0',
+            fontSize: '1.75rem',
+            fontWeight: '700',
+            color: '#1a202c',
+            letterSpacing: '-0.025em',
+            lineHeight: '1.2'
           }}>
             Vos Offres Favorites
           </h2>
           
           {/* Subtitle */}
           <p style={{
-            margin: '0 0 40px 0',
-            fontSize: '1.2rem',
-            color: '#b0b0b0',
+            margin: '0 0 32px 0',
+            fontSize: '1.1rem',
+            color: '#64748b',
             lineHeight: '1.6',
             fontWeight: '400',
-            maxWidth: '500px',
+            maxWidth: '400px',
             marginLeft: 'auto',
             marginRight: 'auto'
           }}>
-            Accédez instantanément à toutes les opportunités qui vous passionnent dans votre espace personnalisé
+            Retrouvez facilement toutes les opportunités qui vous intéressent dans votre espace personnalisé
           </p>
           
           {/* CTA Button */}
@@ -634,37 +518,48 @@ const SavedJobsSection = () => {
             style={{ 
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '16px',
-              color: '#1a1a1a',
+              gap: '12px',
+              color: 'white',
               textDecoration: 'none',
-              fontSize: '1.2rem',
-              fontWeight: '700',
-              padding: '20px 40px',
-              background: 'linear-gradient(135deg, #ff8c00 0%, #ffa500 100%)',
-              borderRadius: '20px',
+              fontSize: '1.1rem',
+              fontWeight: '600',
+              padding: '16px 32px',
+              background: 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)',
+              borderRadius: '16px',
               transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-              boxShadow: '0 12px 32px rgba(255, 140, 0, 0.4)',
+              boxShadow: '0 8px 25px rgba(252, 142, 32, 0.35)',
               border: 'none',
-              letterSpacing: '0.02em',
+              letterSpacing: '0.01em',
               position: 'relative',
               overflow: 'hidden',
               transform: 'translateY(0)'
             }}
             onMouseEnter={(e) => {
-              e.target.style.transform = 'translateY(-4px) scale(1.05)';
-              e.target.style.boxShadow = '0 20px 60px rgba(255, 140, 0, 0.5)';
-              e.target.style.background = 'linear-gradient(135deg, #ffa500 0%, #ff8c00 100%)';
+              e.target.style.transform = 'translateY(-3px) scale(1.02)';
+              e.target.style.boxShadow = '0 15px 40px rgba(252, 142, 32, 0.4)';
+              e.target.style.background = 'linear-gradient(135deg, #ff7b00 0%, #fc8e20 100%)';
             }}
             onMouseLeave={(e) => {
               e.target.style.transform = 'translateY(0) scale(1)';
-              e.target.style.boxShadow = '0 12px 32px rgba(255, 140, 0, 0.4)';
-              e.target.style.background = 'linear-gradient(135deg, #ff8c00 0%, #ffa500 100%)';
+              e.target.style.boxShadow = '0 8px 25px rgba(252, 142, 32, 0.35)';
+              e.target.style.background = 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)';
             }}
           >
+            {/* Button shine effect */}
+            <div style={{
+              position: 'absolute',
+              top: '0',
+              left: '-100%',
+              width: '100%',
+              height: '100%',
+              background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+              transition: 'left 0.6s'
+            }}></div>
+            
             <span style={{ position: 'relative', zIndex: '1' }}>Consulter mes favoris</span>
             <FaArrowRight 
               style={{ 
-                fontSize: '18px', 
+                fontSize: '16px', 
                 transition: 'transform 0.3s ease',
                 position: 'relative',
                 zIndex: '1'
@@ -672,31 +567,28 @@ const SavedJobsSection = () => {
             />
           </Link>
 
-          {/* Info Card */}
+          {/* Stats or additional info */}
           <div style={{
-            marginTop: '40px',
-            padding: '24px',
-            background: 'rgba(255, 140, 0, 0.1)',
-            borderRadius: '16px',
-            border: '1px solid rgba(255, 140, 0, 0.2)'
+            marginTop: '32px',
+            padding: '20px',
+            background: 'rgba(252, 142, 32, 0.05)',
+            borderRadius: '12px',
+            border: '1px solid rgba(252, 142, 32, 0.1)'
           }}>
             <p style={{
               margin: '0',
-              fontSize: '1rem',
-              color: '#e0e0e0',
-              fontWeight: '500',
-              lineHeight: '1.5'
+              fontSize: '0.9rem',
+              color: '#64748b',
+              fontWeight: '500'
             }}>
-              💡 <strong style={{color: '#ff8c00'}}>Astuce Pro :</strong> Sauvegardez les offres qui vous intéressent et créez votre collection personnelle d'opportunités pour ne jamais manquer la chance parfaite !
+              💡 <strong>Astuce :</strong> Sauvegardez les offres qui vous intéressent pour les retrouver plus tard et ne manquer aucune opportunité !
             </p>
           </div>
         </div>
       </div>
     </div>
- 
   );
 };
-
 
 const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
   const [jobs, setJobs] = useState([]);
