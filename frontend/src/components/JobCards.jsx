@@ -525,27 +525,33 @@ function JobCards() {
               const range = [];
               const rangeWithDots = [];
 
-              for (
-                let i = Math.max(2, currentPage - delta);
-                i <= Math.min(totalPages - 1, currentPage + delta);
-                i++
-              ) {
-                range.push(i);
-              }
-
-              if (currentPage - delta > 2) {
-                rangeWithDots.push(1, '...');
-              } else {
+              if (totalPages <= 7) { // For small number of pages, show all
+                for (let i = 1; i <= totalPages; i++) {
+                  rangeWithDots.push(i);
+                }
+              } else { // For larger number of pages, show ellipsis
                 rangeWithDots.push(1);
-              }
 
-              rangeWithDots.push(...range);
+                if (currentPage > delta + 1) {
+                  rangeWithDots.push('...');
+                }
 
-              if (currentPage + delta < totalPages - 1) {
-                rangeWithDots.push('...', totalPages);
-              } else {
+                for (
+                  let i = Math.max(2, currentPage - delta);
+                  i <= Math.min(totalPages - 1, currentPage + delta);
+                  i++
+                ) {
+                  range.push(i);
+                }
+                rangeWithDots.push(...range);
+
+                if (currentPage < totalPages - delta) {
+                  rangeWithDots.push('...');
+                }
+
                 rangeWithDots.push(totalPages);
               }
+
 
               return rangeWithDots.map((page, index) => (
                 page === '...' ? (
