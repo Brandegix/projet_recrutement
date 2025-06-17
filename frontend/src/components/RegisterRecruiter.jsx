@@ -14,6 +14,28 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react"
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet"
+import "leaflet/dist/leaflet.css"
+import L from "leaflet"
+
+// Fix Leaflet icon issue
+delete L.Icon.Default.prototype._getIconUrl
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+})
+
+// Location marker component for the map
+function LocationMarker({ position, setPosition, updateFormLocation }) {
+  useMapEvents({
+    click(e) {
+      setPosition([e.latlng.lat, e.latlng.lng])
+      updateFormLocation(e.latlng.lat, e.latlng.lng)
+    },
+  })
+  return <Marker position={position} />
+}
 
 const RegisterRecruteur = () => {
   const [formData, setFormData] = useState({
@@ -33,6 +55,7 @@ const RegisterRecruteur = () => {
   const [error, setError] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [focusedFields, setFocusedFields] = useState({})
+  const [position, setPosition] = useState([33.57311, -7.589843]) // Default Casablanca
   const [validations, setValidations] = useState({
     username: false,
     email: false,
@@ -63,6 +86,35 @@ const RegisterRecruteur = () => {
       rc: rcRegex.test(formData.rc) && formData.rc.length >= 4,
     })
   }, [formData])
+
+  // Function to get address from coordinates
+  const reverseGeocode = async (lat, lng) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
+      )
+      const data = await response.json()
+
+      if (data && data.display_name) {
+        setFormData((prev) => ({
+          ...prev,
+          address: data.display_name,
+        }))
+      }
+    } catch (error) {
+      console.error("Error reverse geocoding:", error)
+    }
+  }
+
+  // Update form location data
+  const updateFormLocation = (lat, lng) => {
+    setFormData((prev) => ({
+      ...prev,
+      latitude: lat,
+      longitude: lng,
+    }))
+    reverseGeocode(lat, lng)
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -235,13 +287,54 @@ const RegisterRecruteur = () => {
                 />
               </div>
 
-              <div className="form-grid single-column">
-                <InputField
-                  name="address"
-                  placeholder="Adresse complète de l'entreprise"
-                  icon={MapPin}
-                  label="Adresse"
-                />
+              {/* Map Component */}
+              <div className="map-section">
+                <div className="map-header">
+                  <div className="label-content">
+                    <MapPin className="input-icon" />
+                    <span className="label-text">Localisation de l'entreprise</span>
+                    <span className="required-asterisk">*</span>
+                  </div>
+                  {validations.address && formData.address && <CheckCircle className="validation-icon success" />}
+                </div>
+
+                <div className="map-container">
+                  <MapContainer center={position} zoom={13} style={{ height: "100%", width: "100%" }}>
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    <LocationMarker
+                      position={position}
+                      setPosition={setPosition}
+                      updateFormLocation={updateFormLocation}
+                    />
+                  </MapContainer>
+                </div>
+
+                <p className="map-helper-text">
+                  <MapPin className="helper-icon" />
+                  Cliquez sur la carte pour sélectionner l'emplacement de votre entreprise
+                </p>
+
+                <div className="input-group">
+                  <div className="input-container">
+                    <input
+                      type="text"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      onFocus={() => handleFocus("address")}
+                      onBlur={() => handleBlur("address")}
+                      required
+                      placeholder="Adresse (cliquez sur la carte)"
+                      className={`form-input ${
+                        validations.address && formData.address ? "input-valid" : ""
+                      } ${!validations.address && formData.address ? "input-invalid" : ""}`}
+                    />
+                    <div className="input-border" />
+                  </div>
+                  {!validations.address && formData.address && (
+                    <div className="validation-message error">Adresse requise</div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -554,10 +647,6 @@ const RegisterRecruteur = () => {
           gap: 1.5rem;
         }
 
-        .form-grid.single-column {
-          grid-template-columns: 1fr;
-        }
-
         .input-group {
           display: flex;
           flex-direction: column;
@@ -696,6 +785,63 @@ const RegisterRecruteur = () => {
 
         .validation-message.error {
           color: #ef4444;
+        }
+
+        /* Map styling */
+        .map-section {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          margin-top: 0.5rem;
+        }
+
+        .map-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-weight: 600;
+          color: #374151;
+          font-size: 0.9rem;
+        }
+
+        .map-container {
+          height: 300px;
+          border-radius: 12px;
+          overflow: hidden;
+          border: 2px solid #e5e7eb;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .map-container:hover {
+          border-color: #ff8c00;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .map-helper-text {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: #6b7280;
+          font-size: 0.85rem;
+          margin: 0;
+        }
+
+        .helper-icon {
+          width: 0.9rem;
+          height: 0.9rem;
+          color: #ff8c00;
+        }
+
+        /* Fix for Leaflet controls */
+        :global(.leaflet-control-container .leaflet-top),
+        :global(.leaflet-control-container .leaflet-bottom) {
+          z-index: 999 !important;
+        }
+
+        :global(.leaflet-container) {
+          font-family: inherit;
+          border-radius: 12px;
         }
 
         .submit-button {
@@ -848,6 +994,10 @@ const RegisterRecruteur = () => {
           .register-form {
             gap: 2rem;
           }
+
+          .map-container {
+            height: 250px;
+          }
         }
 
         @media (max-width: 480px) {
@@ -869,6 +1019,10 @@ const RegisterRecruteur = () => {
 
           .submit-button {
             padding: 1rem 1.5rem;
+          }
+
+          .map-container {
+            height: 200px;
           }
         }
       `}</style>
