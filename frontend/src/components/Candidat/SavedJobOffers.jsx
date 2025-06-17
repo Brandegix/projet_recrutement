@@ -274,12 +274,12 @@ const SavedJobOffers = () => {
       <style jsx>{`
         .saved-jobs-container {
           min-height: 100vh;
-          background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+          background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
           padding: 0;
         }
 
         .page-header {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
           color: white;
           padding: 80px 0 60px;
           position: relative;
@@ -367,7 +367,7 @@ const SavedJobOffers = () => {
           left: 0;
           right: 0;
           height: 4px;
-          background: linear-gradient(90deg, #667eea, #764ba2);
+          background: linear-gradient(90deg, #ff6b35, #ff8c42);
         }
 
         .modern-job-card:hover {
@@ -403,14 +403,14 @@ const SavedJobOffers = () => {
         .job-title {
           font-size: 1.25rem;
           font-weight: 700;
-          color: #2d3748;
+          color: #1a1a1a;
           margin: 0 0 8px;
           line-height: 1.3;
         }
 
         .company-name {
           font-size: 1rem;
-          color: #718096;
+          color: #666666;
           margin: 0 0 12px;
           font-weight: 500;
         }
@@ -423,7 +423,7 @@ const SavedJobOffers = () => {
         }
 
         .job-type-badge {
-          background: linear-gradient(135deg, #667eea, #764ba2);
+          background: linear-gradient(135deg, #ff6b35, #ff8c42);
           color: white;
           padding: 4px 12px;
           border-radius: 20px;
@@ -434,7 +434,7 @@ const SavedJobOffers = () => {
         }
 
         .job-posted {
-          color: #a0aec0;
+          color: #999999;
           font-size: 0.875rem;
           display: flex;
           align-items: center;
@@ -449,19 +449,19 @@ const SavedJobOffers = () => {
           border: none;
           padding: 8px;
           cursor: pointer;
-          color: #a0aec0;
+          color: #999999;
           transition: all 0.2s ease;
           border-radius: 50%;
         }
 
         .save-job-btn:hover {
-          background: #f7fafc;
-          color: #667eea;
+          background: #f8f9fa;
+          color: #ff6b35;
           transform: scale(1.1);
         }
 
         .saved-icon {
-          color: #e53e3e;
+          color: #ff6b35;
         }
 
         .job-card-body {
@@ -479,12 +479,12 @@ const SavedJobOffers = () => {
           display: flex;
           align-items: center;
           gap: 8px;
-          color: #718096;
+          color: #666666;
           font-size: 0.875rem;
         }
 
         .detail-icon {
-          color: #a0aec0;
+          color: #999999;
           font-size: 0.75rem;
         }
 
@@ -493,7 +493,7 @@ const SavedJobOffers = () => {
         }
 
         .job-description {
-          color: #4a5568;
+          color: #333333;
           font-size: 0.875rem;
           line-height: 1.6;
           margin: 0 0 8px;
@@ -502,7 +502,7 @@ const SavedJobOffers = () => {
         .read-more-btn {
           background: none;
           border: none;
-          color: #667eea;
+          color: #ff6b35;
           font-size: 0.875rem;
           cursor: pointer;
           font-weight: 600;
@@ -511,7 +511,7 @@ const SavedJobOffers = () => {
         }
 
         .read-more-btn:hover {
-          color: #764ba2;
+          color: #ff8c42;
         }
 
         .skills-container {
@@ -521,23 +521,26 @@ const SavedJobOffers = () => {
         }
 
         .skill-tag {
-          background: #edf2f7;
-          color: #4a5568;
+          background: #f8f9fa;
+          color: #333333;
           padding: 6px 12px;
           border-radius: 20px;
           font-size: 0.75rem;
           font-weight: 500;
           transition: all 0.2s ease;
+          border: 1px solid #e9ecef;
         }
 
         .skill-tag:hover {
-          background: #e2e8f0;
+          background: #e9ecef;
           transform: translateY(-1px);
+          border-color: #ff6b35;
         }
 
         .more-skills {
-          background: #667eea;
+          background: #ff6b35;
           color: white;
+          border-color: #ff6b35;
         }
 
         .job-card-footer {
@@ -545,7 +548,7 @@ const SavedJobOffers = () => {
           justify-content: space-between;
           align-items: center;
           padding-top: 20px;
-          border-top: 1px solid #e2e8f0;
+          border-top: 1px solid #e9ecef;
         }
 
         .salary-section {
@@ -555,8 +558,8 @@ const SavedJobOffers = () => {
         .salary-amount {
           font-size: 1.125rem;
           font-weight: 700;
-          color: #2d3748;
-          background: linear-gradient(135deg, #667eea, #764ba2);
+          color: #1a1a1a;
+          background: linear-gradient(135deg, #ff6b35, #ff8c42);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
@@ -568,7 +571,7 @@ const SavedJobOffers = () => {
         }
 
         .apply-button {
-          background: linear-gradient(135deg, #667eea, #764ba2);
+          background: linear-gradient(135deg, #ff6b35, #ff8c42);
           color: white;
           border: none;
           padding: 12px 24px;
@@ -583,11 +586,11 @@ const SavedJobOffers = () => {
 
         .apply-button:hover {
           transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+          box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
         }
 
         .applied-button {
-          background: #48bb78;
+          background: #28a745;
           color: white;
           border: none;
           padding: 12px 24px;
@@ -609,26 +612,26 @@ const SavedJobOffers = () => {
         }
 
         .empty-icon {
-          color: #a0aec0;
+          color: #999999;
           margin-bottom: 24px;
         }
 
         .empty-state h3 {
           font-size: 1.5rem;
-          color: #2d3748;
+          color: #1a1a1a;
           margin: 0 0 12px;
           font-weight: 700;
         }
 
         .empty-state p {
-          color: #718096;
+          color: #666666;
           font-size: 1rem;
           margin: 0 0 32px;
         }
 
         .browse-jobs-btn {
           display: inline-block;
-          background: linear-gradient(135deg, #667eea, #764ba2);
+          background: linear-gradient(135deg, #ff6b35, #ff8c42);
           color: white;
           padding: 14px 28px;
           border-radius: 8px;
@@ -641,7 +644,7 @@ const SavedJobOffers = () => {
 
         .browse-jobs-btn:hover {
           transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+          box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
         }
 
         .loading-container, .error-container {
@@ -657,8 +660,8 @@ const SavedJobOffers = () => {
         .loading-spinner {
           width: 50px;
           height: 50px;
-          border: 4px solid #e2e8f0;
-          border-top: 4px solid #667eea;
+          border: 4px solid #e9ecef;
+          border-top: 4px solid #ff6b35;
           border-radius: 50%;
           animation: spin 1s linear infinite;
           margin: 0 auto 24px;
@@ -670,13 +673,13 @@ const SavedJobOffers = () => {
         }
 
         .error-container h2 {
-          color: #e53e3e;
+          color: #dc3545;
           font-size: 1.5rem;
           margin: 0 0 12px;
         }
 
         .error-container p {
-          color: #718096;
+          color: #666666;
           font-size: 1rem;
         }
 
