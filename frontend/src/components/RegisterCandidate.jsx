@@ -1,23 +1,24 @@
 "use client"
+
 import { useState, useEffect, useRef } from "react"
 import {
-  User,
-  Mail,
-  Phone,
-  Lock,
-  CheckCircle,
-  AlertCircle,
-  ArrowRight,
-  ArrowLeft,
-  Plus,
-  Trash2,
-  GraduationCap,
-  Info,
-  Target,
-  Award,
-} from "lucide-react"
+  FaUser,
+  FaEnvelope,
+  FaPhone,
+  FaLock,
+  FaCheckCircle,
+  FaUserGraduate,
+  FaArrowRight,
+  FaArrowLeft,
+  FaInfoCircle,
+  FaGraduationCap,
+  FaPlus,
+  FaTrash,
+  FaEye,
+  FaEyeSlash,
+} from "react-icons/fa"
 
-const RegisterCandidate = () => {
+function RegisterCandidate() {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -31,8 +32,8 @@ const RegisterCandidate = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [currentStep, setCurrentStep] = useState(1)
-  const [focusedFields, setFocusedFields] = useState({})
   const [showPassword, setShowPassword] = useState(false)
+  const [focusedField, setFocusedField] = useState("")
   const [validations, setValidations] = useState({
     username: false,
     email: false,
@@ -43,7 +44,7 @@ const RegisterCandidate = () => {
 
   const registerCardRef = useRef(null)
 
-  // Real-time validation
+  // Validation en temps réel
   useEffect(() => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     const phoneRegex = /^[0-9]{10}$/
@@ -63,14 +64,6 @@ const RegisterCandidate = () => {
       ...prev,
       [name]: value,
     }))
-  }
-
-  const handleFocus = (fieldName) => {
-    setFocusedFields((prev) => ({ ...prev, [fieldName]: true }))
-  }
-
-  const handleBlur = (fieldName) => {
-    setFocusedFields((prev) => ({ ...prev, [fieldName]: false }))
   }
 
   const handleSkillChange = (index, field, value) => {
@@ -116,7 +109,6 @@ const RegisterCandidate = () => {
     setLoading(true)
     setError("")
 
-    // Validate skills
     const hasEmptySkills = skills.some((skill) => !skill.name.trim())
     if (hasEmptySkills) {
       setError("Veuillez nommer toutes vos compétences ou les supprimer")
@@ -126,14 +118,18 @@ const RegisterCandidate = () => {
 
     const updatedFormData = {
       ...formData,
-      skills: skills.filter((skill) => skill.name.trim()).map((skill) => ({ name: skill.name, level: skill.level })),
+      skills: skills
+        .filter((skill) => skill.name.trim())
+        .map((skill) => ({
+          name: skill.name,
+          level: skill.level,
+        })),
     }
 
     try {
-      // Simulate API call
+      // Simulation d'appel API
       await new Promise((resolve) => setTimeout(resolve, 2000))
-
-      console.log("Registration successful:", updatedFormData)
+      console.log("Inscription réussie:", updatedFormData)
 
       // Reset form
       setFormData({
@@ -153,8 +149,7 @@ const RegisterCandidate = () => {
     }
   }
 
-  const progress = ((currentStep - 1) / 2) * 100
-
+  // Composant Input réutilisable
   const InputField = ({
     name,
     type = "text",
@@ -166,78 +161,147 @@ const RegisterCandidate = () => {
   }) => {
     const isValid = validations[name] && formData[name]
     const isInvalid = !validations[name] && formData[name]
-    const isFocused = focusedFields[name]
+    const isFocused = focusedField === name
+
+    const getValidationMessage = () => {
+      if (!isInvalid) return ""
+
+      switch (name) {
+        case "email":
+          return "Format d'email invalide"
+        case "phoneNumber":
+          return "Le numéro doit contenir 10 chiffres"
+        case "password":
+          return "Le mot de passe doit contenir au moins 6 caractères"
+        case "name":
+        case "username":
+          return "Minimum 3 caractères requis"
+        default:
+          return "Champ invalide"
+      }
+    }
 
     return (
-      <div className={`input-group ${isFocused ? "focused" : ""} ${isValid ? "valid" : ""}`}>
+      <div
+        className={`input-field ${isFocused ? "focused" : ""} ${isValid ? "valid" : ""} ${isInvalid ? "invalid" : ""}`}
+      >
         <label className="input-label">
           <div className="label-content">
-            <Icon className="input-icon" />
+            <Icon className="label-icon" />
             <span className="label-text">{label}</span>
-            {required && <span className="required-asterisk">*</span>}
+            {required && <span className="required">*</span>}
           </div>
-          {isValid && <CheckCircle className="validation-icon success" />}
-          {isInvalid && <AlertCircle className="validation-icon error" />}
+          {isValid && <FaCheckCircle className="validation-success" />}
         </label>
 
-        <div className="input-container">
+        <div className="input-wrapper">
           <input
             type={showPasswordToggle && showPassword ? "text" : type}
             name={name}
             value={formData[name]}
             onChange={handleChange}
-            onFocus={() => handleFocus(name)}
-            onBlur={() => handleBlur(name)}
-            required={required}
+            onFocus={() => setFocusedField(name)}
+            onBlur={() => setFocusedField("")}
             placeholder={placeholder}
-            className={`form-input ${isValid ? "input-valid" : ""} ${isInvalid ? "input-invalid" : ""}`}
+            required={required}
+            className="input-control"
           />
+
+          {showPasswordToggle && (
+            <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          )}
 
           <div className="input-border" />
         </div>
 
-        {isInvalid && (
-          <div className="validation-message error">
-            {name === "email" && "Format d'email invalide"}
-            {name === "phoneNumber" && "Le numéro doit contenir 10 chiffres"}
-            {name === "password" && "Le mot de passe doit contenir au moins 6 caractères"}
-            {(name === "name" || name === "username") && "Minimum 3 caractères requis"}
+        {isInvalid && <div className="validation-error">{getValidationMessage()}</div>}
+      </div>
+    )
+  }
+
+  // Composant Skill réutilisable
+  const SkillField = ({ skill, index, onUpdate, onRemove, canRemove }) => {
+    const getSkillLevel = (level) => {
+      if (level >= 80) return { label: "Expert", color: "#10b981" }
+      if (level >= 60) return { label: "Avancé", color: "#3b82f6" }
+      if (level >= 40) return { label: "Intermédiaire", color: "#f59e0b" }
+      if (level >= 20) return { label: "Débutant", color: "#ef4444" }
+      return { label: "Novice", color: "#6b7280" }
+    }
+
+    const skillLevel = getSkillLevel(skill.level)
+
+    return (
+      <div className="skill-field">
+        <div className="skill-inputs">
+          <div className="skill-name-input">
+            <input
+              type="text"
+              placeholder="Nom de la compétence (ex: JavaScript, Marketing...)"
+              value={skill.name}
+              onChange={(e) => onUpdate(index, "name", e.target.value)}
+              className="skill-input"
+            />
+          </div>
+
+          <div className="skill-level-input">
+            <input
+              type="number"
+              placeholder="0-100"
+              value={skill.level}
+              onChange={(e) => onUpdate(index, "level", e.target.value)}
+              min="0"
+              max="100"
+              className="skill-input level-input"
+            />
+            <div className="skill-level-info">
+              <span className="level-label" style={{ color: skillLevel.color }}>
+                {skillLevel.label}
+              </span>
+              <span className="level-percentage">{skill.level}%</span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="remove-skill"
+            onClick={() => onRemove(index)}
+            disabled={!canRemove}
+            title="Supprimer cette compétence"
+          >
+            <FaTrash />
+          </button>
+        </div>
+
+        {skill.name && (
+          <div className="skill-progress">
+            <div className="progress-track">
+              <div
+                className="progress-fill"
+                style={{
+                  width: `${skill.level}%`,
+                  backgroundColor: skillLevel.color,
+                }}
+              />
+            </div>
           </div>
         )}
       </div>
     )
   }
 
-  const getStepIcon = (stepNumber) => {
-    if (currentStep > stepNumber) return <CheckCircle className="step-check" />
-    if (currentStep === stepNumber) return stepNumber
-    return stepNumber
-  }
-
-  const getSkillLevelLabel = (level) => {
-    if (level >= 80) return "Expert"
-    if (level >= 60) return "Avancé"
-    if (level >= 40) return "Intermédiaire"
-    if (level >= 20) return "Débutant"
-    return "Novice"
-  }
-
-  const getSkillLevelColor = (level) => {
-    if (level >= 80) return "#10b981"
-    if (level >= 60) return "#3b82f6"
-    if (level >= 40) return "#f59e0b"
-    if (level >= 20) return "#ef4444"
-    return "#6b7280"
-  }
+  const progress = ((currentStep - 1) / 2) * 100
 
   return (
     <div className="register-page">
-      {/* Background Elements */}
+      {/* Background décoratif */}
       <div className="background-decoration">
         <div className="floating-shape shape-1" />
         <div className="floating-shape shape-2" />
         <div className="floating-shape shape-3" />
-        <div className="grid-pattern" />
+        <div className="grid-overlay" />
       </div>
 
       <div className="register-container">
@@ -245,194 +309,161 @@ const RegisterCandidate = () => {
           {/* Header */}
           <div className="register-header">
             <div className="icon-container">
-              <GraduationCap className="main-icon" />
+              <FaUserGraduate className="main-icon" />
             </div>
             <h1 className="register-title">Inscription Candidat</h1>
             <p className="register-subtitle">Créez votre compte pour trouver votre prochain emploi</p>
           </div>
 
           {/* Progress Indicator */}
-          <div className="progress-container">
-            <div className="progress-bar-bg">
-              <div className="progress-bar" style={{ width: `${progress}%` }} />
+          <div className="progress-section">
+            <div className="progress-bar">
+              <div className="progress-fill" style={{ width: `${progress}%` }} />
             </div>
             <div className="steps-indicator">
-              <div className={`step ${currentStep >= 1 ? "active" : ""} ${currentStep > 1 ? "completed" : ""}`}>
-                <div className="step-number">{getStepIcon(1)}</div>
-                <span className="step-label">Connexion</span>
-              </div>
-              <div className={`step ${currentStep >= 2 ? "active" : ""} ${currentStep > 2 ? "completed" : ""}`}>
-                <div className="step-number">{getStepIcon(2)}</div>
-                <span className="step-label">Profil</span>
-              </div>
-              <div className={`step ${currentStep >= 3 ? "active" : ""}`}>
-                <div className="step-number">{getStepIcon(3)}</div>
-                <span className="step-label">Compétences</span>
-              </div>
+              {[
+                { number: 1, label: "Connexion", icon: FaLock },
+                { number: 2, label: "Profil", icon: FaUser },
+                { number: 3, label: "Compétences", icon: FaGraduationCap },
+              ].map((step) => (
+                <div
+                  key={step.number}
+                  className={`step ${currentStep >= step.number ? "active" : ""} ${currentStep > step.number ? "completed" : ""}`}
+                >
+                  <div className="step-number">{currentStep > step.number ? <FaCheckCircle /> : step.number}</div>
+                  <span className="step-label">{step.label}</span>
+                </div>
+              ))}
             </div>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="error-message">
-              <AlertCircle className="error-icon" />
+            <div className="error-alert">
+              <FaInfoCircle className="error-icon" />
               <span>{error}</span>
             </div>
           )}
 
-          {/* Registration Form */}
+          {/* Form */}
           <form onSubmit={handleSubmit} className="register-form">
-            {/* Step 1: Login Information */}
+            {/* Étape 1: Connexion */}
             {currentStep === 1 && (
-              <div className="form-section active">
-                <h3 className="section-title">
-                  <Lock className="section-icon" />
-                  Informations de connexion
-                </h3>
+              <div className="form-step active">
+                <div className="step-header">
+                  <FaLock className="step-icon" />
+                  <h3 className="step-title">Informations de connexion</h3>
+                </div>
+
                 <div className="form-grid">
-                  <InputField name="username" placeholder="Votre identifiant" icon={User} label="Nom d'utilisateur" />
-                  <InputField name="email" type="email" placeholder="votre@email.com" icon={Mail} label="Email" />
+                  <InputField name="username" placeholder="Votre identifiant" icon={FaUser} label="Nom d'utilisateur" />
+                  <InputField
+                    name="email"
+                    type="email"
+                    placeholder="votre@email.com"
+                    icon={FaEnvelope}
+                    label="Adresse email"
+                  />
                   <InputField
                     name="password"
                     type="password"
                     placeholder="••••••••"
-                    icon={Lock}
+                    icon={FaLock}
                     label="Mot de passe"
                     showPasswordToggle={true}
                   />
                 </div>
-                <div className="form-navigation">
+
+                <div className="form-actions">
                   <div></div>
-                  <button type="button" className="next-button" onClick={nextStep}>
+                  <button type="button" className="btn btn-primary" onClick={nextStep}>
                     <span>Suivant</span>
-                    <ArrowRight className="button-icon" />
+                    <FaArrowRight />
                   </button>
                 </div>
               </div>
             )}
 
-            {/* Step 2: Personal Information */}
+            {/* Étape 2: Profil */}
             {currentStep === 2 && (
-              <div className="form-section active">
-                <h3 className="section-title">
-                  <User className="section-icon" />
-                  Informations personnelles
-                </h3>
-                <div className="form-grid">
-                  <InputField name="name" placeholder="Votre nom complet" icon={User} label="Nom complet" />
-                  <InputField name="phoneNumber" type="tel" placeholder="0123456789" icon={Phone} label="Téléphone" />
+              <div className="form-step active">
+                <div className="step-header">
+                  <FaUser className="step-icon" />
+                  <h3 className="step-title">Informations personnelles</h3>
                 </div>
-                <div className="form-navigation">
-                  <button type="button" className="prev-button" onClick={prevStep}>
-                    <ArrowLeft className="button-icon" />
+
+                <div className="form-grid">
+                  <InputField name="name" placeholder="Votre nom complet" icon={FaUser} label="Nom complet" />
+                  <InputField
+                    name="phoneNumber"
+                    type="tel"
+                    placeholder="0123456789"
+                    icon={FaPhone}
+                    label="Numéro de téléphone"
+                  />
+                </div>
+
+                <div className="form-actions">
+                  <button type="button" className="btn btn-secondary" onClick={prevStep}>
+                    <FaArrowLeft />
                     <span>Précédent</span>
                   </button>
-                  <button type="button" className="next-button" onClick={nextStep}>
+                  <button type="button" className="btn btn-primary" onClick={nextStep}>
                     <span>Suivant</span>
-                    <ArrowRight className="button-icon" />
+                    <FaArrowRight />
                   </button>
                 </div>
               </div>
             )}
 
-            {/* Step 3: Skills */}
+            {/* Étape 3: Compétences */}
             {currentStep === 3 && (
-              <div className="form-section active">
-                <h3 className="section-title">
-                  <Award className="section-icon" />
-                  Vos compétences
-                </h3>
+              <div className="form-step active">
+                <div className="step-header">
+                  <FaGraduationCap className="step-icon" />
+                  <h3 className="step-title">Vos compétences</h3>
+                </div>
 
                 <div className="skills-info">
-                  <Info className="info-icon" />
+                  <FaInfoCircle className="info-icon" />
                   <p>Ajoutez vos compétences et évaluez votre niveau de maîtrise (0-100)</p>
                 </div>
 
                 <div className="skills-container">
                   {skills.map((skill, index) => (
-                    <div key={index} className="skill-entry">
-                      <div className="skill-header">
-                        <div className="skill-inputs">
-                          <div className="skill-name-input">
-                            <input
-                              type="text"
-                              placeholder="Nom de la compétence (ex: JavaScript, Marketing...)"
-                              value={skill.name}
-                              onChange={(e) => handleSkillChange(index, "name", e.target.value)}
-                              className="form-input"
-                            />
-                          </div>
-                          <div className="skill-level-input">
-                            <input
-                              type="number"
-                              placeholder="Niveau"
-                              value={skill.level}
-                              onChange={(e) => handleSkillChange(index, "level", e.target.value)}
-                              min="0"
-                              max="100"
-                              className="form-input"
-                            />
-                            <span className="level-label" style={{ color: getSkillLevelColor(skill.level) }}>
-                              {getSkillLevelLabel(skill.level)}
-                            </span>
-                          </div>
-                          <button
-                            type="button"
-                            className="remove-skill-btn"
-                            onClick={() => removeSkill(index)}
-                            disabled={skills.length === 1}
-                          >
-                            <Trash2 className="remove-icon" />
-                          </button>
-                        </div>
-                      </div>
-
-                      {skill.name && (
-                        <div className="skill-visual">
-                          <div className="skill-progress-bg">
-                            <div
-                              className="skill-progress-bar"
-                              style={{
-                                width: `${skill.level}%`,
-                                backgroundColor: getSkillLevelColor(skill.level),
-                              }}
-                            />
-                          </div>
-                          <div className="skill-percentage">{skill.level}%</div>
-                        </div>
-                      )}
-                    </div>
+                    <SkillField
+                      key={index}
+                      skill={skill}
+                      index={index}
+                      onUpdate={handleSkillChange}
+                      onRemove={removeSkill}
+                      canRemove={skills.length > 1}
+                    />
                   ))}
 
-                  <button type="button" className="add-skill-btn" onClick={addSkill}>
-                    <Plus className="add-icon" />
+                  <button type="button" className="btn btn-outline add-skill" onClick={addSkill}>
+                    <FaPlus />
                     <span>Ajouter une compétence</span>
                   </button>
                 </div>
 
-                <div className="form-navigation">
-                  <button type="button" className="prev-button" onClick={prevStep}>
-                    <ArrowLeft className="button-icon" />
+                <div className="form-actions">
+                  <button type="button" className="btn btn-secondary" onClick={prevStep}>
+                    <FaArrowLeft />
                     <span>Précédent</span>
                   </button>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className={`submit-button ${loading ? "loading" : ""} ${skills.every((s) => s.name.trim()) ? "ready" : ""}`}
-                  >
-                    <div className="button-content">
-                      {loading ? (
-                        <>
-                          <div className="loading-spinner" />
-                          <span>Inscription en cours...</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>S'inscrire</span>
-                          <Target className="button-icon" />
-                        </>
-                      )}
-                    </div>
+                  <button type="submit" disabled={loading} className={`btn btn-success ${loading ? "loading" : ""}`}>
+                    {loading ? (
+                      <>
+                        <div className="spinner" />
+                        <span>Inscription en cours...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>S'inscrire</span>
+                        <FaCheckCircle />
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
@@ -442,7 +473,7 @@ const RegisterCandidate = () => {
           {/* Footer */}
           <div className="form-footer">
             <p>
-              Déjà inscrit ?{" "}
+              Déjà inscrit ?
               <a href="/login/candidat" className="login-link">
                 Se connecter
               </a>
@@ -452,16 +483,20 @@ const RegisterCandidate = () => {
       </div>
 
       <style jsx>{`
+        * {
+          box-sizing: border-box;
+        }
+
         .register-page {
-          position: relative;
           min-height: 100vh;
           display: flex;
           align-items: center;
           justify-content: center;
-          background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+          background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
           padding: 2rem 1rem;
+          position: relative;
           overflow: hidden;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         .background-decoration {
@@ -474,25 +509,22 @@ const RegisterCandidate = () => {
           z-index: 1;
         }
 
-        .grid-pattern {
+        .grid-overlay {
           position: absolute;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
-          background-image: linear-gradient(rgba(255, 140, 0, 0.1) 1px, transparent 1px),
+          background-image: 
+            linear-gradient(rgba(255, 140, 0, 0.1) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255, 140, 0, 0.1) 1px, transparent 1px);
           background-size: 50px 50px;
           animation: gridMove 20s linear infinite;
         }
 
         @keyframes gridMove {
-          0% {
-            transform: translate(0, 0);
-          }
-          100% {
-            transform: translate(50px, 50px);
-          }
+          0% { transform: translate(0, 0); }
+          100% { transform: translate(50px, 50px); }
         }
 
         .floating-shape {
@@ -503,37 +535,32 @@ const RegisterCandidate = () => {
         }
 
         .shape-1 {
-          width: 100px;
-          height: 100px;
-          top: 20%;
+          width: 120px;
+          height: 120px;
+          top: 15%;
           left: 10%;
           animation-delay: 0s;
         }
 
         .shape-2 {
-          width: 150px;
-          height: 150px;
-          top: 60%;
+          width: 80px;
+          height: 80px;
+          top: 70%;
           right: 15%;
           animation-delay: 2s;
         }
 
         .shape-3 {
-          width: 80px;
-          height: 80px;
+          width: 100px;
+          height: 100px;
           bottom: 20%;
           left: 20%;
           animation-delay: 4s;
         }
 
         @keyframes float {
-          0%,
-          100% {
-            transform: translateY(0px) rotate(0deg);
-          }
-          50% {
-            transform: translateY(-20px) rotate(180deg);
-          }
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(180deg); }
         }
 
         .register-container {
@@ -548,16 +575,17 @@ const RegisterCandidate = () => {
           backdrop-filter: blur(20px);
           border-radius: 24px;
           padding: 3rem;
-          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 140, 0, 0.1);
+          box-shadow: 
+            0 25px 50px rgba(0, 0, 0, 0.3),
+            0 0 0 1px rgba(255, 140, 0, 0.1);
           border: 1px solid rgba(255, 255, 255, 0.2);
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
           overflow: hidden;
-          animation: slideIn 0.6s ease-out;
+          animation: slideUp 0.6s ease-out;
         }
 
         .register-card::before {
-          content: "";
+          content: '';
           position: absolute;
           top: 0;
           left: 0;
@@ -568,15 +596,11 @@ const RegisterCandidate = () => {
         }
 
         @keyframes shimmer {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
-            transform: translateX(100%);
-          }
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
         }
 
-        @keyframes slideIn {
+        @keyframes slideUp {
           from {
             opacity: 0;
             transform: translateY(30px) scale(0.95);
@@ -606,7 +630,7 @@ const RegisterCandidate = () => {
         }
 
         .icon-container::after {
-          content: "";
+          content: '';
           position: absolute;
           top: -2px;
           left: -2px;
@@ -619,12 +643,8 @@ const RegisterCandidate = () => {
         }
 
         @keyframes rotate {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
 
         .main-icon {
@@ -648,16 +668,14 @@ const RegisterCandidate = () => {
           color: #666;
           font-size: 1.1rem;
           margin: 0;
-          max-width: 500px;
-          margin: 0 auto;
           line-height: 1.6;
         }
 
-        .progress-container {
+        .progress-section {
           margin-bottom: 2.5rem;
         }
 
-        .progress-bar-bg {
+        .progress-bar {
           height: 8px;
           background-color: #e5e7eb;
           border-radius: 4px;
@@ -665,7 +683,7 @@ const RegisterCandidate = () => {
           overflow: hidden;
         }
 
-        .progress-bar {
+        .progress-fill {
           height: 100%;
           background: linear-gradient(90deg, #ff8c00, #ff6b35);
           border-radius: 4px;
@@ -683,7 +701,6 @@ const RegisterCandidate = () => {
           flex-direction: column;
           align-items: center;
           flex: 1;
-          position: relative;
         }
 
         .step-number {
@@ -713,11 +730,6 @@ const RegisterCandidate = () => {
           color: white;
         }
 
-        .step-check {
-          width: 1.2rem;
-          height: 1.2rem;
-        }
-
         .step-label {
           font-size: 0.85rem;
           color: #6b7280;
@@ -735,7 +747,7 @@ const RegisterCandidate = () => {
           font-weight: 600;
         }
 
-        .error-message {
+        .error-alert {
           display: flex;
           align-items: center;
           gap: 0.75rem;
@@ -746,7 +758,7 @@ const RegisterCandidate = () => {
           border-radius: 12px;
           color: #dc2626;
           font-weight: 500;
-          animation: errorSlideIn 0.3s ease-out;
+          animation: errorSlide 0.3s ease-out;
         }
 
         .error-icon {
@@ -755,7 +767,7 @@ const RegisterCandidate = () => {
           flex-shrink: 0;
         }
 
-        @keyframes errorSlideIn {
+        @keyframes errorSlide {
           from {
             opacity: 0;
             transform: translateY(-10px);
@@ -770,12 +782,8 @@ const RegisterCandidate = () => {
           position: relative;
         }
 
-        .form-section {
+        .form-step {
           animation: fadeIn 0.5s ease-out;
-        }
-
-        .form-section.active {
-          display: block;
         }
 
         @keyframes fadeIn {
@@ -789,20 +797,17 @@ const RegisterCandidate = () => {
           }
         }
 
-        .section-title {
+        .step-header {
           display: flex;
           align-items: center;
-          font-size: 1.4rem;
-          font-weight: 700;
-          color: #1a1a1a;
           margin-bottom: 2rem;
-          padding-bottom: 0.75rem;
+          padding-bottom: 1rem;
           border-bottom: 2px solid #f3f4f6;
           position: relative;
         }
 
-        .section-title::after {
-          content: "";
+        .step-header::after {
+          content: '';
           position: absolute;
           bottom: -2px;
           left: 0;
@@ -811,28 +816,35 @@ const RegisterCandidate = () => {
           background: linear-gradient(135deg, #ff8c00, #ff6b35);
         }
 
-        .section-icon {
-          margin-right: 0.75rem;
-          color: #ff8c00;
+        .step-icon {
           width: 1.5rem;
           height: 1.5rem;
+          color: #ff8c00;
+          margin-right: 0.75rem;
+        }
+
+        .step-title {
+          font-size: 1.4rem;
+          font-weight: 700;
+          color: #1a1a1a;
+          margin: 0;
         }
 
         .form-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 1.5rem;
-          margin-bottom: 2rem;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 2rem;
+          margin-bottom: 2.5rem;
         }
 
-        .input-group {
+        .input-field {
           display: flex;
           flex-direction: column;
-          gap: 0.5rem;
+          gap: 0.75rem;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .input-group.focused {
+        .input-field.focused {
           transform: translateY(-2px);
         }
 
@@ -842,7 +854,7 @@ const RegisterCandidate = () => {
           justify-content: space-between;
           font-weight: 600;
           color: #374151;
-          font-size: 0.9rem;
+          font-size: 0.95rem;
         }
 
         .label-content {
@@ -851,7 +863,7 @@ const RegisterCandidate = () => {
           gap: 0.5rem;
         }
 
-        .input-icon {
+        .label-icon {
           width: 1.1rem;
           height: 1.1rem;
           color: #ff8c00;
@@ -861,29 +873,24 @@ const RegisterCandidate = () => {
           font-weight: 600;
         }
 
-        .required-asterisk {
+        .required {
           color: #ef4444;
           font-weight: 700;
         }
 
-        .validation-icon {
+        .validation-success {
           width: 1.1rem;
           height: 1.1rem;
-        }
-
-        .validation-icon.success {
           color: #10b981;
         }
 
-        .validation-icon.error {
-          color: #ef4444;
-        }
-
-        .input-container {
+        .input-wrapper {
           position: relative;
+          display: flex;
+          align-items: center;
         }
 
-        .form-input {
+        .input-control {
           width: 100%;
           padding: 1rem 1.25rem;
           border: 2px solid #e5e7eb;
@@ -894,28 +901,44 @@ const RegisterCandidate = () => {
           backdrop-filter: blur(10px);
           color: #1a1a1a;
           font-family: inherit;
-          box-sizing: border-box;
         }
 
-        .form-input::placeholder {
+        .input-control::placeholder {
           color: #9ca3af;
         }
 
-        .form-input:focus {
+        .input-control:focus {
           outline: none;
           border-color: #ff8c00;
           box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
           background: rgba(255, 255, 255, 1);
         }
 
-        .form-input.input-valid {
+        .input-field.valid .input-control {
           border-color: #10b981;
           background: rgba(16, 185, 129, 0.05);
         }
 
-        .form-input.input-invalid {
+        .input-field.invalid .input-control {
           border-color: #ef4444;
           background: rgba(239, 68, 68, 0.05);
+        }
+
+        .password-toggle {
+          position: absolute;
+          right: 1rem;
+          background: none;
+          border: none;
+          color: #6b7280;
+          cursor: pointer;
+          padding: 0.25rem;
+          border-radius: 4px;
+          transition: all 0.3s ease;
+        }
+
+        .password-toggle:hover {
+          color: #ff8c00;
+          background: rgba(255, 140, 0, 0.1);
         }
 
         .input-border {
@@ -929,18 +952,21 @@ const RegisterCandidate = () => {
           border-radius: 1px;
         }
 
-        .input-group.focused .input-border {
+        .input-field.focused .input-border {
           width: 100%;
         }
 
-        .validation-message {
-          font-size: 0.8rem;
+        .validation-error {
+          font-size: 0.85rem;
+          color: #ef4444;
           font-weight: 500;
-          margin-top: 0.25rem;
+          margin-top: -0.25rem;
+          animation: errorFade 0.3s ease-out;
         }
 
-        .validation-message.error {
-          color: #ef4444;
+        @keyframes errorFade {
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
 
         .skills-info {
@@ -963,32 +989,32 @@ const RegisterCandidate = () => {
 
         .skills-info p {
           margin: 0;
-          font-size: 0.9rem;
+          font-size: 0.95rem;
           color: #4b5563;
           line-height: 1.5;
         }
 
         .skills-container {
-          margin-bottom: 2rem;
+          margin-bottom: 2.5rem;
         }
 
-        .skill-entry {
+        .skill-field {
           margin-bottom: 1.5rem;
           padding: 1.5rem;
           background: rgba(255, 255, 255, 0.5);
           border-radius: 16px;
           border: 1px solid rgba(255, 255, 255, 0.3);
           transition: all 0.3s ease;
-          animation: skillFadeIn 0.3s ease-out;
+          animation: skillSlide 0.3s ease-out;
         }
 
-        .skill-entry:hover {
+        .skill-field:hover {
           background: rgba(255, 255, 255, 0.7);
           transform: translateY(-2px);
           box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
 
-        @keyframes skillFadeIn {
+        @keyframes skillSlide {
           from {
             opacity: 0;
             transform: translateY(10px);
@@ -1003,80 +1029,101 @@ const RegisterCandidate = () => {
           display: grid;
           grid-template-columns: 2fr 1fr auto;
           gap: 1rem;
-          align-items: center;
+          align-items: start;
           margin-bottom: 1rem;
         }
 
         .skill-name-input,
         .skill-level-input {
-          position: relative;
-        }
-
-        .skill-level-input {
           display: flex;
           flex-direction: column;
-          gap: 0.25rem;
+          gap: 0.5rem;
+        }
+
+        .skill-input {
+          padding: 0.875rem 1rem;
+          border: 2px solid #e5e7eb;
+          border-radius: 8px;
+          font-size: 0.95rem;
+          transition: all 0.3s ease;
+          background: rgba(255, 255, 255, 0.9);
+          color: #1a1a1a;
+          font-family: inherit;
+        }
+
+        .skill-input:focus {
+          outline: none;
+          border-color: #ff8c00;
+          box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
+          background: rgba(255, 255, 255, 1);
+        }
+
+        .level-input {
+          text-align: center;
+        }
+
+        .skill-level-info {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 0.8rem;
         }
 
         .level-label {
-          font-size: 0.75rem;
           font-weight: 600;
-          text-align: center;
           text-transform: uppercase;
           letter-spacing: 0.05em;
         }
 
-        .remove-skill-btn {
+        .level-percentage {
+          font-weight: 700;
+          color: #374151;
+        }
+
+        .remove-skill {
           background: rgba(239, 68, 68, 0.1);
           border: 1px solid rgba(239, 68, 68, 0.2);
           color: #ef4444;
           padding: 0.75rem;
-          border-radius: 12px;
+          border-radius: 8px;
           cursor: pointer;
           transition: all 0.3s ease;
           display: flex;
           align-items: center;
           justify-content: center;
+          height: fit-content;
         }
 
-        .remove-skill-btn:hover:not(:disabled) {
+        .remove-skill:hover:not(:disabled) {
           background: rgba(239, 68, 68, 0.2);
           transform: scale(1.05);
         }
 
-        .remove-skill-btn:disabled {
+        .remove-skill:disabled {
           opacity: 0.5;
           cursor: not-allowed;
         }
 
-        .remove-icon {
-          width: 1rem;
-          height: 1rem;
+        .skill-progress {
+          margin-top: 0.5rem;
         }
 
-        .skill-visual {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-        }
-
-        .skill-progress-bg {
-          flex: 1;
+        .progress-track {
           height: 8px;
           background-color: #e5e7eb;
           border-radius: 4px;
           overflow: hidden;
         }
 
-        .skill-progress-bar {
+        .progress-fill {
           height: 100%;
           border-radius: 4px;
           transition: all 0.5s ease;
           position: relative;
         }
 
-        .skill-progress-bar::after {
-          content: "";
+        .progress-fill::after {
+          content: '';
           position: absolute;
           top: 0;
           left: 0;
@@ -1087,146 +1134,97 @@ const RegisterCandidate = () => {
         }
 
         @keyframes progressShimmer {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
-            transform: translateX(100%);
-          }
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
         }
 
-        .skill-percentage {
-          font-size: 0.9rem;
-          font-weight: 700;
-          color: #374151;
-          min-width: 40px;
-          text-align: right;
-        }
-
-        .add-skill-btn {
-          width: 100%;
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
-          border: none;
-          color: white;
-          padding: 1rem 1.5rem;
-          border-radius: 12px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-          font-size: 1rem;
-        }
-
-        .add-skill-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(255, 140, 0, 0.3);
-        }
-
-        .add-icon {
-          width: 1.2rem;
-          height: 1.2rem;
-        }
-
-        .form-navigation {
+        .form-actions {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-top: 2rem;
+          margin-top: 2.5rem;
           gap: 1rem;
         }
 
-        .prev-button,
-        .next-button,
-        .submit-button {
-          padding: 1rem 2rem;
-          border-radius: 12px;
-          font-weight: 700;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .btn {
           display: flex;
           align-items: center;
           gap: 0.5rem;
+          padding: 1rem 2rem;
+          border-radius: 12px;
+          font-weight: 700;
           font-size: 1rem;
-          font-family: inherit;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           border: none;
+          font-family: inherit;
+          position: relative;
+          overflow: hidden;
         }
 
-        .prev-button {
+        .btn-primary {
+          background: linear-gradient(135deg, #ff8c00, #ff6b35);
+          color: white;
+          box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(255, 140, 0, 0.4);
+        }
+
+        .btn-secondary {
           background: rgba(107, 114, 128, 0.1);
           border: 2px solid rgba(107, 114, 128, 0.2);
           color: #6b7280;
         }
 
-        .prev-button:hover {
+        .btn-secondary:hover {
           background: rgba(107, 114, 128, 0.2);
           transform: translateY(-2px);
         }
 
-        .next-button {
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
+        .btn-success {
+          background: linear-gradient(135deg, #10b981, #059669);
           color: white;
-          box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
+          box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
         }
 
-        .next-button:hover {
+        .btn-success:hover:not(:disabled) {
           transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(255, 140, 0, 0.4);
+          box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
         }
 
-        .submit-button {
-          background: linear-gradient(135deg, #6b7280, #4b5563);
+        .btn-outline {
+          background: transparent;
+          border: 2px solid #ff8c00;
+          color: #ff8c00;
+        }
+
+        .btn-outline:hover {
+          background: #ff8c00;
           color: white;
-          position: relative;
-          overflow: hidden;
-        }
-
-        .submit-button.ready {
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
-          box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
-        }
-
-        .submit-button:hover:not(:disabled) {
           transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 8px 25px rgba(255, 140, 0, 0.3);
         }
 
-        .submit-button.ready:hover:not(:disabled) {
-          box-shadow: 0 8px 25px rgba(255, 140, 0, 0.4);
-        }
-
-        .submit-button:disabled {
+        .btn:disabled {
           opacity: 0.7;
           cursor: not-allowed;
           transform: none;
         }
 
-        .button-content {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          position: relative;
-          z-index: 2;
+        .btn.loading {
+          pointer-events: none;
         }
 
-        .button-icon {
-          width: 1.2rem;
-          height: 1.2rem;
-          transition: transform 0.3s ease;
+        .add-skill {
+          width: 100%;
+          justify-content: center;
+          margin-top: 1rem;
         }
 
-        .next-button:hover .button-icon,
-        .submit-button:hover .button-icon {
-          transform: translateX(3px);
-        }
-
-        .prev-button:hover .button-icon {
-          transform: translateX(-3px);
-        }
-
-        .loading-spinner {
+        .spinner {
           width: 20px;
           height: 20px;
           border: 2px solid rgba(255, 255, 255, 0.3);
@@ -1236,12 +1234,8 @@ const RegisterCandidate = () => {
         }
 
         @keyframes spin {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
 
         .form-footer {
@@ -1261,6 +1255,7 @@ const RegisterCandidate = () => {
           color: #ff8c00;
           text-decoration: none;
           font-weight: 600;
+          margin-left: 0.5rem;
           transition: all 0.3s ease;
           position: relative;
         }
@@ -1270,7 +1265,7 @@ const RegisterCandidate = () => {
         }
 
         .login-link::after {
-          content: "";
+          content: '';
           position: absolute;
           bottom: -2px;
           left: 0;
@@ -1309,27 +1304,25 @@ const RegisterCandidate = () => {
 
           .form-grid {
             grid-template-columns: 1fr;
-            gap: 1rem;
+            gap: 1.5rem;
           }
 
           .skill-inputs {
             grid-template-columns: 1fr;
-            gap: 0.75rem;
+            gap: 1rem;
           }
 
-          .remove-skill-btn {
+          .remove-skill {
             justify-self: end;
             width: fit-content;
           }
 
-          .form-navigation {
+          .form-actions {
             flex-direction: column;
             gap: 1rem;
           }
 
-          .prev-button,
-          .next-button,
-          .submit-button {
+          .btn {
             width: 100%;
             justify-content: center;
           }
@@ -1357,27 +1350,22 @@ const RegisterCandidate = () => {
             font-size: 1.75rem;
           }
 
-          .section-title {
+          .step-title {
             font-size: 1.2rem;
           }
 
-          .form-input {
+          .input-control {
             padding: 0.875rem 1rem;
           }
 
-          .skill-entry {
+          .skill-field {
             padding: 1rem;
           }
 
-          .skill-visual {
+          .skill-level-info {
             flex-direction: column;
-            align-items: stretch;
-            gap: 0.5rem;
-          }
-
-          .skill-percentage {
-            text-align: center;
-            min-width: auto;
+            align-items: center;
+            gap: 0.25rem;
           }
         }
       `}</style>
