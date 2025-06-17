@@ -81,12 +81,78 @@ const SavedJobOffers = lazy(() => import('./components/Candidat/SavedJobOffers')
 const AppRoutes = () => {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
+  const [pageReady, setPageReady] = useState(false);
 
   useEffect(() => {
     setLoading(true);
-    const timeout = setTimeout(() => setLoading(false), 400); // Delay for smoother UX
-    return () => clearTimeout(timeout);
+    setPageReady(false);
+    
+    // Use requestAnimationFrame to wait for the next render cycle
+    const handlePageLoad = () => {
+      requestAnimationFrame(() => {
+        // Wait for two animation frames to ensure DOM is fully rendered
+        requestAnimationFrame(() => {
+          // Additional check: wait for images and other resources
+          const images = document.querySelectorAll('img');
+          const imagePromises = Array.from(images).map(img => {
+            if (img.complete) return Promise.resolve();
+            return new Promise(resolve => {
+              img.onload = resolve;
+              img.onerror = resolve; // Resolve even if image fails to load
+            });
+          });
+
+          Promise.all(imagePromises).then(() => {
+            // Add a small delay to ensure navbar animations are complete
+            setTimeout(() => {
+              setPageReady(true);
+              setLoading(false);
+            }, 300);
+          });
+        });
+      });
+    };
+
+    handlePageLoad();
   }, [location.pathname]);
+
+  // Alternative approach using Intersection Observer to wait for navbar
+  useEffect(() => {
+    if (!loading) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.target.classList.contains('navbar')) {
+          // Navbar is visible and rendered
+          setTimeout(() => {
+            setPageReady(true);
+            setLoading(false);
+          }, 200);
+        }
+      });
+    });
+
+    // Try to observe navbar after a short delay
+    const checkForNavbar = () => {
+      const navbar = document.querySelector('.navbar, nav, [role="navigation"]');
+      if (navbar) {
+        observer.observe(navbar);
+      } else {
+        // Navbar not found, use fallback timeout
+        setTimeout(() => {
+          setPageReady(true);
+          setLoading(false);
+        }, 800);
+      }
+    };
+
+    const timeout = setTimeout(checkForNavbar, 100);
+    
+    return () => {
+      clearTimeout(timeout);
+      observer.disconnect();
+    };
+  }, [loading, location.pathname]);
 
   return (
     <>
@@ -108,7 +174,7 @@ const AppRoutes = () => {
           <Route path="/admin/verify-otp" element={<VerifyOtpAdmin />} />
           <Route path="/admin/reset-password" element={<ResetPasswordAdmin />} />
           <Route path="/about-us" element={<AboutUs />} />
-          <Route path="/recruiter/request-reset" element={<RequestResetRecruteur />} /> {/* ✅ Add this new route */}
+          <Route path="/recruiter/request-reset" element={<RequestResetRecruteur />} />
 
           {/* Pages principales */}
           <Route path="/" element={<StageRecherche />} />
