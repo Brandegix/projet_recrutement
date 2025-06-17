@@ -15,7 +15,10 @@ const JobCard = ({job, onApply, isApplied, onSave, isSaved }) => {
   const handleViewDetails = () => {
     navigate(`/offres/${job.id}`);
   };
-
+const truncateText = (text, maxLength = 100) => {
+  if (!text) return "Aucune description fournie";
+  return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+};
   return (
   <div className="job-card">
     <div className="job-header">
@@ -36,7 +39,9 @@ const JobCard = ({job, onApply, isApplied, onSave, isSaved }) => {
     <div className="job-body">
       <p><FaMapMarkerAlt /> {job.location}</p>
       <p><FaBriefcase /> {job.experience}</p>
-      <p>{job.description}</p>
+      <p style={{ color: '#aaa', fontSize: '0.9rem', marginBottom: '20px' }}>
+  {truncateText(job.description)}
+</p>
       <div className="skills">
         {job.skills && job.skills.map((skill, index) => (
           <span key={index}>{skill}</span>
