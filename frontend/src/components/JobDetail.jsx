@@ -4,6 +4,7 @@ import axios from 'axios';
 import '../assets/css/JobDetail.css';
 import Navbar from "./Navbara";
 import Footer from "./Footer";
+import Loading from './Loading'; // Import your Loading component
 
 const JobDetail = () => {
     const { id } = useParams();
@@ -33,20 +34,23 @@ const JobDetail = () => {
                 };
 
                 setJob(jobWithDefaults);
-                
-                // Don't set loading to false immediately - wait for image or timeout
-                const timer = setTimeout(() => {
-                    setLoading(false);
-                }, 1000); // Fallback timeout
+                // We no longer set loading to false here.
+                // It will be set false once the image loads or errors,
+                // or after a fallback timeout in the next useEffect.
 
-                return () => clearTimeout(timer);
-                
             } catch (err) {
                 console.error("Error fetching job details:", err);
                 setError("Impossible de charger les détails de l'offre");
-                setLoading(false);
+                setLoading(false); // Set to false on error so the error message can be displayed
             }
         };
+
+        // Reset loading states when ID changes or component mounts
+        setLoading(true);
+        setImageLoaded(false);
+        setImageError(false);
+        setJob(null); // Clear previous job data when fetching new one
+        setError(null); // Clear previous error
 
         fetchJobDetails();
     }, [id]);
@@ -60,24 +64,33 @@ const JobDetail = () => {
             .catch(err => console.error("Erreur candidate:", err));
     }, []);
 
-    // Handle image loading completion
+    // Handle image loading completion and set final loading state
     useEffect(() => {
-        if (job && (imageLoaded || imageError)) {
-            // Small delay to ensure smooth transition
-            const timer = setTimeout(() => {
+        if (job) { // Only proceed if job data is successfully fetched
+            // If the logo URL is empty/default, or if the image has truly loaded/errored
+            if (!job.logo || job.logo === "/default-company.png" || imageLoaded || imageError) {
+                // Small delay to ensure smooth transition
+                const timer = setTimeout(() => {
+                    setLoading(false); // Set loading to false only when job data is here AND image is handled
+                }, 200); // You can adjust this delay (e.g., to 0 if no transition needed)
+                return () => clearTimeout(timer);
+            }
+            // Fallback for cases where image might never fire load/error (e.g., broken URL not caught by browser)
+            const fallbackTimer = setTimeout(() => {
                 setLoading(false);
-            }, 200);
-            
-            return () => clearTimeout(timer);
+            }, 3000); // 3-second fallback to ensure it eventually loads
+            return () => clearTimeout(fallbackTimer);
+
         }
     }, [job, imageLoaded, imageError]);
+
 
     const handleImageLoad = () => {
         setImageLoaded(true);
     };
 
     const handleImageError = () => {
-        console.warn("Company logo failed to load");
+        console.warn("Company logo failed to load or is missing");
         setImageError(true);
     };
 
@@ -116,9 +129,8 @@ const JobDetail = () => {
 
     if (loading) {
         return (
-            <div className="job-detail-container">
-                <div className="loading">Chargement...</div>
-            </div>
+            // Using your imported Loading component directly
+            <Loading message="Chargement des détails de l'offre..." />
         );
     }
 
@@ -145,9 +157,9 @@ const JobDetail = () => {
                 <div className="job-detail-card">
                     <div className="job-headerr">
                         <div className="company-info">
-                            <img 
-                                src={job.logo || '/default-company.png'} 
-                                alt={job.company} 
+                            <img
+                                src={job.logo || '/default-company.png'}
+                                alt={job.company}
                                 className="company-logo"
                                 onLoad={handleImageLoad}
                                 onError={handleImageError}
