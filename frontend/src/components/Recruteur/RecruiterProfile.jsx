@@ -386,13 +386,13 @@ function RecruiterProfile() {
       color: '#fff',
       boxShadow: '0 4px 15px rgba(255, 107, 53, 0.2)',
     },
-    saveButton: {
-      backgroundColor: '#28a745',
-      color: '#fff',
-      boxShadow: '0 4px 15px rgba(40, 167, 69, 0.2)',
-      width: '100%',
-      justifyContent: 'center',
-    },
+   saveButton: {
+  backgroundColor: '#ff6b35', // This is an vibrant orange
+  color: '#fff', // White text for contrast
+  boxShadow: '0 4px 15px rgba(255, 107, 53, 0.2)', // Orange-tinted shadow
+  width: '100%',
+  justifyContent: 'center',
+},
     viewJobsLink: {
       textAlign: 'center',
       marginTop: '40px',
