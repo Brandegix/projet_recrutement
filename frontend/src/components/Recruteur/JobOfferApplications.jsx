@@ -140,6 +140,9 @@ const JobOfferApplications = () => {
                         value={searchName}
                         onChange={(e) => setSearchName(e.target.value)}
                         style={jobAppStyles.searchInput}
+                        // Added focus styles dynamically
+                        onFocus={(e) => e.target.style.borderColor = jobAppStyles.searchInputFocus.borderColor}
+                        onBlur={(e) => e.target.style.borderColor = jobAppStyles.searchInput.borderColor}
                     />
                 </div>
 
@@ -148,7 +151,18 @@ const JobOfferApplications = () => {
                 ) : (
                     <div style={jobAppStyles.applicationList}>
                         {filteredApplications.map(app => (
-                            <div key={app.id} style={jobAppStyles.applicationItem}>
+                            <div
+                                key={app.id}
+                                style={jobAppStyles.applicationItem}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = jobAppStyles.applicationItemHover.transform;
+                                    e.currentTarget.style.boxShadow = jobAppStyles.applicationItemHover.boxShadow;
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = jobAppStyles.applicationItem.transform; // Reset
+                                    e.currentTarget.style.boxShadow = jobAppStyles.applicationItem.boxShadow; // Reset
+                                }}
+                            >
                                 <div style={jobAppStyles.applicantInfo}>
                                     <div style={jobAppStyles.applicantAvatar}>
                                         {app.candidate?.name?.charAt(0).toUpperCase() || "?"}
@@ -334,7 +348,7 @@ const jobAppStyles = {
         border: '1px solid #E0E0E0',
         boxSizing: 'border-box',
         fontSize: '1em',
-        color: '#333333',
+        color: '#333333', // Dark gray for text
         boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)',
         transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
     },
@@ -359,6 +373,7 @@ const jobAppStyles = {
         gap: '20px',
         border: '1px solid #F0F0F0',
         transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+        transform: 'translateY(0)', // Default transform for reset
     },
     applicationItemHover: {
         transform: 'translateY(-3px)',
@@ -416,7 +431,7 @@ const jobAppStyles = {
         color: '#FF6B35', // Orange for "Vu"
         fontWeight: 'bold',
         fontSize: '0.9em',
-        backgroundColor: '#FFF5E5', // Light orange background
+        backgroundColor: '#FFF5E5', // Light orange background for the tag
         padding: '5px 10px',
         borderRadius: '5px',
     },
@@ -449,10 +464,9 @@ const jobAppStyles = {
     error: {
         textAlign: 'center',
         marginTop: '50px',
-        color: '#000000', // Black text for error
+        color: '#FFFFFF', // White text on orange error
         fontSize: '1.2em',
         backgroundColor: '#FF6B35', // Orange background for error
-        color: '#FFFFFF', // White text on orange
         padding: '20px',
         borderRadius: '10px',
         boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
