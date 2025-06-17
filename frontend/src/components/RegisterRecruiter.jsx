@@ -286,13 +286,18 @@ const RegisterRecruteur = () => {
                   label="RC (Registre du Commerce)"
                 />
               </div>
+            </div>
+
+            {/* Location Section - Separate section for better organization */}
+            <div className="form-section">
+              <h3 className="section-title">Localisation de l'entreprise</h3>
 
               {/* Map Component */}
               <div className="map-section">
                 <div className="map-header">
                   <div className="label-content">
                     <MapPin className="input-icon" />
-                    <span className="label-text">Localisation de l'entreprise</span>
+                    <span className="label-text">Sélectionnez l'emplacement sur la carte</span>
                     <span className="required-asterisk">*</span>
                   </div>
                   {validations.address && formData.address && <CheckCircle className="validation-icon success" />}
@@ -313,28 +318,16 @@ const RegisterRecruteur = () => {
                   <MapPin className="helper-icon" />
                   Cliquez sur la carte pour sélectionner l'emplacement de votre entreprise
                 </p>
+              </div>
 
-                <div className="input-group">
-                  <div className="input-container">
-                    <input
-                      type="text"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleChange}
-                      onFocus={() => handleFocus("address")}
-                      onBlur={() => handleBlur("address")}
-                      required
-                      placeholder="Adresse (cliquez sur la carte)"
-                      className={`form-input ${
-                        validations.address && formData.address ? "input-valid" : ""
-                      } ${!validations.address && formData.address ? "input-invalid" : ""}`}
-                    />
-                    <div className="input-border" />
-                  </div>
-                  {!validations.address && formData.address && (
-                    <div className="validation-message error">Adresse requise</div>
-                  )}
-                </div>
+              {/* Address Input - Now properly organized */}
+              <div className="address-input-section">
+                <InputField
+                  name="address"
+                  placeholder="Adresse (sera remplie automatiquement)"
+                  icon={MapPin}
+                  label="Adresse complète"
+                />
               </div>
             </div>
 
@@ -643,7 +636,7 @@ const RegisterRecruteur = () => {
 
         .form-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
           gap: 1.5rem;
         }
 
@@ -716,6 +709,7 @@ const RegisterRecruteur = () => {
           backdrop-filter: blur(10px);
           color: #1a1a1a;
           font-family: inherit;
+          box-sizing: border-box;
         }
 
         .form-input::placeholder {
@@ -787,12 +781,12 @@ const RegisterRecruteur = () => {
           color: #ef4444;
         }
 
-        /* Map styling */
+        /* Map styling - Better organized */
         .map-section {
           display: flex;
           flex-direction: column;
           gap: 1rem;
-          margin-top: 0.5rem;
+          margin-bottom: 1rem;
         }
 
         .map-header {
@@ -825,12 +819,17 @@ const RegisterRecruteur = () => {
           color: #6b7280;
           font-size: 0.85rem;
           margin: 0;
+          padding: 0.5rem 0;
         }
 
         .helper-icon {
           width: 0.9rem;
           height: 0.9rem;
           color: #ff8c00;
+        }
+
+        .address-input-section {
+          margin-top: 0.5rem;
         }
 
         /* Fix for Leaflet controls */
