@@ -4,6 +4,7 @@ import axios from 'axios';
 import '../assets/css/JobDetail.css';
 import Navbar from "./Navbara";
 import Footer from "./Footer";
+
 const JobDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -11,44 +12,74 @@ const JobDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [candidateId, setCandidateId] = useState(null);
+    const [imageLoaded, setImageLoaded] = useState(false);
+    const [imageError, setImageError] = useState(false);
 
     const [experience, setExperience] = useState('');
-  const [domain, setDomain] = useState('');
-  const [motivationLetter, setMotivationLetter] = useState('');
+    const [domain, setDomain] = useState('');
+    const [motivationLetter, setMotivationLetter] = useState('');
 
     useEffect(() => {
         const fetchJobDetails = async () => {
-          try {
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/job_offers/${id}`);
-            const jobData = response.data;
-      
-            // Provide a default logo if none present
-            const jobWithDefaults = {
-              ...jobData,
-              logo: jobData.logo || "https://dummyimage.com/80x80/000/fff.png&text=No+Logo",
-              description: jobData.description || "Description non disponible."
-            };
-      
-            setJob(jobWithDefaults);
-            setLoading(false);
-          } catch (err) {
-            setError("Impossible de charger les détails de l'offre");
-            setLoading(false);
-          }
+            try {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/job_offers/${id}`);
+                const jobData = response.data;
+
+                // Provide a default logo if none present
+                const jobWithDefaults = {
+                    ...jobData,
+                    logo: jobData.logo || "/default-company.png",
+                    description: jobData.description || "Description non disponible."
+                };
+
+                setJob(jobWithDefaults);
+                
+                // Don't set loading to false immediately - wait for image or timeout
+                const timer = setTimeout(() => {
+                    setLoading(false);
+                }, 1000); // Fallback timeout
+
+                return () => clearTimeout(timer);
+                
+            } catch (err) {
+                console.error("Error fetching job details:", err);
+                setError("Impossible de charger les détails de l'offre");
+                setLoading(false);
+            }
         };
-      
+
         fetchJobDetails();
-      }, [id]);
-      
+    }, [id]);
 
     useEffect(() => {
         fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { credentials: 'include' })
-        .then(res => res.json())
+            .then(res => res.json())
             .then(data => {
                 setCandidateId(data.id);
             })
             .catch(err => console.error("Erreur candidate:", err));
     }, []);
+
+    // Handle image loading completion
+    useEffect(() => {
+        if (job && (imageLoaded || imageError)) {
+            // Small delay to ensure smooth transition
+            const timer = setTimeout(() => {
+                setLoading(false);
+            }, 200);
+            
+            return () => clearTimeout(timer);
+        }
+    }, [job, imageLoaded, imageError]);
+
+    const handleImageLoad = () => {
+        setImageLoaded(true);
+    };
+
+    const handleImageError = () => {
+        console.warn("Company logo failed to load");
+        setImageError(true);
+    };
 
     const handleApply = (jobId) => {
         fetch(`${process.env.REACT_APP_API_URL}/api/applications`, {
@@ -61,7 +92,7 @@ const JobDetail = () => {
         .then(data => {
             alert("Votre candidature a été soumise avec succès !");
             navigate('/applications');
-    
+
             // ✅ Notifier le recruteur avec infos supplémentaires
             fetch(`${process.env.REACT_APP_API_URL}/api/notify-recruiter/${jobId}`, {
                 method: 'POST',
@@ -82,7 +113,7 @@ const JobDetail = () => {
             alert("Erreur lors de la soumission de la candidature.");
         });
     };
-    
+
     if (loading) {
         return (
             <div className="job-detail-container">
@@ -109,100 +140,102 @@ const JobDetail = () => {
 
     return (
         <>
-      <Navbar />
-        <div className="job-detail-container">
-            <div className="job-detail-card">
-                <div className="job-headerr">
-                    
-                    <div className="company-info">
-                        <img src={job.logo || '/default-company.png'} alt={job.company} className="company-logo" />
+            <Navbar />
+            <div className="job-detail-container">
+                <div className="job-detail-card">
+                    <div className="job-headerr">
+                        <div className="company-info">
+                            <img 
+                                src={job.logo || '/default-company.png'} 
+                                alt={job.company} 
+                                className="company-logo"
+                                onLoad={handleImageLoad}
+                                onError={handleImageError}
+                                loading="lazy" // Add lazy loading
+                            />
+                        </div>
+                        <h2>{job.company}</h2>
+                        <h1>{job.title}</h1>
                     </div>
-                    <h2>{job.company}</h2>
 
-                    <h1>{job.title}</h1>
-                  
+                    <div className="job-details">
+                        <div className="detail-section">
+                            <h3>Description</h3>
+                            <p className="job-description">{job.description}</p>
 
-
-                </div>
-
-                <div className="job-details">
-                <div className="detail-section">
-  <h3>Description</h3>
-  <p className="job-description">{job.description}</p>
-
-                    <div className="detail-section">
-                        <h3>Compétences requises</h3>
-                        <div className="skills-list">
-                            {Array.isArray(job.skills) ? job.skills.map((skill, index) => (
-                                <span key={index} className="skill-tag">{skill}</span>
-                            )) : <span className="skill-tag">{job.skills}</span>}
+                            <div className="detail-section">
+                                <h3>Compétences requises</h3>
+                                <div className="skills-list">
+                                    {Array.isArray(job.skills) ? job.skills.map((skill, index) => (
+                                        <span key={index} className="skill-tag">{skill}</span>
+                                    )) : <span className="skill-tag">{job.skills}</span>}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="job-info-grid">
+                            <div className="info-item">
+                                <h4>Localisation</h4>
+                                <p>{job.location}</p>
+                            </div>
+                            <div className="info-item">
+                                <h4>Type de contrat</h4>
+                                <p>{job.type}</p>
+                            </div>
+                            <div className="info-item">
+                                <h4>Expérience</h4>
+                                <p>{job.experience}</p>
+                            </div>
+                            <div className="info-item">
+                                <h4>Salaire</h4>
+                                <p>{job.salary}</p>
+                            </div>
                         </div>
                     </div>
+
+                    <div className="application-form">
+                        <h3>Informations supplémentaires</h3>
+
+                        <label>Expérience</label>
+                        <input
+                            type="text"
+                            value={experience}
+                            onChange={(e) => setExperience(e.target.value)}
+                            placeholder="Ex : 3 ans en développement web"
+                            className="form-input"
+                        />
+
+                        <label>Domaine d'activité</label>
+                        <input
+                            type="text"
+                            value={domain}
+                            onChange={(e) => setDomain(e.target.value)}
+                            placeholder="Ex : Développement informatique"
+                            className="form-input"
+                        />
+
+                        <label>Lettre de motivation</label>
+                        <textarea
+                            value={motivationLetter}
+                            onChange={(e) => setMotivationLetter(e.target.value)}
+                            placeholder="Expliquez pourquoi vous postulez..."
+                            rows={5}
+                            className="form-textarea"
+                        />
                     </div>
-                    <div className="job-info-grid">
-                        <div className="info-item">
-                            <h4>Localisation</h4>
-                            <p>{job.location}</p>
-                        </div>
-                        <div className="info-item">
-                            <h4>Type de contrat</h4>
-                            <p>{job.type}</p>
-                        </div>
-                        <div className="info-item">
-                            <h4>Expérience</h4>
-                            <p>{job.experience}</p>
-                        </div>
-                        <div className="info-item">
-                            <h4>Salaire</h4>
-                            <p>{job.salary}</p>
-                        </div>
+
+                    <div className="job-actions">
+                        <button onClick={() => handleApply(job.id)} className="apply-button">
+                            Postuler
+                        </button>
+                        <button onClick={() => navigate(-1)} className="apply-button">
+                            Retour
+                        </button>
                     </div>
-                </div>
-
-                <div className="application-form">
-    <h3>Informations supplémentaires</h3>
-
-    <label>Expérience</label>
-    <input
-        type="text"
-        value={experience}
-        onChange={(e) => setExperience(e.target.value)}
-        placeholder="Ex : 3 ans en développement web"
-        className="form-input"
-    />
-
-    <label>Domaine d'activité</label>
-    <input
-        type="text"
-        value={domain}
-        onChange={(e) => setDomain(e.target.value)}
-        placeholder="Ex : Développement informatique"
-        className="form-input"
-    />
-
-    <label>Lettre de motivation</label>
-    <textarea
-        value={motivationLetter}
-        onChange={(e) => setMotivationLetter(e.target.value)}
-        placeholder="Expliquez pourquoi vous postulez..."
-        rows={5}
-        className="form-textarea"
-    />
-</div>
-
-                <div className="job-actions">
-                    <button onClick={() => handleApply(job.id)} className="apply-button">
-                        Postuler
-                    </button>
-                    <button onClick={() => navigate(-1)} className="apply-button">
-                        Retour
-                    </button>
                 </div>
             </div>
-        </div>
-        <Footer />
+            <Footer />
         </>
     );
 };
 
-export default JobDetail; 
+export default JobDetail;
