@@ -180,17 +180,19 @@ const getPageStyles = (isMobile, isTablet) => {
       display: "flex",
       gap: "30px",
       padding: "30px 60px",
-      alignItems: "flex-start",
+      alignItems: "stretch", // *** Key change: Stretch items (columns) to equal height ***
+      flexWrap: "wrap", // Allow columns to wrap on smaller screens
     },
     leftColumn: {
-      flex: "1",
+      flex: "1 1 450px", // *** Adjusted flex-basis for width control ***
       display: "flex",
       flexDirection: "column",
       gap: "30px",
-      minWidth: "300px",
+      // Remove minWidth/maxWidth here, flex-basis controls it.
+      // If you want fixed ratio, use `flex: 1` and `flex: 1` on rightColumn
     },
     rightColumn: {
-      flex: "2",
+      flex: "1 1 450px", // *** Adjusted flex-basis to match leftColumn's approximate width ***
       display: "flex",
       flexDirection: "column",
       gap: "30px",
@@ -204,6 +206,10 @@ const getPageStyles = (isMobile, isTablet) => {
       boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
       border: "1px solid #2a2a2a",
       transition: "all 0.3s ease",
+      display: "flex", // Enable flexbox for card content
+      flexDirection: "column", // Stack content vertically within the card
+      flexGrow: 1, // **Crucial:** Allows cards within a column to grow and fill available height
+      height: "100%", // Ensures the card itself takes full height of its flex container
     },
     cardHeader: {
       display: "flex",
@@ -212,6 +218,7 @@ const getPageStyles = (isMobile, isTablet) => {
       marginBottom: "20px",
       paddingBottom: "15px",
       borderBottom: "1px solid #333",
+      // The width of the header will naturally match the width of its parent (.card)
     },
     cardTitle: {
       fontSize: "1.8rem",
@@ -243,8 +250,9 @@ const getPageStyles = (isMobile, isTablet) => {
       color: "#ccc",
       fontSize: "1rem",
       lineHeight: "1.6",
+      flexGrow: 1, // **Crucial:** Allows card content to grow and push footer/bottom elements down
+      overflow: "hidden", // Helps manage overflow if content is too long for fixed height
     },
-
     // Contact Info
     contactItem: {
       display: "flex",
