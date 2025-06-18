@@ -76,128 +76,173 @@ import CandidateApplicationChat from './components/Candidat/CandidateApplication
 import JobDetail from './components/JobDetail';
 import CVsExamples from './components/CVsExamples';
 import SavedJobOffers from './components/Candidat/SavedJobOffers';
-
+// Create a wrapper to monitor location changes and handle loading
+// Improved AppRoutes component with better loading logic
 const AppRoutes = () => {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
+    
+    // Simple timeout-based approach with resource checks
     const handlePageLoad = async () => {
       try {
-        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        // Wait for React to finish rendering
+        await new Promise(resolve => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(resolve);
+          });
+        });
 
+        // Check for critical images only (not all images)
         const criticalImages = document.querySelectorAll('img[data-critical], .hero img, .logo img');
         const imagePromises = Array.from(criticalImages).map(img => {
           if (img.complete) return Promise.resolve();
           return new Promise(resolve => {
-            const timeout = setTimeout(() => resolve(), 2000);
-            img.onload = img.onerror = () => {
+            const timeout = setTimeout(() => resolve(), 2000); // 2s timeout per image
+            img.onload = () => {
               clearTimeout(timeout);
               resolve();
+            };
+            img.onerror = () => {
+              clearTimeout(timeout);
+              resolve(); // Continue even if image fails
             };
           });
         });
 
+        // Wait for critical images with overall timeout
         await Promise.race([
           Promise.all(imagePromises),
-          new Promise(resolve => setTimeout(resolve, 3000))
+          new Promise(resolve => setTimeout(resolve, 3000)) // Max 3s wait
         ]);
 
-        setTimeout(() => setLoading(false), 200);
+        // Small delay for smooth transition
+        setTimeout(() => {
+          setLoading(false);
+        }, 200);
+
       } catch (error) {
         console.error('Loading error:', error);
-        setTimeout(() => setLoading(false), 500);
+        // Always stop loading even if there's an error
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
       }
     };
 
     handlePageLoad();
   }, [location.pathname]);
 
+  // Fallback: Force stop loading after maximum time
   useEffect(() => {
     if (!loading) return;
+    
     const maxLoadingTime = setTimeout(() => {
       console.warn('Force stopping loading after 5 seconds');
       setLoading(false);
-    }, 5000);
+    }, 5000); // Maximum 5 seconds loading
+
     return () => clearTimeout(maxLoadingTime);
   }, [loading]);
-
   return (
     <>
       {loading && <Loading />}
-      <SEO title="Casajobs" description="Default description for my app" />
-      <ScrollToTop />
-      <Routes>
-        {/* All Routes Here */}
-        <Route path="/" element={<StageRecherche />} />
-        <Route path="/ContactUs" element={<ContactUs />} />
-        <Route path="/verify-otp" element={<VerifyOtp />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/candidate/request-reset" element={<RequestResetCandidat />} />
-        <Route path="/candidate/verify-otp" element={<VerifyOtpCandidat />} />
-        <Route path="/candidate/reset-password" element={<ResetPasswordCandidat />} />
-        <Route path="/admin/request-reset" element={<RequestResetAdmin />} />
-        <Route path="/admin/verify-otp" element={<VerifyOtpAdmin />} />
-        <Route path="/admin/reset-password" element={<ResetPasswordAdmin />} />
-        <Route path="/about-us" element={<AboutUs />} />
-        <Route path="/recruiter/request-reset" element={<RequestResetRecruteur />} />
-        <Route path="/Offres" element={<Offres />} />
-        <Route path="/conseil/:id" element={<ConseilDetail />} />
-        <Route path="/ApplicationsByRecruiter" element={<ApplicationsByRecruiter />} />
-        <Route path="/DashboardHome" element={<DashboardHome />} />
-        <Route path="/DashboardHomee" element={<DashboardHomee />} />
-        <Route path="/DashboardCharts" element={<DashboardCharts />} />
-        <Route path="/RecruiterApplications" element={<RecruiterApplications />} />
-        <Route path="/Dashboard" element={<Dashboard />} />
-        <Route path="/JobCards" element={<JobCards />} />
-        <Route path="/RecruteurPage" element={<RecruteurPage />} />
-        <Route path="/OffresRecruteur" element={<OffresRecruteur />} />
-        <Route path="/CandidatePagefrom" element={<CandidatePagefrom />} />
-        <Route path="/RecruteurAjout" element={<RecruteurAjout />} />
-        <Route path="/ConseilsPage" element={<ConseilsPage />} />
-        <Route path="/dashboard/:recruiterId" element={<Dash />} />
-        <Route path="/edit-profile" element={<EditProfile />} />
-        <Route path="/ChoixRole" element={<ChoixRole />} />
-        <Route path="/ChoixRole2" element={<ChoixRole2 />} />
-        <Route path="/login/candidat" element={<LoginCandidat />} />
-        <Route path="/LoginRecruteur" element={<LoginRecruteur />} />
-        <Route path="/register/candidat" element={<RegisterCandidate />} />
-        <Route path="/register/recruteur" element={<RegisterRecruiter />} />
-        <Route path="/candidate-profile" element={<CandidateProfile />} />
-        <Route path="/RecruiterProfile" element={<RecruiterProfile />} />
-        <Route path="/JobCardss" element={<JobCardss />} />
-        <Route path="/applications" element={<CandidateApplications />} />
-        <Route path="/RecruiterJobOffers" element={<RecruiterJobOffers />} />
-        <Route path="/JobOfferForm" element={<JobOfferForm />} />
-        <Route path="/EditRecruiterProfile" element={<EditRecruiterProfile />} />
-        <Route path="/edit-offer/:offerId" element={<EditJobOfferForm />} />
-        <Route path="/d512e7c9..." element={<AdminLogin />} />
-        <Route path="/AdminDashboard" element={<AdminDashboard />} />
-        <Route path="/ManageCandidates" element={<ManageCandidates />} />
-        <Route path="/ManageRecruiters" element={<ManageRecruiters />} />
-        <Route path="/ManageJobs" element={<ManageJobs />} />
-        <Route path="/edit-recruiter/:id" element={<EditRecruiter />} />
-        <Route path="/edit-candidate/:id" element={<EditCandidate />} />
-        <Route path="/edit-job/:id" element={<EditJobOffer />} />
-        <Route path="/applicationss" element={<Applications />} />
-        <Route path="/Dashboard_admin" element={<Dashboard_admin />} />
-        <Route path="/Candidatesadmin" element={<Candidatesadmin />} />
-        <Route path="/recruiter/candidate/:id" element={<CandidateProfileView />} />
-        <Route path="/recruiter/candidate-search" element={<CandidateSearchFilter />} />
-        <Route path="/recruiter-profile" element={<RecruiterProfiless />} />
-        <Route path="/chat" element={<Chat />} />
-        <Route path="/ApplicationChat" element={<ApplicationChat />} />
-        <Route path="/CandidateApplicationChat" element={<CandidateApplicationChat />} />
-        <Route path="/GlobalSocket" element={<GlobalSocket />} />
-        <Route path="/offres/:id" element={<JobDetail />} />
-        <Route path="/CVsExamples" element={<CVsExamples />} />
-        <Route path="/SavedJobOffers" element={<SavedJobOffers />} />
-        <Route path="/job-offer-statistics" element={<JobOfferStatistics />} />
-        <Route path="/recruiter/job-offers/:offerId/applications" element={<JobOfferApplications />} />
-        <Route path="/recruiters/:id" element={<RecruiterPublicProfile />} />
-        <Route path="/Subscribers" element={<RecruiterNewsletterSubscribers />} />
-      </Routes>
+      <SEO 
+        title="Casajobs" 
+        description="Default description for my app"
+      />
+      <ScrollToTop />  {/* ✅ good placement */}
+      <Suspense fallback={<Loading message="Chargement de la page..." />}>
+        <Routes>
+          <Route path="/ContactUs" element={<ContactUs />} />
+          <Route path="/verify-otp" element={<VerifyOtp />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/candidate/request-reset" element={<RequestResetCandidat />} />
+          <Route path="/candidate/verify-otp" element={<VerifyOtpCandidat />} />
+          <Route path="/candidate/reset-password" element={<ResetPasswordCandidat />} />
+          <Route path="/admin/request-reset" element={<RequestResetAdmin />} />
+          <Route path="/admin/verify-otp" element={<VerifyOtpAdmin />} />
+          <Route path="/admin/reset-password" element={<ResetPasswordAdmin />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/recruiter/request-reset" element={<RequestResetRecruteur />} />
+
+          {/* Pages principales */}
+          <Route path="/" element={<StageRecherche />} />
+          <Route path="/AboutUs" element={<AboutUs />} />
+          <Route path="/Offres" element={<Offres />} />
+          <Route path="/conseil/:id" element={<ConseilDetail />} />
+          <Route path="/ApplicationsByRecruiter" element={<ApplicationsByRecruiter />} />
+          <Route path="/DashboardHome" element={<DashboardHome />} />
+          <Route path="/DashboardHomee" element={<DashboardHomee />} />
+          <Route path="/DashboardCharts" element={<DashboardCharts />} />
+          <Route path="/RecruiterApplications" element={<RecruiterApplications />} />
+          <Route path="/Dashboard" element={<Dashboard />} />
+          <Route path="/JobCards" element={<JobCards />} />
+          <Route path="/RecruteurPage" element={<RecruteurPage />} />
+          <Route path="/OffresRecruteur" element={<OffresRecruteur />} />
+          <Route path="/CandidatePagefrom" element={<CandidatePagefrom />} />
+          <Route path="/CandidatePagefrom" element={<CandidatePagefrom />} />
+          <Route path="/RecruteurAjout" element={<RecruteurAjout />} />
+          <Route path="/ConseilsPage" element={<ConseilsPage />} />
+          <Route path="/dashboard/:recruiterId" element={<Dash />} />
+
+          {/* Page Choix du rôle */}
+          <Route path="/edit-profile" element={<EditProfile />} />
+          {/* Page Choix du rôle */}
+          <Route path="/ChoixRole" element={<ChoixRole />} />
+          <Route path="/ChoixRole2" element={<ChoixRole2 />} />
+          
+          {/* Pages de connexion */}
+          <Route path="/login/candidat" element={<LoginCandidat />} />
+          <Route path="/LoginRecruteur" element={<LoginRecruteur />} />
+          
+          {/* Pages d'inscription */}
+          <Route path="/register/candidat" element={<RegisterCandidate />} />
+          <Route path="/register/recruteur" element={<RegisterRecruiter />} />
+          <Route path="/CandidatePagefrom" element={<CandidatePagefrom />} />
+          <Route path="/candidate-profile" element={<CandidateProfile />} />
+          <Route path="/RecruiterProfile" element={<RecruiterProfile />} />
+          <Route path="/JobCardss" element={<JobCardss />} />
+          <Route path="/applications" element={<CandidateApplications />} />
+
+          <Route path="/RecruiterJobOffers" element={<RecruiterJobOffers />} />
+          <Route path="/JobOfferForm" element={<JobOfferForm />} />
+          <Route path="/EditRecruiterProfile" element={<EditRecruiterProfile/>} />
+          <Route path="/edit-offer/:offerId" element={<EditJobOfferForm />} />
+          <Route path="/d512e7c9-16fa-4151-95d9-3cacdeed3d9c-4b2f-8e1a-7c6d-admin9f0e-2a3b-4c5d-6e7f-1234-567log8-90ab-cdef-0123-in4567-89ab" element={<AdminLogin />} />
+          <Route path="/AdminDashboard" element={<AdminDashboard />} />
+          <Route path="/ManageCandidates" element={<ManageCandidates />} />
+          <Route path="/ManageRecruiters" element={<ManageRecruiters />} />
+          <Route path="/ManageJobs" element={<ManageJobs />} />
+          <Route path="/edit-recruiter/:id" element={<EditRecruiter />} />
+          <Route path="/edit-candidate/:id" element={<EditCandidate />} />
+          <Route path="/edit-job/:id" element={<EditJobOffer />} />
+          <Route path="/applicationss" element={<Applications />} />
+          <Route path="/Dashboard_admin" element={<Dashboard_admin />} />
+          <Route path="/Candidatesadmin" element={<Candidatesadmin />} />
+
+          <Route path="/recruiter/candidate/:id" element={<CandidateProfileView />} />
+          <Route path="/recruiter/candidate-search" component={CandidateSearchFilter} />
+
+          <Route path="/recruiter-profile" element={<RecruiterProfiless />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/ApplicationChat" element={<ApplicationChat />} />
+          <Route path="/CandidateApplicationChat" element={<CandidateApplicationChat />} />
+          <Route path="/GlobalSocket" element={<GlobalSocket />} />
+          <Route path="/offres/:id" element={<JobDetail />} />
+          <Route path="/CVsExamples" element={<CVsExamples />} />
+          <Route path="/SavedJobOffers" element={<SavedJobOffers />} />
+
+          <Route path="/job-offer-statistics" element={<JobOfferStatistics />} />
+          <Route path="/recruiter/job-offers/:offerId/applications" element={<JobOfferApplications />} />
+
+          <Route path="/recruiters/:id" element={<RecruiterPublicProfile />} />
+
+          <Route path="/Subscribers" element={<RecruiterNewsletterSubscribers />} />
+        </Routes>
+      </Suspense>
       <ChatBot />
     </>
   );
@@ -211,10 +256,12 @@ function App() {
       });
     }
   }, []);
-
+  
   useEffect(() => {
-    socket.connect();
+    socket.connect(); // 🔌 Connect globally
+
     socket.on("receive_message", (msg) => {
+      // ✅ Only show notification if the message is not sent by the current user
       const currentUserId = sessionStorage.getItem('user_id');
       const currentUserType = sessionStorage.getItem('user_type');
 
