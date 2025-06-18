@@ -826,23 +826,7 @@ const JobSearchAndOffers = () => {
 
   return (
     <>
-      <Navbar />
       <div className="job-search-container">
-        {/* Modern Header Section */}
-        <div className="page-header">
-          <div className="header-content">
-            <h1 className="page-title">Découvrez votre prochain emploi</h1>
-            <p className="page-subtitle">
-              Explorez des milliers d'opportunités et trouvez le poste qui vous correspond
-            </p>
-            <div className="stats-bar">
-              <span className="stat-item">
-                {filteredJobs.length} offre{filteredJobs.length !== 1 ? 's' : ''} disponible{filteredJobs.length !== 1 ? 's' : ''}
-              </span>
-            </div>
-          </div>
-        </div>
-
         {/* Modern Search Section */}
         <div className="search-section">
           <div className="search-container">
@@ -924,7 +908,7 @@ const JobSearchAndOffers = () => {
                 </div>
               </div>
 
-              <button onClick={triggerSearch} className="search-button"> {/* Use triggerSearch here */}
+              <button onClick={triggerSearch} className="search-button">
                 <FaSearch />
                 Rechercher
               </button>
@@ -932,7 +916,7 @@ const JobSearchAndOffers = () => {
           </div>
         </div>
 
-        {/* Results Section (from previous snippet) */}
+        {/* Results Section */}
         <div className="results-section">
           {filteredJobs.length === 0 ? (
             <div className="empty-state">
@@ -951,7 +935,7 @@ const JobSearchAndOffers = () => {
                     job={job}
                     onApply={handleApply}
                     isApplied={appliedJobs.includes(job.id)}
-                    onSave={() => handleSaveJob(job.id, savedJobs.includes(job.id))} // Pass currentlySaved status
+                    onSave={() => handleSaveJob(job.id, savedJobs.includes(job.id))}
                     isSaved={savedJobs.includes(job.id)}
                   />
                 ))}
@@ -1021,7 +1005,7 @@ const JobSearchAndOffers = () => {
           background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
         }
 
-        .page-header {
+        .page-header { /* Removed from JSX, but keeping styles here in case other components use it or for future reference */
           background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
           color: white;
           padding: 80px 0 60px;
@@ -1085,8 +1069,8 @@ const JobSearchAndOffers = () => {
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
           position: relative;
           z-index: 10;
-          margin-top: -30px;
-          border-radius: 20px 20px 0 0;
+          margin-top: 0; /* Changed from -30px to 0 as there's no header above it */
+          border-radius: 20px; /* Adjusted radius for top corners */
         }
 
         .search-container {
