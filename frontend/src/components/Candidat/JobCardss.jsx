@@ -67,7 +67,7 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
                   key={index} 
                   className="skill-tag"
                   style={{
-                    backgroundColor: '#f0f0f0',
+          backgroundColor: '#ffffff',
                     color: '#333',
                     padding: '4px 8px',
                     borderRadius: '12px',
@@ -1183,6 +1183,7 @@ const JobSearchAndOffers = () => {
           text-transform: uppercase;
           letter-spacing: 0.5px;
           box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+          width: 200px;
         }
 
         .search-button:hover {
