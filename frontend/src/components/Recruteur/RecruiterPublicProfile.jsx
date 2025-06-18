@@ -41,24 +41,14 @@ const getPageStyles = (isMobile, isTablet) => {
       fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
       border: "1px solid #333",
     },
-    // Header Section - Fixed and improved
+    // Header Section
     headerSection: {
-      height: "400px",
+      height: "320px",
       backgroundSize: "cover",
       backgroundPosition: "center",
-      backgroundRepeat: "no-repeat",
       position: "relative",
       display: "flex",
       alignItems: "flex-end",
-      background: `url(${candidatImage}) center/cover no-repeat, linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #ff6b35 100%)`, // Added candidatImage back
-    },
-    headerOverlay: {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.4) 100%)",
     },
     headerContent: {
       width: "100%",
@@ -66,12 +56,10 @@ const getPageStyles = (isMobile, isTablet) => {
       display: "flex",
       alignItems: "center",
       gap: "40px",
-      position: "relative",
-      zIndex: 2,
+      background: "linear-gradient(to top, rgba(0,0,0,0.95), transparent)",
     },
     profileImageContainer: {
       position: "relative",
-      flexShrink: 0,
     },
     profileImage: {
       width: "180px",
@@ -89,7 +77,6 @@ const getPageStyles = (isMobile, isTablet) => {
       backgroundColor: "#2a2a2a",
       position: "relative",
       overflow: "hidden",
-      flexShrink: 0,
     },
     statusBadge: {
       position: "absolute",
@@ -118,7 +105,6 @@ const getPageStyles = (isMobile, isTablet) => {
     headerInfo: {
       color: "white",
       flex: 1,
-      minWidth: 0, // Prevent flex item from overflowing
     },
     companyName: {
       fontSize: "3.5rem",
@@ -129,8 +115,6 @@ const getPageStyles = (isMobile, isTablet) => {
       WebkitBackgroundClip: "text",
       WebkitTextFillColor: "transparent",
       backgroundClip: "text",
-      wordBreak: "break-word",
-      lineHeight: "1.1",
     },
     companyNameSkeleton: {
       height: "50px",
@@ -146,7 +130,6 @@ const getPageStyles = (isMobile, isTablet) => {
       fontWeight: "400",
       margin: "0 0 25px 0",
       color: "#ccc",
-      wordBreak: "break-word",
     },
     companyTitleSkeleton: {
       height: "24px",
@@ -213,7 +196,7 @@ const getPageStyles = (isMobile, isTablet) => {
       gap: "30px",
     },
 
-    // Card Styles - Improved for better coherence
+    // Card Styles
     card: {
       backgroundColor: "#1f1f1f",
       borderRadius: "15px",
@@ -221,18 +204,6 @@ const getPageStyles = (isMobile, isTablet) => {
       boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
       border: "1px solid #2a2a2a",
       transition: "all 0.3s ease",
-      height: "fit-content",
-    },
-    cardEqualHeight: {
-      backgroundColor: "#1f1f1f",
-      borderRadius: "15px",
-      padding: "25px",
-      boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
-      border: "1px solid #2a2a2a",
-      transition: "all 0.3s ease",
-      display: "flex",
-      flexDirection: "column",
-      minHeight: "350px", // Ensure equal height for left column cards
     },
     cardHeader: {
       display: "flex",
@@ -241,8 +212,6 @@ const getPageStyles = (isMobile, isTablet) => {
       marginBottom: "20px",
       paddingBottom: "15px",
       borderBottom: "1px solid #333",
-      cursor: "pointer",
-      transition: "all 0.3s ease",
     },
     cardTitle: {
       fontSize: "1.8rem",
@@ -274,42 +243,29 @@ const getPageStyles = (isMobile, isTablet) => {
       color: "#ccc",
       fontSize: "1rem",
       lineHeight: "1.6",
-      flex: 1,
     },
 
     // Contact Info
     contactItem: {
       display: "flex",
-      alignItems: "flex-start",
-      marginBottom: "20px",
+      alignItems: "center",
+      marginBottom: "15px",
       gap: "15px",
-      padding: "15px 0",
-      borderBottom: "1px solid #333",
-    },
-    contactIcon: {
-      fontSize: "1.2rem",
-      color: "#ff6b35",
-      marginTop: "2px",
-      minWidth: "20px",
     },
     contactInfo: {
       display: "flex",
       flexDirection: "column",
-      flex: 1,
     },
     contactLabel: {
       fontSize: "0.9rem",
       color: "#888",
       fontWeight: "500",
-      marginBottom: "5px",
-      textTransform: "uppercase",
-      letterSpacing: "0.5px",
+      marginBottom: "3px",
     },
     contactValue: {
       fontSize: "1.05rem",
       color: "#eee",
       fontWeight: "600",
-      wordBreak: "break-word",
     },
     contactLabelSkeleton: {
       height: "18px",
@@ -329,7 +285,7 @@ const getPageStyles = (isMobile, isTablet) => {
       overflow: "hidden",
     },
 
-    // Statistics - Improved layout
+    // Statistics
     statsGrid: {
       display: "grid",
       gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
@@ -338,22 +294,16 @@ const getPageStyles = (isMobile, isTablet) => {
     },
     statItem: {
       backgroundColor: "#2a2a2a",
-      padding: "25px 15px",
-      borderRadius: "12px",
+      padding: "20px 15px",
+      borderRadius: "10px",
       border: "1px solid #333",
-      transition: "all 0.3s ease",
-      position: "relative",
-      overflow: "hidden",
+      transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
     },
     statNumber: {
       fontSize: "2.5rem",
       fontWeight: "800",
       color: "#fff",
-      marginBottom: "8px",
-      background: "linear-gradient(135deg, #fff 0%, #ff6b35 100%)",
-      WebkitBackgroundClip: "text",
-      WebkitTextFillColor: "transparent",
-      backgroundClip: "text",
+      marginBottom: "5px",
     },
     statNumberSkeleton: {
       height: "40px",
@@ -369,7 +319,6 @@ const getPageStyles = (isMobile, isTablet) => {
       color: "#aaa",
       fontWeight: "500",
       textTransform: "uppercase",
-      letterSpacing: "0.5px",
     },
     statLabelSkeleton: {
       height: "18px",
@@ -400,7 +349,7 @@ const getPageStyles = (isMobile, isTablet) => {
     // Job Offers Section
     jobsGrid: {
       display: "grid",
-      gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+      gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
       gap: "25px",
       marginTop: "15px",
     },
@@ -412,9 +361,7 @@ const getPageStyles = (isMobile, isTablet) => {
       boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
       display: "flex",
       flexDirection: "column",
-      transition: "all 0.3s ease",
-      position: "relative",
-      overflow: "hidden",
+      transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
     },
     jobGridHeader: {
       display: "flex",
@@ -422,7 +369,7 @@ const getPageStyles = (isMobile, isTablet) => {
       alignItems: "flex-start",
       marginBottom: "15px",
       borderBottom: "1px solid #444",
-      paddingBottom: "15px",
+      paddingBottom: "10px",
     },
     jobGridTitle: {
       fontSize: "1.4rem",
@@ -430,16 +377,11 @@ const getPageStyles = (isMobile, isTablet) => {
       color: "#ff6b35",
       margin: "0",
       lineHeight: "1.3",
-      flex: 1,
-      marginRight: "15px",
     },
     jobGridDate: {
       fontSize: "0.85rem",
       color: "#888",
       whiteSpace: "nowrap",
-      backgroundColor: "#333",
-      padding: "4px 8px",
-      borderRadius: "6px",
     },
     jobGridTitleSkeleton: {
       height: "28px",
@@ -458,22 +400,20 @@ const getPageStyles = (isMobile, isTablet) => {
       overflow: "hidden",
     },
     jobGridDetails: {
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
-      gap: "12px",
+      display: "flex",
+      flexWrap: "wrap",
+      gap: "10px 20px",
       marginBottom: "15px",
     },
     jobGridDetailItem: {
       display: "flex",
-      flexDirection: "column",
-      gap: "4px",
+      alignItems: "center",
+      gap: "5px",
     },
     jobGridDetailLabel: {
-      fontSize: "0.8rem",
+      fontSize: "0.9rem",
       color: "#aaa",
       fontWeight: "500",
-      textTransform: "uppercase",
-      letterSpacing: "0.5px",
     },
     jobGridDetailValue: {
       fontSize: "0.95rem",
@@ -492,9 +432,8 @@ const getPageStyles = (isMobile, isTablet) => {
       fontSize: "0.95rem",
       color: "#bbb",
       lineHeight: "1.6",
-      marginTop: "auto",
-      paddingTop: "15px",
-      borderTop: "1px solid #333",
+      marginBottom: "15px",
+      flexGrow: 1, // Allow description to take available space
     },
     jobGridDescriptionSkeleton: {
       height: "18px",
@@ -507,22 +446,17 @@ const getPageStyles = (isMobile, isTablet) => {
     },
     emptyState: {
       textAlign: "center",
-      padding: "60px 20px",
+      padding: "40px 20px",
       color: "#888",
       fontSize: "1.1rem",
       backgroundColor: "#2a2a2a",
-      borderRadius: "12px",
+      borderRadius: "10px",
       border: "1px dashed #444",
       marginTop: "20px",
     },
     emptyText: {
       margin: 0,
       color: "#aaa",
-    },
-    emptyIcon: {
-      fontSize: "3rem",
-      color: "#ff6b35",
-      marginBottom: "15px",
     },
 
     // Newsletter Section
@@ -711,134 +645,19 @@ const getPageStyles = (isMobile, isTablet) => {
   };
 
   // Apply tablet specific styles
-  if (isTablet && !isMobile) {
-    Object.assign(baseStyles.container, {
-      padding: '15px 8px',
-    });
-    Object.assign(baseStyles.profileCard, {
-      borderRadius: '15px',
-      margin: '0 8px',
-    });
-    Object.assign(baseStyles.headerSection, {
-      height: '320px',
-    });
-    Object.assign(baseStyles.headerContent, {
-      padding: '40px 25px',
-      flexDirection: 'row',
-      alignItems: 'center',
-      textAlign: 'left',
-      gap: '30px',
-    });
-    Object.assign(baseStyles.profileImage, {
-      width: '140px',
-      height: '140px',
-    });
-    Object.assign(baseStyles.profileImageSkeleton, {
-      width: '140px',
-      height: '140px',
-    });
-    Object.assign(baseStyles.statusBadge, {
-      bottom: '12px',
-      right: '12px',
-      padding: '5px 10px',
-      fontSize: '0.7rem',
-    });
-    Object.assign(baseStyles.statusBadgeSkeleton, {
-      bottom: '12px',
-      right: '12px',
-      width: '55px',
-      height: '24px',
-    });
-    Object.assign(baseStyles.companyName, {
-      fontSize: '2.8rem',
-    });
-    Object.assign(baseStyles.companyNameSkeleton, {
-      width: '280px',
-      height: '45px',
-    });
-    Object.assign(baseStyles.companyTitle, {
-      fontSize: '1.3rem',
-    });
-    Object.assign(baseStyles.companyTitleSkeleton, {
-      width: '180px',
-      height: '22px',
-    });
-    Object.assign(baseStyles.mainContent, {
-      flexDirection: 'column',
-      padding: '25px 25px',
-      gap: '25px',
-    });
-    Object.assign(baseStyles.leftColumn, {
-      minWidth: 'unset',
-      width: '100%',
-      flexDirection: 'row',
-      gap: '20px',
-    });
-    Object.assign(baseStyles.rightColumn, {
-      width: '100%',
-    });
-    Object.assign(baseStyles.card, {
-      padding: '22px',
-    });
-    Object.assign(baseStyles.cardEqualHeight, {
-      minHeight: '300px',
-      flex: 1,
-    });
-    Object.assign(baseStyles.cardTitle, {
-      fontSize: '1.6rem',
-    });
-    Object.assign(baseStyles.cardTitleSkeleton, {
-      width: '180px',
-      height: '28px',
-    });
-    Object.assign(baseStyles.statsGrid, {
-      gridTemplateColumns: "repeat(3, 1fr)",
-      gap: '15px',
-    });
-    Object.assign(baseStyles.statItem, {
-      padding: '20px 12px',
-    });
-    Object.assign(baseStyles.statNumber, {
-      fontSize: '2.2rem',
-    });
-    Object.assign(baseStyles.jobsGrid, {
-      gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-    });
-    Object.assign(baseStyles.jobGridCard, {
-      padding: '22px',
-    });
-    Object.assign(baseStyles.jobGridTitle, {
-      fontSize: '1.3rem',
-    });
-    Object.assign(baseStyles.newsletterSection, {
-      padding: '50px 20px',
-    });
-    Object.assign(baseStyles.newsletterTitle, {
-      fontSize: '2.5rem',
-    });
-    Object.assign(baseStyles.newsletterTitleSkeleton, {
-      width: '350px',
-      height: '35px',
-    });
-    Object.assign(baseStyles.newsletterForm, {
-      maxWidth: '400px',
-    });
-  }
-
-  // Apply mobile specific styles
-  if (isMobile) {
+  if (isTablet) {
     Object.assign(baseStyles.container, {
       padding: '10px 5px',
     });
     Object.assign(baseStyles.profileCard, {
-      borderRadius: '12px',
+      borderRadius: '15px',
       margin: '0 5px',
     });
     Object.assign(baseStyles.headerSection, {
-      height: '280px',
+      height: '250px',
     });
     Object.assign(baseStyles.headerContent, {
-      padding: '25px 15px',
+      padding: '30px 20px',
       flexDirection: 'column',
       alignItems: 'center',
       textAlign: 'center',
@@ -856,38 +675,149 @@ const getPageStyles = (isMobile, isTablet) => {
       bottom: '10px',
       right: '10px',
       padding: '4px 8px',
-      fontSize: '0.65rem',
+      fontSize: '0.7rem',
     });
     Object.assign(baseStyles.statusBadgeSkeleton, {
       bottom: '10px',
       right: '10px',
-      width: '45px',
-      height: '20px',
+      width: '50px',
+      height: '22px',
     });
     Object.assign(baseStyles.companyName, {
-      fontSize: '2rem',
+      fontSize: '2.2rem',
     });
     Object.assign(baseStyles.companyNameSkeleton, {
-      width: '220px',
+      width: '250px',
       height: '40px',
       margin: '0 auto 12px auto',
     });
     Object.assign(baseStyles.companyTitle, {
-      fontSize: '1.1rem',
+      fontSize: '1.2rem',
     });
     Object.assign(baseStyles.companyTitleSkeleton, {
-      width: '140px',
+      width: '150px',
       height: '20px',
       margin: '0 auto 25px auto',
     });
     Object.assign(baseStyles.headerDivider, {
-      width: '80px',
-      height: '3px',
       margin: '0 auto 20px auto',
     });
     Object.assign(baseStyles.headerDomainsContainer, {
       justifyContent: 'center',
       gap: '8px',
+    });
+    Object.assign(baseStyles.mainContent, {
+      flexDirection: 'column',
+      padding: '20px 20px',
+      gap: '20px',
+    });
+    Object.assign(baseStyles.leftColumn, {
+      minWidth: 'unset',
+      width: '100%',
+    });
+    Object.assign(baseStyles.rightColumn, {
+      width: '100%',
+    });
+    Object.assign(baseStyles.card, {
+      padding: '20px',
+    });
+    Object.assign(baseStyles.cardTitle, {
+      fontSize: '1.6rem',
+    });
+    Object.assign(baseStyles.cardTitleSkeleton, {
+      width: '180px',
+      height: '28px',
+    });
+    Object.assign(baseStyles.statsGrid, {
+      gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))",
+      gap: "15px",
+    });
+    Object.assign(baseStyles.statItem, {
+      padding: '15px 10px',
+    });
+    Object.assign(baseStyles.statNumber, {
+      fontSize: '2rem',
+    });
+    Object.assign(baseStyles.jobGridCard, {
+      padding: '20px',
+    });
+    Object.assign(baseStyles.jobGridTitle, {
+      fontSize: '1.2rem',
+    });
+    Object.assign(baseStyles.newsletterSection, {
+      padding: '40px 15px',
+    });
+    Object.assign(baseStyles.newsletterTitle, {
+      fontSize: '2.5rem',
+    });
+    Object.assign(baseStyles.newsletterTitleSkeleton, {
+      width: '350px',
+      height: '35px',
+    });
+    Object.assign(baseStyles.newsletterTextSkeleton, {
+      width: 'auto',
+    });
+    Object.assign(baseStyles.newsletterForm, {
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '10px',
+      maxWidth: '350px',
+    });
+    Object.assign(baseStyles.newsletterInput, {
+      width: '100%',
+    });
+    Object.assign(baseStyles.newsletterButton, {
+      width: '100%',
+      padding: '12px 25px',
+    });
+  }
+
+  // Apply mobile specific styles
+  if (isMobile) {
+    Object.assign(baseStyles.headerSection, {
+      height: '220px',
+    });
+    Object.assign(baseStyles.headerContent, {
+      padding: '20px 15px',
+      gap: '15px',
+    });
+    Object.assign(baseStyles.profileImage, {
+      width: '100px',
+      height: '100px',
+    });
+    Object.assign(baseStyles.profileImageSkeleton, {
+      width: '100px',
+      height: '100px',
+    });
+    Object.assign(baseStyles.statusBadge, {
+      bottom: '8px',
+      right: '8px',
+      padding: '3px 6px',
+      fontSize: '0.65rem',
+    });
+    Object.assign(baseStyles.statusBadgeSkeleton, {
+      bottom: '8px',
+      right: '8px',
+      width: '40px',
+      height: '18px',
+    });
+    Object.assign(baseStyles.companyName, {
+      fontSize: '1.8rem',
+    });
+    Object.assign(baseStyles.companyNameSkeleton, {
+      width: '200px',
+      height: '35px',
+    });
+    Object.assign(baseStyles.companyTitle, {
+      fontSize: '1rem',
+    });
+    Object.assign(baseStyles.companyTitleSkeleton, {
+      width: '120px',
+      height: '18px',
+    });
+    Object.assign(baseStyles.headerDivider, {
+      width: '80px',
+      height: '3px',
     });
     Object.assign(baseStyles.headerDomainTag, {
       padding: '6px 12px',
@@ -898,25 +828,12 @@ const getPageStyles = (isMobile, isTablet) => {
       height: '32px',
     });
     Object.assign(baseStyles.mainContent, {
-      flexDirection: 'column',
-      padding: '20px 15px',
-      gap: '20px',
-    });
-    Object.assign(baseStyles.leftColumn, {
-      minWidth: 'unset',
-      width: '100%',
-      flexDirection: 'column',
-      gap: '20px',
-    });
-    Object.assign(baseStyles.rightColumn, {
-      width: '100%',
+      padding: '15px 15px',
+      gap: '15px',
     });
     Object.assign(baseStyles.card, {
-      padding: '18px',
+      padding: '15px',
       borderRadius: '12px',
-    });
-    Object.assign(baseStyles.cardEqualHeight, {
-      minHeight: 'unset', // Allow height to be dynamic on mobile
     });
     Object.assign(baseStyles.cardHeader, {
       marginBottom: '15px',
@@ -936,16 +853,11 @@ const getPageStyles = (isMobile, isTablet) => {
       fontSize: '0.9rem',
     });
     Object.assign(baseStyles.contactItem, {
-      marginBottom: '15px',
+      marginBottom: '10px',
       gap: '10px',
-      padding: '10px 0',
-    });
-    Object.assign(baseStyles.contactIcon, {
-      fontSize: '1rem',
     });
     Object.assign(baseStyles.contactLabel, {
       fontSize: '0.8rem',
-      marginBottom: '3px',
     });
     Object.assign(baseStyles.contactValue, {
       fontSize: '0.9rem',
@@ -959,15 +871,13 @@ const getPageStyles = (isMobile, isTablet) => {
       height: '20px',
     });
     Object.assign(baseStyles.statsGrid, {
-      gridTemplateColumns: "repeat(auto-fit, minmax(90px, 1fr))",
       gap: "10px",
     });
     Object.assign(baseStyles.statItem, {
-      padding: '15px 10px',
-      borderRadius: '10px',
+      padding: '12px 8px',
     });
     Object.assign(baseStyles.statNumber, {
-      fontSize: '2rem',
+      fontSize: '1.8rem',
     });
     Object.assign(baseStyles.statNumberSkeleton, {
       width: '50px',
@@ -995,14 +905,13 @@ const getPageStyles = (isMobile, isTablet) => {
     });
     Object.assign(baseStyles.jobGridHeader, {
       marginBottom: '10px',
-      paddingBottom: '10px',
+      paddingBottom: '8px',
     });
     Object.assign(baseStyles.jobGridTitle, {
-      fontSize: '1.2rem',
+      fontSize: '1.1rem',
     });
     Object.assign(baseStyles.jobGridDate, {
       fontSize: '0.75rem',
-      padding: '3px 6px',
     });
     Object.assign(baseStyles.jobGridTitleSkeleton, {
       height: '24px',
@@ -1015,11 +924,8 @@ const getPageStyles = (isMobile, isTablet) => {
       gap: '8px 15px',
       marginBottom: '10px',
     });
-    Object.assign(baseStyles.jobGridDetailItem, {
-      gap: '3px',
-    });
     Object.assign(baseStyles.jobGridDetailLabel, {
-      fontSize: '0.75rem',
+      fontSize: '0.8rem',
     });
     Object.assign(baseStyles.jobGridDetailValue, {
       fontSize: '0.85rem',
@@ -1030,22 +936,17 @@ const getPageStyles = (isMobile, isTablet) => {
     });
     Object.assign(baseStyles.jobGridDescription, {
       fontSize: '0.85rem',
-      paddingTop: '10px',
     });
     Object.assign(baseStyles.jobGridDescriptionSkeleton, {
       height: '16px',
     });
     Object.assign(baseStyles.emptyState, {
-      padding: '30px 15px',
+      padding: '20px 10px',
       fontSize: '1rem',
       marginTop: '15px',
     });
-    Object.assign(baseStyles.emptyIcon, {
-      fontSize: '2.5rem',
-      marginBottom: '10px',
-    });
     Object.assign(baseStyles.newsletterSection, {
-      padding: '30px 15px',
+      padding: '30px 10px',
       marginTop: '30px',
     });
     Object.assign(baseStyles.newsletterSubtitle, {
@@ -1071,8 +972,7 @@ const getPageStyles = (isMobile, isTablet) => {
       width: '250px',
     });
     Object.assign(baseStyles.newsletterForm, {
-      gap: '10px',
-      flexDirection: 'column',
+      gap: '8px',
       maxWidth: '300px',
     });
     Object.assign(baseStyles.newsletterFormSkeleton, {
@@ -1084,7 +984,7 @@ const getPageStyles = (isMobile, isTablet) => {
       fontSize: '0.9rem',
     });
     Object.assign(baseStyles.newsletterButton, {
-      padding: '12px 25px',
+      padding: '12px 20px',
       fontSize: '0.9rem',
     });
     Object.assign(baseStyles.newsletterFeatures, {
@@ -1101,65 +1001,63 @@ const getPageStyles = (isMobile, isTablet) => {
   return baseStyles;
 };
 
-
 // --- RecruiterPublicProfile Component ---
 function RecruiterPublicProfile() {
   const [profile, setProfile] = useState(null);
   const [jobStats, setJobStats] = useState(null);
   const [jobOffers, setJobOffers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Added loading state
   const [error, setError] = useState(null);
-  const [showAbout, setShowAbout] = useState(true);
-  const [showInfos, setShowInfos] = useState(true);
-  const [newsletters, setNewsletters] = useState([]);
+  const [showAbout, setShowAbout] = useState(false);
+  const [showInfos, setShowInfos] = useState(false);
+  const [newsletters, setNewsletters] = useState([]); // This state is now populated by the profile fetch
 
-  const { id } = useParams();
+  const { id } = useParams(); // Using 'id' as per your original code
 
+  // Use the custom media query hook
   const isMobile = useMediaQuery("(max-width: 480px)");
   const isTablet = useMediaQuery("(max-width: 768px)");
 
+  // Get dynamic styles based on screen size
   const pageStyles = getPageStyles(isMobile, isTablet);
 
+  // Consolidated API Calls
   useEffect(() => {
     const fetchRecruiterData = async () => {
       setLoading(true);
       setError(null);
       try {
+        // Fetch profile and job stats
         const profileRes = await fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/public-profile/${id}`);
-        if (!profileRes.ok) {
-          const errorData = await profileRes.json();
-          throw new Error(errorData.message || "Failed to fetch public profile");
-        }
+        if (!profileRes.ok) throw new Error("Failed to fetch public profile");
         const profileData = await profileRes.json();
         setProfile(profileData);
         setJobStats(profileData.jobStats || null);
         setNewsletters(profileData.newsletters || []);
 
+        // Fetch last 3 job offers
         const jobsRes = await fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/${id}/last-job-offers`);
-        if (!jobsRes.ok) {
-          const errorData = await jobsRes.json();
-          throw new Error(errorData.message || "Failed to fetch job offers");
-        }
+        if (!jobsRes.ok) throw new Error("Failed to fetch job offers");
         const jobsData = await jobsRes.json();
         setJobOffers(jobsData);
 
       } catch (err) {
         console.error("Error fetching data:", err);
-        setError(err.message || "Erreur lors du chargement du profil ou des offres.");
+        setError("Erreur lors du chargement du profil ou des offres.");
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) {
-      fetchRecruiterData();
+    if (id) { // Only fetch if id is available
+        fetchRecruiterData();
     }
-  }, [id]);
+  }, [id]); // Dependency array ensures it re-runs if 'id' changes
 
-  const handleSubmit = useCallback(async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const email = e.target.email.value;
-
+    
     try {
       const res = await fetch(`${process.env.REACT_APP_API_URL}/api/newsletter/subscribe`, {
         method: 'POST',
@@ -1169,7 +1067,7 @@ function RecruiterPublicProfile() {
           recruiter_id: id,
         }),
       });
-
+      
       const result = await res.json();
       if (!res.ok) {
         throw new Error(result.message || 'Échec de l\'inscription à la newsletter.');
@@ -1179,16 +1077,14 @@ function RecruiterPublicProfile() {
       console.error('Erreur:', err);
       alert(`Erreur lors de l'inscription: ${err.message || 'Veuillez réessayer.'}`);
     }
-  }, [id]);
-
-  // Loading Component (Skeleton)
+  };
+  
+  // Loading Component
   const LoadingComponent = () => (
     <div style={pageStyles.container}>
-      <Navbar />
       <div style={pageStyles.profileCard}>
         {/* Header Section Skeleton */}
         <div style={pageStyles.headerSection}>
-          <div style={pageStyles.headerOverlay}></div>
           <div style={pageStyles.headerContent}>
             <div style={pageStyles.profileImageContainer}>
               <div style={pageStyles.profileImageSkeleton}>
@@ -1222,7 +1118,7 @@ function RecruiterPublicProfile() {
           {/* Left Column */}
           <div style={pageStyles.leftColumn}>
             {/* Contact Information Card */}
-            <div style={pageStyles.cardEqualHeight}>
+            <div style={pageStyles.card}>
               <div style={pageStyles.cardHeader}>
                 <div style={pageStyles.cardTitleSkeleton}>
                   <div style={pageStyles.shimmer}></div>
@@ -1231,16 +1127,11 @@ function RecruiterPublicProfile() {
               <div style={pageStyles.cardContent}>
                 {[1, 2, 3].map((i) => (
                   <div key={i} style={pageStyles.contactItem}>
-                    <div style={{ ...pageStyles.contactIcon, backgroundColor: "#2a2a2a", borderRadius: "50%", width: "20px", height: "20px" }}>
+                    <div style={pageStyles.contactLabelSkeleton}>
                       <div style={pageStyles.shimmer}></div>
                     </div>
-                    <div style={pageStyles.contactInfo}>
-                      <div style={pageStyles.contactLabelSkeleton}>
-                        <div style={pageStyles.shimmer}></div>
-                      </div>
-                      <div style={pageStyles.contactValueSkeleton}>
-                        <div style={pageStyles.shimmer}></div>
-                      </div>
+                    <div style={pageStyles.contactValueSkeleton}>
+                      <div style={pageStyles.shimmer}></div>
                     </div>
                   </div>
                 ))}
@@ -1248,7 +1139,7 @@ function RecruiterPublicProfile() {
             </div>
 
             {/* Statistics Card */}
-            <div style={pageStyles.cardEqualHeight}>
+            <div style={pageStyles.card}>
               <div style={pageStyles.cardHeader}>
                 <div style={pageStyles.cardTitleSkeleton}>
                   <div style={pageStyles.shimmer}></div>
@@ -1282,78 +1173,47 @@ function RecruiterPublicProfile() {
               </div>
               <div style={pageStyles.cardContent}>
                 {[1, 2, 3, 4].map((i) => (
-                  <div key={i} style={{ ...pageStyles.aboutTextLineSkeleton, width: `${90 - i * 10}%` }}>
+                  <div key={i} style={pageStyles.aboutTextLineSkeleton}>
                     <div style={pageStyles.shimmer}></div>
                   </div>
                 ))}
               </div>
             </div>
-
-            {/* Job Offers Section */}
-            <div style={pageStyles.card}>
-              <div style={pageStyles.cardHeader}>
-                <div style={pageStyles.cardTitleSkeleton}>
-                  <div style={pageStyles.shimmer}></div>
-                </div>
-              </div>
-              <div style={pageStyles.cardContent}>
-                <div style={pageStyles.jobsGrid}>
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} style={pageStyles.jobGridCard}>
-                      <div style={pageStyles.jobGridHeader}>
-                        <div style={pageStyles.jobGridTitleSkeleton}>
-                          <div style={pageStyles.shimmer}></div>
-                        </div>
-                        <div style={pageStyles.jobGridDateSkeleton}>
-                          <div style={pageStyles.shimmer}></div>
-                        </div>
-                      </div>
-                      <div style={pageStyles.jobGridDetails}>
-                        {[1, 2].map((j) => (
-                          <div key={j} style={pageStyles.jobGridDetailSkeleton}>
-                            <div style={pageStyles.shimmer}></div>
-                          </div>
-                        ))}
-                      </div>
-                      <div style={pageStyles.jobGridDescriptionSkeleton}>
-                        <div style={pageStyles.shimmer}></div>
-                      </div>
-                      <div style={{ ...pageStyles.jobGridDescriptionSkeleton, width: "80%" }}>
-                        <div style={pageStyles.shimmer}></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* Newsletter Section Skeleton */}
-        <div style={pageStyles.newsletterSection}>
-          <div style={pageStyles.newsletterContainer}>
-            <div style={pageStyles.newsletterSubtitleSkeleton}>
+        {/* Job Offers Section */}
+        <div style={pageStyles.card}>
+          <div style={pageStyles.cardHeader}>
+            <div style={pageStyles.cardTitleSkeleton}>
               <div style={pageStyles.shimmer}></div>
             </div>
-            <div style={pageStyles.newsletterTitleSkeleton}>
-              <div style={pageStyles.shimmer}></div>
-            </div>
-            <div style={{ ...pageStyles.newsletterTextSkeleton, width: "80%" }}>
-              <div style={pageStyles.shimmer}></div>
-            </div>
-            <div style={{ ...pageStyles.newsletterTextSkeleton, width: "70%", marginBottom: "30px" }}>
-              <div style={pageStyles.shimmer}></div>
-            </div>
-            <div style={pageStyles.newsletterFormSkeleton}>
-              <div style={pageStyles.shimmer}></div>
-            </div>
-            <div style={pageStyles.newsletterFeatures}>
+          </div>
+          <div style={pageStyles.cardContent}>
+            <div style={pageStyles.jobsGrid}>
               {[1, 2, 3].map((i) => (
-                <div key={i} style={{ ...pageStyles.newsletterFeature, position: "relative", overflow: "hidden" }}>
-                  <div style={{ ...pageStyles.newsletterFeatureIcon, backgroundColor: "#2a2a2a", width: "20px", height: "20px", borderRadius: "4px" }}>
+                <div key={i} style={pageStyles.jobGridCard}>
+                  <div style={pageStyles.jobGridHeader}>
+                    <div style={pageStyles.jobGridTitleSkeleton}>
+                      <div style={pageStyles.shimmer}></div>
+                    </div>
+                    <div style={pageStyles.jobGridDateSkeleton}>
+                      <div style={pageStyles.shimmer}></div>
+                    </div>
+                  </div>
+                  <div style={pageStyles.jobGridDetails}>
+                    {[1, 2, 3].map((j) => (
+                      <div key={j} style={pageStyles.jobGridDetailItem}>
+                        <div style={pageStyles.jobGridDetailSkeleton}>
+                          <div style={pageStyles.shimmer}></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={pageStyles.jobGridDescriptionSkeleton}>
                     <div style={pageStyles.shimmer}></div>
                   </div>
-                  <div style={{ ...pageStyles.aboutTextLineSkeleton, width: "100px", height: "18px", marginBottom: "0" }}>
+                  <div style={{...pageStyles.jobGridDescriptionSkeleton, width: '60%'}}>
                     <div style={pageStyles.shimmer}></div>
                   </div>
                 </div>
@@ -1362,277 +1222,289 @@ function RecruiterPublicProfile() {
           </div>
         </div>
       </div>
-      <style>{`
-        @keyframes shimmer {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
-        }
-      `}</style>
+
+      {/* Newsletter Section */}
+      <div style={pageStyles.newsletterSection}>
+        <div style={pageStyles.newsletterContainer}>
+          <div style={pageStyles.newsletterSubtitleSkeleton}>
+            <div style={pageStyles.shimmer}></div>
+          </div>
+          <div style={pageStyles.newsletterTitleSkeleton}>
+            <div style={pageStyles.shimmer}></div>
+          </div>
+          <div style={pageStyles.newsletterTextSkeleton}>
+            <div style={pageStyles.shimmer}></div>
+          </div>
+          <div style={pageStyles.newsletterFormSkeleton}>
+            <div style={pageStyles.shimmer}></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Floating Loading Indicator */}
+      <div style={pageStyles.loadingIndicator}>
+        <div style={pageStyles.spinner}></div>
+        <div style={pageStyles.loadingText}>Chargement du profil...</div>
+      </div>
     </div>
   );
 
-  if (loading) {
-    return <LoadingComponent />;
-  }
-
-  if (error) {
-    return (
-      <div style={pageStyles.container}>
-        <Navbar />
-        <div style={pageStyles.errorMessage}>{error}</div>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (!profile) {
-    return (
-      <div style={pageStyles.container}>
-        <Navbar />
-        <div style={pageStyles.emptyState}>
-          <p style={pageStyles.emptyText}>Aucun profil de recruteur trouvé.</p>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
+  // Render Logic
+  if (error) return <div style={pageStyles.errorMessage}>{error}</div>;
+  if (loading || !profile) return ( // Show loading if data is still fetching or profile is null
+    <>
+      <Navbar />
+      <LoadingComponent />
+      <Footer />
+    </>
+  );
 
   return (
-    <div style={pageStyles.container}>
+    <>
       <Navbar />
-      <div style={pageStyles.profileCard}>
-        {/* Header Section */}
-        <div style={{ ...pageStyles.headerSection, backgroundImage: `url(${candidatImage})` }}>
-          <div style={pageStyles.headerOverlay}></div>
-          <div style={pageStyles.headerContent}>
-            <div style={pageStyles.profileImageContainer}>
-              <img
-                src={profile.profileImage || `https://via.placeholder.com/180/333/ff6b35?text=${profile.company_name ? profile.company_name.charAt(0) : 'R'}`}
-                alt={`${profile.company_name}'s profile`}
-                style={pageStyles.profileImage}
-              />
-              <span style={pageStyles.statusBadge}>
-                {profile.active ? "Actif" : "Inactif"}
-              </span>
+      <div style={pageStyles.container}>
+        <div style={pageStyles.profileCard}>
+          {/* Premium Header Section */}
+          <div
+            style={{
+              ...pageStyles.headerSection,
+              background: profile?.cover_image
+                ? `linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.85) 60%, transparent 100%), url(${profile.cover_image})`
+                : 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #ff6b35 100%)',
+            }}
+          >
+            <div style={pageStyles.headerContent}>
+              <div style={pageStyles.profileImageContainer}>
+                <img
+                  src={
+                    profile.profile_image
+                      ? `${process.env.REACT_APP_API_URL}/uploads/profile_images/${profile.profile_image}`
+                      : candidatImage
+                  }
+                  alt="Recruiter Profile"
+                  style={pageStyles.profileImage}
+                />
+                <div style={pageStyles.statusBadge}>ACTIF</div>
+              </div>
+              <div style={pageStyles.headerInfo}>
+                <h1 style={pageStyles.companyName}>{profile.companyName}</h1>
+                <p style={pageStyles.companyTitle}>{profile.company_title}</p>
+                <div style={pageStyles.headerDivider}></div>
+                {/* Domains displayed in header */}
+                {(profile.selected_domains || []).length > 0 && (
+                  <div style={pageStyles.headerDomainsContainer}>
+                    {(profile.selected_domains || []).map((domain, index) => (
+                      <div key={index} style={pageStyles.headerDomainTag}>
+                        {domain}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-            <div style={pageStyles.headerInfo}>
-              <h1 style={pageStyles.companyName}>{profile.company_name}</h1>
-              <h2 style={pageStyles.companyTitle}>{profile.headline}</h2>
-              <div style={pageStyles.headerDivider}></div>
-              {profile.domains && profile.domains.length > 0 && (
-                <div style={pageStyles.headerDomainsContainer}>
-                  {profile.domains.map((domain, index) => (
-                    <span key={index} style={pageStyles.headerDomainTag}>
-                      {domain}
-                    </span>
+          </div>
+
+          {/* Main Content Layout */}
+          <div style={pageStyles.mainContent}>
+            {/* Left Column */}
+            <div style={pageStyles.leftColumn}>
+              {/* Contact Information Card */}
+              <div style={pageStyles.card}>
+                <div 
+                  style={pageStyles.cardHeader}
+                  onClick={() => setShowInfos(!showInfos)}
+                >
+                  <h3 style={pageStyles.cardTitle}>Informations de contact
+                    <span style={{
+                        ...pageStyles.toggleIcon,
+                        transform: showInfos ? "rotate(90deg)" : "rotate(0deg)"
+                      }}>
+                        ▶
+                      </span>
+                    </h3>
+                  </div>
+                  {showInfos && (
+                   <div style={pageStyles.cardContent}>
+                     <div style={pageStyles.contactItem}>
+                        <div style={pageStyles.contactInfo}>
+                          <span style={pageStyles.contactLabel}>Email</span>
+                          <span style={pageStyles.contactValue}>{profile.email}</span>
+                        </div>
+                      </div>
+                      <div style={pageStyles.contactItem}>
+                        <div style={pageStyles.contactInfo}>
+                          <span style={pageStyles.contactLabel}>Téléphone</span>
+                          <span style={pageStyles.contactValue}>{profile.phoneNumber || "Non fourni"}</span>
+                        </div>
+                      </div>
+                      <div style={pageStyles.contactItem}>
+                        <div style={pageStyles.contactInfo}>
+                          <span style={pageStyles.contactLabel}>Adresse</span>
+                          <span style={pageStyles.contactValue}>{profile.address || "Non spécifiée"}</span>
+                        </div>
+                      </div>
+                   </div>
+                  )}
+              </div>
+
+              {/* Statistics Card */}
+              {jobStats && (
+                <div style={pageStyles.card}>
+                  <div style={pageStyles.cardHeader}>
+                    <h3 style={pageStyles.cardTitle}>Statistiques des offres</h3>
+                  </div>
+                  <div style={pageStyles.cardContent}>
+                    <div style={pageStyles.statsGrid}>
+                      <div style={pageStyles.statItem}>
+                        <div style={pageStyles.statNumber}>{jobStats.total}</div>
+                        <div style={pageStyles.statLabel}>Total</div>
+                      </div>
+                      <div style={pageStyles.statItem}>
+                        <div style={{...pageStyles.statNumber, color: '#ff6b35'}}>{jobStats.active}</div>
+                        <div style={pageStyles.statLabel}>Actives</div>
+                      </div>
+                      <div style={pageStyles.statItem}>
+                        <div style={{...pageStyles.statNumber, color: '#666'}}>{jobStats.expired}</div>
+                        <div style={pageStyles.statLabel}>Expirées</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+            </div>
+
+            {/* Right Column */}
+            <div style={pageStyles.rightColumn}>
+              {/* About Section */}
+              <div style={pageStyles.card}>
+                <div 
+                  style={pageStyles.cardHeader}
+                  onClick={() => setShowAbout(!showAbout)}
+                >
+                  <h3 style={{...pageStyles.cardTitle, cursor: 'pointer'}}>
+                    À propos de l'entreprise
+                    <span style={{
+                        ...pageStyles.toggleIcon,
+                        transform: showAbout ? "rotate(90deg)" : "rotate(0deg)"
+                      }}>
+                        ▶
+                      </span>
+                    </h3>
+                </div>
+                {showAbout && (
+                  <div style={pageStyles.cardContent}>
+                    <div style={pageStyles.aboutText}>
+                      {profile.description || "Aucune description fournie."}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          {/* Job Offers Section - Moved here and displayed as grid */}
+          <div style={pageStyles.card}>
+            <div style={pageStyles.cardHeader}>
+              <h3 style={pageStyles.cardTitle}>Dernières offres publiées</h3>
+            </div>
+            <div style={pageStyles.cardContent}>
+              {jobOffers.length === 0 ? (
+                <div style={pageStyles.emptyState}>
+                  <p style={pageStyles.emptyText}>Aucune offre disponible pour le moment</p>
+                </div>
+              ) : (
+                <div style={pageStyles.jobsGrid}>
+                  {jobOffers.map((job) => (
+                    <div key={job.id} style={pageStyles.jobGridCard}>
+                      <div style={pageStyles.jobGridHeader}>
+                        <h4 style={pageStyles.jobGridTitle}>{job.title}</h4>
+                        <span style={pageStyles.jobGridDate}>
+                          {new Date(job.posted_at).toLocaleDateString("fr-FR")}
+                        </span>
+                      </div>
+                      <div style={pageStyles.jobGridDetails}>
+                        <div style={pageStyles.jobGridDetailItem}>
+                          <span style={pageStyles.jobGridDetailLabel}>Lieu :</span>
+                          <span style={pageStyles.jobGridDetailValue}>{job.location || "Non spécifié"}</span>
+                        </div>
+                        <div style={pageStyles.jobGridDetailItem}>
+                          <span style={pageStyles.jobGridDetailLabel}>Type :</span>
+                          <span style={pageStyles.jobGridDetailValue}>{job.type || "Non spécifié"}</span>
+                        </div>
+                        <div style={pageStyles.jobGridDetailItem}>
+                          <span style={pageStyles.jobGridDetailLabel}>Salaire :</span>
+                          <span style={pageStyles.jobGridDetailValue}>{job.salary ? `${job.salary} MAD` : "Non spécifié"}</span>
+                        </div>
+                      </div>
+                      <p style={pageStyles.jobGridDescription}>
+                        {job.description ? job.description.slice(0, 80) + (job.description.length > 80 ? "..." : "") : "Pas de description disponible."}
+                      </p>
+                    </div>
                   ))}
                 </div>
               )}
             </div>
           </div>
+          
         </div>
-
-        {/* Main Content Layout */}
-        <div style={pageStyles.mainContent}>
-          {/* Left Column */}
-          <div style={pageStyles.leftColumn}>
-            {/* Contact Information Card */}
-            <div style={pageStyles.cardEqualHeight}>
-              <div
-                style={pageStyles.cardHeader}
-                onClick={() => setShowInfos(!showInfos)}
+      
+        {/* Newsletter Subscription Section (full-width, outside main content) */}
+        <div style={pageStyles.newsletterSection}>
+          <div style={pageStyles.newsletterContainer}>
+            <div style={pageStyles.newsletterSubtitle}>Restez connecté</div>
+            <h2 style={pageStyles.newsletterTitle}>Ne manquez aucune opportunité</h2>
+            <p style={pageStyles.newsletterText}>
+              Recevez les dernières offres d'emploi, actualités du secteur et conseils carrière 
+              directement dans votre boîte mail.
+            </p>
+            
+            <form
+              style={pageStyles.newsletterForm}
+              onSubmit={handleSubmit}
+            >
+              <input
+                type="email"
+                name="email"
+                placeholder="Entrez votre adresse email"
+                style={pageStyles.newsletterInput}
+                required
+              />
+              <button 
+                type="submit" 
+                style={pageStyles.newsletterButton}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = '#e05a28';
+                  e.target.style.transform = 'scale(1.02)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = '#ff6b35';
+                  e.target.style.transform = 'scale(1)';
+                }}
               >
-                <h3 style={pageStyles.cardTitle}>Contact Information</h3>
-                <span
-                  style={{
-                    ...pageStyles.toggleIcon,
-                    transform: showInfos ? "rotate(0deg)" : "rotate(-90deg)",
-                  }}
-                >
-                  &#9660; {/* Down arrow for toggle */}
-                </span>
+                S'abonner
+              </button>
+            </form>
+            
+            <div style={pageStyles.newsletterFeatures}>
+              <div style={pageStyles.newsletterFeature}>
+                <div style={pageStyles.newsletterFeatureIcon}>✓</div>
+                <span>Offres exclusives</span>
               </div>
-              {showInfos && (
-                <div style={pageStyles.cardContent}>
-                  {profile.contact_email && (
-                    <div style={pageStyles.contactItem}>
-                      <span style={pageStyles.contactIcon}>&#9993;</span> {/* Email icon */}
-                      <div style={pageStyles.contactInfo}>
-                        <span style={pageStyles.contactLabel}>Email</span>
-                        <span style={pageStyles.contactValue}>{profile.contact_email}</span>
-                      </div>
-                    </div>
-                  )}
-                  {profile.phone_number && (
-                    <div style={pageStyles.contactItem}>
-                      <span style={pageStyles.contactIcon}>&#9742;</span> {/* Phone icon */}
-                      <div style={pageStyles.contactInfo}>
-                        <span style={pageStyles.contactLabel}>Phone</span>
-                        <span style={pageStyles.contactValue}>{profile.phone_number}</span>
-                      </div>
-                    </div>
-                  )}
-                  {profile.website && (
-                    <div style={pageStyles.contactItem}>
-                      <span style={pageStyles.contactIcon}>&#127760;</span> {/* Globe icon */}
-                      <div style={pageStyles.contactInfo}>
-                        <span style={pageStyles.contactLabel}>Website</span>
-                        <a href={profile.website} target="_blank" rel="noopener noreferrer" style={{ ...pageStyles.contactValue, color: "#ff6b35", textDecoration: "none" }}>
-                          {profile.website}
-                        </a>
-                      </div>
-                    </div>
-                  )}
-                  {!profile.contact_email && !profile.phone_number && !profile.website && (
-                    <p style={pageStyles.emptyText}>No contact information available.</p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Statistics Card */}
-            <div style={pageStyles.cardEqualHeight}>
-              <div style={pageStyles.cardHeader}>
-                <h3 style={pageStyles.cardTitle}>Statistics</h3>
+              <div style={pageStyles.newsletterFeature}>
+                <div style={pageStyles.newsletterFeatureIcon}>✓</div>
+                <span>Conseils carrière</span>
               </div>
-              <div style={pageStyles.cardContent}>
-                {jobStats ? (
-                  <div style={pageStyles.statsGrid}>
-                    <div style={pageStyles.statItem}>
-                      <span style={pageStyles.statNumber}>{jobStats.totalJobs}</span>
-                      <span style={pageStyles.statLabel}>Total Jobs</span>
-                    </div>
-                    <div style={pageStyles.statItem}>
-                      <span style={pageStyles.statNumber}>{jobStats.activeJobs}</span>
-                      <span style={pageStyles.statLabel}>Active Jobs</span>
-                    </div>
-                    <div style={pageStyles.statItem}>
-                      <span style={pageStyles.statNumber}>{jobStats.applicationsReceived}</span>
-                      <span style={pageStyles.statLabel}>Applications</span>
-                    </div>
-                  </div>
-                ) : (
-                  <p style={pageStyles.emptyText}>No job statistics available.</p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column */}
-          <div style={pageStyles.rightColumn}>
-            {/* About Section */}
-            <div style={pageStyles.card}>
-              <div
-                style={pageStyles.cardHeader}
-                onClick={() => setShowAbout(!showAbout)}
-              >
-                <h3 style={pageStyles.cardTitle}>About {profile.company_name}</h3>
-                <span
-                  style={{
-                    ...pageStyles.toggleIcon,
-                    transform: showAbout ? "rotate(0deg)" : "rotate(-90deg)",
-                  }}
-                >
-                  &#9660; {/* Down arrow for toggle */}
-                </span>
-              </div>
-              {showAbout && (
-                <div style={pageStyles.cardContent}>
-                  {profile.about ? (
-                    <p style={pageStyles.aboutText}>{profile.about}</p>
-                  ) : (
-                    <p style={pageStyles.emptyText}>No "About" information provided.</p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Job Offers Section */}
-            <div style={pageStyles.card}>
-              <div style={pageStyles.cardHeader}>
-                <h3 style={pageStyles.cardTitle}>Latest Job Offers</h3>
-              </div>
-              <div style={pageStyles.cardContent}>
-                {jobOffers.length > 0 ? (
-                  <div style={pageStyles.jobsGrid}>
-                    {jobOffers.map((job) => (
-                      <div key={job.id} style={pageStyles.jobGridCard}>
-                        <div style={pageStyles.jobGridHeader}>
-                          <h4 style={pageStyles.jobGridTitle}>{job.title}</h4>
-                          <span style={pageStyles.jobGridDate}>
-                            {new Date(job.created_at).toLocaleDateString()}
-                          </span>
-                        </div>
-                        <div style={pageStyles.jobGridDetails}>
-                          {job.location && (
-                            <div style={pageStyles.jobGridDetailItem}>
-                              <span style={pageStyles.jobGridDetailLabel}>Location:</span>
-                              <span style={pageStyles.jobGridDetailValue}>{job.location}</span>
-                            </div>
-                          )}
-                          {job.type && (
-                            <div style={pageStyles.jobGridDetailItem}>
-                              <span style={pageStyles.jobGridDetailLabel}>Type:</span>
-                              <span style={pageStyles.jobGridDetailValue}>{job.type}</span>
-                            </div>
-                          )}
-                        </div>
-                        <p style={pageStyles.jobGridDescription}>
-                          {job.description.length > 150
-                            ? `${job.description.substring(0, 150)}...`
-                            : job.description}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div style={pageStyles.emptyState}>
-                    <p style={pageStyles.emptyText}>No recent job offers available.</p>
-                  </div>
-                )}
+              <div style={pageStyles.newsletterFeature}>
+                <div style={pageStyles.newsletterFeatureIcon}>✓</div>
+                <span>Actualités secteur</span>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Newsletter Section */}
-        {newsletters.length > 0 && (
-          <div style={pageStyles.newsletterSection}>
-            <div style={pageStyles.newsletterContainer}>
-              <p style={pageStyles.newsletterSubtitle}>Stay Updated</p>
-              <h2 style={pageStyles.newsletterTitle}>Subscribe to Our Newsletter</h2>
-              <p style={pageStyles.newsletterText}>
-                Get the latest updates on new job opportunities and company news directly to your inbox.
-              </p>
-              <form onSubmit={handleSubmit} style={pageStyles.newsletterForm}>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Your email address"
-                  required
-                  style={pageStyles.newsletterInput}
-                />
-                <button type="submit" style={pageStyles.newsletterButton}>
-                  Subscribe
-                </button>
-              </form>
-              <div style={pageStyles.newsletterFeatures}>
-                <span style={pageStyles.newsletterFeature}>
-                  <span style={pageStyles.newsletterFeatureIcon}>&#10003;</span> New job alerts
-                </span>
-                <span style={pageStyles.newsletterFeature}>
-                  <span style={pageStyles.newsletterFeatureIcon}>&#10003;</span> Company news
-                </span>
-                <span style={pageStyles.newsletterFeature}>
-                  <span style={pageStyles.newsletterFeatureIcon}>&#10003;</span> Career tips
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
       <Footer />
-    </div>
+    </>
   );
 }
 
