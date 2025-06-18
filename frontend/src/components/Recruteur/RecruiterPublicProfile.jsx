@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Navbar from "../Navbara";
 import Footer from "../Footer";
 import { useParams } from "react-router-dom";
+import candidatImage from '../../assets/images/choixRole/recruiter.jpg';
 
 // --- Helper Hook for Media Queries ---
 const useMediaQuery = (query) => {
@@ -40,20 +41,22 @@ const getPageStyles = (isMobile, isTablet) => {
       fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
       border: "1px solid #333",
     },
-    // Header Section - Simplified, no cover image
+    // Header Section
     headerSection: {
-      backgroundColor: "#2a2a2a", // Darker background for header area
+      height: "320px",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      position: "relative",
+      display: "flex",
+      alignItems: "flex-end",
+    },
+    headerContent: {
+      width: "100%",
       padding: "50px 60px",
       display: "flex",
       alignItems: "center",
       gap: "40px",
-      borderBottom: "1px solid #333",
-    },
-    headerContent: {
-      width: "100%",
-      display: "flex",
-      alignItems: "center",
-      gap: "40px",
+      background: "linear-gradient(to top, rgba(0,0,0,0.95), transparent)",
     },
     profileImageContainer: {
       position: "relative",
@@ -230,15 +233,10 @@ const getPageStyles = (isMobile, isTablet) => {
       position: "relative",
       overflow: "hidden",
     },
-    toggleButton: { // Renamed from toggleIcon to be more generic, assuming it's a clickable button
-      fontSize: "1rem", // Reduced size as it's not an icon
+    toggleIcon: {
+      fontSize: "1.2rem",
       color: "#ff6b35",
-      background: "none",
-      border: "1px solid #ff6b35",
-      borderRadius: "8px",
-      padding: "8px 15px",
-      cursor: "pointer",
-      transition: "background-color 0.3s ease, color 0.3s ease",
+      transition: "transform 0.3s ease",
       marginLeft: "auto",
     },
     cardContent: {
@@ -435,7 +433,7 @@ const getPageStyles = (isMobile, isTablet) => {
       color: "#bbb",
       lineHeight: "1.6",
       marginBottom: "15px",
-      flexGrow: 1,
+      flexGrow: 1, // Allow description to take available space
     },
     jobGridDescriptionSkeleton: {
       height: "18px",
@@ -575,6 +573,11 @@ const getPageStyles = (isMobile, isTablet) => {
       color: "#ccc",
       fontSize: "0.95rem",
     },
+    newsletterFeatureIcon: {
+      color: "#ff6b35",
+      fontSize: "1.2rem",
+      fontWeight: "bold",
+    },
 
     // Shimmer effect for skeletons
     shimmer: {
@@ -651,13 +654,10 @@ const getPageStyles = (isMobile, isTablet) => {
       margin: '0 5px',
     });
     Object.assign(baseStyles.headerSection, {
-      padding: '30px 20px',
-      flexDirection: 'column',
-      alignItems: 'center',
-      textAlign: 'center',
-      gap: '20px',
+      height: '250px',
     });
     Object.assign(baseStyles.headerContent, {
+      padding: '30px 20px',
       flexDirection: 'column',
       alignItems: 'center',
       textAlign: 'center',
@@ -775,11 +775,10 @@ const getPageStyles = (isMobile, isTablet) => {
   // Apply mobile specific styles
   if (isMobile) {
     Object.assign(baseStyles.headerSection, {
-      padding: '20px 15px',
-      gap: '15px',
+      height: '220px',
     });
     Object.assign(baseStyles.headerContent, {
-      padding: '0', // Already set in headerSection, reset for mobile specific
+      padding: '20px 15px',
       gap: '15px',
     });
     Object.assign(baseStyles.profileImage, {
@@ -847,8 +846,8 @@ const getPageStyles = (isMobile, isTablet) => {
       width: '150px',
       height: '25px',
     });
-    Object.assign(baseStyles.toggleButton, {
-      fontSize: '0.9rem',
+    Object.assign(baseStyles.toggleIcon, {
+      fontSize: '1rem',
     });
     Object.assign(baseStyles.cardContent, {
       fontSize: '0.9rem',
@@ -994,6 +993,9 @@ const getPageStyles = (isMobile, isTablet) => {
     Object.assign(baseStyles.newsletterFeature, {
       fontSize: '0.85rem',
     });
+    Object.assign(baseStyles.newsletterFeatureIcon, {
+      fontSize: '1rem',
+    });
   }
 
   return baseStyles;
@@ -1004,24 +1006,28 @@ function RecruiterPublicProfile() {
   const [profile, setProfile] = useState(null);
   const [jobStats, setJobStats] = useState(null);
   const [jobOffers, setJobOffers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Added loading state
   const [error, setError] = useState(null);
-  const [showAbout, setShowAbout] = useState(true); // Default to true as there are no icons to toggle
-  const [showInfos, setShowInfos] = useState(true); // Default to true as there are no icons to toggle
-  const [newsletters, setNewsletters] = useState([]);
+  const [showAbout, setShowAbout] = useState(false);
+  const [showInfos, setShowInfos] = useState(false);
+  const [newsletters, setNewsletters] = useState([]); // This state is now populated by the profile fetch
 
-  const { id } = useParams();
+  const { id } = useParams(); // Using 'id' as per your original code
 
+  // Use the custom media query hook
   const isMobile = useMediaQuery("(max-width: 480px)");
   const isTablet = useMediaQuery("(max-width: 768px)");
 
+  // Get dynamic styles based on screen size
   const pageStyles = getPageStyles(isMobile, isTablet);
 
+  // Consolidated API Calls
   useEffect(() => {
     const fetchRecruiterData = async () => {
       setLoading(true);
       setError(null);
       try {
+        // Fetch profile and job stats
         const profileRes = await fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/public-profile/${id}`);
         if (!profileRes.ok) throw new Error("Failed to fetch public profile");
         const profileData = await profileRes.json();
@@ -1029,6 +1035,7 @@ function RecruiterPublicProfile() {
         setJobStats(profileData.jobStats || null);
         setNewsletters(profileData.newsletters || []);
 
+        // Fetch last 3 job offers
         const jobsRes = await fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/${id}/last-job-offers`);
         if (!jobsRes.ok) throw new Error("Failed to fetch job offers");
         const jobsData = await jobsRes.json();
@@ -1042,15 +1049,15 @@ function RecruiterPublicProfile() {
       }
     };
 
-    if (id) {
-      fetchRecruiterData();
+    if (id) { // Only fetch if id is available
+        fetchRecruiterData();
     }
-  }, [id]);
+  }, [id]); // Dependency array ensures it re-runs if 'id' changes
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const email = e.target.email.value;
-
+    
     try {
       const res = await fetch(`${process.env.REACT_APP_API_URL}/api/newsletter/subscribe`, {
         method: 'POST',
@@ -1060,7 +1067,7 @@ function RecruiterPublicProfile() {
           recruiter_id: id,
         }),
       });
-
+      
       const result = await res.json();
       if (!res.ok) {
         throw new Error(result.message || 'Échec de l\'inscription à la newsletter.');
@@ -1071,8 +1078,8 @@ function RecruiterPublicProfile() {
       alert(`Erreur lors de l'inscription: ${err.message || 'Veuillez réessayer.'}`);
     }
   };
-
-  // Loading Component (Skeleton)
+  
+  // Loading Component
   const LoadingComponent = () => (
     <div style={pageStyles.container}>
       <div style={pageStyles.profileCard}>
@@ -1166,78 +1173,47 @@ function RecruiterPublicProfile() {
               </div>
               <div style={pageStyles.cardContent}>
                 {[1, 2, 3, 4].map((i) => (
-                  <div key={i} style={{ ...pageStyles.aboutTextLineSkeleton, width: `${90 - i * 10}%` }}>
+                  <div key={i} style={pageStyles.aboutTextLineSkeleton}>
                     <div style={pageStyles.shimmer}></div>
                   </div>
                 ))}
               </div>
             </div>
-
-            {/* Job Offers Section */}
-            <div style={pageStyles.card}>
-              <div style={pageStyles.cardHeader}>
-                <div style={pageStyles.cardTitleSkeleton}>
-                  <div style={pageStyles.shimmer}></div>
-                </div>
-              </div>
-              <div style={pageStyles.cardContent}>
-                <div style={pageStyles.jobsGrid}>
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} style={pageStyles.jobGridCard}>
-                      <div style={pageStyles.jobGridHeader}>
-                        <div style={pageStyles.jobGridTitleSkeleton}>
-                          <div style={pageStyles.shimmer}></div>
-                        </div>
-                        <div style={pageStyles.jobGridDateSkeleton}>
-                          <div style={pageStyles.shimmer}></div>
-                        </div>
-                      </div>
-                      <div style={pageStyles.jobGridDetails}>
-                        {[1, 2].map((j) => (
-                          <div key={j} style={pageStyles.jobGridDetailSkeleton}>
-                            <div style={pageStyles.shimmer}></div>
-                          </div>
-                        ))}
-                      </div>
-                      <div style={pageStyles.jobGridDescriptionSkeleton}>
-                        <div style={pageStyles.shimmer}></div>
-                      </div>
-                      <div style={{ ...pageStyles.jobGridDescriptionSkeleton, width: "80%" }}>
-                        <div style={pageStyles.shimmer}></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* Newsletter Section Skeleton */}
-        <div style={pageStyles.newsletterSection}>
-          <div style={pageStyles.newsletterContainer}>
-            <div style={pageStyles.newsletterSubtitleSkeleton}>
+        {/* Job Offers Section */}
+        <div style={pageStyles.card}>
+          <div style={pageStyles.cardHeader}>
+            <div style={pageStyles.cardTitleSkeleton}>
               <div style={pageStyles.shimmer}></div>
             </div>
-            <div style={pageStyles.newsletterTitleSkeleton}>
-              <div style={pageStyles.shimmer}></div>
-            </div>
-            <div style={{ ...pageStyles.newsletterTextSkeleton, width: "80%" }}>
-              <div style={pageStyles.shimmer}></div>
-            </div>
-            <div style={{ ...pageStyles.newsletterTextSkeleton, width: "70%", marginBottom: "30px" }}>
-              <div style={pageStyles.shimmer}></div>
-            </div>
-            <div style={pageStyles.newsletterFormSkeleton}>
-              <div style={pageStyles.shimmer}></div>
-            </div>
-            <div style={pageStyles.newsletterFeatures}>
+          </div>
+          <div style={pageStyles.cardContent}>
+            <div style={pageStyles.jobsGrid}>
               {[1, 2, 3].map((i) => (
-                <div key={i} style={{ ...pageStyles.newsletterFeature, position: "relative", overflow: "hidden" }}>
-                  <div style={{ ...pageStyles.newsletterFeatureIcon, backgroundColor: "#2a2a2a", width: "20px", height: "20px", borderRadius: "4px" }}>
+                <div key={i} style={pageStyles.jobGridCard}>
+                  <div style={pageStyles.jobGridHeader}>
+                    <div style={pageStyles.jobGridTitleSkeleton}>
+                      <div style={pageStyles.shimmer}></div>
+                    </div>
+                    <div style={pageStyles.jobGridDateSkeleton}>
+                      <div style={pageStyles.shimmer}></div>
+                    </div>
+                  </div>
+                  <div style={pageStyles.jobGridDetails}>
+                    {[1, 2, 3].map((j) => (
+                      <div key={j} style={pageStyles.jobGridDetailItem}>
+                        <div style={pageStyles.jobGridDetailSkeleton}>
+                          <div style={pageStyles.shimmer}></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={pageStyles.jobGridDescriptionSkeleton}>
                     <div style={pageStyles.shimmer}></div>
                   </div>
-                  <div style={{ ...pageStyles.aboutTextLineSkeleton, width: "100px", height: "18px", marginBottom: "0" }}>
+                  <div style={{...pageStyles.jobGridDescriptionSkeleton, width: '60%'}}>
                     <div style={pageStyles.shimmer}></div>
                   </div>
                 </div>
@@ -1246,257 +1222,289 @@ function RecruiterPublicProfile() {
           </div>
         </div>
       </div>
-      <style>{`
-        @keyframes shimmer {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
-        }
-      `}</style>
+
+      {/* Newsletter Section */}
+      <div style={pageStyles.newsletterSection}>
+        <div style={pageStyles.newsletterContainer}>
+          <div style={pageStyles.newsletterSubtitleSkeleton}>
+            <div style={pageStyles.shimmer}></div>
+          </div>
+          <div style={pageStyles.newsletterTitleSkeleton}>
+            <div style={pageStyles.shimmer}></div>
+          </div>
+          <div style={pageStyles.newsletterTextSkeleton}>
+            <div style={pageStyles.shimmer}></div>
+          </div>
+          <div style={pageStyles.newsletterFormSkeleton}>
+            <div style={pageStyles.shimmer}></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Floating Loading Indicator */}
+      <div style={pageStyles.loadingIndicator}>
+        <div style={pageStyles.spinner}></div>
+        <div style={pageStyles.loadingText}>Chargement du profil...</div>
+      </div>
     </div>
   );
 
-  if (loading) {
-    return <LoadingComponent />;
-  }
-
-  if (error) {
-    return (
-      <div style={pageStyles.container}>
-        <Navbar />
-        <div style={pageStyles.errorMessage}>{error}</div>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (!profile) {
-    return (
-      <div style={pageStyles.container}>
-        <Navbar />
-        <div style={pageStyles.emptyState}>
-          <p style={pageStyles.emptyText}>Aucun profil de recruteur trouvé.</p>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
+  // Render Logic
+  if (error) return <div style={pageStyles.errorMessage}>{error}</div>;
+  if (loading || !profile) return ( // Show loading if data is still fetching or profile is null
+    <>
+      <Navbar />
+      <LoadingComponent />
+      <Footer />
+    </>
+  );
 
   return (
-    <div style={pageStyles.container}>
+    <>
       <Navbar />
-      <div style={pageStyles.profileCard}>
-        {/* Header Section */}
-        <div style={pageStyles.headerSection}>
-          <div style={pageStyles.headerContent}>
-            <div style={pageStyles.profileImageContainer}>
-              <img
-                src={profile.profileImage || `https://via.placeholder.com/180/333/ff6b35?text=${profile.company_name ? profile.company_name.charAt(0) : 'R'}`}
-                alt={`${profile.company_name}'s profile`}
-                style={pageStyles.profileImage}
-              />
-              <span style={pageStyles.statusBadge}>
-                {profile.active ? "Actif" : "Inactif"}
-              </span>
+      <div style={pageStyles.container}>
+        <div style={pageStyles.profileCard}>
+          {/* Premium Header Section */}
+          <div
+            style={{
+              ...pageStyles.headerSection,
+              background: profile?.cover_image
+                ? `linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.85) 60%, transparent 100%), url(${profile.cover_image})`
+                : 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #ff6b35 100%)',
+            }}
+          >
+            <div style={pageStyles.headerContent}>
+              <div style={pageStyles.profileImageContainer}>
+                <img
+                  src={
+                    profile.profile_image
+                      ? `${process.env.REACT_APP_API_URL}/uploads/profile_images/${profile.profile_image}`
+                      : candidatImage
+                  }
+                  alt="Recruiter Profile"
+                  style={pageStyles.profileImage}
+                />
+                <div style={pageStyles.statusBadge}>ACTIF</div>
+              </div>
+              <div style={pageStyles.headerInfo}>
+                <h1 style={pageStyles.companyName}>{profile.companyName}</h1>
+                <p style={pageStyles.companyTitle}>{profile.company_title}</p>
+                <div style={pageStyles.headerDivider}></div>
+                {/* Domains displayed in header */}
+                {(profile.selected_domains || []).length > 0 && (
+                  <div style={pageStyles.headerDomainsContainer}>
+                    {(profile.selected_domains || []).map((domain, index) => (
+                      <div key={index} style={pageStyles.headerDomainTag}>
+                        {domain}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-            <div style={pageStyles.headerInfo}>
-              <h1 style={pageStyles.companyName}>{profile.company_name}</h1>
-              <h2 style={pageStyles.companyTitle}>{profile.headline}</h2>
-              <div style={pageStyles.headerDivider}></div>
-              {profile.domains && profile.domains.length > 0 && (
-                <div style={pageStyles.headerDomainsContainer}>
-                  {profile.domains.map((domain, index) => (
-                    <span key={index} style={pageStyles.headerDomainTag}>
-                      {domain}
-                    </span>
+          </div>
+
+          {/* Main Content Layout */}
+          <div style={pageStyles.mainContent}>
+            {/* Left Column */}
+            <div style={pageStyles.leftColumn}>
+              {/* Contact Information Card */}
+              <div style={pageStyles.card}>
+                <div 
+                  style={pageStyles.cardHeader}
+                  onClick={() => setShowInfos(!showInfos)}
+                >
+                  <h3 style={pageStyles.cardTitle}>Informations de contact
+                    <span style={{
+                        ...pageStyles.toggleIcon,
+                        transform: showInfos ? "rotate(90deg)" : "rotate(0deg)"
+                      }}>
+                        ▶
+                      </span>
+                    </h3>
+                  </div>
+                  {showInfos && (
+                   <div style={pageStyles.cardContent}>
+                     <div style={pageStyles.contactItem}>
+                        <div style={pageStyles.contactInfo}>
+                          <span style={pageStyles.contactLabel}>Email</span>
+                          <span style={pageStyles.contactValue}>{profile.email}</span>
+                        </div>
+                      </div>
+                      <div style={pageStyles.contactItem}>
+                        <div style={pageStyles.contactInfo}>
+                          <span style={pageStyles.contactLabel}>Téléphone</span>
+                          <span style={pageStyles.contactValue}>{profile.phoneNumber || "Non fourni"}</span>
+                        </div>
+                      </div>
+                      <div style={pageStyles.contactItem}>
+                        <div style={pageStyles.contactInfo}>
+                          <span style={pageStyles.contactLabel}>Adresse</span>
+                          <span style={pageStyles.contactValue}>{profile.address || "Non spécifiée"}</span>
+                        </div>
+                      </div>
+                   </div>
+                  )}
+              </div>
+
+              {/* Statistics Card */}
+              {jobStats && (
+                <div style={pageStyles.card}>
+                  <div style={pageStyles.cardHeader}>
+                    <h3 style={pageStyles.cardTitle}>Statistiques des offres</h3>
+                  </div>
+                  <div style={pageStyles.cardContent}>
+                    <div style={pageStyles.statsGrid}>
+                      <div style={pageStyles.statItem}>
+                        <div style={pageStyles.statNumber}>{jobStats.total}</div>
+                        <div style={pageStyles.statLabel}>Total</div>
+                      </div>
+                      <div style={pageStyles.statItem}>
+                        <div style={{...pageStyles.statNumber, color: '#ff6b35'}}>{jobStats.active}</div>
+                        <div style={pageStyles.statLabel}>Actives</div>
+                      </div>
+                      <div style={pageStyles.statItem}>
+                        <div style={{...pageStyles.statNumber, color: '#666'}}>{jobStats.expired}</div>
+                        <div style={pageStyles.statLabel}>Expirées</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+            </div>
+
+            {/* Right Column */}
+            <div style={pageStyles.rightColumn}>
+              {/* About Section */}
+              <div style={pageStyles.card}>
+                <div 
+                  style={pageStyles.cardHeader}
+                  onClick={() => setShowAbout(!showAbout)}
+                >
+                  <h3 style={{...pageStyles.cardTitle, cursor: 'pointer'}}>
+                    À propos de l'entreprise
+                    <span style={{
+                        ...pageStyles.toggleIcon,
+                        transform: showAbout ? "rotate(90deg)" : "rotate(0deg)"
+                      }}>
+                        ▶
+                      </span>
+                    </h3>
+                </div>
+                {showAbout && (
+                  <div style={pageStyles.cardContent}>
+                    <div style={pageStyles.aboutText}>
+                      {profile.description || "Aucune description fournie."}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          {/* Job Offers Section - Moved here and displayed as grid */}
+          <div style={pageStyles.card}>
+            <div style={pageStyles.cardHeader}>
+              <h3 style={pageStyles.cardTitle}>Dernières offres publiées</h3>
+            </div>
+            <div style={pageStyles.cardContent}>
+              {jobOffers.length === 0 ? (
+                <div style={pageStyles.emptyState}>
+                  <p style={pageStyles.emptyText}>Aucune offre disponible pour le moment</p>
+                </div>
+              ) : (
+                <div style={pageStyles.jobsGrid}>
+                  {jobOffers.map((job) => (
+                    <div key={job.id} style={pageStyles.jobGridCard}>
+                      <div style={pageStyles.jobGridHeader}>
+                        <h4 style={pageStyles.jobGridTitle}>{job.title}</h4>
+                        <span style={pageStyles.jobGridDate}>
+                          {new Date(job.posted_at).toLocaleDateString("fr-FR")}
+                        </span>
+                      </div>
+                      <div style={pageStyles.jobGridDetails}>
+                        <div style={pageStyles.jobGridDetailItem}>
+                          <span style={pageStyles.jobGridDetailLabel}>Lieu :</span>
+                          <span style={pageStyles.jobGridDetailValue}>{job.location || "Non spécifié"}</span>
+                        </div>
+                        <div style={pageStyles.jobGridDetailItem}>
+                          <span style={pageStyles.jobGridDetailLabel}>Type :</span>
+                          <span style={pageStyles.jobGridDetailValue}>{job.type || "Non spécifié"}</span>
+                        </div>
+                        <div style={pageStyles.jobGridDetailItem}>
+                          <span style={pageStyles.jobGridDetailLabel}>Salaire :</span>
+                          <span style={pageStyles.jobGridDetailValue}>{job.salary ? `${job.salary} MAD` : "Non spécifié"}</span>
+                        </div>
+                      </div>
+                      <p style={pageStyles.jobGridDescription}>
+                        {job.description ? job.description.slice(0, 80) + (job.description.length > 80 ? "..." : "") : "Pas de description disponible."}
+                      </p>
+                    </div>
                   ))}
                 </div>
               )}
             </div>
           </div>
+          
         </div>
-
-        {/* Main Content Layout */}
-        <div style={pageStyles.mainContent}>
-          {/* Left Column */}
-          <div style={pageStyles.leftColumn}>
-            {/* Contact Information Card */}
-            <div style={pageStyles.card}>
-              <div style={pageStyles.cardHeader}>
-                <h3 style={pageStyles.cardTitle}>Contact Information</h3>
-                <button
-                  onClick={() => setShowInfos(!showInfos)}
-                  style={pageStyles.toggleButton}
-                >
-                  {showInfos ? "Hide" : "Show"}
-                </button>
+      
+        {/* Newsletter Subscription Section (full-width, outside main content) */}
+        <div style={pageStyles.newsletterSection}>
+          <div style={pageStyles.newsletterContainer}>
+            <div style={pageStyles.newsletterSubtitle}>Restez connecté</div>
+            <h2 style={pageStyles.newsletterTitle}>Ne manquez aucune opportunité</h2>
+            <p style={pageStyles.newsletterText}>
+              Recevez les dernières offres d'emploi, actualités du secteur et conseils carrière 
+              directement dans votre boîte mail.
+            </p>
+            
+            <form
+              style={pageStyles.newsletterForm}
+              onSubmit={handleSubmit}
+            >
+              <input
+                type="email"
+                name="email"
+                placeholder="Entrez votre adresse email"
+                style={pageStyles.newsletterInput}
+                required
+              />
+              <button 
+                type="submit" 
+                style={pageStyles.newsletterButton}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = '#e05a28';
+                  e.target.style.transform = 'scale(1.02)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = '#ff6b35';
+                  e.target.style.transform = 'scale(1)';
+                }}
+              >
+                S'abonner
+              </button>
+            </form>
+            
+            <div style={pageStyles.newsletterFeatures}>
+              <div style={pageStyles.newsletterFeature}>
+                <div style={pageStyles.newsletterFeatureIcon}>✓</div>
+                <span>Offres exclusives</span>
               </div>
-              {showInfos && (
-                <div style={pageStyles.cardContent}>
-                  {profile.contact_email && (
-                    <div style={pageStyles.contactItem}>
-                      <div style={pageStyles.contactInfo}>
-                        <span style={pageStyles.contactLabel}>Email</span>
-                        <span style={pageStyles.contactValue}>{profile.contact_email}</span>
-                      </div>
-                    </div>
-                  )}
-                  {profile.phone_number && (
-                    <div style={pageStyles.contactItem}>
-                      <div style={pageStyles.contactInfo}>
-                        <span style={pageStyles.contactLabel}>Phone</span>
-                        <span style={pageStyles.contactValue}>{profile.phone_number}</span>
-                      </div>
-                    </div>
-                  )}
-                  {profile.website && (
-                    <div style={pageStyles.contactItem}>
-                      <div style={pageStyles.contactInfo}>
-                        <span style={pageStyles.contactLabel}>Website</span>
-                        <a href={profile.website} target="_blank" rel="noopener noreferrer" style={{ ...pageStyles.contactValue, color: "#ff6b35", textDecoration: "none" }}>
-                          {profile.website}
-                        </a>
-                      </div>
-                    </div>
-                  )}
-                  {!profile.contact_email && !profile.phone_number && !profile.website && (
-                    <p style={pageStyles.emptyText}>No contact information available.</p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Statistics Card */}
-            <div style={pageStyles.card}>
-              <div style={pageStyles.cardHeader}>
-                <h3 style={pageStyles.cardTitle}>Statistics</h3>
+              <div style={pageStyles.newsletterFeature}>
+                <div style={pageStyles.newsletterFeatureIcon}>✓</div>
+                <span>Conseils carrière</span>
               </div>
-              <div style={pageStyles.cardContent}>
-                {jobStats ? (
-                  <div style={pageStyles.statsGrid}>
-                    <div style={pageStyles.statItem}>
-                      <span style={pageStyles.statNumber}>{jobStats.totalJobs}</span>
-                      <span style={pageStyles.statLabel}>Total Jobs</span>
-                    </div>
-                    <div style={pageStyles.statItem}>
-                      <span style={pageStyles.statNumber}>{jobStats.activeJobs}</span>
-                      <span style={pageStyles.statLabel}>Active Jobs</span>
-                    </div>
-                    <div style={pageStyles.statItem}>
-                      <span style={pageStyles.statNumber}>{jobStats.applicationsReceived}</span>
-                      <span style={pageStyles.statLabel}>Applications</span>
-                    </div>
-                  </div>
-                ) : (
-                  <p style={pageStyles.emptyText}>No job statistics available.</p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column */}
-          <div style={pageStyles.rightColumn}>
-            {/* About Section */}
-            <div style={pageStyles.card}>
-              <div style={pageStyles.cardHeader}>
-                <h3 style={pageStyles.cardTitle}>About {profile.company_name}</h3>
-                <button
-                  onClick={() => setShowAbout(!showAbout)}
-                  style={pageStyles.toggleButton}
-                >
-                  {showAbout ? "Hide" : "Show"}
-                </button>
-              </div>
-              {showAbout && (
-                <div style={pageStyles.cardContent}>
-                  {profile.about ? (
-                    <p style={pageStyles.aboutText}>{profile.about}</p>
-                  ) : (
-                    <p style={pageStyles.emptyText}>No "About" information provided.</p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Job Offers Section */}
-            <div style={pageStyles.card}>
-              <div style={pageStyles.cardHeader}>
-                <h3 style={pageStyles.cardTitle}>Latest Job Offers</h3>
-              </div>
-              <div style={pageStyles.cardContent}>
-                {jobOffers.length > 0 ? (
-                  <div style={pageStyles.jobsGrid}>
-                    {jobOffers.map((job) => (
-                      <div key={job.id} style={pageStyles.jobGridCard}>
-                        <div style={pageStyles.jobGridHeader}>
-                          <h4 style={pageStyles.jobGridTitle}>{job.title}</h4>
-                          <span style={pageStyles.jobGridDate}>
-                            {new Date(job.created_at).toLocaleDateString()}
-                          </span>
-                        </div>
-                        <div style={pageStyles.jobGridDetails}>
-                          {job.location && (
-                            <div style={pageStyles.jobGridDetailItem}>
-                              <span style={pageStyles.jobGridDetailLabel}>Location:</span>
-                              <span style={pageStyles.jobGridDetailValue}>{job.location}</span>
-                            </div>
-                          )}
-                          {job.type && (
-                            <div style={pageStyles.jobGridDetailItem}>
-                              <span style={pageStyles.jobGridDetailLabel}>Type:</span>
-                              <span style={pageStyles.jobGridDetailValue}>{job.type}</span>
-                            </div>
-                          )}
-                        </div>
-                        <p style={pageStyles.jobGridDescription}>
-                          {job.description.length > 150
-                            ? `${job.description.substring(0, 150)}...`
-                            : job.description}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div style={pageStyles.emptyState}>
-                    <p style={pageStyles.emptyText}>No recent job offers available.</p>
-                  </div>
-                )}
+              <div style={pageStyles.newsletterFeature}>
+                <div style={pageStyles.newsletterFeatureIcon}>✓</div>
+                <span>Actualités secteur</span>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Newsletter Section */}
-        {newsletters.length > 0 && (
-          <div style={pageStyles.newsletterSection}>
-            <div style={pageStyles.newsletterContainer}>
-              <p style={pageStyles.newsletterSubtitle}>Stay Updated</p>
-              <h2 style={pageStyles.newsletterTitle}>Subscribe to Our Newsletter</h2>
-              <p style={pageStyles.newsletterText}>
-                Get the latest updates on new job opportunities and company news directly to your inbox.
-              </p>
-              <form onSubmit={handleSubmit} style={pageStyles.newsletterForm}>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Your email address"
-                  required
-                  style={pageStyles.newsletterInput}
-                />
-                <button type="submit" style={pageStyles.newsletterButton}>
-                  Subscribe
-                </button>
-              </form>
-              <div style={pageStyles.newsletterFeatures}>
-                <span style={pageStyles.newsletterFeature}>New job alerts</span>
-                <span style={pageStyles.newsletterFeature}>Company news</span>
-                <span style={pageStyles.newsletterFeature}>Career tips</span>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
       <Footer />
-    </div>
+    </>
   );
 }
 
