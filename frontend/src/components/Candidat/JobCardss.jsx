@@ -775,336 +775,601 @@ const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
   if (error) return <p>Erreur de chargement des offres. Vérifiez le backend.</p>;
 
   return (
-    <>
-      <div className="job-search-box">
-        <input
-          type="text"
-          placeholder="Rechercher une offre..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="search-input"
-        />
+  <>
+    <Navbar />
+    <div className="job-search-container">
+      {/* Modern Header Section */}
+      <div className="page-header">
+        <div className="header-content">
+          <h1 className="page-title">Découvrez votre prochain emploi</h1>
+          <p className="page-subtitle">
+            Explorez des milliers d'opportunités et trouvez le poste qui vous correspond
+          </p>
+          <div className="stats-bar">
+            <span className="stat-item">
+              {filteredJobs.length} offre{filteredJobs.length !== 1 ? 's' : ''} disponible{filteredJobs.length !== 1 ? 's' : ''}
+            </span>
+          </div>
+        </div>
+      </div>
 
-        <div className="job-search-form">
-          <div className="form-group">
-            <label>Poste</label>
-            <select value={selectedPoste} onChange={(e) => setSelectedPoste(e.target.value)}>
-              <option value="">Tous</option>
-              {[...new Set(jobs.map(job => job.title))].map((poste, index) => (
-                <option key={index} value={poste}>{poste}</option>
-              ))}
-            </select>
+      {/* Modern Search Section */}
+      <div className="search-section">
+        <div className="search-container">
+          <div className="main-search">
+            <div className="search-input-wrapper">
+              <FaSearch className="search-icon" />
+              <input
+                type="text"
+                placeholder="Rechercher un poste, une entreprise..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="main-search-input"
+              />
+            </div>
           </div>
-          <div className="form-group">
-            <label>Lieu</label>
-            <select value={selectedLieu} onChange={(e) => setSelectedLieu(e.target.value)}>
-              <option value="">Tous</option>
-              {[...new Set(jobs.map(job => job.location))].map((lieu, index) => (
-                <option key={index} value={lieu}>{lieu}</option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Salaire</label>
-            <select value={selectedSalaire} onChange={(e) => setSelectedSalaire(e.target.value)}>
-              <option value="">Tous</option>
-              {[...new Set(jobs.map(job => job.salary))].map((salaire, index) => (
-                <option key={index} value={salaire}>{salaire}</option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Domaine</label>
-            <select value={selectedDomaine} onChange={(e) => setSelectedDomaine(e.target.value)}>
-              <option value="">Tous</option>
-              {[...new Set(jobs.map(job => job.type))].map((domaine, index) => (
-                <option key={index} value={domaine}>{domaine}</option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group">
-            <button 
-              onClick={handleSearch}
-              style={{
-                background: 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)',
-                color: 'white',
-                border: 'none',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                fontSize: '0.95rem',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-                boxShadow: '0 3px 6px rgba(252, 142, 32, 0.3)',
-                transform: 'translateY(0)',
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = 'linear-gradient(135deg, #ff7b00 0%, #fc8e20 100%)';
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 5px 12px rgba(252, 142, 32, 0.4)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)';
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 3px 6px rgba(252, 142, 32, 0.3)';
-              }}
-            >
+          
+          <div className="filters-section">
+            <div className="filters-grid">
+              <div className="filter-group">
+                <label className="filter-label">
+                  <FaBriefcase className="filter-icon" />
+                  Poste
+                </label>
+                <select 
+                  value={selectedPoste} 
+                  onChange={(e) => setSelectedPoste(e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="">Tous les postes</option>
+                  {[...new Set(jobs.map(job => job.title))].map((poste, index) => (
+                    <option key={index} value={poste}>{poste}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="filter-group">
+                <label className="filter-label">
+                  <FaMapMarkerAlt className="filter-icon" />
+                  Lieu
+                </label>
+                <select 
+                  value={selectedLieu} 
+                  onChange={(e) => setSelectedLieu(e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="">Toutes les villes</option>
+                  {[...new Set(jobs.map(job => job.location))].map((lieu, index) => (
+                    <option key={index} value={lieu}>{lieu}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="filter-group">
+                <label className="filter-label">Salaire</label>
+                <select 
+                  value={selectedSalaire} 
+                  onChange={(e) => setSelectedSalaire(e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="">Tous les salaires</option>
+                  {[...new Set(jobs.map(job => job.salary))].map((salaire, index) => (
+                    <option key={index} value={salaire}>{salaire}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="filter-group">
+                <label className="filter-label">Domaine</label>
+                <select 
+                  value={selectedDomaine} 
+                  onChange={(e) => setSelectedDomaine(e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="">Tous les domaines</option>
+                  {[...new Set(jobs.map(job => job.type))].map((domaine, index) => (
+                    <option key={index} value={domaine}>{domaine}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            
+            <button onClick={handleSearch} className="search-button">
+              <FaSearch />
               Rechercher
             </button>
           </div>
         </div>
       </div>
 
-      <div className="offers-wrapper">
-        {filteredJobs.length === 0 ? (
-          <p className="empty-message">Aucune offre disponible pour le moment.</p>
-        ) : (
-          <div className="offers-grid">
-            {currentJobs.map((job) => (
-              <JobCard 
-                key={job.id} 
-                job={job} 
-                onApply={handleApply} 
-                isApplied={appliedJobs.includes(job.id)}
-                onSave={handleSaveJob}
-                isSaved={savedJobs.includes(job.id)}
-              />
-            ))}
+      {/* Results Section */}
+      <div className="results-section">
+        {loading ? (
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <p>Recherche en cours...</p>
           </div>
+        ) : error ? (
+          <div className="error-container">
+            <h2>Erreur de chargement</h2>
+            <p>Impossible de charger les offres. Veuillez réessayer plus tard.</p>
+          </div>
+        ) : filteredJobs.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-icon">
+              <FaSearch size={48} />
+            </div>
+            <h3>Aucune offre trouvée</h3>
+            <p>Essayez d'ajuster vos critères de recherche</p>
+          </div>
+        ) : (
+          <>
+            <div className="jobs-grid">
+              {currentJobs.map((job) => (
+                <JobCard 
+                  key={job.id} 
+                  job={job} 
+                  onApply={handleApply} 
+                  isApplied={appliedJobs.includes(job.id)}
+                  onSave={handleSaveJob}
+                  isSaved={savedJobs.includes(job.id)}
+                />
+              ))}
+            </div>
+
+            {/* Modern Pagination */}
+            {totalPages > 1 && (
+              <div className="pagination-container">
+                <button
+                  onClick={() => paginate(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`}
+                >
+                  Précédent
+                </button>
+
+                <div className="pagination-numbers">
+                  {[...Array(totalPages)].map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => paginate(idx + 1)}
+                      className={`pagination-number ${currentPage === idx + 1 ? 'active' : ''}`}
+                    >
+                      {idx + 1}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => paginate(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`}
+                >
+                  Suivant
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 
-      {/* Enhanced Pagination */}
-      <div style={{ 
-        display: 'flex', 
-        gap: '0.5rem', 
-        justifyContent: 'center', 
-        marginTop: '2rem',
-        alignItems: 'center'
-      }}>
-        <button
-          onClick={() => paginate(currentPage - 1)}
-          disabled={currentPage === 1}
-          style={{
-            padding: '10px 16px',
-            fontSize: '0.85rem',
-            fontWeight: '600',
-            border: '2px solid #fc8e20',
-            backgroundColor: currentPage === 1 ? '#f8f9fa' : 'white',
-            color: currentPage === 1 ? '#6c757d' : '#fc8e20',
-            borderRadius: '8px',
-            cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-            opacity: currentPage === 1 ? 0.6 : 1,
-            transition: 'all 0.3s ease',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            boxShadow: currentPage === 1 ? 'none' : '0 2px 4px rgba(0, 0, 0, 0.1)'
-          }}
-          onMouseEnter={(e) => {
-            if (currentPage !== 1) {
-              e.target.style.backgroundColor = 'rgba(252, 142, 32, 0.1)';
-              e.target.style.transform = 'translateY(-1px)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (currentPage !== 1) {
-              e.target.style.backgroundColor = 'white';
-              e.target.style.transform = 'translateY(0)';
-            }
-          }}
-        >
-          Précédent
-        </button>
-
-        {[...Array(totalPages)].map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => paginate(idx + 1)}
-            style={{
-              padding: '10px 14px',
-              fontSize: '0.85rem',
-              fontWeight: '600',
-              border: '2px solid #fc8e20',
-              backgroundColor: currentPage === idx + 1 ? 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)' : 'white',
-              background: currentPage === idx + 1 ? 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)' : 'white',
-              color: currentPage === idx + 1 ? 'white' : '#fc8e20',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              minWidth: '40px',
-              transition: 'all 0.3s ease',
-              boxShadow: currentPage === idx + 1 ? '0 3px 6px rgba(252, 142, 32, 0.3)' : '0 2px 4px rgba(0, 0, 0, 0.1)'
-            }}
-            onMouseEnter={(e) => {
-              if (currentPage !== idx + 1) {
-                e.target.style.backgroundColor = 'rgba(252, 142, 32, 0.1)';
-                e.target.style.transform = 'translateY(-1px)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (currentPage !== idx + 1) {
-                e.target.style.backgroundColor = 'white';
-                e.target.style.transform = 'translateY(0)';
-              }
-            }}
-          >
-            {idx + 1}
-          </button>
-        ))}
-
-        <button
-          onClick={() => paginate(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          style={{
-            padding: '10px 16px',
-            fontSize: '0.85rem',
-            fontWeight: '600',
-            border: '2px solid #fc8e20',
-            backgroundColor: currentPage === totalPages ? '#f8f9fa' : 'white',
-            color: currentPage === totalPages ? '#6c757d' : '#fc8e20',
-            borderRadius: '8px',
-            cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-            opacity: currentPage === totalPages ? 0.6 : 1,
-            transition: 'all 0.3s ease',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            boxShadow: currentPage === totalPages ? 'none' : '0 2px 4px rgba(0, 0, 0, 0.1)'
-          }}
-          onMouseEnter={(e) => {
-            if (currentPage !== totalPages) {
-              e.target.style.backgroundColor = 'rgba(252, 142, 32, 0.1)';
-              e.target.style.transform = 'translateY(-1px)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (currentPage !== totalPages) {
-              e.target.style.backgroundColor = 'white';
-              e.target.style.transform = 'translateY(0)';
-            }
-          }}
-        >
-          Suivant
-        </button>
-      </div>
-
-      {/* Premium Saved Jobs Section */}
-      <div style={{ 
-        display: 'flex',
-        justifyContent: 'center',
-        marginTop: '40px',
-        marginBottom: '20px'
-      }}>
-        <div style={{
-          position: 'relative',
-          background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
-          borderRadius: '16px',
-          padding: '24px 32px',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-          border: '1px solid rgba(252, 142, 32, 0.15)',
-          maxWidth: '500px',
-          width: '100%',
-          textAlign: 'center',
-          overflow: 'hidden'
-        }}>
-          {/* Decorative background element */}
-          <div style={{
-            position: 'absolute',
-            top: '-50%',
-            right: '-20%',
-            width: '200px',
-            height: '200px',
-            background: 'linear-gradient(135deg, rgba(252, 142, 32, 0.08) 0%, rgba(255, 123, 0, 0.05) 100%)',
-            borderRadius: '50%',
-            zIndex: '0'
-          }}></div>
-          
-          <div style={{ position: 'relative', zIndex: '1' }}>
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '48px',
-              height: '48px',
-              background: 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)',
-              borderRadius: '12px',
-              marginBottom: '16px',
-              boxShadow: '0 4px 12px rgba(252, 142, 32, 0.3)'
-            }}>
-              <FaBookmark style={{ color: 'white', fontSize: '20px' }} />
-            </div>
-            
-            <h3 style={{
-              margin: '0 0 8px 0',
-              fontSize: '1.25rem',
-              fontWeight: '700',
-              color: '#2c3e50',
-              letterSpacing: '-0.02em'
-            }}>
-              Offres Sauvegardées
-            </h3>
-            
-            <p style={{
-              margin: '0 0 24px 0',
-              fontSize: '0.95rem',
-              color: '#64748b',
-              lineHeight: '1.5',
-              fontWeight: '400'
-            }}>
-              Accédez rapidement à toutes vos offres d'emploi favorites
-            </p>
-            
-            <Link 
-              to="/SavedJobOffers" 
-              style={{ 
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                color: 'white',
-                textDecoration: 'none',
-                fontSize: '1rem',
-                fontWeight: '600',
-                padding: '14px 28px',
-                background: 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)',
-                borderRadius: '12px',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                boxShadow: '0 4px 12px rgba(252, 142, 32, 0.35)',
-                border: 'none',
-                letterSpacing: '0.02em',
-                position: 'relative',
-                overflow: 'hidden'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = 'translateY(-2px) scale(1.02)';
-                e.target.style.boxShadow = '0 8px 25px rgba(252, 142, 32, 0.4)';
-                e.target.style.background = 'linear-gradient(135deg, #ff7b00 0%, #fc8e20 100%)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = 'translateY(0) scale(1)';
-                e.target.style.boxShadow = '0 4px 12px rgba(252, 142, 32, 0.35)';
-                e.target.style.background = 'linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%)';
-              }}
-            >
-              <span>Consulter mes favoris</span>
-              <svg 
-                width="16" 
-                height="16" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round"
-                style={{ transition: 'transform 0.3s ease' }}
-              >
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </Link>
+      {/* Saved Jobs CTA */}
+      <div className="saved-jobs-cta">
+        <div className="cta-content">
+          <div className="cta-icon">
+            <FaBookmark />
           </div>
+          <div className="cta-text">
+            <h3>Offres Sauvegardées</h3>
+            <p>Accédez rapidement à toutes vos offres d'emploi favorites</p>
+          </div>
+          <Link to="/SavedJobOffers" className="cta-button">
+            Consulter mes favoris
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </Link>
         </div>
       </div>
-    </>
-  );
-};
+    </div>
+    <Footer />
 
+    {/* ADD THE COMPLETE STYLE BLOCK HERE */}
+    <style jsx>{`
+      .job-search-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      }
+
+      .page-header {
+        background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+        color: white;
+        padding: 80px 0 60px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><radialGradient id="a" cx="50%" cy="0%" r="100%"><stop offset="0%" stop-color="white" stop-opacity="0.1"/><stop offset="100%" stop-color="white" stop-opacity="0"/></radialGradient></defs><ellipse cx="50" cy="0" rx="50" ry="20" fill="url(%23a)"/></svg>') no-repeat center top;
+        background-size: 100% 200px;
+      }
+
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      .page-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin: 0 0 16px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+
+      .page-subtitle {
+        font-size: 1.2rem;
+        margin: 0 0 32px;
+        opacity: 0.9;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .stats-bar {
+        display: inline-flex;
+        background: rgba(255,255,255,0.2);
+        backdrop-filter: blur(10px);
+        border-radius: 50px;
+        padding: 12px 24px;
+        border: 1px solid rgba(255,255,255,0.3);
+      }
+
+      .stat-item {
+        font-weight: 600;
+        font-size: 1rem;
+      }
+
+      .search-section {
+        background: white;
+        padding: 40px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        position: relative;
+        z-index: 10;
+        margin-top: -30px;
+        border-radius: 20px 20px 0 0;
+      }
+
+      .search-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .main-search {
+        margin-bottom: 32px;
+      }
+
+      .search-input-wrapper {
+        position: relative;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #999;
+        font-size: 18px;
+      }
+
+      .main-search-input {
+        width: 100%;
+        padding: 18px 20px 18px 50px;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+      }
+
+      .main-search-input:focus {
+        outline: none;
+        border-color: #ff6b35;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+      }
+
+      .filters-section {
+        background: #f8f9fa;
+        border-radius: 16px;
+        padding: 32px;
+        border: 1px solid #e9ecef;
+      }
+
+      .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 24px;
+        margin-bottom: 32px;
+      }
+
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .filter-label {
+        font-weight: 600;
+        color: #333;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .filter-icon {
+        color: #ff6b35;
+        font-size: 0.8rem;
+      }
+
+      .filter-select {
+        padding: 12px 16px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: white;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .filter-select:focus {
+        outline: none;
+        border-color: #ff6b35;
+        box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+      }
+
+      .search-button {
+        background: linear-gradient(135deg, #ff6b35, #ff8c42);
+        color: white;
+        border: none;
+        padding: 16px 32px;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0 auto;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+      }
+
+      .search-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+      }
+
+      .results-section {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .jobs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 24px;
+        margin-bottom: 40px;
+      }
+
+      .loading-container, .error-container, .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      }
+
+      .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid #e9ecef;
+        border-top: 4px solid #ff6b35;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 24px;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      .empty-icon, .error-container h2 {
+        color: #999;
+        margin-bottom: 24px;
+      }
+
+      .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 40px;
+      }
+
+      .pagination-btn {
+        padding: 12px 20px;
+        border: 2px solid #ff6b35;
+        background: white;
+        color: #ff6b35;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .pagination-btn:hover:not(.disabled) {
+        background: rgba(255, 107, 53, 0.1);
+        transform: translateY(-1px);
+      }
+
+      .pagination-btn.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        color: #999;
+        border-color: #ddd;
+      }
+
+      .pagination-numbers {
+        display: flex;
+        gap: 4px;
+      }
+
+      .pagination-number {
+        padding: 12px 16px;
+        border: 2px solid #ff6b35;
+        background: white;
+        color: #ff6b35;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 48px;
+      }
+
+      .pagination-number.active {
+        background: linear-gradient(135deg, #ff6b35, #ff8c42);
+        color: white;
+        box-shadow: 0 3px 6px rgba(255, 107, 53, 0.3);
+      }
+
+      .pagination-number:hover:not(.active) {
+        background: rgba(255, 107, 53, 0.1);
+        transform: translateY(-1px);
+      }
+
+      .saved-jobs-cta {
+        background: white;
+        margin: 40px auto;
+        max-width: 1000px;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        border: 1px solid rgba(255, 107, 53, 0.1);
+      }
+
+      .cta-content {
+        display: flex;
+        align-items: center;
+        padding: 32px;
+        gap: 24px;
+        position: relative;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      }
+
+      .cta-content::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(135deg, #ff6b35, #ff8c42);
+      }
+
+      .cta-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #ff6b35, #ff8c42);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+        flex-shrink: 0;
+        box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+      }
+
+      .cta-text {
+        flex: 1;
+      }
+
+      .cta-text h3 {
+        margin: 0 0 8px;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #333;
+      }
+
+      .cta-text p {
+        margin: 0;
+        color: #666;
+        font-size: 1rem;
+      }
+
+      .cta-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #ff6b35, #ff8c42);
+        color: white;
+        padding: 14px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+      }
+
+      .cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+      }
+
+      @media (max-width: 768px) {
+        .page-title {
+          font-size: 2rem;
+        }
+        
+        .filters-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .jobs-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .cta-content {
+          flex-direction: column;
+          text-align: center;
+          gap: 20px;
+        }
+        
+       .pagination-container {
+          flex-wrap: wrap;
+        }
+      `}</style>
+  </>
+);
+ 
 export default JobSearchAndOffers;
