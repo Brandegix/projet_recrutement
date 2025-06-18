@@ -195,10 +195,6 @@ const SavedJobOffers = () => {
       <>
         <Navbar />
         <div className="saved-jobs-container">
-          <div className="loading-container">
-            <div className="loading-spinner"></div>
-            <p>Chargement de vos offres sauvegardées...</p>
-          </div>
         </div>
         <Footer />
       </>
