@@ -996,7 +996,6 @@ const JobSearchAndOffers = () => {
           </div>
         </div>
       </div>
-      <Footer />
 
       {/* Styles (Assuming Next.js or similar handling for <style jsx>) */}
       <style jsx>{`
