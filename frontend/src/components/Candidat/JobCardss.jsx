@@ -677,37 +677,30 @@ const JobSearchAndOffers = () => {
 
   // Handles saving a job
   const handleSaveJob = (jobId, currentlySaved) => {
-    if (!candidateId) {
-      alert("Veuillez vous connecter pour sauvegarder des offres.");
-      return;
-    }
-
-    // Determine the API endpoint and method based on whether it's currently saved
-    const url = currentlySaved ? `${process.env.REACT_APP_API_URL}/api/unsave-job` : `${process.env.REACT_APP_API_URL}/api/save-job`;
-    const method = 'POST'; // Both save and unsave are POST with job_offer_id and candidate_id
-
-    fetch(url, {
-      method: method,
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
-    })
-      .then(res => {
-        if (!res.ok) throw new Error(`Failed to ${currentlySaved ? 'unsave' : 'save'} job`);
-        return res.json();
-      })
-      .then(() => {
-        setSavedJobs(prev =>
-          currentlySaved ? prev.filter(id => id !== jobId) : [...prev, jobId]
-        );
-        alert(`Offre ${currentlySaved ? 'retirée des' : 'ajoutée aux'} favoris !`);
-      })
-      .catch(error => {
-        console.error(`Erreur ${currentlySaved ? 'de suppression' : 'de sauvegarde'} de l'offre :`, error);
-        alert(`Impossible de ${currentlySaved ? 'retirer' : 'sauvegarder'} l'offre pour le moment.`);
-      });
-  };
-
+      if (currentlySaved) {
+        // Unsave job
+        handleUnsaveJob(jobId);
+      } else {
+        // Save job
+        fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+        })
+          .then(res => {
+            if (!res.ok) throw new Error('Failed to save job');
+            return res.json();
+          })
+          .then(() => {
+            setSavedJobs(prev => [...prev, jobId]);
+          })
+          .catch(error => {
+            console.error('Erreur sauvegarde de l\'offre :', error);
+            alert("Impossible de sauvegarder l'offre pour le moment.");
+          });
+      }
+    };
   // Handles job application
   const handleApply = (jobId) => {
     if (!candidateId) {
