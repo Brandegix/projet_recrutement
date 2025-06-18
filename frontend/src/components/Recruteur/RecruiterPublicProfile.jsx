@@ -11,8 +11,7 @@ function RecruiterPublicProfile() {
   const [error, setError] = useState(null);
   const [showAbout, setShowAbout] = useState(false);
   const [showInfos, setShowInfos] = useState(false);
-   const [newsletters, setNewsletters] = useState([]); // State for newsletters
-
+  const [newsletters, setNewsletters] = useState([]);
 
   const { id } = useParams();
 
@@ -26,8 +25,7 @@ function RecruiterPublicProfile() {
       .then(data => {
         setProfile(data);
         setJobStats(data.jobStats || null);
-         setNewsletters(data.newsletters || []); // Set newsletters data here
-
+        setNewsletters(data.newsletters || []);
       })
       .catch((err) => {
         console.error(err);
@@ -45,7 +43,7 @@ function RecruiterPublicProfile() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email,
-          recruiter_id: id, // 💡 le vrai ID du recruteur
+          recruiter_id: id,
         }),
       });
   
@@ -56,7 +54,6 @@ function RecruiterPublicProfile() {
       alert('Erreur lors de l inscription.');
     }
   };
-  
   
   useEffect(() => {
     // Fetch last 3 job offers for the recruiter
@@ -73,8 +70,184 @@ function RecruiterPublicProfile() {
       });
   }, [id]);
 
+  // Loading Component
+  const LoadingComponent = () => (
+    <div style={pageStyles.container}>
+      <div style={pageStyles.profileCard}>
+        {/* Header Section Skeleton */}
+        <div style={pageStyles.headerSection}>
+          <div style={pageStyles.headerContent}>
+            <div style={pageStyles.profileImageContainer}>
+              <div style={pageStyles.profileImageSkeleton}>
+                <div style={pageStyles.shimmer}></div>
+              </div>
+              <div style={pageStyles.statusBadgeSkeleton}>
+                <div style={pageStyles.shimmer}></div>
+              </div>
+            </div>
+            <div style={pageStyles.headerInfo}>
+              <div style={pageStyles.companyNameSkeleton}>
+                <div style={pageStyles.shimmer}></div>
+              </div>
+              <div style={pageStyles.companyTitleSkeleton}>
+                <div style={pageStyles.shimmer}></div>
+              </div>
+              <div style={pageStyles.headerDivider}></div>
+              <div style={pageStyles.headerDomainsContainer}>
+                {[1, 2, 3].map((i) => (
+                  <div key={i} style={pageStyles.headerDomainTagSkeleton}>
+                    <div style={pageStyles.shimmer}></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content Layout */}
+        <div style={pageStyles.mainContent}>
+          {/* Left Column */}
+          <div style={pageStyles.leftColumn}>
+            {/* Contact Information Card */}
+            <div style={pageStyles.card}>
+              <div style={pageStyles.cardHeader}>
+                <div style={pageStyles.cardTitleSkeleton}>
+                  <div style={pageStyles.shimmer}></div>
+                </div>
+              </div>
+              <div style={pageStyles.cardContent}>
+                {[1, 2, 3].map((i) => (
+                  <div key={i} style={pageStyles.contactItem}>
+                    <div style={pageStyles.contactLabelSkeleton}>
+                      <div style={pageStyles.shimmer}></div>
+                    </div>
+                    <div style={pageStyles.contactValueSkeleton}>
+                      <div style={pageStyles.shimmer}></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Statistics Card */}
+            <div style={pageStyles.card}>
+              <div style={pageStyles.cardHeader}>
+                <div style={pageStyles.cardTitleSkeleton}>
+                  <div style={pageStyles.shimmer}></div>
+                </div>
+              </div>
+              <div style={pageStyles.cardContent}>
+                <div style={pageStyles.statsGrid}>
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} style={pageStyles.statItem}>
+                      <div style={pageStyles.statNumberSkeleton}>
+                        <div style={pageStyles.shimmer}></div>
+                      </div>
+                      <div style={pageStyles.statLabelSkeleton}>
+                        <div style={pageStyles.shimmer}></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column */}
+          <div style={pageStyles.rightColumn}>
+            {/* About Section */}
+            <div style={pageStyles.card}>
+              <div style={pageStyles.cardHeader}>
+                <div style={pageStyles.cardTitleSkeleton}>
+                  <div style={pageStyles.shimmer}></div>
+                </div>
+              </div>
+              <div style={pageStyles.cardContent}>
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} style={pageStyles.aboutTextLineSkeleton}>
+                    <div style={pageStyles.shimmer}></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Job Offers Section */}
+        <div style={pageStyles.card}>
+          <div style={pageStyles.cardHeader}>
+            <div style={pageStyles.cardTitleSkeleton}>
+              <div style={pageStyles.shimmer}></div>
+            </div>
+          </div>
+          <div style={pageStyles.cardContent}>
+            <div style={pageStyles.jobsGrid}>
+              {[1, 2, 3].map((i) => (
+                <div key={i} style={pageStyles.jobGridCard}>
+                  <div style={pageStyles.jobGridHeader}>
+                    <div style={pageStyles.jobGridTitleSkeleton}>
+                      <div style={pageStyles.shimmer}></div>
+                    </div>
+                    <div style={pageStyles.jobGridDateSkeleton}>
+                      <div style={pageStyles.shimmer}></div>
+                    </div>
+                  </div>
+                  <div style={pageStyles.jobGridDetails}>
+                    {[1, 2, 3].map((j) => (
+                      <div key={j} style={pageStyles.jobGridDetailItem}>
+                        <div style={pageStyles.jobGridDetailSkeleton}>
+                          <div style={pageStyles.shimmer}></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={pageStyles.jobGridDescriptionSkeleton}>
+                    <div style={pageStyles.shimmer}></div>
+                  </div>
+                  <div style={{...pageStyles.jobGridDescriptionSkeleton, width: '60%'}}>
+                    <div style={pageStyles.shimmer}></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Newsletter Section */}
+      <div style={pageStyles.newsletterSection}>
+        <div style={pageStyles.newsletterContainer}>
+          <div style={pageStyles.newsletterSubtitleSkeleton}>
+            <div style={pageStyles.shimmer}></div>
+          </div>
+          <div style={pageStyles.newsletterTitleSkeleton}>
+            <div style={pageStyles.shimmer}></div>
+          </div>
+          <div style={pageStyles.newsletterTextSkeleton}>
+            <div style={pageStyles.shimmer}></div>
+          </div>
+          <div style={pageStyles.newsletterFormSkeleton}>
+            <div style={pageStyles.shimmer}></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Floating Loading Indicator */}
+      <div style={pageStyles.loadingIndicator}>
+        <div style={pageStyles.spinner}></div>
+        <div style={pageStyles.loadingText}>Chargement du profil...</div>
+      </div>
+    </div>
+  );
+
   if (error) return <div style={pageStyles.errorMessage}>{error}</div>;
-  if (!profile) return <div style={pageStyles.loadingMessage}>Chargement du profil...</div>;
+  if (!profile) return (
+    <>
+      <Navbar />
+      <LoadingComponent />
+      <Footer />
+    </>
+  );
 
   return (
     <>
@@ -270,7 +443,6 @@ function RecruiterPublicProfile() {
             
         </div>
      
-     
         {/* Newsletter Subscription Section (full-width, outside main content) */}
         <div style={pageStyles.newsletterSection}>
           <div style={pageStyles.newsletterContainer}>
@@ -282,17 +454,16 @@ function RecruiterPublicProfile() {
             </p>
             
             <form
- style={pageStyles.newsletterForm}
- onSubmit={handleSubmit}
- >
+              style={pageStyles.newsletterForm}
+              onSubmit={handleSubmit}
+            >
               <input
-  type="email"
-  name="email"
-  placeholder="Entrez votre adresse email"
-  style={pageStyles.newsletterInput}
-  required
-/>
-
+                type="email"
+                name="email"
+                placeholder="Entrez votre adresse email"
+                style={pageStyles.newsletterInput}
+                required
+              />
               <button 
                 type="submit" 
                 style={pageStyles.newsletterButton}
@@ -335,7 +506,11 @@ const pageStyles = {
   container: {
     minHeight: "100vh",
     backgroundColor: "#0a0a0a",
-    padding: "20px 0",
+    padding: "20px 10px",
+    position: "relative",
+    '@media (max-width: 768px)': {
+      padding: '10px 5px',
+    },
   },
   profileCard: {
     maxWidth: "1400px",
@@ -346,6 +521,10 @@ const pageStyles = {
     boxShadow: "0 25px 80px rgba(0,0,0,0.5)",
     fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     border: "1px solid #333",
+    '@media (max-width: 768px)': {
+      borderRadius: '15px',
+      margin: '0 5px',
+    },
   },
   
   // Header Section
@@ -356,6 +535,15 @@ const pageStyles = {
     position: "relative",
     display: "flex",
     alignItems: "flex-end",
+    '@media (max-width: 1024px)': {
+      height: '280px',
+    },
+    '@media (max-width: 768px)': {
+      height: '250px',
+    },
+    '@media (max-width: 480px)': {
+      height: '220px',
+    },
   },
   headerContent: {
     width: "100%",
@@ -364,6 +552,21 @@ const pageStyles = {
     alignItems: "center",
     gap: "40px",
     background: "linear-gradient(to top, rgba(0,0,0,0.95), transparent)",
+    '@media (max-width: 1024px)': {
+      padding: '40px 40px',
+      gap: '30px',
+    },
+    '@media (max-width: 768px)': {
+      padding: '30px 20px',
+      flexDirection: 'column',
+      alignItems: 'center',
+      textAlign: 'center',
+      gap: '20px',
+    },
+    '@media (max-width: 480px)': {
+      padding: '20px 15px',
+      gap: '15px',
+    },
   },
   profileImageContainer: {
     position: "relative",
@@ -375,6 +578,39 @@ const pageStyles = {
     border: "4px solid #ff6b35",
     objectFit: "cover",
     boxShadow: "0 15px 40px rgba(255,107,53,0.4)",
+    '@media (max-width: 1024px)': {
+      width: '150px',
+      height: '150px',
+    },
+    '@media (max-width: 768px)': {
+      width: '120px',
+      height: '120px',
+    },
+    '@media (max-width: 480px)': {
+      width: '100px',
+      height: '100px',
+    },
+  },
+  profileImageSkeleton: {
+    width: "180px",
+    height: "180px",
+    borderRadius: "50%",
+    border: "4px solid #333",
+    backgroundColor: "#2a2a2a",
+    position: "relative",
+    overflow: "hidden",
+    '@media (max-width: 1024px)': {
+      width: '150px',
+      height: '150px',
+    },
+    '@media (max-width: 768px)': {
+      width: '120px',
+      height: '120px',
+    },
+    '@media (max-width: 480px)': {
+      width: '100px',
+      height: '100px',
+    },
   },
   statusBadge: {
     position: "absolute",
@@ -388,10 +624,48 @@ const pageStyles = {
     fontWeight: "800",
     letterSpacing: "0.5px",
     border: "2px solid #1a1a1a",
+    '@media (max-width: 768px)': {
+      bottom: '10px',
+      right: '10px',
+      padding: '4px 8px',
+      fontSize: '0.7rem',
+    },
+    '@media (max-width: 480px)': {
+      bottom: '8px',
+      right: '8px',
+      padding: '3px 6px',
+      fontSize: '0.65rem',
+    },
+  },
+  statusBadgeSkeleton: {
+    position: "absolute",
+    bottom: "15px",
+    right: "15px",
+    width: "60px",
+    height: "26px",
+    backgroundColor: "#333",
+    borderRadius: "20px",
+    border: "2px solid #1a1a1a",
+    overflow: "hidden",
+    '@media (max-width: 768px)': {
+      bottom: '10px',
+      right: '10px',
+      width: '50px',
+      height: '22px',
+    },
+    '@media (max-width: 480px)': {
+      bottom: '8px',
+      right: '8px',
+      width: '40px',
+      height: '18px',
+    },
   },
   headerInfo: {
     color: "white",
     flex: 1,
+    '@media (max-width: 768px)': {
+      textAlign: 'center',
+    },
   },
   companyName: {
     fontSize: "3.5rem",
@@ -402,12 +676,70 @@ const pageStyles = {
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
     backgroundClip: "text",
+    '@media (max-width: 1024px)': {
+      fontSize: '2.8rem',
+    },
+    '@media (max-width: 768px)': {
+      fontSize: '2.2rem',
+    },
+    '@media (max-width: 480px)': {
+      fontSize: '1.8rem',
+    },
+    '@media (max-width: 360px)': {
+      fontSize: '1.5rem',
+    },
+  },
+  companyNameSkeleton: {
+    height: "50px",
+    width: "300px",
+    backgroundColor: "#2a2a2a",
+    borderRadius: "8px",
+    marginBottom: "12px",
+    position: "relative",
+    overflow: "hidden",
+    '@media (max-width: 768px)': {
+      width: '250px',
+      height: '40px',
+      margin: '0 auto 12px auto',
+    },
+    '@media (max-width: 480px)': {
+      width: '200px',
+      height: '35px',
+    },
+    '@media (max-width: 360px)': {
+      width: '180px',
+      height: '30px',
+    },
   },
   companyTitle: {
     fontSize: "1.5rem",
     fontWeight: "400",
     margin: "0 0 25px 0",
     color: "#ccc",
+    '@media (max-width: 768px)': {
+      fontSize: '1.2rem',
+    },
+    '@media (max-width: 480px)': {
+      fontSize: '1rem',
+    },
+  },
+  companyTitleSkeleton: {
+    height: "24px",
+    width: "200px",
+    backgroundColor: "#2a2a2a",
+    borderRadius: "6px",
+    marginBottom: "25px",
+    position: "relative",
+    overflow: "hidden",
+    '@media (max-width: 768px)': {
+      width: '150px',
+      height: '20px',
+      margin: '0 auto 25px auto',
+    },
+    '@media (max-width: 480px)': {
+      width: '120px',
+      height: '18px',
+    },
   },
   headerDivider: {
     width: "100px",
@@ -415,6 +747,13 @@ const pageStyles = {
     background: "linear-gradient(90deg, #ff6b35, #ff8c42)",
     borderRadius: "2px",
     marginBottom: "20px",
+    '@media (max-width: 768px)': {
+      margin: '0 auto 20px auto',
+    },
+    '@media (max-width: 480px)': {
+      width: '80px',
+      height: '3px',
+    },
   },
 
   // Header Domains
@@ -423,6 +762,13 @@ const pageStyles = {
     flexWrap: "wrap",
     gap: "12px",
     marginTop: "5px",
+    '@media (max-width: 768px)': {
+      justifyContent: 'center',
+      gap: '8px',
+    },
+    '@media (max-width: 480px)': {
+      gap: '6px',
+    },
   },
   headerDomainTag: {
     backgroundColor: "rgba(255, 107, 53, 0.15)",
@@ -434,450 +780,770 @@ const pageStyles = {
     fontWeight: "600",
     backdropFilter: "blur(10px)",
     transition: "all 0.3s ease",
+    '@media (max-width: 480px)': {
+      padding: '6px 12px',
+      fontSize: '0.8rem',
+    },
+    '@media (max-width: 360px)': {
+      padding: '4px 8px',
+      fontSize: '0.75rem',
+    },
   },
-
-  // Main Content Layout
-  mainContent: {
-    display: "flex",
-    gap: "40px",
-    padding: "50px 60px 60px",
-    alignItems: "flex-start",
-  },
-  leftColumn: {
-    flex: "0 0 420px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "30px",
-  },
-  rightColumn: {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    gap: "30px",
-  },
-
-  // Card Styles
-  card: {
+  headerDomainTagSkeleton: {
+    width: "80px",
+    height: "36px",
     backgroundColor: "#2a2a2a",
-    border: "1px solid #404040",
-    borderRadius: "16px",
-    overflow: "hidden",
-    transition: "all 0.3s ease",
-    marginLeft: '20px',
-    marginRight: '20px',
-    marginBottom: '20px',
-  },
-  cardHeader: {
-    backgroundColor: "#000",
-    padding: "25px 30px",
-    borderBottom: "2px solid #ff6b35",
-  },
-  cardTitle: {
-    color: "#fff",
-    fontSize: "1.3rem",
-    fontWeight: "700",
-    margin: 0,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    letterSpacing: "-0.01em",
-  },
-  cardContent: {
-    padding: "30px",
-    width: '100%',
-    padding: '20px',
-    boxSizing: 'border-box',
-  },
-
-  // Contact Section
-  contactItem: {
-    padding: "20px 0",
-    borderBottom: "1px solid #404040",
-  },
-  contactInfo: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-  },
-  contactLabel: {
-    fontSize: "0.9rem",
-    color: "#999",
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: "1px",
-  },
-  contactValue: {
-    fontSize: "1.1rem",
-    color: "#fff",
-    fontWeight: "500",
-  },
-
-  // Statistics Section
-  statsGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
-    gap: "25px",
-  },
-  statItem: {
-    textAlign: "center",
-    padding: "25px 20px",
-    backgroundColor: "#1a1a1a",
-    borderRadius: "12px",
-    border: "1px solid #404040",
-    transition: "all 0.3s ease",
-  },
-  statNumber: {
-    fontSize: "2.5rem",
-    fontWeight: "900",
-    color: "#fff",
-    margin: "0 0 10px 0",
-  },
-  statLabel: {
-    fontSize: "0.9rem",
-    color: "#ccc",
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: "1px",
-  },
-
-  // Job Offers Grid Section
-  jobsGrid: {
-    display: "grid",
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-  gap: '20px',
-  width: '100%',
-  },
-  jobGridCard: {
-    border: "1px solid #404040",
-    borderRadius: "12px",
-    padding: "20px",
-    transition: "all 0.3s ease",
-    backgroundColor: "#1a1a1a",
-  },
-  jobGridHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: "15px",
-    gap: "15px",
-  },
-  jobGridTitle: {
-    fontSize: "1.1rem",
-    fontWeight: "700",
-    color: "#fff",
-    margin: 0,
-    flex: 1,
-    lineHeight: "1.3",
-  },
-  jobGridDate: {
-    fontSize: "0.8rem",
-    color: "#ff6b35",
-    backgroundColor: "#2a2a2a",
-    padding: "4px 12px",
-    borderRadius: "15px",
-    fontWeight: "600",
-    whiteSpace: "nowrap",
-    border: "1px solid #404040",
-  },
-  jobGridDetails: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    marginBottom: "15px",
-  },
-  jobGridDetailItem: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-  },
-  jobGridDetailLabel: {
-    fontSize: "0.9rem",
-    minWidth: "20px",
-    color :"white",
-    fontWeight: "800",
-  },
-  jobGridDetailValue: {
-    fontSize: "0.9rem",
-    color: "#fff",
-    fontWeight: "500",
-  },
-  jobGridDescription: {
-    fontSize: "0.9rem",
-    color: "#ccc",
-    lineHeight: "1.5",
-    margin: 0,
-  },
-
-  // About Section
-  toggleIcon: {
-    fontSize: "1.2rem",
-    transition: "transform 0.3s ease",
-    color: "#ff6b35",
-    marginLeft: "auto",
-  },
-  aboutText: {
-    fontSize: "1.05rem",
-    lineHeight: "1.8",
-    color: "#ddd",
-    padding: "10px 0",
-  },
-
-  // Newsletter List Section
-  newsletterCard: {
-    backgroundColor: "#2a2a2a",
-    border: "1px solid #404040",
-    borderRadius: "16px",
-    overflow: "hidden",
-    transition: "all 0.3s ease",
-    margin: "0 60px 40px 60px", // Space before subscription section
-  },
-  
-  newsletterCardHeader: {
-    backgroundColor: "#000",
-    padding: "25px 30px",
-    borderBottom: "2px solid #ff6b35",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  
-  newsletterCardTitle: {
-    color: "#fff",
-    fontSize: "1.3rem",
-    fontWeight: "700",
-    margin: 0,
-    letterSpacing: "-0.01em",
-  },
-  
-  newsletterCount: {
-    backgroundColor: "#ff6b35",
-    color: "#000",
-    padding: "6px 12px",
-    borderRadius: "20px",
-    fontSize: "0.85rem",
-    fontWeight: "800",
-  },
-  
-  newsletterCardContent: {
-    padding: "30px",
-  },
-  
-  newslettersList: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
-    gap: "25px",
-    marginBottom: "20px",
-  },
-  
-  newsletterItem: {
-    backgroundColor: "#1a1a1a",
-    padding: "30px",
-    borderRadius: "16px",
-    border: "1px solid #404040",
-    transition: "all 0.3s ease",
-    position: "relative",
-    overflow: "hidden",
-    cursor: "pointer",
-  },
-  
-  newsletterItemHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: "15px",
-    gap: "15px",
-  },
-  
-  newsletterItemTitle: {
-    color: "#fff",
-    fontSize: "1.25rem",
-    fontWeight: "700",
-    margin: "0",
-    lineHeight: "1.3",
-    flex: 1,
-  },
-  
-  newsletterItemDate: {
-    color: "#ff6b35",
-    fontSize: "0.85rem",
-    fontWeight: "600",
-    backgroundColor: "#2a2a2a",
-    padding: "6px 12px",
     borderRadius: "20px",
     border: "1px solid #404040",
-    whiteSpace: "nowrap",
-  },
-  
-  newsletterItemContent: {
-    color: "#ccc",
-    fontSize: "1rem",
-    lineHeight: "1.6",
-    margin: "0",
-  },
-  
-  newsletterItemBadge: {
-    position: "absolute",
-    top: "20px",
-    right: "20px",
-    backgroundColor: "#ff6b35",
-    color: "#000",
-    fontSize: "0.7rem",
-    fontWeight: "800",
-    padding: "4px 10px",
-    borderRadius: "12px",
-    textTransform: "uppercase",
-    letterSpacing: "0.5px",
-  },
-
-  // Newsletter Subscription Section
-  newsletterSection: {
-    backgroundColor: "#000",
-    padding: "80px 60px",
-    textAlign: "center",
     position: "relative",
-    borderTop: "2px solid #ff6b35",
-    background: "linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%)",
-  },
-  
-  newsletterContainer: {
-    maxWidth: "800px",
-    margin: "0 auto",
-  },
-  
-  newsletterTitle: {
-    color: "#fff",
-    fontSize: "2.5rem",
-    fontWeight: "900",
-    marginBottom: "15px",
-    letterSpacing: "-0.02em",
-    background: "linear-gradient(135deg, #ffffff 0%, #ff6b35 100%)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
-  },
-  
-  newsletterSubtitle: {
-    color: "#ff6b35",
-    fontSize: "1.1rem",
-    fontWeight: "600",
-    marginBottom: "10px",
-    textTransform: "uppercase",
-    letterSpacing: "2px",
-  },
-  
-  newsletterText: {
-    color: "#ccc",
-    fontSize: "1.2rem",
-    marginBottom: "40px",
-    lineHeight: "1.6",
-    maxWidth: "600px",
-    margin: "0 auto 40px auto",
-  },
-  
-  newsletterForm: {
-    display: "flex",
-    maxWidth: "500px",
-    margin: "0 auto",
-    gap: "0",
-    borderRadius: "50px",
-    border: "2px solid #404040",
     overflow: "hidden",
-    backgroundColor: "#1a1a1a",
-    transition: "all 0.3s ease",
-  },
-  
-  newsletterInput: {
-    flex: 1,
-    padding: "18px 25px",
-    border: "none",
-    backgroundColor: "transparent",
-    color: "#fff",
-    fontSize: "1rem",
-    fontWeight: "500",
-    outline: "none",
-  },
-  
-  newsletterButton: {
-  all: "unset", // ✨ Reset all inherited styles
-  display: "inline-block",
-  padding: "12px 24px",
-  backgroundColor: "#ff6b35",
-  color: "#fff",
-  fontWeight: "700",
-  fontSize: "1rem",
-  fontFamily: "inherit",
-  borderRadius: "8px",
-  cursor: "pointer",
-  transition: "transform 0.2s ease, background-color 0.3s ease",
-  textTransform: "uppercase",
-  letterSpacing: "1px",
-  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-  border: "none",
-},
-  
-  newsletterFeatures: {
-    display: "flex",
-    justifyContent: "center",
-    gap: "40px",
-    marginTop: "50px",
-    flexWrap: "wrap",
-  },
-  
-  newsletterFeature: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    color: "#ccc",
-    fontSize: "0.95rem",
-    fontWeight: "500",
-  },
-  
-  newsletterFeatureIcon: {
-    width: "20px",
-    height: "20px",
-    backgroundColor: "#ff6b35",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "12px",
-    fontWeight: "800",
-    color: "#000",
-  },
+    '@media (max-width: 480px)': {
+      width: '70px',
+      height: '32px',
+    },
+    '@media (max-width: 360px)': {
+      width: '60px',
+      height: '28px',
+    },
+  },
 
-  // Empty State
-  emptyState: {
-    textAlign: "center",
-    padding: "50px 20px",
-  },
-  emptyText: {
-    color: "#999",
-    fontSize: "1.1rem",
-    margin: 0,
-  },
+  // Main Content Layout
+  mainContent: {
+    display: "flex",
+    gap: "30px",
+    padding: "40px 60px",
+    '@media (max-width: 1024px)': {
+      padding: '30px 40px',
+      gap: '25px',
+    },
+    '@media (max-width: 768px)': {
+      flexDirection: 'column',
+      padding: '25px 20px',
+      gap: '20px',
+    },
+    '@media (max-width: 480px)': {
+      padding: '20px 15px',
+      gap: '15px',
+    },
+  },
+  leftColumn: {
+    flex: "1",
+    display: "flex",
+    flexDirection: "column",
+    gap: "30px",
+    '@media (max-width: 768px)': {
+      gap: '20px',
+    },
+  },
+  rightColumn: {
+    flex: "2",
+    display: "flex",
+    flexDirection: "column",
+    gap: "30px",
+    '@media (max-width: 768px)': {
+      gap: '20px',
+    },
+  },
 
-  // Loading and Error States
-  loadingMessage: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: "60vh",
-    fontSize: "1.3rem",
-    color: "#fff",
-    fontWeight: "500",
-    backgroundColor: "#0a0a0a",
-  },
- 
-  errorMessage: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: "60vh",
-    fontSize: "1.3rem",
-    color: "#ff6b35",
-    fontWeight: "500",
-    backgroundColor: "#0a0a0a",
-  },
+  // Card Styles (General)
+  card: {
+    backgroundColor: "#2a2a2a",
+    borderRadius: "15px",
+    padding: "30px",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+    border: "1px solid #333",
+    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+    '&:hover': {
+      transform: 'translateY(-5px)',
+      boxShadow: '0 15px 40px rgba(0,0,0,0.4)',
+    },
+    '@media (max-width: 1024px)': {
+      padding: '25px',
+    },
+    '@media (max-width: 768px)': {
+      padding: '20px',
+    },
+    '@media (max-width: 480px)': {
+      padding: '15px',
+    },
+  },
+  cardHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: "25px",
+    paddingBottom: "15px",
+    borderBottom: "1px solid #444",
+    cursor: 'pointer',
+    '@media (max-width: 768px)': {
+      marginBottom: '20px',
+      paddingBottom: '10px',
+    },
+    '@media (max-width: 480px)': {
+      marginBottom: '15px',
+    },
+  },
+  cardTitle: {
+    fontSize: "1.8rem",
+    color: "#ffffff",
+    margin: "0",
+    fontWeight: "700",
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    '@media (max-width: 1024px)': {
+      fontSize: '1.6rem',
+    },
+    '@media (max-width: 768px)': {
+      fontSize: '1.4rem',
+    },
+    '@media (max-width: 480px)': {
+      fontSize: '1.2rem',
+    },
+  },
+  toggleIcon: {
+    fontSize: '1.2rem',
+    color: '#ff6b35',
+    transition: 'transform 0.3s ease',
+    '@media (max-width: 480px)': {
+      fontSize: '1rem',
+    },
+  },
+  cardTitleSkeleton: {
+    height: "30px",
+    width: "200px",
+    backgroundColor: "#3a3a3a",
+    borderRadius: "5px",
+    position: "relative",
+    overflow: "hidden",
+    '@media (max-width: 768px)': {
+      height: '25px',
+      width: '180px',
+    },
+    '@media (max-width: 480px)': {
+      height: '22px',
+      width: '150px',
+    },
+  },
+  cardContent: {
+    color: "#e0e0e0",
+    lineHeight: "1.7",
+  },
+
+  // Contact Information
+  contactItem: {
+    display: "flex",
+    alignItems: "center",
+    marginBottom: "15px",
+    gap: '15px',
+    '&:last-child': {
+      marginBottom: '0',
+    },
+    '@media (max-width: 480px)': {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      gap: '5px',
+    },
+  },
+  contactInfo: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  contactLabel: {
+    fontSize: "0.95rem",
+    color: "#aaa",
+    fontWeight: "500",
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
+    marginBottom: '5px',
+    '@media (max-width: 480px)': {
+      fontSize: '0.85rem',
+    },
+  },
+  contactValue: {
+    fontSize: "1.05rem",
+    color: "#fff",
+    fontWeight: "400",
+    '@media (max-width: 480px)': {
+      fontSize: '0.95rem',
+    },
+  },
+  contactLabelSkeleton: {
+    height: "18px",
+    width: "80px",
+    backgroundColor: "#3a3a3a",
+    borderRadius: "3px",
+    marginBottom: "5px",
+    position: "relative",
+    overflow: "hidden",
+  },
+  contactValueSkeleton: {
+    height: "20px",
+    width: "150px",
+    backgroundColor: "#3a3a3a",
+    borderRadius: "3px",
+    position: "relative",
+    overflow: "hidden",
+  },
+
+  // Statistics Grid
+  statsGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+    gap: "20px",
+    '@media (max-width: 480px)': {
+      gridTemplateColumns: '1fr',
+      gap: '15px',
+    },
+  },
+  statItem: {
+    backgroundColor: "#3a3a3a",
+    borderRadius: "10px",
+    padding: "20px",
+    textAlign: "center",
+    border: "1px solid #444",
+    transition: "background-color 0.3s ease",
+    '&:hover': {
+      backgroundColor: '#4a4a4a',
+    },
+    '@media (max-width: 768px)': {
+      padding: '15px',
+    },
+    '@media (max-width: 480px)': {
+      padding: '12px',
+    },
+  },
+  statNumber: {
+    fontSize: "2.5rem",
+    fontWeight: "800",
+    color: "#ff6b35",
+    marginBottom: "5px",
+    '@media (max-width: 768px)': {
+      fontSize: '2rem',
+    },
+    '@media (max-width: 480px)': {
+      fontSize: '1.8rem',
+    },
+  },
+  statNumberSkeleton: {
+    height: "40px",
+    width: "60%",
+    margin: "0 auto 5px auto",
+    backgroundColor: "#4a4a4a",
+    borderRadius: "5px",
+    position: "relative",
+    overflow: "hidden",
+  },
+  statLabel: {
+    fontSize: "1rem",
+    color: "#bbb",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+    '@media (max-width: 768px)': {
+      fontSize: '0.9rem',
+    },
+    '@media (max-width: 480px)': {
+      fontSize: '0.8rem',
+    },
+  },
+  statLabelSkeleton: {
+    height: "18px",
+    width: "70%",
+    margin: "0 auto",
+    backgroundColor: "#4a4a4a",
+    borderRadius: "3px",
+    position: "relative",
+    overflow: "hidden",
+  },
+
+  // About Section
+  aboutText: {
+    fontSize: "1.05rem",
+    color: "#e0e0e0",
+    '@media (max-width: 768px)': {
+      fontSize: '1rem',
+    },
+    '@media (max-width: 480px)': {
+      fontSize: '0.95rem',
+    },
+  },
+  aboutTextLineSkeleton: {
+    height: "18px",
+    width: "100%",
+    backgroundColor: "#3a3a3a",
+    borderRadius: "3px",
+    marginBottom: "10px",
+    position: "relative",
+    overflow: "hidden",
+    '&:nth-child(even)': {
+      width: '90%',
+    },
+    '&:last-child': {
+      width: '70%',
+      marginBottom: '0',
+    },
+  },
+
+  // Job Offers Grid
+  jobsGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+    gap: "25px",
+    '@media (max-width: 1024px)': {
+      gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+      gap: '20px',
+    },
+    '@media (max-width: 768px)': {
+      gridTemplateColumns: '1fr',
+      gap: '18px',
+    },
+  },
+  jobGridCard: {
+    backgroundColor: "#3a3a3a",
+    borderRadius: "12px",
+    padding: "25px",
+    boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
+    border: "1px solid #444",
+    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+    '&:hover': {
+      transform: 'translateY(-5px) scale(1.01)',
+      boxShadow: '0 12px 25px rgba(0,0,0,0.35)',
+    },
+    '@media (max-width: 768px)': {
+      padding: '20px',
+    },
+    '@media (max-width: 480px)': {
+      padding: '18px',
+    },
+  },
+  jobGridHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "baseline",
+    marginBottom: "15px",
+    '@media (max-width: 480px)': {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      marginBottom: '10px',
+    },
+  },
+  jobGridTitle: {
+    fontSize: "1.4rem",
+    color: "#ff6b35",
+    margin: "0",
+    fontWeight: "700",
+    '@media (max-width: 768px)': {
+      fontSize: '1.2rem',
+    },
+    '@media (max-width: 480px)': {
+      fontSize: '1.1rem',
+    },
+  },
+  jobGridTitleSkeleton: {
+    height: "24px",
+    width: "70%",
+    backgroundColor: "#4a4a4a",
+    borderRadius: "4px",
+    position: "relative",
+    overflow: "hidden",
+  },
+  jobGridDate: {
+    fontSize: "0.85rem",
+    color: "#aaa",
+    '@media (max-width: 480px)': {
+      fontSize: '0.8rem',
+    },
+  },
+  jobGridDateSkeleton: {
+    height: "16px",
+    width: "80px",
+    backgroundColor: "#4a4a4a",
+    borderRadius: "3px",
+    position: "relative",
+    overflow: "hidden",
+  },
+  jobGridDetails: {
+    marginBottom: "20px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    '@media (max-width: 480px)': {
+      marginBottom: '15px',
+      gap: '6px',
+    },
+  },
+  jobGridDetailItem: {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+  },
+  jobGridDetailLabel: {
+    fontSize: "0.95rem",
+    color: "#ccc",
+    fontWeight: "600",
+    '@media (max-width: 480px)': {
+      fontSize: '0.9rem',
+    },
+  },
+  jobGridDetailValue: {
+    fontSize: "0.95rem",
+    color: "#e0e0e0",
+    '@media (max-width: 480px)': {
+      fontSize: '0.9rem',
+    },
+  },
+  jobGridDetailSkeleton: {
+    height: "18px",
+    width: "100%",
+    backgroundColor: "#4a4a4a",
+    borderRadius: "3px",
+    position: "relative",
+    overflow: "hidden",
+  },
+  jobGridDescription: {
+    fontSize: "0.9rem",
+    color: "#bbb",
+    lineHeight: "1.6",
+    margin: "0",
+    '@media (max-width: 768px)': {
+      fontSize: '0.85rem',
+    },
+    '@media (max-width: 480px)': {
+      fontSize: '0.8rem',
+    },
+  },
+  jobGridDescriptionSkeleton: {
+    height: "16px",
+    width: "90%",
+    backgroundColor: "#4a4a4a",
+    borderRadius: "3px",
+    marginBottom: "8px",
+    position: "relative",
+    overflow: "hidden",
+    '&:last-child': {
+      marginBottom: '0',
+    },
+  },
+  emptyState: {
+    textAlign: "center",
+    padding: "40px 20px",
+    backgroundColor: "#3a3a3a",
+    borderRadius: "10px",
+    border: "1px dashed #555",
+    '@media (max-width: 480px)': {
+      padding: '30px 15px',
+    },
+  },
+  emptyText: {
+    fontSize: "1.1rem",
+    color: "#bbb",
+    fontWeight: "500",
+    margin: "0",
+    '@media (max-width: 480px)': {
+      fontSize: '1rem',
+    },
+  },
+
+  // Newsletter Section
+  newsletterSection: {
+    backgroundColor: "#1f1f1f",
+    padding: "80px 20px",
+    textAlign: "center",
+    borderTop: "1px solid #333",
+    marginTop: "40px",
+    '@media (max-width: 1024px)': {
+      padding: '60px 20px',
+      marginTop: '30px',
+    },
+    '@media (max-width: 768px)': {
+      padding: '50px 15px',
+      marginTop: '25px',
+    },
+    '@media (max-width: 480px)': {
+      padding: '40px 10px',
+      marginTop: '20px',
+    },
+  },
+  newsletterContainer: {
+    maxWidth: "800px",
+    margin: "0 auto",
+  },
+  newsletterSubtitle: {
+    fontSize: "1.2rem",
+    color: "#ff6b35",
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: "1px",
+    marginBottom: "15px",
+    '@media (max-width: 768px)': {
+      fontSize: '1.1rem',
+      marginBottom: '10px',
+    },
+    '@media (max-width: 480px)': {
+      fontSize: '1rem',
+    },
+  },
+  newsletterSubtitleSkeleton: {
+    height: "20px",
+    width: "150px",
+    margin: "0 auto 15px auto",
+    backgroundColor: "#2a2a2a",
+    borderRadius: "4px",
+    position: "relative",
+    overflow: "hidden",
+  },
+  newsletterTitle: {
+    fontSize: "3rem",
+    color: "#ffffff",
+    fontWeight: "900",
+    marginBottom: "20px",
+    lineHeight: "1.2",
+    '@media (max-width: 1024px)': {
+      fontSize: '2.5rem',
+    },
+    '@media (max-width: 768px)': {
+      fontSize: '2rem',
+    },
+    '@media (max-width: 480px)': {
+      fontSize: '1.8rem',
+      marginBottom: '15px',
+    },
+    '@media (max-width: 360px)': {
+      fontSize: '1.5rem',
+    },
+  },
+  newsletterTitleSkeleton: {
+    height: "45px",
+    width: "70%",
+    margin: "0 auto 20px auto",
+    backgroundColor: "#2a2a2a",
+    borderRadius: "6px",
+    position: "relative",
+    overflow: "hidden",
+  },
+  newsletterText: {
+    fontSize: "1.1rem",
+    color: "#cccccc",
+    marginBottom: "30px",
+    lineHeight: "1.7",
+    '@media (max-width: 768px)': {
+      fontSize: '1rem',
+      marginBottom: '25px',
+    },
+    '@media (max-width: 480px)': {
+      fontSize: '0.95rem',
+      marginBottom: '20px',
+    },
+  },
+  newsletterTextSkeleton: {
+    height: "20px",
+    width: "80%",
+    margin: "0 auto 10px auto",
+    backgroundColor: "#2a2a2a",
+    borderRadius: "4px",
+    position: "relative",
+    overflow: "hidden",
+    '&:last-child': {
+      width: '60%',
+      marginBottom: '30px',
+    },
+  },
+  newsletterForm: {
+    display: "flex",
+    justifyContent: "center",
+    gap: "15px",
+    maxWidth: "500px",
+    margin: "0 auto 30px auto",
+    '@media (max-width: 480px)': {
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '10px',
+    },
+  },
+  newsletterFormSkeleton: {
+    height: "50px",
+    width: "400px",
+    margin: "0 auto 30px auto",
+    backgroundColor: "#2a2a2a",
+    borderRadius: "8px",
+    position: "relative",
+    overflow: "hidden",
+    '@media (max-width: 480px)': {
+      width: '90%',
+      height: '45px',
+    },
+  },
+  newsletterInput: {
+    flex: "1",
+    padding: "15px 20px",
+    borderRadius: "8px",
+    border: "1px solid #555",
+    backgroundColor: "#3a3a3a",
+    color: "#ffffff",
+    fontSize: "1rem",
+    outline: "none",
+    '&::placeholder': {
+      color: '#888',
+    },
+    '&:focus': {
+      borderColor: '#ff6b35',
+      boxShadow: '0 0 0 3px rgba(255,107,53,0.3)',
+    },
+    '@media (max-width: 480px)': {
+      width: '100%',
+      padding: '12px 15px',
+    },
+  },
+  newsletterButton: {
+    padding: "15px 30px",
+    backgroundColor: "#ff6b35",
+    color: "#1a1a1a",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "1rem",
+    fontWeight: "700",
+    transition: "background-color 0.3s ease, transform 0.2s ease",
+    '&:hover': {
+      backgroundColor: '#e05a28',
+      transform: 'scale(1.02)',
+    },
+    '@media (max-width: 480px)': {
+      width: '100%',
+      padding: '12px 20px',
+    },
+  },
+  newsletterFeatures: {
+    display: "flex",
+    justifyContent: "center",
+    flexWrap: "wrap",
+    gap: "25px",
+    marginTop: "20px",
+    '@media (max-width: 768px)': {
+      gap: '20px',
+    },
+    '@media (max-width: 480px)': {
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '15px',
+    },
+  },
+  newsletterFeature: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    color: "#e0e0e0",
+    fontSize: "0.95rem",
+    fontWeight: "500",
+    '@media (max-width: 480px)': {
+      fontSize: '0.9rem',
+    },
+  },
+  newsletterFeatureIcon: {
+    backgroundColor: "#ff6b35",
+    color: "#1a1a1a",
+    borderRadius: "50%",
+    width: "22px",
+    height: "22px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: "0.8rem",
+    fontWeight: "800",
+  },
+
+  // Skeleton Loading Shimmer Effect
+  shimmer: {
+    position: "absolute",
+    top: "0",
+    left: "0",
+    width: "100%",
+    height: "100%",
+    animation: "shimmer 2s infinite linear",
+    background: "linear-gradient(to right, #3a3a3a 8%, #4a4a4a 18%, #3a3a3a 33%)",
+    backgroundSize: "800px 100%",
+  },
+  '@keyframes shimmer': {
+    '0%': {
+      backgroundPosition: '-468px 0',
+    },
+    '100%': {
+      backgroundPosition: '468px 0',
+    },
+  },
+
+  // Floating Loading Indicator
+  loadingIndicator: {
+    position: "fixed",
+    bottom: "30px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    backgroundColor: "rgba(255, 107, 53, 0.9)",
+    color: "#000",
+    padding: "12px 25px",
+    borderRadius: "30px",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    boxShadow: "0 8px 25px rgba(255, 107, 53, 0.4)",
+    zIndex: "1000",
+    opacity: "1",
+    transition: "opacity 0.3s ease",
+    '@media (max-width: 480px)': {
+      bottom: '20px',
+      padding: '10px 20px',
+      gap: '8px',
+    },
+  },
+  spinner: {
+    border: "3px solid rgba(0, 0, 0, 0.3)",
+    borderTop: "3px solid #000",
+    borderRadius: "50%",
+    width: "20px",
+    height: "20px",
+    animation: "spin 1s linear infinite",
+    '@media (max-width: 480px)': {
+      width: '18px',
+      height: '18px',
+    },
+  },
+  '@keyframes spin': {
+    '0%': { transform: 'rotate(0deg)' },
+    '100%': { transform: 'rotate(360deg)' },
+  },
+  loadingText: {
+    fontSize: "0.95rem",
+    fontWeight: "600",
+    '@media (max-width: 480px)': {
+      fontSize: '0.85rem',
+    },
+  },
+
+  // Error Message
+  errorMessage: {
+    textAlign: "center",
+    color: "#ff6b35",
+    fontSize: "1.2rem",
+    padding: "50px",
+    backgroundColor: "#1a1a1a",
+    minHeight: "100vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: "20px",
+    margin: "20px auto",
+    maxWidth: "800px",
+    border: "1px solid #444",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+    '@media (max-width: 768px)': {
+      fontSize: '1.1rem',
+      padding: '30px',
+    },
+    '@media (max-width: 480px)': {
+      fontSize: '1rem',
+      padding: '20px',
+    },
+  },
 };
 
 export default RecruiterPublicProfile;
