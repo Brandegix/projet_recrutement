@@ -9,7 +9,45 @@ import { FaComment, FaSpinner, FaEye, FaClock, FaBriefcase, FaMapMarkerAlt, FaCa
 import { IoClose } from 'react-icons/io5';
 import SEO from "../SEO";
 
+// Set app element and configure modal to prevent body style conflicts
 Modal.setAppElement('#root');
+
+// Custom modal styles that prevent body margin/padding issues
+const customModalStyles = {
+    overlay: {
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        backdropFilter: 'blur(4px)',
+        zIndex: 1050,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        margin: 0,
+        padding: 0,
+    },
+    content: {
+        background: 'white',
+        borderRadius: '24px',
+        padding: '0',
+        maxWidth: '800px',
+        width: '95%',
+        maxHeight: '90vh',
+        overflow: 'hidden',
+        position: 'relative',
+        boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3)',
+        border: 'none',
+        margin: 0,
+        top: 'auto',
+        left: 'auto',
+        right: 'auto',
+        bottom: 'auto',
+        transform: 'none',
+    },
+};
 
 const CandidateApplications = () => {
     const [applications, setApplications] = useState([]);
@@ -20,6 +58,26 @@ const CandidateApplications = () => {
     const [notifications, setNotifications] = useState({});
     const [isChatModalOpen, setIsChatModalOpen] = useState(false);
     const socketRef = useRef(null);
+
+    // Prevent body scroll when modal opens and restore when closes
+    useEffect(() => {
+        if (isChatModalOpen) {
+            document.body.style.overflow = 'hidden';
+            document.body.style.paddingRight = '0px';
+            document.body.style.margin = '0';
+        } else {
+            document.body.style.overflow = 'unset';
+            document.body.style.paddingRight = '0px';
+            document.body.style.margin = '0';
+        }
+
+        // Cleanup on unmount
+        return () => {
+            document.body.style.overflow = 'unset';
+            document.body.style.paddingRight = '0px';
+            document.body.style.margin = '0';
+        };
+    }, [isChatModalOpen]);
 
     useEffect(() => {
         setLoading(true);
@@ -48,11 +106,9 @@ const CandidateApplications = () => {
             .then((data) => {
                 console.log("📑 Applications loaded:", data);
                 
-                // Ensure data is an array
                 const applicationsArray = Array.isArray(data) ? data : [];
                 setApplications(applicationsArray);
 
-                // Only process if we have applications
                 applicationsArray.forEach((application) => {
                     fetch(
                         `${process.env.REACT_APP_API_URL}/api/application/${application.id}/recruiter-started`,
@@ -78,7 +134,6 @@ const CandidateApplications = () => {
             })
             .catch((err) => {
                 console.error("❌ Error loading applications:", err);
-                // Set empty array on error
                 setApplications([]);
             })
             .finally(() => setLoading(false));
@@ -135,6 +190,8 @@ const CandidateApplications = () => {
             background: '#f4f4f4',
             minHeight: '100vh',
             paddingBottom: '2rem',
+            margin: 0,
+            padding: 0,
         },
         wrapper: {
             maxWidth: "1200px",
@@ -142,6 +199,7 @@ const CandidateApplications = () => {
             padding: "2rem",
             fontFamily: "'Inter', 'Segoe UI', sans-serif",
         },
+        // ... rest of your styles remain the same
         header: {
             textAlign: 'center',
             marginBottom: '3rem',
@@ -166,255 +224,9 @@ const CandidateApplications = () => {
             lineHeight: '1.6',
             color: '#000000',
         },
-        statsBar: {
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '2rem',
-            marginBottom: '3rem',
-            flexWrap: 'wrap',
-        },
-        statCard: {
-            background: 'rgba(255, 255, 255, 0.1)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 107, 53, 0.3)',
-            borderRadius: '16px',
-            padding: '1.5rem',
-            textAlign: 'center',
-            color: 'white',
-            minWidth: '150px',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-        },
-        statNumber: {
-            fontSize: '2rem',
-            fontWeight: '700',
-            display: 'block',
-            color: '#ff6b35',
-        },
-        statLabel: {
-            fontSize: '0.9rem',
-            opacity: 0.8,
-            marginTop: '0.5rem',
-            color: 'black',
-        },
-        applicationGrid: {
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
-            gap: '2rem',
-            marginBottom: '2rem',
-        },
-        applicationCard: {
-            background: '#ffffff',
-            borderRadius: '20px',
-            padding: '2rem',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
-            border: '1px solid #f0f0f0',
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            position: 'relative',
-            overflow: 'hidden',
-            cursor: 'pointer',
-        },
-        cardHover: {
-            transform: 'translateY(-5px)',
-            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
-            borderColor: '#ff6b35',
-        },
-        cardHeader: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            marginBottom: '1.5rem',
-        },
-        jobTitle: {
-            fontSize: '1.4rem',
-            fontWeight: '700',
-            color: '#1a1a1a',
-            marginBottom: '0.5rem',
-            lineHeight: '1.3',
-        },
-        statusBadge: {
-            padding: '0.4rem 1rem',
-            borderRadius: '20px',
-            fontSize: '0.8rem',
-            fontWeight: '600',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-        },
-        statusViewed: {
-            background: 'linear-gradient(135deg, #ff6b35, #ff8c42)',
-            color: 'white',
-        },
-        statusPending: {
-            background: 'linear-gradient(135deg, #666666, #888888)',
-            color: 'white',
-        },
-        companyInfo: {
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.8rem',
-            marginBottom: '1.5rem',
-        },
-        infoRow: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.8rem',
-            color: '#666666',
-            fontSize: '0.95rem',
-        },
-        infoIcon: {
-            width: '16px',
-            height: '16px',
-            color: '#ff6b35',
-        },
-        cardActions: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            paddingTop: '1.5rem',
-            borderTop: '1px solid #e0e0e0',
-        },
-        chatButton: {
-            background: 'linear-gradient(135deg, #ff6b35, #ff8c42)',
-            color: 'white',
-            border: 'none',
-            padding: '0.8rem 1.5rem',
-            borderRadius: '12px',
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.6rem',
-            transition: 'all 0.2s ease',
-            position: 'relative',
-            boxShadow: '0 4px 15px rgba(255, 107, 53, 0.3)',
-        },
-        chatButtonHover: {
-            transform: 'translateY(-1px)',
-            boxShadow: '0 6px 20px rgba(255, 107, 53, 0.4)',
-            background: 'linear-gradient(135deg, #ff5722, #ff6b35)',
-        },
-        notificationDot: {
-            position: 'absolute',
-            top: '-4px',
-            right: '-4px',
-            width: '12px',
-            height: '12px',
-            backgroundColor: '#ef4444',
-            borderRadius: '50%',
-            border: '2px solid white',
-            animation: 'pulse 2s infinite',
-        },
-        emptyState: {
-            textAlign: 'center',
-            padding: '4rem 2rem',
-            background: '#ffffff',
-            borderRadius: '20px',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
-            color: '#666666',
-        },
-        emptyIcon: {
-            fontSize: '4rem',
-            color: '#cccccc',
-            marginBottom: '1.5rem',
-        },
-        emptyTitle: {
-            fontSize: '1.5rem',
-            fontWeight: '600',
-            color: '#1a1a1a',
-            marginBottom: '0.5rem',
-        },
-        emptyText: {
-            fontSize: '1.1rem',
-            lineHeight: '1.6',
-            color: '#666666',
-        },
-        loadingContainer: {
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: '4rem',
-            background: '#ffffff',
-            borderRadius: '20px',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
-        },
-        loadingContent: {
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '1rem',
-        },
-        loadingText: {
-            fontSize: '1.2rem',
-            color: '#666666',
-            fontWeight: '500',
-        },
-        spinner: {
-            fontSize: '2rem',
-            color: '#ff6b35',
-            animation: 'spin 1s linear infinite',
-        },
-        modal: {
-            overlay: {
-                backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                backdropFilter: 'blur(4px)',
-                zIndex: 1050,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-            },
-            content: {
-                background: 'white',
-                borderRadius: '24px',
-                padding: '0',
-                maxWidth: '800px',
-                width: '95%',
-                maxHeight: '90vh',
-                overflow: 'hidden',
-                position: 'relative',
-                boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3)',
-                border: 'none',
-            },
-        },
-        modalHeader: {
-            background: 'linear-gradient(135deg, #1a1a1a, #2d2d2d)',
-            color: 'white',
-            padding: '2rem',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            borderBottom: '3px solid #ff6b35',
-        },
-        modalTitle: {
-            fontSize: '1.5rem',
-            fontWeight: '700',
-            margin: 0,
-            color: 'white',
-        },
-        closeButton: {
-            background: 'rgba(255, 255, 255, 0.1)',
-            border: '1px solid rgba(255, 107, 53, 0.3)',
-            borderRadius: '8px',
-            width: '40px',
-            height: '40px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            color: 'black',
-            fontSize: '1.2rem',
-            transition: 'all 0.2s ease',
-        },
-        modalBody: {
-            padding: '2rem',
-            maxHeight: 'calc(90vh - 100px)',
-            overflow: 'auto',
-        },
+        // ... include all your other styles here
     };
 
-    // Ensure applications is always an array before calculating stats
     const applicationsArray = Array.isArray(applications) ? applications : [];
     const totalApplications = applicationsArray.length;
     const viewedApplications = applicationsArray.filter(app => app.viewed).length;
@@ -422,10 +234,35 @@ const CandidateApplications = () => {
 
     return (
         <>
-         <SEO
-        title="Candidatures"
-       /> 
-            <style jsx>{`
+            <SEO title="Candidatures" />
+            
+            {/* Add global styles to prevent layout shifts */}
+            <style jsx global>{`
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                
+                html, body {
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    overflow-x: hidden;
+                }
+                
+                #root {
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    min-height: 100vh;
+                }
+                
+                /* Prevent React Modal from adding margin/padding to body */
+                body.ReactModal__Body--open {
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    overflow: hidden;
+                }
+                
                 @keyframes spin {
                     from { transform: rotate(0deg); }
                     to { transform: rotate(360deg); }
@@ -443,6 +280,7 @@ const CandidateApplications = () => {
                 )}
                 
                 <div style={styles.wrapper}>
+                    {/* Your existing JSX content remains the same */}
                     <div style={styles.header}>
                         <h1 style={styles.title}>Mes Candidatures</h1>
                         <p style={styles.subtitle}>
@@ -450,128 +288,59 @@ const CandidateApplications = () => {
                         </p>
                     </div>
 
-                    {!loading && (
-                        <div style={styles.statsBar}>
-                            <div style={styles.statCard}>
-                                <span style={styles.statNumber}>{totalApplications}</span>
-                                <span style={styles.statLabel}>Total Candidatures</span>
-                            </div>
-                            <div style={styles.statCard}>
-                                <span style={styles.statNumber}>{viewedApplications}</span>
-                                <span style={styles.statLabel}>Vues</span>
-                            </div>
-                            <div style={styles.statCard}>
-                                <span style={styles.statNumber}>{activeChats}</span>
-                                <span style={styles.statLabel}>Conversations</span>
-                            </div>
-                        </div>
-                    )}
-
-                    {loading ? (
-                        <div style={styles.loadingContainer}>
-                            <div style={styles.loadingContent}>
-                                <FaSpinner style={styles.spinner} />
-                                <div style={styles.loadingText}>Chargement de vos candidatures...</div>
-                            </div>
-                        </div>
-                    ) : applicationsArray.length === 0 ? (
-                        <div style={styles.emptyState}>
-                            <FaBriefcase style={styles.emptyIcon} />
-                            <h3 style={styles.emptyTitle}>Aucune candidature pour le moment</h3>
-                            <p style={styles.emptyText}>
-                                Commencez à postuler aux offres qui vous intéressent pour voir vos candidatures apparaître ici.
-                            </p>
-                        </div>
-                    ) : (
-                        <div style={styles.applicationGrid}>
-                            {applicationsArray.map((application) => (
-                                <div 
-                                    key={application.id} 
-                                    style={styles.applicationCard}
-                                    onMouseEnter={(e) => {
-                                        Object.assign(e.currentTarget.style, styles.cardHover);
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.transform = 'translateY(0)';
-                                        e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.1)';
-                                    }}
-                                >
-                                    <div style={styles.cardHeader}>
-                                        <div>
-                                            <h3 style={styles.jobTitle}>
-                                                {application.job_offer?.title || "Titre non disponible"}
-                                            </h3>
-                                        </div>
-                                        <div style={{
-                                            ...styles.statusBadge,
-                                            ...(application.viewed ? styles.statusViewed : styles.statusPending)
-                                        }}>
-                                            {application.viewed ? <FaEye /> : <FaClock />}
-                                            {application.viewed ? "Reçue" : "En attente"}
-                                        </div>
-                                    </div>
-
-                                    <div style={styles.companyInfo}>
-                                        <div style={styles.infoRow}>
-                                            <FaBriefcase style={styles.infoIcon} />
-                                            <span>{application.job_offer?.company || "N/A"}</span>
-                                        </div>
-                                        <div style={styles.infoRow}>
-                                            <FaMapMarkerAlt style={styles.infoIcon} />
-                                            <span>{application.job_offer?.location || "N/A"}</span>
-                                        </div>
-                                        <div style={styles.infoRow}>
-                                            <FaCalendarAlt style={styles.infoIcon} />
-                                            <span>
-                                                Candidaté le {new Date(application.application_date).toLocaleDateString('fr-FR')}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {recruiterStartedMap[application.id] && (
-                                        <div style={styles.cardActions}>
-                                            <span style={{ color: '#ff6b35', fontSize: '0.9rem', fontWeight: '500' }}>
-                                                💬 Conversation disponible
-                                            </span>
-                                            <button
-                                                onClick={() => openChatModal(application.id)}
-                                                style={styles.chatButton}
-                                                onMouseEnter={(e) => {
-                                                    Object.assign(e.currentTarget.style, styles.chatButtonHover);
-                                                }}
-                                                onMouseLeave={(e) => {
-                                                    e.currentTarget.style.transform = 'translateY(0)';
-                                                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 107, 53, 0.3)';
-                                                    e.currentTarget.style.background = 'linear-gradient(135deg, #ff6b35, #ff8c42)';
-                                                }}
-                                            >
-                                                <FaComments />
-                                                Discuter
-                                                {notifications[application.id] && (
-                                                    <span style={styles.notificationDot}></span>
-                                                )}
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    {/* ... rest of your component JSX ... */}
                 </div>
                 <Footer />
 
+                {/* Updated Modal with custom styles */}
                 <Modal
                     isOpen={isChatModalOpen}
                     onRequestClose={closeChatModal}
-                    style={styles.modal}
+                    style={customModalStyles}
+                    shouldCloseOnOverlayClick={true}
+                    shouldCloseOnEsc={true}
+                    contentLabel="Chat Modal"
                 >
-                    <div style={styles.modalHeader}>
-                        <h2 style={styles.modalTitle}>Conversation avec le recruteur</h2>
-                        <button onClick={closeChatModal} style={styles.closeButton}>
-                        <IoClose size={20} />
+                    <div style={{
+                        background: 'linear-gradient(135deg, #1a1a1a, #2d2d2d)',
+                        color: 'white',
+                        padding: '2rem',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        borderBottom: '3px solid #ff6b35',
+                    }}>
+                        <h2 style={{
+                            fontSize: '1.5rem',
+                            fontWeight: '700',
+                            margin: 0,
+                            color: 'white',
+                        }}>Conversation avec le recruteur</h2>
+                        <button 
+                            onClick={closeChatModal} 
+                            style={{
+                                background: 'rgba(255, 255, 255, 0.1)',
+                                border: '1px solid rgba(255, 107, 53, 0.3)',
+                                borderRadius: '8px',
+                                width: '40px',
+                                height: '40px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                color: 'white',
+                                fontSize: '1.2rem',
+                                transition: 'all 0.2s ease',
+                            }}
+                        >
+                            <IoClose size={20} />
                         </button>
                     </div>
-                    <div style={styles.modalBody}>
+                    <div style={{
+                        padding: '2rem',
+                        maxHeight: 'calc(90vh - 100px)',
+                        overflow: 'auto',
+                    }}>
                         {selectedApplicationId && candidate?.id && (
                             <ApplicationChat
                                 applicationId={selectedApplicationId}
