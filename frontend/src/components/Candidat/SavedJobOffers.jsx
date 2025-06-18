@@ -190,31 +190,7 @@ const SavedJobOffers = () => {
     });
   };
 
-  if (loading) {
-    return (
-      <>
-        <Navbar />
-        <div className="saved-jobs-container">
-        </div>
-        <Footer />
-      </>
-    );
-  }
-
-  if (error) {
-    return (
-      <>
-        <Navbar />
-        <div className="saved-jobs-container">
-          <div className="error-container">
-            <h2>Erreur de chargement</h2>
-            <p>Impossible de charger vos offres sauvegardées. Veuillez réessayer plus tard.</p>
-          </div>
-        </div>
-        <Footer />
-      </>
-    );
-  }
+  
 
   const savedJobOffers = jobs.filter(job => savedJobs.includes(job.id));
 
