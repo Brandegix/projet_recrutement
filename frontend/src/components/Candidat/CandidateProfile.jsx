@@ -152,32 +152,52 @@ function CandidateProfile() {
     profilePage: {
       minHeight: '100vh',
       backgroundColor: '#fafafa',
-      paddingTop: '40px',
+      paddingTop: '20px',
       paddingBottom: '60px',
+      '@media (min-width: 768px)': {
+        paddingTop: '40px',
+      }
     },
     profileContainer: {
       maxWidth: '1200px',
       margin: '0 auto',
-      padding: '0 20px',
+      padding: '0 15px',
+      '@media (min-width: 768px)': {
+        padding: '0 20px',
+      }
     },
     profileHeader: {
       background: 'linear-gradient(135deg, #fff 0%, #f8f8f8 100%)',
-      borderRadius: '20px',
-      padding: '40px',
-      marginBottom: '30px',
+      borderRadius: '15px',
+      padding: '20px',
+      marginBottom: '20px',
       boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
       border: '1px solid #f0f0f0',
       display: 'flex',
       alignItems: 'center',
-      gap: '40px',
-      flexWrap: 'wrap',
+      justifyContent: 'center',
+      gap: '20px',
+      flexDirection: 'column',
+      textAlign: 'center',
+      '@media (min-width: 768px)': {
+        borderRadius: '20px',
+        padding: '40px',
+        marginBottom: '30px',
+        flexDirection: 'row',
+        gap: '40px',
+        textAlign: 'left',
+      }
     },
     profilePicture: {
       position: 'relative',
-      width: '180px',
-      height: '180px',
+      width: '120px',
+      height: '120px',
       cursor: 'pointer',
       flexShrink: 0,
+      '@media (min-width: 768px)': {
+        width: '180px',
+        height: '180px',
+      }
     },
     profileImg: {
       width: '100%',
@@ -201,16 +221,19 @@ function CandidateProfile() {
       alignItems: 'center',
       color: 'white',
       fontWeight: 'bold',
-      fontSize: '1.1rem',
+      fontSize: '0.9rem',
       userSelect: 'none',
       transition: 'all 0.3s ease',
+      '@media (min-width: 768px)': {
+        fontSize: '1.1rem',
+      }
     },
     profileInfo: {
       flex: 1,
-      minWidth: '300px',
+      minWidth: '250px',
     },
     profileName: {
-      fontSize: '3rem',
+      fontSize: '2rem',
       fontWeight: '300',
       marginBottom: '0.5rem',
       background: 'linear-gradient(45deg, #ff6b35, #ff8c42)',
@@ -218,176 +241,282 @@ function CandidateProfile() {
       WebkitTextFillColor: 'transparent',
       backgroundClip: 'text',
       letterSpacing: '-1px',
+      '@media (min-width: 768px)': {
+        fontSize: '3rem',
+      }
     },
     profileRole: {
-      fontSize: '1.2rem',
+      fontSize: '1rem',
       color: '#666',
-      marginBottom: '20px',
+      marginBottom: '15px',
       fontWeight: '400',
+      '@media (min-width: 768px)': {
+        fontSize: '1.2rem',
+        marginBottom: '20px',
+      }
     },
     editLink: {
       display: 'inline-flex',
       alignItems: 'center',
       gap: '8px',
-      padding: '12px 24px',
+      padding: '10px 20px',
       backgroundColor: '#fff',
       color: '#333',
       border: '2px solid #ff6b35',
       borderRadius: '25px',
-      fontSize: '0.95rem',
+      fontSize: '0.9rem',
       textDecoration: 'none',
       fontWeight: '500',
       transition: 'all 0.3s ease',
       boxShadow: '0 4px 15px rgba(255, 107, 53, 0.1)',
+      '@media (min-width: 768px)': {
+        padding: '12px 24px',
+        fontSize: '0.95rem',
+      }
     },
     completionSection: {
       backgroundColor: '#fff',
-      borderRadius: '15px',
-      padding: '25px',
-      marginBottom: '30px',
+      borderRadius: '12px',
+      padding: '20px',
+      marginBottom: '20px',
       boxShadow: '0 5px 20px rgba(0,0,0,0.06)',
       border: '1px solid #f0f0f0',
+      '@media (min-width: 768px)': {
+        borderRadius: '15px',
+        padding: '25px',
+        marginBottom: '30px',
+      }
     },
     completionTitle: {
-      fontSize: '1.3rem',
+      fontSize: '1.1rem',
       fontWeight: '600',
       color: '#333',
-      marginBottom: '15px',
+      marginBottom: '12px',
       display: 'flex',
       alignItems: 'center',
-      gap: '10px',
+      gap: '8px',
+      '@media (min-width: 768px)': {
+        fontSize: '1.3rem',
+        marginBottom: '15px',
+        gap: '10px',
+      }
     },
     progressBar: {
       width: '100%',
-      height: '12px',
+      height: '10px',
       backgroundColor: '#f0f0f0',
-      borderRadius: '6px',
+      borderRadius: '5px',
       overflow: 'hidden',
-      marginBottom: '10px',
+      marginBottom: '8px',
+      '@media (min-width: 768px)': {
+        height: '12px',
+        borderRadius: '6px',
+        marginBottom: '10px',
+      }
     },
     progressFill: {
       height: '100%',
       background: 'linear-gradient(90deg, #ff6b35, #ff8c42)',
-      borderRadius: '6px',
+      borderRadius: '5px',
       transition: 'width 0.3s ease',
+      '@media (min-width: 768px)': {
+        borderRadius: '6px',
+      }
     },
     mainContent: {
       display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
-      gap: '30px',
-      marginBottom: '40px',
+      gridTemplateColumns: '1fr',
+      gap: '20px',
+      marginBottom: '30px',
+      '@media (min-width: 768px)': {
+        gridTemplateColumns: '1fr 1fr',
+        gap: '30px',
+        marginBottom: '40px',
+      }
     },
     card: {
       backgroundColor: '#fff',
-      borderRadius: '15px',
-      padding: '30px',
+      borderRadius: '12px',
+      padding: '20px',
       boxShadow: '0 5px 20px rgba(0,0,0,0.06)',
       border: '1px solid #f0f0f0',
       transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+      '@media (min-width: 768px)': {
+        borderRadius: '15px',
+        padding: '30px',
+      }
     },
     cardTitle: {
-      fontSize: '1.4rem',
+      fontSize: '1.2rem',
       fontWeight: '600',
       color: '#333',
-      marginBottom: '20px',
-      paddingBottom: '10px',
+      marginBottom: '15px',
+      paddingBottom: '8px',
       borderBottom: '3px solid #ff6b35',
       display: 'inline-block',
+      '@media (min-width: 768px)': {
+        fontSize: '1.4rem',
+        marginBottom: '20px',
+        paddingBottom: '10px',
+      }
     },
     profileDetail: {
       display: 'flex',
-      alignItems: 'center',
-      padding: '12px 0',
+      alignItems: 'flex-start',
+      padding: '10px 0',
       borderBottom: '1px solid #f5f5f5',
+      flexDirection: 'column',
+      gap: '4px',
+      '@media (min-width: 768px)': {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: '12px 0',
+        gap: '0',
+      }
     },
     profileDetailLabel: {
       fontWeight: '600',
       color: '#555',
-      minWidth: '120px',
-      fontSize: '0.95rem',
+      minWidth: '100px',
+      fontSize: '0.9rem',
+      '@media (min-width: 768px)': {
+        minWidth: '120px',
+        fontSize: '0.95rem',
+      }
     },
     profileDetailValue: {
       color: '#333',
-      fontSize: '0.95rem',
+      fontSize: '0.9rem',
+      wordBreak: 'break-word',
+      '@media (min-width: 768px)': {
+        fontSize: '0.95rem',
+      }
     },
     skillsSection: {
       backgroundColor: '#fff',
-      borderRadius: '15px',
-      padding: '30px',
+      borderRadius: '12px',
+      padding: '20px',
       boxShadow: '0 5px 20px rgba(0,0,0,0.06)',
       border: '1px solid #f0f0f0',
+      '@media (min-width: 768px)': {
+        borderRadius: '15px',
+        padding: '30px',
+      }
     },
     skillItem: {
       display: 'flex',
       alignItems: 'center',
-      gap: '15px',
-      padding: '15px 20px',
-      borderRadius: '12px',
+      gap: '12px',
+      padding: '12px 15px',
+      borderRadius: '10px',
       backgroundColor: '#fafafa',
-      marginBottom: '12px',
+      marginBottom: '10px',
       border: '1px solid #f0f0f0',
       transition: 'all 0.3s ease',
+      '@media (min-width: 768px)': {
+        gap: '15px',
+        padding: '15px 20px',
+        borderRadius: '12px',
+        marginBottom: '12px',
+      }
     },
     skillIndicator: {
-      width: '20px',
-      height: '20px',
+      width: '16px',
+      height: '16px',
       borderRadius: '50%',
       flexShrink: 0,
       boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+      '@media (min-width: 768px)': {
+        width: '20px',
+        height: '20px',
+      }
     },
     skillName: {
       flex: 1,
       fontWeight: '600',
-      fontSize: '1rem',
+      fontSize: '0.9rem',
       color: '#333',
+      '@media (min-width: 768px)': {
+        fontSize: '1rem',
+      }
     },
     skillLevel: {
       fontWeight: 'bold',
-      fontSize: '0.9rem',
+      fontSize: '0.8rem',
+      '@media (min-width: 768px)': {
+        fontSize: '0.9rem',
+      }
     },
     cvSection: {
       backgroundColor: '#fff',
-      borderRadius: '15px',
-      padding: '30px',
+      borderRadius: '12px',
+      padding: '20px',
       boxShadow: '0 5px 20px rgba(0,0,0,0.06)',
       border: '1px solid #f0f0f0',
-      marginBottom: '30px',
+      marginBottom: '20px',
+      '@media (min-width: 768px)': {
+        borderRadius: '15px',
+        padding: '30px',
+        marginBottom: '30px',
+      }
     },
     cvForm: {
       display: 'flex',
-      gap: '15px',
+      gap: '12px',
       alignItems: 'center',
-      marginBottom: '20px',
-      flexWrap: 'wrap',
+      marginBottom: '15px',
+      flexDirection: 'column',
+      '@media (min-width: 768px)': {
+        flexDirection: 'row',
+        gap: '15px',
+        marginBottom: '20px',
+      }
     },
     fileInput: {
-      flex: '1',
-      minWidth: '250px',
-      padding: '12px 16px',
+      width: '100%',
+      padding: '10px 14px',
       border: '2px solid #f0f0f0',
-      borderRadius: '10px',
-      fontSize: '0.95rem',
+      borderRadius: '8px',
+      fontSize: '0.9rem',
       backgroundColor: '#fafafa',
       transition: 'border-color 0.3s ease',
+      '@media (min-width: 768px)': {
+        flex: '1',
+        minWidth: '250px',
+        padding: '12px 16px',
+        borderRadius: '10px',
+        fontSize: '0.95rem',
+      }
     },
     uploadBtn: {
       backgroundColor: '#ff6b35',
       color: '#fff',
       border: 'none',
-      borderRadius: '10px',
-      padding: '12px 24px',
+      borderRadius: '8px',
+      padding: '10px 20px',
       cursor: 'pointer',
-      fontSize: '0.95rem',
+      fontSize: '0.9rem',
       fontWeight: '600',
-      minWidth: '180px',
+      width: '100%',
       transition: 'all 0.3s ease',
       boxShadow: '0 4px 15px rgba(255, 107, 53, 0.2)',
+      '@media (min-width: 768px)': {
+        borderRadius: '10px',
+        padding: '12px 24px',
+        fontSize: '0.95rem',
+        minWidth: '180px',
+        width: 'auto',
+      }
     },
     currentCv: {
-      padding: '15px 20px',
+      padding: '12px 16px',
       backgroundColor: '#f8f9fa',
-      borderRadius: '10px',
+      borderRadius: '8px',
       border: '1px solid #e9ecef',
+      '@media (min-width: 768px)': {
+        padding: '15px 20px',
+        borderRadius: '10px',
+      }
     },
     cvLink: {
       color: '#ff6b35',
@@ -397,21 +526,29 @@ function CandidateProfile() {
     },
     offersLink: {
       textAlign: 'center',
-      marginTop: '40px',
+      marginTop: '30px',
+      '@media (min-width: 768px)': {
+        marginTop: '40px',
+      }
     },
     offersLinkBtn: {
       display: 'inline-flex',
       alignItems: 'center',
-      gap: '10px',
-      padding: '15px 30px',
+      gap: '8px',
+      padding: '12px 24px',
       backgroundColor: '#ff6b35',
       color: '#fff',
       textDecoration: 'none',
       borderRadius: '25px',
-      fontSize: '1.1rem',
+      fontSize: '1rem',
       fontWeight: '600',
       transition: 'all 0.3s ease',
       boxShadow: '0 6px 20px rgba(255, 107, 53, 0.3)',
+      '@media (min-width: 768px)': {
+        gap: '10px',
+        padding: '15px 30px',
+        fontSize: '1.1rem',
+      }
     },
   };
 
@@ -510,7 +647,7 @@ function CandidateProfile() {
                   }}
                 />
               </div>
-              <p style={{ color: '#666', fontSize: '0.95rem', margin: 0 }}>
+              <p style={{ color: '#666', fontSize: '0.9rem', margin: 0 }}>
                 {candidate.completion}% complété
               </p>
             </div>
@@ -657,26 +794,26 @@ function CandidateProfile() {
 
             {candidate && candidate.cv_filename ? (
               <div style={styles.currentCv}>
-                <p style={{ margin: 0, fontSize: '0.95rem', color: '#555' }}>
+                <p style={{ margin: 0, fontSize: '0.9rem', color: '#555' }}>
                   <strong>CV actuel:</strong>{' '}
                   <a
-  href={candidate.cv_filename}
-  download // Forces download instead of opening
-  target="_blank"
-  rel="noopener noreferrer"
->
-  Voir CV
-</a>
-
-
+                    href={candidate.cv_filename}
+                    download // Forces download instead of opening
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={styles.cvLink}
+                  >
+                    Voir CV
+                  </a>
                 </p>
               </div>
             ) : (
-              <p style={{ fontSize: '0.95rem', color: '#999', fontStyle: 'italic' }}>
+              <p style={{ fontSize: '0.9rem', color: '#999', fontStyle: 'italic' }}>
                 Aucun CV téléchargé pour l'instant.
               </p>
             )}
           </div>
+
 
           {/* Job Offers Link */}
           <div style={styles.offersLink}>
