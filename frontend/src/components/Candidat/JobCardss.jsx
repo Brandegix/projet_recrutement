@@ -1170,7 +1170,7 @@ const JobSearchAndOffers = () => {
           background: linear-gradient(135deg, #ff6b35, #ff8c42);
           color: white;
           border: none;
-          padding: 16px 32px;
+          padding: 32px;
           border-radius: 12px;
           font-size: 1.1rem;
           font-weight: 600;
