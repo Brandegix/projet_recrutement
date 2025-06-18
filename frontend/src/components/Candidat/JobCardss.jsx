@@ -707,25 +707,7 @@ const JobSearchAndOffers = () => {
       alert("Veuillez vous connecter pour postuler.");
       return;
     }
-     const handleUnsaveJob = (jobId) => {
-      fetch(`${process.env.REACT_APP_API_URL}/api/unsave-job`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
-      })
-        .then(res => {
-          if (!res.ok) throw new Error('Failed to unsave job');
-          return res.json();
-        })
-        .then(() => {
-          setSavedJobs(prev => prev.filter(id => id !== jobId));
-        })
-        .catch(error => {
-          console.error("Erreur lors de la suppression de l'enregistrement :", error);
-          alert("Impossible de retirer l'offre des sauvegardés pour le moment.");
-        });
-    };
+     
 
     fetch(`${process.env.REACT_APP_API_URL}/api/applications`, {
       method: 'POST',
@@ -761,6 +743,25 @@ const JobSearchAndOffers = () => {
       });
   };
 
+  const handleUnsaveJob = (jobId) => {
+      fetch(`${process.env.REACT_APP_API_URL}/api/unsave-job`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to unsave job');
+          return res.json();
+        })
+        .then(() => {
+          setSavedJobs(prev => prev.filter(id => id !== jobId));
+        })
+        .catch(error => {
+          console.error("Erreur lors de la suppression de l'enregistrement :", error);
+          alert("Impossible de retirer l'offre des sauvegardés pour le moment.");
+        });
+    };
   // Handles filtering jobs based on search term and selected filters
   useEffect(() => {
     const results = jobs.filter(job =>
