@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaMapMarkerAlt, FaBriefcase, FaBookmark, FaRegBookmark, FaChevronLeft, FaChevronRight, FaEllipsisH, FaHeart, FaArrowRight } from 'react-icons/fa';
+import { FaMapMarkerAlt,FaSearch, FaBriefcase, FaBookmark, FaRegBookmark, FaChevronLeft, FaChevronRight, FaEllipsisH, FaHeart, FaArrowRight } from 'react-icons/fa';
 import "../../assets/css/JobCards.css";
 import Footer from '../../components/Footer';
 import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
 import SavedJobOffers from './SavedJobOffers';
-
+import Navbar from "../Navbara";
 const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
   const navigate = useNavigate();
 
