@@ -83,7 +83,7 @@ function RecruiterPublicProfile() {
           <div style={pageStyles.spinnerRing}></div>
         </div>
         <div style={pageStyles.loadingText}>Chargement du profil...</div>
-        <div style={pageStyles.loadingSubtext}>Préparation de l'expérience premium</div>
+        <div style={pageStyles.loadingSubtext}>Chargement du profil...</div>
       </div>
     </div>
   );
