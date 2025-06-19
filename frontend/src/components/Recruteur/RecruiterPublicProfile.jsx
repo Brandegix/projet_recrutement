@@ -290,7 +290,7 @@ function RecruiterPublicProfile() {
         </div>
 
         {/* Newsletter Section - Nouveau Design */}
-        <div style={pageStyles.newsletterSection}>
+        <div style={pageStyles.newsletterSection} className="newsletter-section">
           <div style={pageStyles.newsletterContainer}>
             {/* Background Elements */}
             <div style={pageStyles.newsletterBgPattern}></div>
@@ -298,7 +298,7 @@ function RecruiterPublicProfile() {
             <div style={pageStyles.newsletterBgCircle2}></div>
 
             {/* Main Content */}
-            <div style={pageStyles.newsletterContent}>
+            <div style={pageStyles.newsletterContent} className="newsletter-content">
               {/* Left Side - Text Content */}
               <div style={pageStyles.newsletterTextSection}>
                 <div style={pageStyles.newsletterBadge}>
@@ -306,45 +306,53 @@ function RecruiterPublicProfile() {
                   Newsletter Exclusive
                 </div>
 
-                <h2 style={pageStyles.newsletterMainTitle}>
+                <h2 style={pageStyles.newsletterMainTitle} className="newsletter-main-title">
                   Transformez votre
                   <span style={pageStyles.newsletterHighlight}> carrière </span>
                   avec nous
                 </h2>
 
-                <p style={pageStyles.newsletterDescription}>
+                <p style={pageStyles.newsletterDescription} className="newsletter-description">
                   Rejoignez plus de <strong>10,000+ professionnels</strong> qui reçoivent nos conseils exclusifs,
                   opportunités premium et insights du marché de l'emploi directement dans leur boîte mail.
                 </p>
 
                 {/* Benefits Grid */}
-                <div style={pageStyles.benefitsGrid}>
-                  <div style={pageStyles.benefitItem}>
-                    <div style={pageStyles.benefitIcon}>🎯</div>
+                <div style={pageStyles.benefitsGrid} className="benefits-grid">
+                  <div style={pageStyles.benefitItem} className="benefit-item">
+                    <div style={pageStyles.benefitIcon} className="benefit-icon">
+                      🎯
+                    </div>
                     <div>
                       <h4 style={pageStyles.benefitTitle}>Offres Ciblées</h4>
                       <p style={pageStyles.benefitText}>Opportunités personnalisées selon votre profil</p>
                     </div>
                   </div>
 
-                  <div style={pageStyles.benefitItem}>
-                    <div style={pageStyles.benefitIcon}>⚡</div>
+                  <div style={pageStyles.benefitItem} className="benefit-item">
+                    <div style={pageStyles.benefitIcon} className="benefit-icon">
+                      ⚡
+                    </div>
                     <div>
                       <h4 style={pageStyles.benefitTitle}>Accès Prioritaire</h4>
                       <p style={pageStyles.benefitText}>Soyez les premiers informés des nouvelles offres</p>
                     </div>
                   </div>
 
-                  <div style={pageStyles.benefitItem}>
-                    <div style={pageStyles.benefitIcon}>📈</div>
+                  <div style={pageStyles.benefitItem} className="benefit-item">
+                    <div style={pageStyles.benefitIcon} className="benefit-icon">
+                      📈
+                    </div>
                     <div>
                       <h4 style={pageStyles.benefitTitle}>Conseils Expert</h4>
                       <p style={pageStyles.benefitText}>Tips carrière et tendances du marché</p>
                     </div>
                   </div>
 
-                  <div style={pageStyles.benefitItem}>
-                    <div style={pageStyles.benefitIcon}>🔒</div>
+                  <div style={pageStyles.benefitItem} className="benefit-item">
+                    <div style={pageStyles.benefitIcon} className="benefit-icon">
+                      🔒
+                    </div>
                     <div>
                       <h4 style={pageStyles.benefitTitle}>100% Gratuit</h4>
                       <p style={pageStyles.benefitText}>Aucun spam, désabonnement en 1 clic</p>
@@ -354,7 +362,7 @@ function RecruiterPublicProfile() {
               </div>
 
               {/* Right Side - Form Card */}
-              <div style={pageStyles.newsletterFormCard}>
+              <div style={pageStyles.newsletterFormCard} className="newsletter-form-card">
                 <div style={pageStyles.formCardHeader}>
                   <h3 style={pageStyles.formCardTitle}>Rejoignez-nous maintenant</h3>
                   <p style={pageStyles.formCardSubtitle}>Inscription gratuite en 30 secondes</p>
@@ -368,6 +376,7 @@ function RecruiterPublicProfile() {
                       name="email"
                       placeholder="votre.email@exemple.com"
                       style={pageStyles.modernInput}
+                      className="modern-input"
                       required
                     />
                   </div>
@@ -375,6 +384,7 @@ function RecruiterPublicProfile() {
                   <button
                     type="submit"
                     style={pageStyles.modernButton}
+                    className="modern-button"
                     onMouseEnter={(e) => {
                       e.target.style.background = "linear-gradient(135deg, #e05a28 0%, #ff8c42 100%)"
                       e.target.style.transform = "translateY(-3px)"
@@ -410,22 +420,38 @@ function RecruiterPublicProfile() {
             </div>
 
             {/* Stats Section */}
-            <div style={pageStyles.statsSection}>
+            <div style={pageStyles.statsSection} className="stats-section">
               <div style={pageStyles.statCard}>
-                <div style={pageStyles.statNumber}>10K+</div>
-                <div style={pageStyles.statLabel}>Abonnés actifs</div>
+                <div style={pageStyles.statNumber} className="stat-number">
+                  10K+
+                </div>
+                <div style={pageStyles.statLabel} className="stat-label">
+                  Abonnés actifs
+                </div>
               </div>
               <div style={pageStyles.statCard}>
-                <div style={pageStyles.statNumber}>95%</div>
-                <div style={pageStyles.statLabel}>Taux de satisfaction</div>
+                <div style={pageStyles.statNumber} className="stat-number">
+                  95%
+                </div>
+                <div style={pageStyles.statLabel} className="stat-label">
+                  Taux de satisfaction
+                </div>
               </div>
               <div style={pageStyles.statCard}>
-                <div style={pageStyles.statNumber}>500+</div>
-                <div style={pageStyles.statLabel}>Offres par mois</div>
+                <div style={pageStyles.statNumber} className="stat-number">
+                  500+
+                </div>
+                <div style={pageStyles.statLabel} className="stat-label">
+                  Offres par mois
+                </div>
               </div>
               <div style={pageStyles.statCard}>
-                <div style={pageStyles.statNumber}>24h</div>
-                <div style={pageStyles.statLabel}>Temps de réponse</div>
+                <div style={pageStyles.statNumber} className="stat-number">
+                  24h
+                </div>
+                <div style={pageStyles.statLabel} className="stat-label">
+                  Temps de réponse
+                </div>
               </div>
             </div>
           </div>
@@ -873,12 +899,16 @@ const pageStyles = {
     padding: "10px 0",
   },
 
+  // Newsletter Section - Styles responsive corrigés
   newsletterSection: {
     backgroundColor: "#0a0a0a",
     padding: "100px 40px",
     position: "relative",
     overflow: "hidden",
     borderTop: "1px solid #333",
+    "@media (max-width: 768px)": {
+      padding: "60px 20px",
+    },
   },
 
   newsletterContainer: {
@@ -932,6 +962,13 @@ const pageStyles = {
     gap: "60px",
     alignItems: "start",
     marginBottom: "80px",
+    "@media (max-width: 1024px)": {
+      gridTemplateColumns: "1fr",
+      gap: "40px",
+    },
+    "@media (max-width: 768px)": {
+      marginBottom: "60px",
+    },
   },
 
   newsletterTextSection: {
@@ -983,6 +1020,10 @@ const pageStyles = {
     display: "grid",
     gridTemplateColumns: "repeat(2, 1fr)",
     gap: "20px",
+    "@media (max-width: 768px)": {
+      gridTemplateColumns: "1fr",
+      gap: "15px",
+    },
   },
 
   benefitItem: {
@@ -1029,6 +1070,10 @@ const pageStyles = {
     borderRadius: "20px",
     padding: "40px",
     boxShadow: "0 20px 40px rgba(0, 0, 0, 0.3)",
+    "@media (max-width: 768px)": {
+      padding: "30px 20px",
+      borderRadius: "15px",
+    },
   },
 
   formCardHeader: {
@@ -1139,6 +1184,14 @@ const pageStyles = {
     gap: "30px",
     padding: "40px 0",
     borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+    "@media (max-width: 768px)": {
+      gridTemplateColumns: "repeat(2, 1fr)",
+      gap: "20px",
+    },
+    "@media (max-width: 480px)": {
+      gridTemplateColumns: "1fr",
+      gap: "15px",
+    },
   },
 
   statCard: {
@@ -1163,5 +1216,160 @@ const pageStyles = {
   },
 }
 
-export default RecruiterPublicProfile
+const keyframes = `
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Responsive pour la section newsletter */
+@media (max-width: 1024px) {
+  .newsletter-content {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+  
+  .benefits-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .stats-section {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .profileSection {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 25px !important;
+    align-items: center !important;
+  }
+  
+  .headerContent {
+    padding: 30px 20px !important;
+    text-align: center !important;
+  }
+  
+  .profileImage {
+    width: 100px !important;
+    height: 100px !important;
+  }
+  
+  .statusBadge {
+    bottom: 2px !important;
+    right: 2px !important;
+    padding: 4px 8px !important;
+    font-size: 0.55rem !important;
+  }
+  
+  .headerInfo {
+    text-align: center !important;
+  }
+  
+  .companyName {
+    text-align: center !important;
+  }
+  
+  .companyTitle {
+    text-align: center !important;
+  }
+  
+  .headerDomainsContainer {
+    justify-content: center !important;
+  }
+  
+  /* Newsletter responsive */
+  .newsletter-section {
+    padding: 60px 20px !important;
+  }
+  
+  .newsletter-content {
+    grid-template-columns: 1fr !important;
+    gap: 30px !important;
+    margin-bottom: 50px !important;
+  }
+  
+  .newsletter-form-card {
+    padding: 30px 20px !important;
+    border-radius: 15px !important;
+  }
+  
+  .benefits-grid {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+  }
+  
+  .benefit-item {
+    padding: 15px !important;
+    flex-direction: column !important;
+    text-align: center !important;
+  }
+  
+  .stats-section {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+    padding: 30px 0 !important;
+  }
+  
+  .newsletter-main-title {
+    font-size: 2rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  .newsletter-description {
+    font-size: 1rem !important;
+    margin-bottom: 30px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .newsletter-section {
+    padding: 40px 15px !important;
+  }
+  
+  .newsletter-form-card {
+    padding: 25px 15px !important;
+  }
+  
+  .stats-section {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+  }
+  
+  .newsletter-main-title {
+    font-size: 1.8rem !important;
+  }
+  
+  .modern-input {
+    padding: 14px 14px 14px 45px !important;
+    font-size: 0.95rem !important;
+  }
+  
+  .modern-button {
+    padding: 14px 20px !important;
+    font-size: 0.95rem !important;
+  }
+  
+  .benefit-icon {
+    width: 35px !important;
+    height: 35px !important;
+    font-size: 1.3rem !important;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem !important;
+  }
+  
+  .stat-label {
+    font-size: 0.8rem !important;
+  }
+}
+`
+export default RecruiterPublicProfile
