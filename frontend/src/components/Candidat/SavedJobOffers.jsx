@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaMapMarkerAlt, FaBriefcase, FaBookmark, FaRegBookmark, FaClock, FaHeart, FaRegHeart, FaSearch } from 'react-icons/fa';
-import "../../assets/css/JobCards.css";
+import "../../assets/css/JobCards.css"; // Ensure this CSS file is used for JobCard specific styles
 import Footer from '../../components/Footer';
 import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
 import Navbar from "../Navbara";
 
-const JobCard = ({job, onApply, isApplied, onSave, isSaved }) => {
+const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
   const navigate = useNavigate();
 
   const handleViewDetails = () => {
@@ -16,17 +16,17 @@ const JobCard = ({job, onApply, isApplied, onSave, isSaved }) => {
 
   const ReadMoreText = ({ text, maxLength = 120 }) => {
     const [isExpanded, setIsExpanded] = useState(false);
-    
+
     if (!text) return <p className="job-description">Aucune description fournie</p>;
-    
+
     if (text.length <= maxLength) return <p className="job-description">{text}</p>;
-    
+
     return (
       <div className="job-description-container">
         <p className="job-description">
           {isExpanded ? text : `${text.slice(0, maxLength)}...`}
         </p>
-        <button 
+        <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="read-more-btn"
         >
@@ -55,9 +55,9 @@ const JobCard = ({job, onApply, isApplied, onSave, isSaved }) => {
             <span className="job-type-badge">{job.type}</span>
           </div>
         </div>
-        <button 
+        <button
           className="save-job-btn"
-          onClick={() => onSave(job.id)} 
+          onClick={() => onSave(job.id)}
           title={isSaved ? "Retirer des sauvegardés" : "Sauvegarder l'offre"}
         >
           {isSaved ? <FaHeart className="saved-icon" /> : <FaRegHeart />}
@@ -75,9 +75,9 @@ const JobCard = ({job, onApply, isApplied, onSave, isSaved }) => {
             {job.experience}
           </span>
         </div>
-        
+
         <ReadMoreText text={job.description} maxLength={120} />
-        
+
         {job.skills && job.skills.length > 0 && (
           <div className="skills-container">
             {job.skills.slice(0, 4).map((skill, index) => (
@@ -112,23 +112,24 @@ const JobCard = ({job, onApply, isApplied, onSave, isSaved }) => {
 
 const SavedJobOffers = () => {
   const [jobs, setJobs] = useState([]);
-  const [filteredJobs, setFilteredJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [filteredJobs, setFilteredJobs] = useState([]); // This state is not currently used in this component.
+  const [loading, setLoading] = useState(true); // This state is not currently used to display loading indicators.
+  const [error, setError] = useState(false); // This state is not currently used to display error messages.
   const [candidateId, setCandidateId] = useState(null);
   const [appliedJobs, setAppliedJobs] = useState([]);
-  const [candidate, setCandidate] = useState(null);
+  const [candidate, setCandidate] = useState(null); // This state is not currently directly displayed.
   const [savedJobs, setSavedJobs] = useState([]);
 
   useEffect(() => {
+    // Fetch all job offers
     axios.get(`${process.env.REACT_APP_API_URL}/api/je`)
-    .then(response => {
+      .then(response => {
         const updatedJobs = response.data.map(job => ({
           ...job,
           logo: job.logo || "https://via.placeholder.com/60x60/f8f9fa/6c757d?text=Logo"
         }));
         setJobs(updatedJobs);
-        setFilteredJobs(updatedJobs);
+        setFilteredJobs(updatedJobs); // Keep this if filtering logic is added later
         setLoading(false);
       })
       .catch(error => {
@@ -139,22 +140,24 @@ const SavedJobOffers = () => {
   }, []);
 
   useEffect(() => {
+    // Fetch saved jobs for the current user
     axios.get(`${process.env.REACT_APP_API_URL}/api/saved-jobs`, { withCredentials: true })
-    .then(response => {
+      .then(response => {
         const savedJobIds = response.data.map(job => job.id);
         setSavedJobs(savedJobIds);
       })
       .catch(error => {
         console.error("Erreur lors du chargement des jobs sauvegardés:", error);
       });
-  }, [candidateId]);
+  }, [candidateId]); // Depend on candidateId to refetch if it changes
 
   useEffect(() => {
+    // Fetch current candidate and their applications
     fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { credentials: 'include' })
-    .then(res => res.json())
+      .then(res => res.json())
       .then(data => {
         setCandidate(data);
-        setCandidateId(data.id);
+        setCandidateId(data.id); // Set candidateId here
 
         return fetch(`${process.env.REACT_APP_API_URL}/api/getapplications`, {
           credentials: 'include'
@@ -166,30 +169,41 @@ const SavedJobOffers = () => {
         setAppliedJobs(appliedJobIds);
       })
       .catch(err => console.error("Erreur candidate ou applications:", err));
-  }, []);
+  }, []); // Empty dependency array means this runs once on mount
 
   const handleSaveJob = (jobId) => {
+    // Optimistically update UI
+    setSavedJobs(prev =>
+      prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId]
+    );
+
     fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
     })
-    .then(res => {
-      if (!res.ok) throw new Error('Failed to save job');
-      return res.json();
-    })
-    .then(data => {
-      setSavedJobs(prev =>
-        prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId]
-      );
-    })
-    .catch(error => {
-      console.error('Erreur sauvegarde de l\'offre :', error);
-      alert("Impossible de sauvegarder l'offre pour le moment.");
-    });
+      .then(res => {
+        if (!res.ok) {
+          // If API call fails, revert UI change
+          setSavedJobs(prev =>
+            prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId] // Revert logic
+          );
+          throw new Error('Failed to save/unsave job');
+        }
+        return res.json();
+      })
+      .then(data => {
+        // UI is already updated, just confirm or handle success message if needed
+        console.log("Job save/unsave successful:", data);
+      })
+      .catch(error => {
+        console.error('Erreur sauvegarde de l\'offre :', error);
+        alert("Impossible de sauvegarder/désauvegarder l'offre pour le moment.");
+      });
   };
 
+  // Filter jobs to only show saved ones
   const savedJobOffers = jobs.filter(job => savedJobs.includes(job.id));
 
   return (
@@ -255,7 +269,7 @@ const SavedJobOffers = () => {
                     <JobCard
                       key={job.id}
                       job={job}
-                      onApply={() => {}}
+                      onApply={() => { }} // No direct apply from this page, but keeping prop for consistency
                       isApplied={appliedJobs.includes(job.id)}
                       onSave={handleSaveJob}
                       isSaved={savedJobs.includes(job.id)}
@@ -299,7 +313,7 @@ const SavedJobOffers = () => {
           left: 0;
           right: 0;
           bottom: 0;
-          background-image: 
+          background-image:
             radial-gradient(circle at 20% 20%, rgba(255, 107, 53, 0.05) 0%, transparent 50%),
             radial-gradient(circle at 80% 80%, rgba(255, 140, 66, 0.05) 0%, transparent 50%),
             radial-gradient(circle at 40% 60%, rgba(0, 0, 0, 0.02) 0%, transparent 50%);
@@ -533,12 +547,13 @@ const SavedJobOffers = () => {
           font-size: 0.875rem;
         }
 
-        /* Jobs Grid */
+        /* Jobs Grid - Crucial for Correct Display */
         .jobs-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
           gap: 24px;
-          justify-content: center;
+          justify-content: center; /* Centers the whole grid track block */
+          justify-items: center;   /* Centers each individual job card within its cell */
         }
 
         /* Enhanced Job Cards */
@@ -820,7 +835,7 @@ const SavedJobOffers = () => {
           }
 
           .jobs-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr; /* On smaller screens, stack cards vertically */
             gap: 20px;
           }
 
