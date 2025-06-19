@@ -264,73 +264,147 @@ const JobSearchAndOffers = () => {
 
   // Fetch jobs data
   useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/je`);
-        const data = await response.json();
-        
-        const updatedJobs = data.map(job => ({
+    axios.get(`${process.env.REACT_APP_API_URL}/api/je`)
+    .then(response => {
+        const updatedJobs = response.data.map(job => ({
           ...job,
-          logo: job.logo || "https://via.placeholder.com/60x60/4f46e5/ffffff?text=" + job.company.charAt(0)
+          logo: job.logo || "https://dummyimage.com/80x80/000/fff.png&text=No+Logo"
         }));
-        
         setJobs(updatedJobs);
         setFilteredJobs(updatedJobs);
         setLoading(false);
-      } catch (error) {
+      })
+      .catch(error => {
         console.error("Erreur lors du chargement des offres :", error);
         setError(true);
         setLoading(false);
-      }
-    };
-
-    fetchJobs();
+      });
   }, []);
 
-  // Fetch saved jobs
   useEffect(() => {
-    const fetchSavedJobs = async () => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/saved-jobs`, { 
-          credentials: 'include' 
-        });
-        const data = await response.json();
-        const savedJobIds = data.map(job => job.id);
+    axios.get(`${process.env.REACT_APP_API_URL}/api/saved-jobs`, { withCredentials: true })
+    .then(response => {
+        const savedJobIds = response.data.map(job => job.id);
         setSavedJobs(savedJobIds);
-      } catch (error) {
+      })
+      .catch(error => {
         console.error("Erreur lors du chargement des jobs sauvegardés:", error);
-      }
-    };
-
-    if (candidateId) {
-      fetchSavedJobs();
-    }
+      });
   }, [candidateId]);
 
-  // Fetch candidate data and applications
-  useEffect(() => {
-    const fetchCandidateData = async () => {
-      try {
-        const candidateResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { 
-          credentials: 'include' 
-        });
-        const candidateData = await candidateResponse.json();
-        setCandidate(candidateData);
-        setCandidateId(candidateData.id);
+  const handleSavedJob = (jobId) => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Failed to save job');
+      return res.json();
+    })
+    .then(data => {
+      setSavedJobs(prev =>
+        prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId]
+      );
+    })
+    .catch(error => {
+      console.error('Erreur sauvegarde de l\'offre :', error);
+      alert("Impossible de sauvegarder l'offre pour le moment.");
+    });
+  };
 
-        const applicationsResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/getapplications`, {
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { credentials: 'include' })
+    .then(res => res.json())
+      .then(data => {
+        setCandidate(data);
+        setCandidateId(data.id);
+
+        return fetch(`${process.env.REACT_APP_API_URL}/api/getapplications`, {
           credentials: 'include'
         });
-        const applications = await applicationsResponse.json();
+      })
+      .then(res => res.json())
+      .then(applications => {
         const appliedJobIds = applications.map(app => app.job_offer_id);
         setAppliedJobs(appliedJobIds);
-      } catch (error) {
-        console.error("Erreur candidate ou applications:", error);
-      }
-    };
-
-    fetchCandidateData();
+      })
+      .catch(err => console.error("Erreur candidate ou applications:", err));
   }, []);
+
+  const handleSaveJob = (jobId, currentlySaved) => {
+    if (currentlySaved) {
+      handleUnsaveJob(jobId);
+    } else {
+      fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to save job');
+          return res.json();
+        })
+        .then(() => {
+          setSavedJobs(prev => [...prev, jobId]);
+        })
+        .catch(error => {
+          console.error('Erreur sauvegarde de l\'offre :', error);
+          alert("Impossible de sauvegarder l'offre pour le moment.");
+        });
+    }
+  };
+
+  const handleUnsaveJob = (jobId) => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/unsave-job`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to unsave job');
+        return res.json();
+      })
+      .then(() => {
+        setSavedJobs(prev => prev.filter(id => id !== jobId));
+      })
+      .catch(error => {
+        console.error("Erreur lors de la suppression de l'enregistrement :", error);
+        alert("Impossible de retirer l'offre des sauvegardés pour le moment.");
+      });
+  };
+
+
+
+  const handleApply = (jobId) => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/applications`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+    })
+      .then(response => response.json())
+      .then(data => {
+        alert("Votre candidature a été soumise avec succès !");
+        setAppliedJobs(prev => [...prev, jobId]);
+        setFilteredJobs(prev => prev.filter(job => job.id !== jobId));
+
+        fetch(`${process.env.REACT_APP_API_URL}/api/notify-recruiter/${jobId}`, {
+          method: 'POST',
+          credentials: 'include'
+        })
+          .then(res => res.json())
+          .then(response => console.log("Recruiter notified:", response))
+          .catch(err => console.error("Erreur notification recruteur:", err));
+      })
+      .catch(error => {
+        console.error('Erreur postulation :', error);
+        alert("Erreur lors de la soumission de la candidature.");
+      });
+  };
 
   // Filter jobs based on search criteria
   useEffect(() => {
@@ -363,58 +437,7 @@ const JobSearchAndOffers = () => {
     filterJobs();
   }, [searchTerm, selectedPoste, selectedLieu, selectedSalaire, selectedDomaine, jobs]);
 
-  // Handle job save/unsave
-  const handleSaveJob = useCallback(async (jobId, currentlySaved) => {
-    try {
-      const url = currentlySaved 
-        ? `${process.env.REACT_APP_API_URL}/api/unsave-job`
-        : `${process.env.REACT_APP_API_URL}/api/save-job`;
-      
-      const response = await fetch(url, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
-      });
-
-      if (!response.ok) throw new Error('Failed to save/unsave job');
-
-      setSavedJobs(prev => 
-        currentlySaved 
-          ? prev.filter(id => id !== jobId)
-          : [...prev, jobId]
-      );
-    } catch (error) {
-      console.error('Erreur sauvegarde de l\'offre :', error);
-      alert("Impossible de modifier la sauvegarde pour le moment.");
-    }
-  }, [candidateId]);
-
-  // Handle job application
-  const handleApply = useCallback(async (jobId) => {
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applications`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
-      });
-
-      const data = await response.json();
-      alert("Votre candidature a été soumise avec succès !");
-      setAppliedJobs(prev => [...prev, jobId]);
-
-      // Notify recruiter
-      fetch(`${process.env.REACT_APP_API_URL}/api/notify-recruiter/${jobId}`, {
-        method: 'POST',
-        credentials: 'include'
-      });
-    } catch (error) {
-      console.error('Erreur postulation :', error);
-      alert("Erreur lors de la soumission de la candidature.");
-    }
-  }, [candidateId]);
-
+  
   // Get unique filter options
   const filterOptions = useMemo(() => ({
     postes: [...new Set(jobs.map(job => job.title))],
