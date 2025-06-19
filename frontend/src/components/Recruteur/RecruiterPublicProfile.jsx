@@ -79,7 +79,7 @@ function RecruiterPublicProfile() {
           <div style={pageStyles.spinnerRing}></div>
           <div style={pageStyles.spinnerRing}></div>
         </div>
-        <div style={pageStyles.loadingText}>Chargement du profil. . .</div>
+        <div style={pageStyles.loadingText}>Chargement du profil...</div>
         <div style={pageStyles.loadingSubtext}>Veuillez patienter</div>
       </div>
     </div>
@@ -462,11 +462,15 @@ const pageStyles = {
     alignItems: "center",
     gap: "40px",
     flexWrap: "wrap",
+    justifyContent: "center", // Centrer sur mobile
   },
 
   profileImageContainer: {
     position: "relative",
     flexShrink: 0,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center", // Centrer la photo
   },
 
   profileImageBorder: {
@@ -514,6 +518,7 @@ const pageStyles = {
     color: "white",
     flex: 1,
     minWidth: "300px",
+    textAlign: "center", // Centrer le texte sur mobile
   },
 
   companyBadge: {
@@ -935,124 +940,42 @@ styleSheet.innerText = `
       flex-direction: column !important;
       text-align: center !important;
       gap: 25px !important;
+      align-items: center !important;
     }
     
     .headerContent {
       padding: 30px 20px !important;
-    }
-    
-    .mainContent {
-      flex-direction: column !important;
-      padding: 30px 20px !important;
-      gap: 20px !important;
-    }
-    
-    .newsletterForm {
-      flex-direction: column !important;
-      border-radius: 15px !important;
-    }
-    
-    .newsletterInput {
-      border-bottom: 1px solid #404040 !important;
-    }
-    
-    .newsletterButton {
-      border-radius: 0 0 15px 15px !important;
-    }
-    
-    .headerSection {
-      height: auto !important;
-      min-height: 300px !important;
-    }
-    
-    .profileImage {
-      width: 120px !important;
-      height: 120px !important;
-    }
-    
-    .statusBadge {
-      bottom: 5px !important;
-      right: 5px !important;
-      padding: 6px 12px !important;
-      font-size: 0.6rem !important;
-    }
-    
-    .statsGrid {
-      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)) !important;
-      gap: 15px !important;
-    }
-    
-    .statNumber {
-      font-size: 2rem !important;
-    }
-    
-    .jobsGrid {
-      grid-template-columns: 1fr !important;
-      gap: 15px !important;
-    }
-    
-    .cardHeader {
-      padding: 20px !important;
-    }
-    
-    .cardContent {
-      padding: 20px !important;
-    }
-    
-    .newsletterSection {
-      padding: 60px 20px !important;
-    }
-    
-    .newsletterFeatures {
-      gap: 20px !important;
-    }
+      text-align: center !important;
   }
   
-  @media (max-width: 480px) {
-    .container {
-      padding: 10px !important;
-    }
-    
-    .profileCard {
-      border-radius: 15px !important;
-    }
-    
-    .companyName {
-      font-size: 1.8rem !important;
-    }
-    
-    .companyTitle {
-      font-size: 1rem !important;
-    }
-    
-    .headerDomainsContainer {
-      justify-content: center !important;
-      gap: 8px !important;
-    }
-    
-    .headerDomainTag {
-      font-size: 0.75rem !important;
-      padding: 6px 12px !important;
-    }
-    
-    .jobGridHeader {
-      flex-direction: column !important;
-      align-items: flex-start !important;
-      gap: 10px !important;
-    }
-    
-    .jobGridTitle {
-      min-width: auto !important;
-    }
-    
-    .newsletterTitle {
-      font-size: 1.5rem !important;
-    }
-    
-    .newsletterText {
-      font-size: 0.95rem !important;
-    }
+  .profileImage {
+    width: 100px !important;
+    height: 100px !important;
   }
+  
+  .statusBadge {
+    bottom: 2px !important;
+    right: 2px !important;
+    padding: 4px 8px !important;
+    font-size: 0.55rem !important;
+  }
+  
+  .headerInfo {
+    text-align: center !important;
+  }
+  
+  .companyName {
+    text-align: center !important;
+  }
+  
+  .companyTitle {
+    text-align: center !important;
+  }
+  
+  .headerDomainsContainer {
+    justify-content: center !important;
+  }
+}
 `
 document.head.appendChild(styleSheet)
 
