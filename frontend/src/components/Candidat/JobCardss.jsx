@@ -24,20 +24,19 @@ import { useNavigate } from 'react-router-dom';
 import Footer from '../../components/Footer';
 import Navbar from "../Navbara";
 import axios from 'axios';
+
 // Enhanced Job Card Component
 const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleViewDetails = () => {
     // Replace with your navigation logic
-    window.location.href = /offres/${job.id};
+    window.location.href = `/offres/${job.id}`;
   };
 
-   (
-   
-      
+  return (
     <div 
-      className={job-card ${isHovered ? 'hovered' : ''}}
+      className={`job-card ${isHovered ? 'hovered' : ''}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -47,7 +46,7 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
           <div className="company-logo">
             <img
               src={job.logo || "/api/placeholder/60/60"}
-              alt={${job.company} logo}
+              alt={`${job.company} logo`}
               onError={(e) => {
                 e.target.src = "/api/placeholder/60/60";
               }}
@@ -59,7 +58,7 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
           </div>
         </div>
         <div className="job-type-badge">
-          <span className={badge ${job.type?.toLowerCase()}}>{job.type}</span>
+          <span className={`badge ${job.type?.toLowerCase()}`}>{job.type}</span>
         </div>
       </div>
 
@@ -122,7 +121,7 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
           )}
           
           <button 
-            className={btn btn-save ${isSaved ? 'saved' : ''}}
+            className={`btn btn-save ${isSaved ? 'saved' : ''}`}
             onClick={() => onSave(job.id, isSaved)}
             title={isSaved ? "Retirer des favoris" : "Ajouter aux favoris"}
           >
@@ -155,32 +154,6 @@ const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
       rangeWithDots.push(1);
     }
 
-  return (
-    <>
-      <Navbar />
-      {/* <SEO title="Offres d'emploi" /> */}
-      
-      <div className="job-listing-container">
-        {jobs.map((job) => (
-          <JobCard 
-            key={job.id}
-            job={job}
-            isApplied={false}
-            isSaved={false}
-            onApply={handleApply}
-            onSave={handleSave}
-          />
-        ))}
-      </div>
-
-      <Footer />
-    </>
-  );
-};
-
-export default JobListingPage;
-
-
     rangeWithDots.push(...range);
 
     if (currentPage + delta < totalPages - 1) {
@@ -189,10 +162,10 @@ export default JobListingPage;
       if (totalPages > 1) rangeWithDots.push(totalPages);
     }
 
-     rangeWithDots;
+    return rangeWithDots;
   };
 
-  if (totalPages <= 1)  null;
+  if (totalPages <= 1) return null;
 
   return (
     <div className="pagination-wrapper">
@@ -234,13 +207,12 @@ export default JobListingPage;
         </button>
       </div>
     </div>
-    
   );
 };
 
 // Saved Jobs CTA Component
 const SavedJobsCTA = () => {
-   (
+  return (
     <div className="saved-jobs-cta">
       <div className="cta-content">
         <div className="cta-visual">
@@ -272,20 +244,27 @@ const SavedJobsCTA = () => {
 };
 
 // Main Component
-const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
+const JobSearchAndOffers = () => {
+  // State management
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [candidateId, setCandidateId] = useState(null);
+  const [appliedJobs, setAppliedJobs] = useState([]);
+  const [savedJobs, setSavedJobs] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [candidate, setCandidate] = useState(null);
+  
+  // Filter states
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedPoste, setSelectedPoste] = useState('');
   const [selectedLieu, setSelectedLieu] = useState('');
   const [selectedSalaire, setSelectedSalaire] = useState('');
   const [selectedDomaine, setSelectedDomaine] = useState('');
-  const [appliedJobs, setAppliedJobs] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 3;
-  const [searchTerm, setSearchTerm] = useState('');
+
+  const jobsPerPage = 6;
+
   const [candidate, setCandidate] = useState(null);
   const [savedJobs, setSavedJobs] = useState([]);
   // Filter states
