@@ -236,7 +236,7 @@ const SavedJobOffers = () => {
         </div>
 
         {/* Main Content */}
-        <div className="main-content">
+        <div className="main-contentt">
           <div className="content-wrapper">
             {savedJobOffers.length === 0 ? (
               <div className="empty-state">
@@ -412,7 +412,7 @@ const SavedJobOffers = () => {
         }
 
         /* Main Content */
-        .main-content {
+        .main-contentt {
           background: #f8f9fa;
           min-height: 60vh;
           padding: 60px 0;
@@ -839,7 +839,7 @@ const SavedJobOffers = () => {
             gap: 20px;
           }
 
-          .main-content {
+          .main-contentt {
             padding: 40px 0;
           }
 
