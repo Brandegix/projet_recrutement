@@ -15,6 +15,13 @@
 /* Logo section */
 .nav-left {
   flex-shrink: 0;
+  /* Additions for hamburger icon positioning on mobile */
+  display: flex; /* Make nav-left a flex container */
+  align-items: center; /* Vertically align items */
+  width: 100%; /* Take full width on mobile to contain toggle */
+  justify-content: space-between; /* Push logo left, toggle effectively right */
+  position: relative; /* Make nav-left the positioning context for absolute menu-toggle */
+  padding-right: 2.5rem; /* Add padding to account for the toggle's width/margin */
 }
 
 .nav-logo {
@@ -105,7 +112,7 @@
 @media (max-width: 768px) {
   .nav-wrapper {
     flex-wrap: wrap;
-    padding: 1rem;
+    padding: 1rem; /* Adjust padding for mobile view */
   }
 
   .nav-right {
@@ -135,8 +142,9 @@
 
   .menu-toggle {
     display: block;
-    position: absolute;
-    top: 1rem;
-    right: 2rem;
+    position: absolute; /* Position relative to .nav-left */
+    top: 50%; /* Center vertically */
+    right: 0; /* Align to the right edge of its parent (.nav-left) */
+    transform: translateY(-50%); /* Adjust for perfect vertical centering */
   }
 }
