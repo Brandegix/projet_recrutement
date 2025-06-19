@@ -5,7 +5,7 @@
   padding: 1rem 2rem;
   display: flex;
   align-items: center;
-  justify-content: space-between; /* This will naturally push logo left, and menu toggle right */
+  justify-content: space-between;
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -15,8 +15,6 @@
 /* Logo section */
 .nav-left {
   flex-shrink: 0;
-  /* Removed position: relative, width: 100%, justify-content: space-between, padding-right */
-  /* These were needed when menu-toggle was inside nav-left. Now it's not. */
 }
 
 .nav-logo {
@@ -32,6 +30,12 @@
 
 .nav-logo-orange {
   color: #ff6f00;
+}
+
+/* Hamburger menu button - separate styling */
+.hamburger-menu-btn {
+  /* Styles are handled inline in the component */
+  /* This class exists just for targeting if needed */
 }
 
 /* Right section: links + logout (This will be the collapsible menu) */
@@ -74,85 +78,64 @@
   color: #fff;
 }
 
-/* The .nav-logout-btn class will be removed from the button,
-   as you requested to apply its styles inline.
-   If you change your mind and want a hover effect, put it back here. */
-.nav-logout-btn:hover {
-  background: #ff8f33; /* This rule will remain in CSS if button keeps the class for hover */
-}
-
-
-/* Hamburger menu icon */
-.menu-toggle {
-  display: none; /* Hidden by default on desktop */
-  background: none;
-  border: none;
-  font-size: 1.8rem;
-  color: white;
-  cursor: pointer;
-  z-index: 1100;
-  /* Removed absolute positioning from here. It will be a flex item. */
-}
-
 /* Responsive styles */
 @media (max-width: 768px) {
   .nav-wrapper {
-    /* No flex-wrap needed if nav-right is an overlay/separate block */
-    padding: 1rem; /* Consistent padding on mobile */
-    /* Remove justify-content: space-between; if nav-right is NOT a sibling anymore */
+    padding: 1rem;
+    /* Three items: nav-left, hamburger-menu-btn, nav-right (hidden) */
   }
 
-  /* Make the menu-toggle visible on mobile */
-  .menu-toggle {
-    display: block; /* Show hamburger on mobile */
-    /* It will now be positioned by flexbox, so no 'right: 1rem' needed directly here */
-  }
+  /* Hamburger button visibility is handled via inline styles in component */
 
   .nav-right {
-    /* Make this an overlay or a full-width block below the header */
-    position: absolute; /* Position relative to nav-wrapper or body */
-    top: 64px; /* Adjust based on your nav-wrapper height */
+    position: absolute;
+    top: 100%; /* Position right below the navbar */
     left: 0;
     width: 100%;
-    background-color: #000; /* Same as navbar for continuity */
+    background-color: #000;
     flex-direction: column;
-    align-items: center; /* Center links/button vertically */
-    padding: 1rem 0; /* Add padding inside the menu */
+    align-items: center;
+    padding: 1rem 0;
     display: none; /* Hidden by default */
-    transform: translateY(-100%); /* Start off-screen above */
-    transition: transform 0.3s ease-out; /* Smooth slide effect */
+    transform: translateY(-10px);
+    opacity: 0;
+    transition: all 0.3s ease-out;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    z-index: 999; /* Below the nav-wrapper but above other content */
+    z-index: 999;
   }
 
   .nav-right.open {
-    display: flex; /* Show when open */
-    transform: translateY(0); /* Slide into view */
+    display: flex;
+    transform: translateY(0);
+    opacity: 1;
   }
 
   .nav-links {
     flex-direction: column;
     width: 100%;
-    gap: 1.5rem; /* More space between links */
+    gap: 1.5rem;
     text-align: center;
   }
 
   .nav-links li {
-    width: 100%; /* Make list items take full width for consistent clicks */
+    width: 100%;
   }
 
   .nav-links li a {
-    display: block; /* Make links block-level for full clickable area */
+    display: block;
     padding: 0.5rem 0;
   }
 
   .nav-userinfo {
     flex-direction: column;
-    align-items: center; /* Center logout button */
+    align-items: center;
     width: 100%;
-    margin-top: 1.5rem; /* Space from links */
+    margin-top: 1.5rem;
     gap: 1rem;
   }
 }
 
-/* End of Nav.css */
+/* Remove any old menu-toggle styles that might conflict */
+.menu-toggle {
+  /* Deprecated - styles moved to inline in component */
+}
