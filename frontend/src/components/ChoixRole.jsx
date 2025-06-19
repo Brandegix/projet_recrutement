@@ -377,6 +377,9 @@ const ChoixRole = () => {
         .card-header {
           text-align: center;
           margin-bottom: 1.5rem;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
 
         .role-icon-container {
@@ -389,15 +392,18 @@ const ChoixRole = () => {
           margin-bottom: 1rem;
           box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
-
+  .candidat-icon, .recruteur-icon {
+  margin-left: auto;
+  margin-right: auto;
+}
         .candidat-icon {
           background: linear-gradient(135deg, #ff8c00, #ffa500);
-           margin-left:190px;
+           
         }
 
         .recruteur-icon {
           background: linear-gradient(135deg, #f56040, #ff6b6b);
-           margin-left:190px;
+          
         }
 
         .role-icon {
@@ -568,12 +574,14 @@ const ChoixRole = () => {
           }
           
           .main-title {
-            font-size: 2.25rem;
-          }
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    word-break: break-word;
+  }
           
           .sub-title {
-            font-size: 1.1rem;
-          }
+    font-size: 1rem;
+  }
           
           .roles-wrapper {
             grid-template-columns: 1fr;
@@ -585,12 +593,13 @@ const ChoixRole = () => {
           }
           
           .icon-container {
-            width: 80px;
+            width: 70px;
             height: 80px;
+            margin-bottom: 1.5rem;
           }
           
           .main-icon {
-            font-size: 2rem;
+            font-size: 1.75rem;
           }
           
           .role-icon-container {
@@ -626,6 +635,32 @@ const ChoixRole = () => {
             padding: 0.8rem 1rem;
           }
         }
+        @media (max-width: 360px) {
+  .role-selection-content {
+    padding: 1.5rem 1rem; /* Reduced padding */
+  }
+  
+  .main-title {
+    font-size: 1.4rem; /* Reduced from 1.5rem */
+    max-width: 100%;
+    word-break: break-word;
+    margin: 0 auto 0.75rem; /* Center with margin */
+  }
+  
+  .icon-container {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 1.75rem; /* Increased spacing between icon and title */
+  }
+  
+  .main-icon {
+    font-size: 1.5rem;
+  }
+  
+  .header-section {
+    margin-bottom: 1.5rem; /* Reduced overall header section margin */
+  }
+}
       `}</style>
     </>
   );
