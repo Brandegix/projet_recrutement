@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaMapMarkerAlt, FaBriefcase, FaBookmark, FaRegBookmark, FaClock, FaHeart, FaRegHeart } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaBriefcase, FaBookmark, FaRegBookmark, FaClock, FaHeart, FaRegHeart, FaSearch, FaFilter } from 'react-icons/fa';
 import "../../assets/css/JobCards.css";
 import Footer from '../../components/Footer';
 import { useNavigate } from 'react-router-dom';
@@ -37,7 +37,7 @@ const JobCard = ({job, onApply, isApplied, onSave, isSaved }) => {
   };
 
   return (
-    <div className="modern-job-card">
+    <div className="enhanced-job-card">
       <div className="job-card-header">
         <div className="company-logo">
           <img
@@ -190,8 +190,6 @@ const SavedJobOffers = () => {
     });
   };
 
-  
-
   const savedJobOffers = jobs.filter(job => savedJobs.includes(job.id));
 
   return (
@@ -200,14 +198,25 @@ const SavedJobOffers = () => {
       <div className="saved-jobs-container">
         <div className="page-header">
           <div className="header-content">
-            <h1 className="page-title">Mes offres sauvegardées</h1>
+            <div className="breadcrumb">
+              <Link to="/" className="breadcrumb-link">Accueil</Link>
+              <span className="breadcrumb-separator">•</span>
+              <span className="breadcrumb-current">Mes offres sauvegardées</span>
+            </div>
+            <h1 className="page-title">
+              <FaBookmark className="title-icon" />
+              Mes offres sauvegardées
+            </h1>
             <p className="page-subtitle">
-              Retrouvez toutes les offres d'emploi que vous avez sauvegardées
+              Retrouvez toutes les offres d'emploi que vous avez sauvegardées pour les consulter plus tard
             </p>
-            <div className="stats-bar">
-              <span className="stat-item">
-                {savedJobOffers.length} offre{savedJobOffers.length !== 1 ? 's' : ''} sauvegardée{savedJobOffers.length !== 1 ? 's' : ''}
-              </span>
+            <div className="stats-section">
+              <div className="stat-card">
+                <div className="stat-number">{savedJobOffers.length}</div>
+                <div className="stat-label">
+                  Offre{savedJobOffers.length !== 1 ? 's' : ''} sauvegardée{savedJobOffers.length !== 1 ? 's' : ''}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -215,27 +224,37 @@ const SavedJobOffers = () => {
         <div className="saved-jobs-content">
           {savedJobOffers.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-icon">
-                <FaBookmark size={48} />
+              <div className="empty-illustration">
+                <FaBookmark size={64} />
               </div>
               <h3>Aucune offre sauvegardée</h3>
-              <p>Vous n'avez pas encore sauvegardé d'offres d'emploi.</p>
+              <p>Vous n'avez pas encore sauvegardé d'offres d'emploi. Commencez à explorer les opportunités disponibles.</p>
               <Link to="/offres" className="browse-jobs-btn">
+                <FaSearch className="btn-icon" />
                 Parcourir les offres
               </Link>
             </div>
           ) : (
-            <div className="jobs-grid">
-              {savedJobOffers.map(job => (
-                <JobCard
-                  key={job.id}
-                  job={job}
-                  onApply={() => {}}
-                  isApplied={appliedJobs.includes(job.id)}
-                  onSave={handleSaveJob}
-                  isSaved={savedJobs.includes(job.id)}
-                />
-              ))}
+            <div className="jobs-section">
+              <div className="section-header">
+                <h2 className="section-title">Vos offres sauvegardées</h2>
+                <div className="view-options">
+                  <span className="jobs-count">{savedJobOffers.length} résultat{savedJobOffers.length !== 1 ? 's' : ''}</span>
+                </div>
+              </div>
+              
+              <div className="jobs-grid">
+                {savedJobOffers.map(job => (
+                  <JobCard
+                    key={job.id}
+                    job={job}
+                    onApply={() => {}}
+                    isApplied={appliedJobs.includes(job.id)}
+                    onSave={handleSaveJob}
+                    isSaved={savedJobs.includes(job.id)}
+                  />
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -245,16 +264,14 @@ const SavedJobOffers = () => {
       <style jsx>{`
         .saved-jobs-container {
           min-height: 100vh;
-          background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-          padding: 0;
+          background: #fafbfc;
         }
 
         .page-header {
-          background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
-          color: white;
-          padding: 80px 0 60px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           position: relative;
           overflow: hidden;
+          padding: 100px 0 80px;
         }
 
         .page-header::before {
@@ -264,86 +281,174 @@ const SavedJobOffers = () => {
           left: 0;
           right: 0;
           bottom: 0;
-          background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><radialGradient id="a" cx="50%" cy="0%" r="100%"><stop offset="0%" stop-color="white" stop-opacity="0.1"/><stop offset="100%" stop-color="white" stop-opacity="0"/></radialGradient></defs><ellipse cx="50" cy="0" rx="50" ry="20" fill="url(%23a)"/></svg>') no-repeat center top;
-          background-size: 100% 200px;
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
+          backdrop-filter: blur(10px);
+        }
+
+        .page-header::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          right: 0;
+          height: 60px;
+          background: #fafbfc;
+          clip-path: ellipse(100% 100% at 50% 100%);
         }
 
         .header-content {
           max-width: 1200px;
           margin: 0 auto;
-          padding: 0 20px;
-          text-align: center;
+          padding: 0 24px;
           position: relative;
-          z-index: 1;
+          z-index: 2;
+          text-align: center;
+        }
+
+        .breadcrumb {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          margin-bottom: 24px;
+          font-size: 0.875rem;
+        }
+
+        .breadcrumb-link {
+          color: rgba(255, 255, 255, 0.8);
+          text-decoration: none;
+          transition: color 0.2s ease;
+        }
+
+        .breadcrumb-link:hover {
+          color: white;
+        }
+
+        .breadcrumb-separator {
+          color: rgba(255, 255, 255, 0.6);
+        }
+
+        .breadcrumb-current {
+          color: white;
+          font-weight: 500;
         }
 
         .page-title {
-          font-size: 3rem;
+          font-size: 2.75rem;
           font-weight: 700;
           margin: 0 0 16px;
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 16px;
           text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .page-subtitle {
-          font-size: 1.2rem;
-          margin: 0 0 32px;
+        .title-icon {
+          font-size: 2.25rem;
           opacity: 0.9;
+        }
+
+        .page-subtitle {
+          font-size: 1.125rem;
+          margin: 0 0 40px;
+          color: rgba(255, 255, 255, 0.9);
           max-width: 600px;
           margin-left: auto;
           margin-right: auto;
+          line-height: 1.6;
         }
 
-        .stats-bar {
-          display: inline-flex;
-          background: rgba(255,255,255,0.2);
+        .stats-section {
+          display: flex;
+          justify-content: center;
+          gap: 24px;
+        }
+
+        .stat-card {
+          background: rgba(255, 255, 255, 0.15);
           backdrop-filter: blur(10px);
-          border-radius: 50px;
-          padding: 12px 24px;
-          border: 1px solid rgba(255,255,255,0.3);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 16px;
+          padding: 24px 32px;
+          min-width: 140px;
+          text-align: center;
         }
 
-        .stat-item {
-          font-weight: 600;
-          font-size: 1rem;
+        .stat-number {
+          font-size: 2rem;
+          font-weight: 700;
+          color: white;
+          margin-bottom: 4px;
+        }
+
+        .stat-label {
+          font-size: 0.875rem;
+          color: rgba(255, 255, 255, 0.8);
+          font-weight: 500;
         }
 
         .saved-jobs-content {
           max-width: 1200px;
           margin: 0 auto;
-          padding: 40px 20px;
+          padding: 60px 24px 80px;
+        }
+
+        .jobs-section {
+          margin-top: 0;
+        }
+
+        .section-header {
+          display: flex;
+          justify-content: between;
+          align-items: center;
+          margin-bottom: 32px;
+          flex-wrap: wrap;
+          gap: 16px;
+        }
+
+        .section-title {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #1a202c;
+          margin: 0;
+          flex: 1;
+        }
+
+        .view-options {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+
+        .jobs-count {
+          color: #64748b;
+          font-size: 0.875rem;
+          font-weight: 500;
         }
 
         .jobs-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+          grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
           gap: 24px;
-          margin-top: 20px;
         }
 
-        .modern-job-card {
+        .enhanced-job-card {
           background: white;
           border-radius: 16px;
           padding: 24px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 20px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
           transition: all 0.3s ease;
-          border: 1px solid rgba(0,0,0,0.05);
+          border: 1px solid #e2e8f0;
           position: relative;
           overflow: hidden;
         }
 
-        .modern-job-card::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 4px;
-          background: linear-gradient(90deg, #ff6b35, #ff8c42);
-        }
-
-        .modern-job-card:hover {
+        .enhanced-job-card:hover {
           transform: translateY(-4px);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+          border-color: #cbd5e0;
         }
 
         .job-card-header {
@@ -359,11 +464,12 @@ const SavedJobOffers = () => {
         }
 
         .company-logo img {
-          width: 60px;
-          height: 60px;
+          width: 56px;
+          height: 56px;
           border-radius: 12px;
           object-fit: cover;
-          border: 2px solid #f8f9fa;
+          border: 2px solid #f7fafc;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .job-title-section {
@@ -374,14 +480,18 @@ const SavedJobOffers = () => {
         .job-title {
           font-size: 1.25rem;
           font-weight: 700;
-          color: #1a1a1a;
-          margin: 0 0 8px;
+          color: #1a202c;
+          margin: 0 0 6px;
           line-height: 1.3;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
 
         .company-name {
-          font-size: 1rem;
-          color: #666666;
+          font-size: 0.95rem;
+          color: #64748b;
           margin: 0 0 12px;
           font-weight: 500;
         }
@@ -394,45 +504,44 @@ const SavedJobOffers = () => {
         }
 
         .job-type-badge {
-          background: linear-gradient(135deg, #ff6b35, #ff8c42);
+          background: linear-gradient(135deg, #667eea, #764ba2);
           color: white;
           padding: 4px 12px;
-          border-radius: 20px;
+          border-radius: 16px;
           font-size: 0.75rem;
           font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-
-        .job-posted {
-          color: #999999;
-          font-size: 0.875rem;
-          display: flex;
-          align-items: center;
-          gap: 4px;
+          text-transform: capitalize;
+          letter-spacing: 0.025em;
         }
 
         .save-job-btn {
           position: absolute;
-          top: 0;
-          right: 0;
-          background: none;
-          border: none;
+          top: -4px;
+          right: -4px;
+          background: white;
+          border: 1px solid #e2e8f0;
           padding: 8px;
           cursor: pointer;
-          color: #999999;
+          color: #64748b;
           transition: all 0.2s ease;
           border-radius: 50%;
+          width: 36px;
+          height: 36px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .save-job-btn:hover {
-          background: #f8f9fa;
-          color: #ff6b35;
-          transform: scale(1.1);
+          background: #f7fafc;
+          color: #e53e3e;
+          transform: scale(1.05);
+          border-color: #e53e3e;
         }
 
         .saved-icon {
-          color: #ff6b35;
+          color: #e53e3e;
         }
 
         .job-card-body {
@@ -450,12 +559,13 @@ const SavedJobOffers = () => {
           display: flex;
           align-items: center;
           gap: 8px;
-          color: #666666;
+          color: #64748b;
           font-size: 0.875rem;
+          font-weight: 500;
         }
 
         .detail-icon {
-          color: #999999;
+          color: #94a3b8;
           font-size: 0.75rem;
         }
 
@@ -464,7 +574,7 @@ const SavedJobOffers = () => {
         }
 
         .job-description {
-          color: #333333;
+          color: #4a5568;
           font-size: 0.875rem;
           line-height: 1.6;
           margin: 0 0 8px;
@@ -473,7 +583,7 @@ const SavedJobOffers = () => {
         .read-more-btn {
           background: none;
           border: none;
-          color: #ff6b35;
+          color: #667eea;
           font-size: 0.875rem;
           cursor: pointer;
           font-weight: 600;
@@ -482,7 +592,7 @@ const SavedJobOffers = () => {
         }
 
         .read-more-btn:hover {
-          color: #ff8c42;
+          color: #764ba2;
         }
 
         .skills-container {
@@ -492,26 +602,26 @@ const SavedJobOffers = () => {
         }
 
         .skill-tag {
-          background: #f8f9fa;
-          color: #333333;
+          background: #f7fafc;
+          color: #4a5568;
           padding: 6px 12px;
-          border-radius: 20px;
+          border-radius: 16px;
           font-size: 0.75rem;
           font-weight: 500;
           transition: all 0.2s ease;
-          border: 1px solid #e9ecef;
+          border: 1px solid #e2e8f0;
         }
 
         .skill-tag:hover {
-          background: #e9ecef;
+          background: #edf2f7;
           transform: translateY(-1px);
-          border-color: #ff6b35;
+          border-color: #cbd5e0;
         }
 
         .more-skills {
-          background: #ff6b35;
+          background: #667eea;
           color: white;
-          border-color: #ff6b35;
+          border-color: #667eea;
         }
 
         .job-card-footer {
@@ -519,7 +629,7 @@ const SavedJobOffers = () => {
           justify-content: space-between;
           align-items: center;
           padding-top: 20px;
-          border-top: 1px solid #e9ecef;
+          border-top: 1px solid #e2e8f0;
         }
 
         .salary-section {
@@ -529,8 +639,8 @@ const SavedJobOffers = () => {
         .salary-amount {
           font-size: 1.125rem;
           font-weight: 700;
-          color: #1a1a1a;
-          background: linear-gradient(135deg, #ff6b35, #ff8c42);
+          color: #1a202c;
+          background: linear-gradient(135deg, #667eea, #764ba2);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
@@ -542,121 +652,135 @@ const SavedJobOffers = () => {
         }
 
         .apply-button {
-          background: linear-gradient(135deg, #ff6b35, #ff8c42);
+          background: linear-gradient(135deg, #667eea, #764ba2);
           color: white;
           border: none;
-          padding: 12px 24px;
+          padding: 12px 20px;
           border-radius: 8px;
           font-weight: 600;
           font-size: 0.875rem;
           cursor: pointer;
           transition: all 0.3s ease;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
+          text-transform: capitalize;
+          letter-spacing: 0.025em;
         }
 
         .apply-button:hover {
           transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+          box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
 
         .applied-button {
-          background: #28a745;
+          background: #48bb78;
           color: white;
           border: none;
-          padding: 12px 24px;
+          padding: 12px 20px;
           border-radius: 8px;
           font-weight: 600;
           font-size: 0.875rem;
           cursor: not-allowed;
-          opacity: 0.8;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
+          opacity: 0.9;
+          text-transform: capitalize;
+          letter-spacing: 0.025em;
         }
 
         .empty-state {
           text-align: center;
           padding: 80px 20px;
           background: white;
-          border-radius: 16px;
+          border-radius: 20px;
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+          border: 1px solid #e2e8f0;
         }
 
-        .empty-icon {
-          color: #999999;
-          margin-bottom: 24px;
+        .empty-illustration {
+          color: #cbd5e0;
+          margin-bottom: 32px;
         }
 
         .empty-state h3 {
           font-size: 1.5rem;
-          color: #1a1a1a;
+          color: #1a202c;
           margin: 0 0 12px;
           font-weight: 700;
         }
 
         .empty-state p {
-          color: #666666;
+          color: #64748b;
           font-size: 1rem;
           margin: 0 0 32px;
+          line-height: 1.6;
+          max-width: 400px;
+          margin-left: auto;
+          margin-right: auto;
         }
 
         .browse-jobs-btn {
-          display: inline-block;
-          background: linear-gradient(135deg, #ff6b35, #ff8c42);
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: linear-gradient(135deg, #667eea, #764ba2);
           color: white;
           padding: 14px 28px;
-          border-radius: 8px;
+          border-radius: 10px;
           text-decoration: none;
           font-weight: 600;
           transition: all 0.3s ease;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
+          text-transform: capitalize;
+          letter-spacing: 0.025em;
         }
 
         .browse-jobs-btn:hover {
           transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+          box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
 
-        .loading-container, .error-container {
-          text-align: center;
-          padding: 100px 20px;
-          background: white;
-          border-radius: 16px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-          margin: 40px auto;
-          max-width: 600px;
+        .btn-icon {
+          font-size: 0.875rem;
         }
 
-        .loading-spinner {
-          width: 50px;
-          height: 50px;
-          border: 4px solid #e9ecef;
-          border-top: 4px solid #ff6b35;
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-          margin: 0 auto 24px;
-        }
-
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-
-        .error-container h2 {
-          color: #dc3545;
-          font-size: 1.5rem;
-          margin: 0 0 12px;
-        }
-
-        .error-container p {
-          color: #666666;
-          font-size: 1rem;
+        @media (max-width: 1024px) {
+          .jobs-grid {
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+          }
         }
 
         @media (max-width: 768px) {
+          .page-header {
+            padding: 80px 0 60px;
+          }
+
+          .header-content {
+            padding: 0 20px;
+          }
+          
           .page-title {
             font-size: 2rem;
+            flex-direction: column;
+            gap: 12px;
+          }
+
+          .title-icon {
+            font-size: 1.75rem;
+          }
+          
+          .stats-section {
+            flex-direction: column;
+            align-items: center;
+          }
+
+          .stat-card {
+            min-width: 200px;
+          }
+          
+          .saved-jobs-content {
+            padding: 40px 20px 60px;
+          }
+
+          .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
           }
           
           .jobs-grid {
@@ -677,6 +801,37 @@ const SavedJobOffers = () => {
           .apply-button, .applied-button {
             width: 100%;
             justify-content: center;
+          }
+
+          .breadcrumb {
+            flex-wrap: wrap;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .page-title {
+            font-size: 1.75rem;
+          }
+
+          .enhanced-job-card {
+            padding: 20px;
+          }
+
+          .company-logo img {
+            width: 48px;
+            height: 48px;
+          }
+
+          .job-title {
+            font-size: 1.125rem;
+          }
+
+          .empty-state {
+            padding: 60px 20px;
+          }
+
+          .empty-illustration {
+            margin-bottom: 24px;
           }
         }
       `}</style>
