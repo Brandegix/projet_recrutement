@@ -538,6 +538,7 @@ const SavedJobOffers = () => {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
           gap: 24px;
+          justify-items: center;
         }
 
         /* Enhanced Job Cards */
