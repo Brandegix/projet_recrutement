@@ -686,7 +686,7 @@ const JobSearchAndOffers = () => {
       <style jsx>{`
         .job-search-container {
           min-height: 100vh;
-          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          background: white;
         }
 /* Hero Section */
 .hero-section {
