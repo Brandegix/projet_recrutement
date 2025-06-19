@@ -478,7 +478,6 @@ const pageStyles = {
     borderRadius: "50%",
     background: "linear-gradient(135deg, #ff6b35 0%, #ff8c42 50%, #ffa366 100%)",
     boxShadow: `0 0 0 4px rgba(255, 107, 53, 0.2), 0 20px 40px rgba(255, 107, 53, 0.3), inset 0 0 0 2px rgba(255, 255, 255, 0.1)`,
-    marginBottom: "-20px",
   },
 
   profileImage: {
@@ -837,7 +836,7 @@ const pageStyles = {
     overflow: "hidden",
     backgroundColor: "#1a1a1a",
     transition: "all 0.3s ease",
-    flexWrap: "wrap",
+    alignItems: "stretch",
   },
 
   newsletterInput: {
@@ -865,6 +864,7 @@ const pageStyles = {
     textTransform: "uppercase",
     letterSpacing: "1px",
     minWidth: "120px",
+    flexShrink: 0,
   },
 
   newsletterFeatures: {
@@ -975,6 +975,50 @@ styleSheet.innerText = `
   
   .headerDomainsContainer {
     justify-content: center !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .newsletterForm {
+    flex-direction: column !important;
+    border-radius: 15px !important;
+    max-width: 90% !important;
+  }
+  
+  .newsletterInput {
+    border-bottom: 1px solid #404040 !important;
+    text-align: center !important;
+  }
+  
+  .newsletterButton {
+    border-radius: 0 0 15px 15px !important;
+    width: 100% !important;
+    justify-self: center !important;
+  }
+  
+  .newsletterSection {
+    padding: 60px 20px !important;
+  }
+  
+  .newsletterFeatures {
+    gap: 20px !important;
+    justify-content: center !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .newsletterForm {
+    max-width: 95% !important;
+  }
+  
+  .newsletterInput {
+    padding: 15px 20px !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .newsletterButton {
+    padding: 15px 20px !important;
+    font-size: 0.9rem !important;
   }
 }
 `
