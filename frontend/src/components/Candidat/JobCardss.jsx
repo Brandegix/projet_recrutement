@@ -319,24 +319,26 @@ const JobSearchAndOffers = () => {
     });
   };
 
-  useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { credentials: 'include' })
+useEffect(() => {
+  fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { credentials: 'include' })
     .then(res => res.json())
-      .then(data => {
-        setCandidate(data);
-        setCandidateId(data.id);
+    .then(data => {
+      setCandidate(data);
+      setCandidateId(data.id);
 
-         fetch(`${process.env.REACT_APP_API_URL}/api/getapplications`, {
-          credentials: 'include'
-        });
-      })
-      .then(res => res.json())
-      .then(applications => {
-        const appliedJobIds = applications.map(app => app.job_offer_id);
-        setAppliedJobs(appliedJobIds);
-      })
-      .catch(err => console.error("Erreur candidate ou applications:", err));
-  }, []);
+      // ✅ Return the fetch to continue the promise chain properly
+      return fetch(`${process.env.REACT_APP_API_URL}/api/getapplications`, {
+        credentials: 'include'
+      });
+    })
+    .then(res => res.json())
+    .then(applications => {
+      const appliedJobIds = applications.map(app => app.job_offer_id);
+      setAppliedJobs(appliedJobIds);
+    })
+    .catch(err => console.error("Erreur candidate ou applications:", err));
+}, []);
+
 
   const handleSaveJob = (jobId, currentlySaved) => {
     if (currentlySaved) {
