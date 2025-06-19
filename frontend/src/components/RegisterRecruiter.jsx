@@ -14,28 +14,6 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react"
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet"
-import "leaflet/dist/leaflet.css"
-import L from "leaflet"
-
-// Fix Leaflet icon issue
-delete L.Icon.Default.prototype._getIconUrl
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
-})
-
-// Location marker component for the map
-function LocationMarker({ position, setPosition, updateFormLocation }) {
-  useMapEvents({
-    click(e) {
-      setPosition([e.latlng.lat, e.latlng.lng])
-      updateFormLocation(e.latlng.lat, e.latlng.lng)
-    },
-  })
-  return <Marker position={position} />
-}
 
 const RegisterRecruteur = () => {
   const [formData, setFormData] = useState({
@@ -55,7 +33,6 @@ const RegisterRecruteur = () => {
   const [error, setError] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [focusedFields, setFocusedFields] = useState({})
-  const [position, setPosition] = useState([33.57311, -7.589843]) // Default Casablanca
   const [validations, setValidations] = useState({
     username: false,
     email: false,
@@ -87,35 +64,6 @@ const RegisterRecruteur = () => {
     })
   }, [formData])
 
-  // Function to get address from coordinates
-  const reverseGeocode = async (lat, lng) => {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
-      )
-      const data = await response.json()
-
-      if (data && data.display_name) {
-        setFormData((prev) => ({
-          ...prev,
-          address: data.display_name,
-        }))
-      }
-    } catch (error) {
-      console.error("Error reverse geocoding:", error)
-    }
-  }
-
-  // Update form location data
-  const updateFormLocation = (lat, lng) => {
-    setFormData((prev) => ({
-      ...prev,
-      latitude: lat,
-      longitude: lng,
-    }))
-    reverseGeocode(lat, lng)
-  }
-
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({
@@ -143,6 +91,7 @@ const RegisterRecruteur = () => {
 
       // Simulate success
       console.log("Registration successful:", formData)
+      alert("Inscription réussie!")
 
       // Reset form
       setFormData({
@@ -228,6 +177,15 @@ const RegisterRecruteur = () => {
     )
   }
 
+  const handleMapClick = () => {
+    // Simple map interaction simulation
+    const newAddress = "123 Avenue Mohammed V, Casablanca, Morocco"
+    setFormData(prev => ({
+      ...prev,
+      address: newAddress
+    }))
+  }
+
   return (
     <div className="register-page">
       {/* Background Elements */}
@@ -288,7 +246,7 @@ const RegisterRecruteur = () => {
               </div>
             </div>
 
-            {/* Location Section - Separate section for better organization */}
+            {/* Location Section */}
             <div className="form-section">
               <h3 className="section-title">Localisation de l'entreprise</h3>
 
@@ -303,15 +261,14 @@ const RegisterRecruteur = () => {
                   {validations.address && formData.address && <CheckCircle className="validation-icon success" />}
                 </div>
 
-                <div className="map-container">
-                  <MapContainer center={position} zoom={13} style={{ height: "100%", width: "100%" }}>
-                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                    <LocationMarker
-                      position={position}
-                      setPosition={setPosition}
-                      updateFormLocation={updateFormLocation}
-                    />
-                  </MapContainer>
+                <div className="map-container" onClick={handleMapClick}>
+                  <div className="map-placeholder">
+                    <MapPin size={48} className="map-icon" />
+                    <p>Cliquez ici pour sélectionner l'emplacement</p>
+                    <p className="map-coordinates">
+                      Lat: {formData.latitude.toFixed(6)}, Lng: {formData.longitude.toFixed(6)}
+                    </p>
+                  </div>
                 </div>
 
                 <p className="map-helper-text">
@@ -320,7 +277,7 @@ const RegisterRecruteur = () => {
                 </p>
               </div>
 
-              {/* Address Input - Now properly organized */}
+              {/* Address Input */}
               <div className="address-input-section">
                 <InputField
                   name="address"
@@ -394,62 +351,21 @@ const RegisterRecruteur = () => {
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-        /* Fix for input fields - critical fixes */
-        .form-input {
-          position: relative;
-          z-index: 10 !important; /* Ensure inputs are on top */
-          pointer-events: auto !important;
-          user-select: text !important;
-          -webkit-user-select: text !important;
-        }
-
-        /* Fix for background elements */
-        .background-decoration,
-        .floating-shape,
-        .grid-pattern {
-          pointer-events: none !important; /* Prevent shapes from capturing clicks */
-        }
-
-        /* Fix for map container z-index */
-        .map-container {
-          position: relative;
-          z-index: 10;
-        }
-
-        /* Fix for password toggle button */
-        .password-toggle {
-          position: absolute;
-          right: 1rem;
-          top: 50%;
-          transform: translateY(-50%);
-          z-index: 15 !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          width: 30px !important;
-          height: 30px !important;
-          padding: 0 !important;
-        }
-
-        /* Fix overlap issues */
-        .input-container {
-          position: relative;
-          z-index: 5;
-        }
-
-        /* Fix leaflet map controls */
-        :global(.leaflet-control-container) {
-          z-index: 999 !important;
-        }
-
+        /* CRITICAL FIX: Background elements must not interfere with inputs */
         .background-decoration {
-          position: absolute;
+          position: fixed;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
-          pointer-events: none;
-          z-index: 1;
+          pointer-events: none !important;
+          z-index: 0;
+        }
+
+        .floating-shape,
+        .grid-pattern {
+          pointer-events: none !important;
+          z-index: 0;
         }
 
         .grid-pattern {
@@ -465,12 +381,8 @@ const RegisterRecruteur = () => {
         }
 
         @keyframes gridMove {
-          0% {
-            transform: translate(0, 0);
-          }
-          100% {
-            transform: translate(50px, 50px);
-          }
+          0% { transform: translate(0, 0); }
+          100% { transform: translate(50px, 50px); }
         }
 
         .floating-shape {
@@ -505,15 +417,11 @@ const RegisterRecruteur = () => {
         }
 
         @keyframes float {
-          0%,
-          100% {
-            transform: translateY(0px) rotate(0deg);
-          }
-          50% {
-            transform: translateY(-20px) rotate(180deg);
-          }
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(180deg); }
         }
 
+        /* CRITICAL FIX: Form container must be above background */
         .register-container {
           position: relative;
           z-index: 100;
@@ -531,6 +439,7 @@ const RegisterRecruteur = () => {
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
           overflow: hidden;
+          z-index: 101;
         }
 
         .register-card::before {
@@ -545,12 +454,8 @@ const RegisterRecruteur = () => {
         }
 
         @keyframes shimmer {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
-            transform: translateX(100%);
-          }
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
         }
 
         .register-header {
@@ -585,12 +490,8 @@ const RegisterRecruteur = () => {
         }
 
         @keyframes rotate {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
 
         .main-icon {
@@ -640,26 +541,25 @@ const RegisterRecruteur = () => {
         }
 
         @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
 
+        /* CRITICAL FIX: Form elements must be properly layered */
         .register-form {
           display: flex;
           flex-direction: column;
           gap: 2.5rem;
+          position: relative;
+          z-index: 102;
         }
 
         .form-section {
           display: flex;
           flex-direction: column;
           gap: 1.5rem;
+          position: relative;
+          z-index: 103;
         }
 
         .section-title {
@@ -688,11 +588,14 @@ const RegisterRecruteur = () => {
           gap: 1.5rem;
         }
 
+        /* CRITICAL FIX: Input groups must be properly layered */
         .input-group {
           display: flex;
           flex-direction: column;
           gap: 0.5rem;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          z-index: 104;
         }
 
         .input-group.focused {
@@ -742,10 +645,13 @@ const RegisterRecruteur = () => {
           color: #ef4444;
         }
 
+        /* CRITICAL FIX: Input container must be properly positioned */
         .input-container {
           position: relative;
+          z-index: 105;
         }
 
+        /* CRITICAL FIX: Form inputs must be on top and interactive */
         .form-input {
           width: 100%;
           padding: 1rem 1.25rem;
@@ -753,11 +659,17 @@ const RegisterRecruteur = () => {
           border-radius: 12px;
           font-size: 1rem;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          background: rgba(255, 255, 255, 0.9);
+          background: rgba(255, 255, 255, 0.95);
           backdrop-filter: blur(10px);
           color: #1a1a1a;
           font-family: inherit;
           box-sizing: border-box;
+          position: relative;
+          z-index: 106 !important;
+          pointer-events: auto !important;
+          user-select: text !important;
+          -webkit-user-select: text !important;
+          cursor: text !important;
         }
 
         .form-input::placeholder {
@@ -769,6 +681,7 @@ const RegisterRecruteur = () => {
           border-color: #ff8c00;
           box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
           background: rgba(255, 255, 255, 1);
+          z-index: 107 !important;
         }
 
         .form-input.input-valid {
@@ -781,23 +694,34 @@ const RegisterRecruteur = () => {
           background: rgba(239, 68, 68, 0.05);
         }
 
+        /* CRITICAL FIX: Password toggle must be properly positioned */
         .password-toggle {
           position: absolute;
           right: 1rem;
           top: 50%;
           transform: translateY(-50%);
-          z-index: 15 !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          width: 30px !important;
-          height: 30px !important;
-          padding: 0 !important;
+          background: none;
+          border: none;
+          cursor: pointer;
+          z-index: 108 !important;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 30px;
+          height: 30px;
+          border-radius: 6px;
+          transition: background-color 0.2s ease;
+          pointer-events: auto !important;
+        }
+
+        .password-toggle:hover {
+          background-color: rgba(255, 140, 0, 0.1);
         }
 
         .toggle-icon {
           width: 1.1rem;
           height: 1.1rem;
+          color: #6b7280;
         }
 
         .input-border {
@@ -825,7 +749,7 @@ const RegisterRecruteur = () => {
           color: #ef4444;
         }
 
-        /* Map styling - Better organized */
+        /* Map styling */
         .map-section {
           display: flex;
           flex-direction: column;
@@ -849,11 +773,39 @@ const RegisterRecruteur = () => {
           border: 2px solid #e5e7eb;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+          position: relative;
+          z-index: 105;
         }
 
         .map-container:hover {
           border-color: #ff8c00;
           box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .map-placeholder {
+          text-align: center;
+          color: #6b7280;
+        }
+
+        .map-icon {
+          color: #ff8c00;
+          margin-bottom: 1rem;
+        }
+
+        .map-placeholder p {
+          margin: 0.5rem 0;
+          font-weight: 500;
+        }
+
+        .map-coordinates {
+          font-size: 0.8rem;
+          color: #9ca3af;
+          font-family: monospace;
         }
 
         .map-helper-text {
@@ -876,17 +828,6 @@ const RegisterRecruteur = () => {
           margin-top: 0.5rem;
         }
 
-        /* Fix for Leaflet controls */
-        :global(.leaflet-control-container .leaflet-top),
-        :global(.leaflet-control-container .leaflet-bottom) {
-          z-index: 999 !important;
-        }
-
-        :global(.leaflet-container) {
-          font-family: inherit;
-          border-radius: 12px;
-        }
-
         .submit-button {
           width: 100%;
           padding: 1.25rem 2rem;
@@ -902,6 +843,7 @@ const RegisterRecruteur = () => {
           overflow: hidden;
           margin-top: 1rem;
           font-family: inherit;
+          z-index: 105;
         }
 
         .submit-button:hover:not(:disabled) {
@@ -954,12 +896,8 @@ const RegisterRecruteur = () => {
         }
 
         @keyframes spin {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
 
         .form-footer {
@@ -994,83 +932,3 @@ const RegisterRecruteur = () => {
           left: 0;
           width: 0;
           height: 2px;
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
-          transition: width 0.3s ease;
-        }
-
-        .login-link:hover::after {
-          width: 100%;
-        }
-
-        @media (max-width: 768px) {
-          .register-page {
-            padding: 1rem;
-          }
-
-          .register-card {
-            padding: 2rem 1.5rem;
-          }
-
-          .register-title {
-            font-size: 2rem;
-          }
-
-          .icon-container {
-            width: 60px;
-            height: 60px;
-          }
-
-          .main-icon {
-            width: 1.5rem;
-            height: 1.5rem;
-          }
-
-          .form-grid {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-          }
-
-          .form-section {
-            gap: 1rem;
-          }
-
-          .register-form {
-            gap: 2rem;
-          }
-
-          .map-container {
-            height: 250px;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .register-card {
-            padding: 1.5rem 1rem;
-          }
-
-          .register-title {
-            font-size: 1.75rem;
-          }
-
-          .section-title {
-            font-size: 1.1rem;
-          }
-
-          .form-input {
-            padding: 0.875rem 1rem;
-          }
-
-          .submit-button {
-            padding: 1rem 1.5rem;
-          }
-
-          .map-container {
-            height: 200px;
-          }
-        }
-      `}</style>
-    </div>
-  )
-}
-
-export default RegisterRecruteur;
