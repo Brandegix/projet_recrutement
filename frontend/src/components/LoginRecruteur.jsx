@@ -499,14 +499,15 @@ function LoginRecruteur() {
         }
 
         .toggle-password {
-          position: absolute;
-          right: 1rem;
-          cursor: pointer;
-          color: #6b7280;
-          transition: color 0.3s ease;
-          z-index: 2;
-          margin-top: -8px;
-        }
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #6b7280;
+  transition: color 0.3s ease;
+  z-index: 2;
+}
 
         .toggle-password:hover {
           color: #ff8c00;
