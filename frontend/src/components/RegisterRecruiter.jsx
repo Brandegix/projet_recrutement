@@ -151,14 +151,8 @@ const RegisterRecruteur = () => {
             required={required}
             placeholder={placeholder}
             className={`form-input ${isValid ? "input-valid" : ""} ${isInvalid ? "input-invalid" : ""}`}
-            style={{
-              zIndex: 1000,
-              position: 'relative',
-              pointerEvents: 'auto',
-              userSelect: 'text',
-              WebkitUserSelect: 'text',
-              cursor: 'text'
-            }}
+            // Remove inline style pointer-events, user-select, zIndex from here
+            // They are better handled in the global CSS to ensure consistency and override
           />
 
           {showPasswordToggle && (
@@ -204,6 +198,7 @@ const RegisterRecruteur = () => {
         <div className="grid-pattern" />
       </div>
 
+      {/* Main content container - give it a higher z-index than background */}
       <div className="register-container">
         <div className="register-card" ref={registerCardRef}>
           {/* Header */}
@@ -359,21 +354,22 @@ const RegisterRecruteur = () => {
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-        /* CRITICAL FIX: Background elements must not interfere with inputs */
+        /* Essential: Ensure background elements do not interfere with interaction */
         .background-decoration {
-          position: fixed;
+          position: fixed; /* Use fixed for full viewport coverage */
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
-          pointer-events: none !important;
-          z-index: 0;
+          /* IMPORTANT: These two properties are crucial */
+          pointer-events: none; /* Allows clicks to pass through */
+          z-index: 0; /* Ensures it's behind everything else */
         }
 
         .floating-shape,
         .grid-pattern {
-          pointer-events: none !important;
-          z-index: 0;
+          pointer-events: none; /* Redundant but good for explicit safety */
+          z-index: 0; /* Ensures it's behind everything else */
         }
 
         .grid-pattern {
@@ -429,10 +425,10 @@ const RegisterRecruteur = () => {
           50% { transform: translateY(-20px) rotate(180deg); }
         }
 
-        /* CRITICAL FIX: Form container must be above background */
+        /* Ensure content container is above background */
         .register-container {
           position: relative;
-          z-index: 100;
+          z-index: 10; /* Higher than background (0) */
           width: 100%;
           max-width: 900px;
         }
@@ -447,7 +443,7 @@ const RegisterRecruteur = () => {
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
           overflow: hidden;
-          z-index: 101;
+          z-index: 11; /* Higher than register-container (10) */
         }
 
         .register-card::before {
@@ -459,6 +455,8 @@ const RegisterRecruteur = () => {
           height: 3px;
           background: linear-gradient(90deg, transparent, #ff8c00, transparent);
           animation: shimmer 2s ease-in-out infinite;
+          pointer-events: none; /* Prevent interference */
+          z-index: -1; /* Ensure it's behind card content */
         }
 
         @keyframes shimmer {
@@ -469,6 +467,8 @@ const RegisterRecruteur = () => {
         .register-header {
           text-align: center;
           margin-bottom: 3rem;
+          position: relative; /* Ensure it establishes its own stacking context */
+          z-index: 12;
         }
 
         .icon-container {
@@ -482,6 +482,7 @@ const RegisterRecruteur = () => {
           margin-bottom: 1.5rem;
           box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3);
           position: relative;
+          z-index: 1; /* Stacking context for its pseudo-element */
         }
 
         .icon-container::after {
@@ -493,19 +494,14 @@ const RegisterRecruteur = () => {
           bottom: -2px;
           background: linear-gradient(45deg, #ff8c00, transparent, #ff8c00);
           border-radius: 50%;
-          z-index: -1;
+          z-index: -1; /* Behind the icon itself */
           animation: rotate 3s linear infinite;
+          pointer-events: none; /* Crucial for background effects */
         }
 
         @keyframes rotate {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
-        }
-
-        .main-icon {
-          width: 2rem;
-          height: 2rem;
-          color: white;
         }
 
         .register-title {
@@ -540,6 +536,8 @@ const RegisterRecruteur = () => {
           color: #dc2626;
           font-weight: 500;
           animation: slideIn 0.3s ease-out;
+          position: relative; /* Ensure it's part of the main stacking context */
+          z-index: 12;
         }
 
         .error-icon {
@@ -553,13 +551,13 @@ const RegisterRecruteur = () => {
           to { opacity: 1; transform: translateY(0); }
         }
 
-        /* CRITICAL FIX: Form elements must be properly layered */
+        /* The form and its interactive elements */
         .register-form {
           display: flex;
           flex-direction: column;
           gap: 2.5rem;
           position: relative;
-          z-index: 102;
+          z-index: 15; /* Crucial: This z-index should be higher than all non-interactive elements */
         }
 
         .form-section {
@@ -567,7 +565,7 @@ const RegisterRecruteur = () => {
           flex-direction: column;
           gap: 1.5rem;
           position: relative;
-          z-index: 103;
+          z-index: 1; /* Within the form's stacking context */
         }
 
         .section-title {
@@ -596,14 +594,13 @@ const RegisterRecruteur = () => {
           gap: 1.5rem;
         }
 
-        /* CRITICAL FIX: Input groups must be properly layered */
         .input-group {
           display: flex;
           flex-direction: column;
           gap: 0.5rem;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
-          z-index: 104;
+          z-index: 1; /* Each input group should have a stacking context */
         }
 
         .input-group.focused {
@@ -643,6 +640,7 @@ const RegisterRecruteur = () => {
         .validation-icon {
           width: 1.1rem;
           height: 1.1rem;
+          pointer-events: none; /* Ensure icons don't block input */
         }
 
         .validation-icon.success {
@@ -653,13 +651,13 @@ const RegisterRecruteur = () => {
           color: #ef4444;
         }
 
-        /* CRITICAL FIX: Input container must be properly positioned */
         .input-container {
           position: relative;
-          z-index: 105;
+          /* isolation: isolate; */ /* Not always needed but can help create new stacking context */
+          z-index: 1; /* Ensures input and its children are on top within this group */
         }
 
-        /* CRITICAL FIX: Form inputs must be on top and interactive */
+        /* THIS IS THE MOST CRITICAL PART: Ensure all interactive form elements are fully clickable */
         .form-input {
           width: 100%;
           padding: 1rem 1.25rem;
@@ -672,12 +670,12 @@ const RegisterRecruteur = () => {
           color: #1a1a1a;
           font-family: inherit;
           box-sizing: border-box;
-          position: relative;
-          z-index: 106 !important;
-          pointer-events: auto !important;
-          user-select: text !important;
-          -webkit-user-select: text !important;
-          cursor: text !important;
+          position: relative; /* Essential for z-index to work */
+          z-index: 2; /* Higher than input-border, but within input-container's stacking context */
+          pointer-events: auto; /* Explicitly allow pointer events */
+          user-select: text; /* Allow text selection */
+          -webkit-user-select: text;
+          cursor: text; /* Show text cursor */
         }
 
         .form-input::placeholder {
@@ -689,7 +687,7 @@ const RegisterRecruteur = () => {
           border-color: #ff8c00;
           box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
           background: rgba(255, 255, 255, 1);
-          z-index: 107 !important;
+          z-index: 3; /* Even higher when focused */
         }
 
         .form-input.input-valid {
@@ -702,7 +700,6 @@ const RegisterRecruteur = () => {
           background: rgba(239, 68, 68, 0.05);
         }
 
-        /* CRITICAL FIX: Password toggle must be properly positioned */
         .password-toggle {
           position: absolute;
           right: 1rem;
@@ -711,7 +708,7 @@ const RegisterRecruteur = () => {
           background: none;
           border: none;
           cursor: pointer;
-          z-index: 1001 !important;
+          z-index: 3; /* Ensure it's above the input field */
           display: flex;
           align-items: center;
           justify-content: center;
@@ -719,7 +716,7 @@ const RegisterRecruteur = () => {
           height: 30px;
           border-radius: 6px;
           transition: background-color 0.2s ease;
-          pointer-events: auto !important;
+          pointer-events: auto; /* Allow interaction */
         }
 
         .password-toggle:hover {
@@ -741,6 +738,8 @@ const RegisterRecruteur = () => {
           background: linear-gradient(135deg, #ff8c00, #ff6b35);
           transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           border-radius: 1px;
+          pointer-events: none; /* Does not need to be clickable */
+          z-index: 1; /* Below the input field */
         }
 
         .input-group.focused .input-border {
@@ -751,6 +750,8 @@ const RegisterRecruteur = () => {
           font-size: 0.8rem;
           font-weight: 500;
           margin-top: 0.25rem;
+          position: relative; /* Ensure it's part of the stacking context */
+          z-index: 1;
         }
 
         .validation-message.error {
@@ -763,6 +764,8 @@ const RegisterRecruteur = () => {
           flex-direction: column;
           gap: 1rem;
           margin-bottom: 1rem;
+          position: relative;
+          z-index: 1;
         }
 
         .map-header {
@@ -772,6 +775,8 @@ const RegisterRecruteur = () => {
           font-weight: 600;
           color: #374151;
           font-size: 0.9rem;
+          position: relative;
+          z-index: 1;
         }
 
         .map-container {
@@ -787,7 +792,8 @@ const RegisterRecruteur = () => {
           justify-content: center;
           background: linear-gradient(135deg, #f8fafc, #f1f5f9);
           position: relative;
-          z-index: 105;
+          z-index: 2; /* Higher than map-header */
+          pointer-events: auto; /* Explicitly allow clicks */
         }
 
         .map-container:hover {
@@ -798,6 +804,8 @@ const RegisterRecruteur = () => {
         .map-placeholder {
           text-align: center;
           color: #6b7280;
+          position: relative;
+          z-index: 1; /* Ensure text/icons are visible */
         }
 
         .map-icon {
@@ -824,6 +832,8 @@ const RegisterRecruteur = () => {
           font-size: 0.85rem;
           margin: 0;
           padding: 0.5rem 0;
+          position: relative;
+          z-index: 1;
         }
 
         .helper-icon {
@@ -834,6 +844,8 @@ const RegisterRecruteur = () => {
 
         .address-input-section {
           margin-top: 0.5rem;
+          position: relative;
+          z-index: 1;
         }
 
         .submit-button {
@@ -851,7 +863,8 @@ const RegisterRecruteur = () => {
           overflow: hidden;
           margin-top: 1rem;
           font-family: inherit;
-          z-index: 105;
+          z-index: 1; /* Relative to the form, but still interactive */
+          pointer-events: auto; /* Explicitly allow clicks */
         }
 
         .submit-button:hover:not(:disabled) {
@@ -881,7 +894,7 @@ const RegisterRecruteur = () => {
           justify-content: center;
           gap: 0.75rem;
           position: relative;
-          z-index: 2;
+          z-index: 2; /* Ensures content is above potential button effects */
         }
 
         .button-icon {
@@ -913,6 +926,8 @@ const RegisterRecruteur = () => {
           margin-top: 2rem;
           padding-top: 2rem;
           border-top: 1px solid #e5e7eb;
+          position: relative;
+          z-index: 1;
         }
 
         .form-footer p {
@@ -927,6 +942,8 @@ const RegisterRecruteur = () => {
           font-weight: 600;
           transition: all 0.3s ease;
           position: relative;
+          z-index: 1; /* Ensure link is clickable */
+          pointer-events: auto;
         }
 
         .login-link:hover {
@@ -942,80 +959,97 @@ const RegisterRecruteur = () => {
           height: 2px;
           background: linear-gradient(90deg, transparent, #ff8c00, transparent);
           animation: shimmer 2s ease-in-out infinite;
+          pointer-events: none; /* Should not block link */
         }
 
-        /* Critical fixes for input interaction */
+        /* --- Consolidated Z-index and Pointer Events Fixes --- */
 
-        /* 1. Set global input behavior */
-        input, textarea, select, button {
-          position: relative;
-          z-index: 1000 !important;
-          pointer-events: auto !important;
-          user-select: text !important;
-          -webkit-user-select: text !important;
-          cursor: text !important;
+        /* 1. Reset base pointer-events for all elements to auto where needed */
+        /* This rule targets common interactive elements */
+        input, textarea, select, button, a {
+          pointer-events: auto;
         }
 
-        /* 2. Fix all background elements to prevent them from capturing clicks */
+        /* 2. Ensure all background/decorative elements have pointer-events: none and a low z-index */
         .background-decoration,
         .floating-shape,
         .grid-pattern,
-        .register-card::before,
-        .icon-container::after {
-          pointer-events: none !important;
-          z-index: -1 !important;
+        .register-card::before, /* Shimmer on top of card */
+        .icon-container::after, /* Rotating border around icon */
+        .input-border, /* Underline animation */
+        .validation-icon, /* Check/Alert icons */
+        .login-link::after /* Shimmer under login link */
+        {
+          pointer-events: none;
+          z-index: -1; /* Place them safely behind all content */
         }
 
-        /* 3. Fix input-specific styles */
-        .form-input {
-          isolation: isolate;
-          position: relative;
-          z-index: 1000 !important;
+        /* 3. Establish clear stacking contexts and higher z-index for main content */
+
+        /* The overall container for the interactive card */
+        .register-container {
+          z-index: 100; /* A high base z-index for the entire card wrapper */
+          position: relative; /* Crucial for z-index to work */
         }
 
-        /* 4. Fix password toggle button */
-        .password-toggle {
-          z-index: 1001 !important;
-          pointer-events: auto !important;
-          cursor: pointer !important;
+        /* The card itself */
+        .register-card {
+          z-index: 101; /* Slightly higher than its container */
+          position: relative; /* Crucial for z-index to work */
         }
 
-        /* 5. Fix input container stacking context */
+        /* The form and all its contents should be above the card's background/decorations */
+        .register-form {
+          z-index: 102; /* Ensures the form is on top of the card's base elements */
+          position: relative; /* Establishes a stacking context for its children */
+        }
+
+        /* Input fields and their direct containers (including password toggle) */
         .input-container {
-          isolation: isolate;
+          position: relative; /* Creates stacking context for input and toggle */
+          z-index: 1; /* Relative to its parent .input-group */
         }
 
-        /* 6. Fix animations that might interfere with inputs */
+        .form-input {
+          z-index: 2; /* Above input-border within .input-container */
+        }
+
+        .password-toggle {
+          z-index: 3; /* Above form-input within .input-container */
+        }
+
+        .submit-button {
+          z-index: 103; /* Make sure the button is always clickable and on top */
+          position: relative;
+        }
+
+        /* Elements that might have pseudo-elements or specific animations */
         @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); pointer-events: none; }
-          50% { transform: translateY(-20px) rotate(180deg); pointer-events: none; }
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(180deg); }
+          /* pointer-events: none; is already on the element via .floating-shape */
         }
 
         @keyframes gridMove {
-          0% { transform: translate(0, 0); pointer-events: none; }
-          100% { transform: translate(50px, 50px); pointer-events: none; }
+          0% { transform: translate(0, 0); }
+          100% { transform: translate(50px, 50px); }
+          /* pointer-events: none; is already on the element via .grid-pattern */
         }
 
-        /* 7. Apply an extremely high z-index to all form elements */
-        .register-form,
-        .form-section,
-        .input-group,
-        .input-container,
-        .form-input,
-        .password-toggle,
-        .submit-button {
-          z-index: 1000 !important;
-          position: relative;
-        }
+        /* Remove the problematic inline styles from InputField component */
+        /* style={{
+          zIndex: 1000,
+          position: 'relative',
+          pointerEvents: 'auto',
+          userSelect: 'text',
+          WebkitUserSelect: 'text',
+          cursor: 'text'
+        }} */
+        /* These properties are now handled universally in the CSS block */
 
-        /* 8. Ensure absolute positioned elements don't block inputs */
-        .input-border,
-        .validation-icon {
-          pointer-events: none !important;
-        }
       `}</style>
     </div>
   )
 }
 
-export default RegisterRecruteur
+export default RegisterRecruteur;
