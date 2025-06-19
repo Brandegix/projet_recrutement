@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../../components/Footer';
+import Navbar from "../Navbara";
 import axios from 'axios';
 // Enhanced Job Card Component
 const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
@@ -32,7 +33,12 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
     window.location.href = `/offres/${job.id}`;
   };
 
-  return (
+   (
+   
+      <Navbar />
+      <SEO
+        title="Offres d'emploi"
+       /> 
     <div 
       className={`job-card ${isHovered ? 'hovered' : ''}`}
       onMouseEnter={() => setIsHovered(true)}
@@ -160,10 +166,10 @@ const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
       if (totalPages > 1) rangeWithDots.push(totalPages);
     }
 
-    return rangeWithDots;
+     rangeWithDots;
   };
 
-  if (totalPages <= 1) return null;
+  if (totalPages <= 1)  null;
 
   return (
     <div className="pagination-wrapper">
@@ -205,12 +211,13 @@ const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
         </button>
       </div>
     </div>
+    
   );
 };
 
 // Saved Jobs CTA Component
 const SavedJobsCTA = () => {
-  return (
+   (
     <div className="saved-jobs-cta">
       <div className="cta-content">
         <div className="cta-visual">
@@ -298,7 +305,7 @@ const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
     })
     .then(res => {
       if (!res.ok) throw new Error('Failed to save job');
-      return res.json();
+       res.json();
     })
     .then(data => {
       setSavedJobs(prev =>
@@ -318,7 +325,7 @@ const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
         setCandidate(data);
         setCandidateId(data.id);
 
-        return fetch(`${process.env.REACT_APP_API_URL}/api/getapplications`, {
+         fetch(`${process.env.REACT_APP_API_URL}/api/getapplications`, {
           credentials: 'include'
         });
       })
@@ -342,7 +349,7 @@ const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
       })
         .then(res => {
           if (!res.ok) throw new Error('Failed to save job');
-          return res.json();
+           res.json();
         })
         .then(() => {
           setSavedJobs(prev => [...prev, jobId]);
@@ -363,7 +370,7 @@ const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
     })
       .then(res => {
         if (!res.ok) throw new Error('Failed to unsave job');
-        return res.json();
+         res.json();
       })
       .then(() => {
         setSavedJobs(prev => prev.filter(id => id !== jobId));
@@ -425,7 +432,7 @@ const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
         const matchesDomaine = selectedDomaine === '' || 
           job.type.toLowerCase().includes(selectedDomaine.toLowerCase());
 
-        return matchesSearch && matchesPoste && matchesLieu && matchesSalaire && matchesDomaine;
+         matchesSearch && matchesPoste && matchesLieu && matchesSalaire && matchesDomaine;
       });
       
       setFilteredJobs(results);
@@ -449,7 +456,7 @@ const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
   const currentJobs = useMemo(() => {
     const indexOfLastJob = currentPage * jobsPerPage;
     const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-    return filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
+     filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
   }, [filteredJobs, currentPage, jobsPerPage]);
 
   // Clear all filters
@@ -463,7 +470,7 @@ const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
 
   // Loading state
   if (loading) {
-    return (
+     (
       <div className="loading-container">
         <div className="loading-spinner">
           <div className="spinner"></div>
@@ -475,7 +482,7 @@ const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
 
   // Error state
   if (error) {
-    return (
+     (
       <div className="error-container">
         <div className="error-icon">⚠️</div>
         <h2>Erreur de chargement</h2>
@@ -487,7 +494,7 @@ const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
     );
   }
 
-  return (
+   (
     <div className="job-search-container">
       {/* Hero Section */}
       <div className="hero-section">
