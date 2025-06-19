@@ -125,7 +125,6 @@ const ChoixRole2 = () => {
                   Accédez à votre profil et gérez vos candidatures
                 </p>
               </div>
-              
               <div className="image-container">
                 <img src={candidatImg || "/placeholder.svg"} alt="Candidat" className="role-image" />
                 <div className="image-overlay"></div>
@@ -407,6 +406,9 @@ const ChoixRole2 = () => {
         .card-header {
           text-align: center;
           margin-bottom: 1.5rem;
+          display: flex;
+          flex-direction: column;
+          align-items: center;  /* Ensure everything is centered */
         }
 
         .role-icon-container {
@@ -445,6 +447,8 @@ const ChoixRole2 = () => {
           font-size: 1rem;
           margin: 0;
           line-height: 1.5;
+          max-width: 100%;  /* Ensure text wraps */
+          padding: 0 10px;  /* Add some padding */
         }
 
         .image-container {
@@ -670,25 +674,40 @@ const ChoixRole2 = () => {
           }
           
           .main-title {
-            font-size: 2rem;
+            font-size: 2rem;  /* Reduced from 2.25rem */
             margin-bottom: 0.75rem;
+            word-break: break-word;  /* Allow text to wrap properly */
           }
           
           .sub-title {
-            font-size: 1rem;
+            font-size: 1rem;  /* Slightly smaller */
           }
           
-          .header-section {
-            margin-bottom: 2rem;
+          .roles-wrapper {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+          }
+          
+          .role-card {
+            padding: 1.5rem;
           }
           
           .icon-container {
-            width: 70px;
+            width: 70px;  /* Reduced from 80px */
             height: 70px;
             margin-bottom: 1.5rem;
           }
+          
+          .main-icon {
+            font-size: 1.75rem;  /* Reduced from 2rem */
+          }
+          
+          .role-description {
+            max-width: 100%;  /* Ensure text wraps */
+            padding: 0 10px;  /* Add some padding */
+          }
         }
-        
+
         @media (max-width: 480px) {
           .roles-wrapper {
             grid-template-columns: 1fr;
@@ -697,50 +716,33 @@ const ChoixRole2 = () => {
           .role-card {
             min-width: auto;
           }
-
-          .icon-container {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 1.5rem; /* Increased from 1rem */
-          }
-          
-          .main-title {
-            font-size: 1.75rem;
-            line-height: 1.2;
-            padding: 0 10px; /* Add padding to avoid text flowing to edges */
-            word-break: break-word; /* Allow word breaks for long titles */
-          }
-          
-          .sub-title {
-            font-size: 0.9rem;
-            line-height: 1.4;
-          }
         }
 
         @media (max-width: 360px) {
-          .role-selection-content {
-            padding: 1.5rem 1rem; /* Reduced padding */
-          }
-          
           .main-title {
-            font-size: 1.4rem; /* Reduced from 1.5rem */
-            max-width: 100%;
-            word-break: break-word;
-            margin: 0 auto 0.75rem; /* Center with margin */
+            font-size: 1.5rem;
           }
           
           .icon-container {
-            width: 50px;
-            height: 50px;
-            margin-bottom: 1.75rem; /* Increased spacing between icon and title */
+            width: 60px;
+            height: 60px;
           }
           
           .main-icon {
             font-size: 1.5rem;
           }
           
-          .header-section {
-            margin-bottom: 1.5rem; /* Reduced overall header section margin */
+          .role-name {
+            font-size: 1.5rem;  /* Smaller title */
+          }
+          
+          .role-description {
+            font-size: 0.9rem;  /* Smaller description text */
+          }
+          
+          .role-icon-container {
+            width: 50px;  /* Smaller icon container */
+            height: 50px;
           }
         }
       `}</style>
