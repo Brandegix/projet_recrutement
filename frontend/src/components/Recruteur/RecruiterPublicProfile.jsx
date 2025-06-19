@@ -518,7 +518,7 @@ const pageStyles = {
     color: "white",
     flex: 1,
     minWidth: "300px",
-    textAlign: "center", // Centrer le texte sur mobile
+    textAlign: "center", // Centrer sur mobile
   },
 
   companyBadge: {
@@ -828,43 +828,49 @@ const pageStyles = {
 
   newsletterForm: {
     display: "flex",
-    maxWidth: "500px",
+    maxWidth: "520px",
     margin: "0 auto",
     gap: "0",
     borderRadius: "50px",
-    border: "2px solid #404040",
+    border: "2px solid #ff6b35",
     overflow: "hidden",
     backgroundColor: "#1a1a1a",
     transition: "all 0.3s ease",
     alignItems: "stretch",
+    boxShadow: "0 8px 25px rgba(0, 0, 0, 0.3)",
   },
 
   newsletterInput: {
     flex: 1,
-    minWidth: "250px",
-    padding: "18px 25px",
+    minWidth: "280px",
+    padding: "16px 25px",
     border: "none",
     backgroundColor: "transparent",
     color: "#fff",
     fontSize: "1rem",
-    fontWeight: "500",
+    fontWeight: "400",
     outline: "none",
+    borderRadius: "50px 0 0 50px",
   },
 
   newsletterButton: {
-    padding: "18px 30px",
+    padding: "16px 32px",
     backgroundColor: "#ff6b35",
     color: "#fff",
     border: "none",
-    fontWeight: "700",
-    fontSize: "1rem",
+    fontWeight: "600",
+    fontSize: "0.95rem",
     fontFamily: "inherit",
     cursor: "pointer",
     transition: "all 0.3s ease",
-    textTransform: "uppercase",
-    letterSpacing: "1px",
-    minWidth: "120px",
+    textTransform: "none",
+    letterSpacing: "0.5px",
+    minWidth: "140px",
     flexShrink: 0,
+    borderRadius: "0 50px 50px 0",
+    position: "relative",
+    overflow: "hidden",
+    boxShadow: "0 4px 15px rgba(255, 107, 53, 0.3)",
   },
 
   newsletterFeatures: {
@@ -936,18 +942,18 @@ styleSheet.innerText = `
     50% { opacity: 0.5; }
   }
   
-  @media (max-width: 768px) {
-    .profileSection {
-      flex-direction: column !important;
-      text-align: center !important;
-      gap: 25px !important;
-      align-items: center !important;
-    }
-    
-    .headerContent {
-      padding: 30px 20px !important;
-      text-align: center !important;
+@media (max-width: 768px) {
+  .profileSection {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 25px !important;
+    align-items: center !important;
   }
+  
+  .headerContent {
+    padding: 30px 20px !important;
+    text-align: center !important;
+}
   
   .profileImage {
     width: 100px !important;
@@ -981,19 +987,26 @@ styleSheet.innerText = `
 @media (max-width: 768px) {
   .newsletterForm {
     flex-direction: column !important;
-    border-radius: 15px !important;
+    border-radius: 20px !important;
     max-width: 90% !important;
+    border: 2px solid #ff6b35 !important;
   }
   
   .newsletterInput {
-    border-bottom: 1px solid #404040 !important;
-    text-align: center !important;
+    border-radius: 20px 20px 0 0 !important;
+    text-align: left !important;
+    padding: 18px 25px !important;
+    border-bottom: 1px solid #333 !important;
   }
   
   .newsletterButton {
-    border-radius: 0 0 15px 15px !important;
+    border-radius: 0 0 20px 20px !important;
     width: 100% !important;
-    justify-self: center !important;
+    padding: 18px 25px !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%) !important;
+    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4) !important;
   }
   
   .newsletterSection {
@@ -1009,16 +1022,38 @@ styleSheet.innerText = `
 @media (max-width: 480px) {
   .newsletterForm {
     max-width: 95% !important;
+    border-radius: 15px !important;
   }
   
   .newsletterInput {
-    padding: 15px 20px !important;
-    font-size: 0.9rem !important;
+    padding: 16px 20px !important;
+    font-size: 0.95rem !important;
+    border-radius: 15px 15px 0 0 !important;
   }
   
   .newsletterButton {
-    padding: 15px 20px !important;
-    font-size: 0.9rem !important;
+    padding: 16px 20px !important;
+    font-size: 0.95rem !important;
+    border-radius: 0 0 15px 15px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .newsletterButton:hover {
+    background: linear-gradient(135deg, #e05a28 0%, #ff6b35 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(255, 107, 53, 0.5) !important;
+  }
+  
+  .newsletterButton:active {
+    transform: translateY(0) !important;
+  }
+  
+  .newsletterForm:hover {
+    border-color: #ff8c42 !important;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4) !important;
   }
 }
 `
