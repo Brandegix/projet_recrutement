@@ -151,6 +151,14 @@ const RegisterRecruteur = () => {
             required={required}
             placeholder={placeholder}
             className={`form-input ${isValid ? "input-valid" : ""} ${isInvalid ? "input-invalid" : ""}`}
+            style={{
+              zIndex: 1000,
+              position: 'relative',
+              pointerEvents: 'auto',
+              userSelect: 'text',
+              WebkitUserSelect: 'text',
+              cursor: 'text'
+            }}
           />
 
           {showPasswordToggle && (
@@ -703,7 +711,7 @@ const RegisterRecruteur = () => {
           background: none;
           border: none;
           cursor: pointer;
-          z-index: 108 !important;
+          z-index: 1001 !important;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -932,3 +940,82 @@ const RegisterRecruteur = () => {
           left: 0;
           width: 0;
           height: 2px;
+          background: linear-gradient(90deg, transparent, #ff8c00, transparent);
+          animation: shimmer 2s ease-in-out infinite;
+        }
+
+        /* Critical fixes for input interaction */
+
+        /* 1. Set global input behavior */
+        input, textarea, select, button {
+          position: relative;
+          z-index: 1000 !important;
+          pointer-events: auto !important;
+          user-select: text !important;
+          -webkit-user-select: text !important;
+          cursor: text !important;
+        }
+
+        /* 2. Fix all background elements to prevent them from capturing clicks */
+        .background-decoration,
+        .floating-shape,
+        .grid-pattern,
+        .register-card::before,
+        .icon-container::after {
+          pointer-events: none !important;
+          z-index: -1 !important;
+        }
+
+        /* 3. Fix input-specific styles */
+        .form-input {
+          isolation: isolate;
+          position: relative;
+          z-index: 1000 !important;
+        }
+
+        /* 4. Fix password toggle button */
+        .password-toggle {
+          z-index: 1001 !important;
+          pointer-events: auto !important;
+          cursor: pointer !important;
+        }
+
+        /* 5. Fix input container stacking context */
+        .input-container {
+          isolation: isolate;
+        }
+
+        /* 6. Fix animations that might interfere with inputs */
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); pointer-events: none; }
+          50% { transform: translateY(-20px) rotate(180deg); pointer-events: none; }
+        }
+
+        @keyframes gridMove {
+          0% { transform: translate(0, 0); pointer-events: none; }
+          100% { transform: translate(50px, 50px); pointer-events: none; }
+        }
+
+        /* 7. Apply an extremely high z-index to all form elements */
+        .register-form,
+        .form-section,
+        .input-group,
+        .input-container,
+        .form-input,
+        .password-toggle,
+        .submit-button {
+          z-index: 1000 !important;
+          position: relative;
+        }
+
+        /* 8. Ensure absolute positioned elements don't block inputs */
+        .input-border,
+        .validation-icon {
+          pointer-events: none !important;
+        }
+      `}</style>
+    </div>
+  )
+}
+
+export default RegisterRecruteur
