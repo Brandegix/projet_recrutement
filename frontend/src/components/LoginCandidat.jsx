@@ -81,7 +81,7 @@ function LoginCandidat() {
           loginBoxRef.current.style.transform = "scale(0.95)";
           loginBoxRef.current.style.opacity = "0.8";
           setTimeout(() => {
-            navigate("/Offres");
+            navigate("/JobCardss");
           }, 300);
         }, 500);
       }
