@@ -415,37 +415,36 @@ useEffect(() => {
 
 
   // Filter jobs based on search criteria
-  useEffect(() => {
-    const filterJobs = () => {
-      const results = jobs.filter(job => {
-        const matchesSearch = searchTerm === '' || 
-          job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          job.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          job.company.toLowerCase().includes(searchTerm.toLowerCase());
-        
-        const matchesPoste = selectedPoste === '' || 
-          job.title.toLowerCase().includes(selectedPoste.toLowerCase());
-        
-        const matchesLieu = selectedLieu === '' || 
-          job.location.toLowerCase().includes(selectedLieu.toLowerCase());
-        
-        const matchesSalaire = selectedSalaire === '' || 
-          (job.salary && job.salary.toLowerCase().includes(selectedSalaire.toLowerCase()));
-        
-        const matchesDomaine = selectedDomaine === '' || 
-          job.type.toLowerCase().includes(selectedDomaine.toLowerCase());
+  // Filter jobs based on search criteria
+  useEffect(() => {
+    const filterJobs = () => {
+      const results = jobs.filter(job => {
+        const matchesSearch = searchTerm === '' || 
+          job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          job.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          job.company.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        const matchesPoste = selectedPoste === '' || 
+          job.title.toLowerCase().includes(selectedPoste.toLowerCase());
+        
+        const matchesLieu = selectedLieu === '' || 
+          job.location.toLowerCase().includes(selectedLieu.toLowerCase());
+        
+        const matchesSalaire = selectedSalaire === '' || 
+          (job.salary && job.salary.toLowerCase().includes(selectedSalaire.toLowerCase()));
+        
+        const matchesDomaine = selectedDomaine === '' || 
+          job.type.toLowerCase().includes(selectedDomaine.toLowerCase());
 
-         matchesSearch && matchesPoste && matchesLieu && matchesSalaire && matchesDomaine;
-      });
-      
-      setFilteredJobs(results);
-      setCurrentPage(1);
-    };
+        return matchesSearch && matchesPoste && matchesLieu && matchesSalaire && matchesDomaine; // Corrected line
+      });
+      
+      setFilteredJobs(results);
+      setCurrentPage(1);
+    };
 
-    filterJobs();
-  }, [searchTerm, selectedPoste, selectedLieu, selectedSalaire, selectedDomaine, jobs]);
-
- 
+    filterJobs();
+  }, [searchTerm, selectedPoste, selectedLieu, selectedSalaire, selectedDomaine, jobs]);
   // Get unique filter options
   const filterOptions = useMemo(() => ({
     postes: [...new Set(jobs.map(job => job.title))],
