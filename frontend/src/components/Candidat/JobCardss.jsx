@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { 
   Search, 
   MapPin, 
@@ -22,21 +22,22 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../../components/Footer';
-import Navbar from '../Navbara'; // Check that the path is correct
+import Navbar from "../Navbara";
 import axios from 'axios';
-// import SEO from 'your/seo/component' // Add this if SEO is a custom component
-
-// ---------------------- JobCard ----------------------
+// Enhanced Job Card Component
 const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleViewDetails = () => {
-    window.location.href = `/offres/${job.id}`;
+    // Replace with your navigation logic
+    window.location.href = /offres/${job.id};
   };
 
-  return (
+   (
+   
+      
     <div 
-      className={`job-card ${isHovered ? 'hovered' : ''}`}
+      className={job-card ${isHovered ? 'hovered' : ''}}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -46,7 +47,7 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
           <div className="company-logo">
             <img
               src={job.logo || "/api/placeholder/60/60"}
-              alt={`${job.company} logo`}
+              alt={${job.company} logo}
               onError={(e) => {
                 e.target.src = "/api/placeholder/60/60";
               }}
@@ -58,7 +59,7 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
           </div>
         </div>
         <div className="job-type-badge">
-          <span className={`badge ${job.type?.toLowerCase()}`}>{job.type}</span>
+          <span className={badge ${job.type?.toLowerCase()}}>{job.type}</span>
         </div>
       </div>
 
@@ -79,8 +80,11 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
           </div>
         </div>
 
-        <p className="job-description">{job.description}</p>
+        <p className="job-description">
+          {job.description}
+        </p>
 
+        {/* Skills */}
         {job.skills && job.skills.length > 0 && (
           <div className="skills-container">
             <div className="skills-list">
@@ -116,9 +120,9 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
               Postuler
             </button>
           )}
-
+          
           <button 
-            className={`btn btn-save ${isSaved ? 'saved' : ''}`}
+            className={btn btn-save ${isSaved ? 'saved' : ''}}
             onClick={() => onSave(job.id, isSaved)}
             title={isSaved ? "Retirer des favoris" : "Ajouter aux favoris"}
           >
@@ -130,26 +134,26 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
   );
 };
 
-// ---------------------- Main Page ----------------------
-const JobListingPage = () => {
-  const [jobs, setJobs] = useState([]);
+// Enhanced Pagination Component
+const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
+  const getVisiblePages = () => {
+    const delta = 1;
+    const range = [];
+    const rangeWithDots = [];
 
-  useEffect(() => {
-    // Example API call
-    axios.get('/api/jobs')
-      .then(response => setJobs(response.data))
-      .catch(error => console.error('Error fetching jobs:', error));
-  }, []);
+    for (
+      let i = Math.max(2, currentPage - delta);
+      i <= Math.min(totalPages - 1, currentPage + delta);
+      i++
+    ) {
+      range.push(i);
+    }
 
-  const handleApply = (jobId) => {
-    // Handle apply logic here
-    console.log(`Applied to job ID: ${jobId}`);
-  };
-
-  const handleSave = (jobId, isSaved) => {
-    // Handle save/unsave logic here
-    console.log(`${isSaved ? 'Unsaved' : 'Saved'} job ID: ${jobId}`);
-  };
+    if (currentPage - delta > 2) {
+      rangeWithDots.push(1, '...');
+    } else {
+      rangeWithDots.push(1);
+    }
 
   return (
     <>
