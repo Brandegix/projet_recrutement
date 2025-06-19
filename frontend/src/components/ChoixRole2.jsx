@@ -670,50 +670,25 @@ const ChoixRole2 = () => {
           }
           
           .main-title {
-            font-size: 2.25rem;
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
           }
           
           .sub-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
           }
           
-          .roles-wrapper {
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-          }
-          
-          .role-card {
-            padding: 1.5rem;
+          .header-section {
+            margin-bottom: 2rem;
           }
           
           .icon-container {
-            width: 80px;
-            height: 80px;
-          }
-          
-          .main-icon {
-            font-size: 2rem;
-          }
-          
-          .role-icon-container {
-            width: 60px;
-            height: 60px;
-          }
-          
-          .role-icon {
-            font-size: 1.5rem;
-          }
-          
-          .image-container {
-            height: 180px;
-          }
-
-          .help-section {
-            flex-direction: column;
-            text-align: center;
+            width: 70px;
+            height: 70px;
+            margin-bottom: 1.5rem;
           }
         }
-
+        
         @media (max-width: 480px) {
           .roles-wrapper {
             grid-template-columns: 1fr;
@@ -721,6 +696,51 @@ const ChoixRole2 = () => {
           
           .role-card {
             min-width: auto;
+          }
+
+          .icon-container {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 1.5rem; /* Increased from 1rem */
+          }
+          
+          .main-title {
+            font-size: 1.75rem;
+            line-height: 1.2;
+            padding: 0 10px; /* Add padding to avoid text flowing to edges */
+            word-break: break-word; /* Allow word breaks for long titles */
+          }
+          
+          .sub-title {
+            font-size: 0.9rem;
+            line-height: 1.4;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .role-selection-content {
+            padding: 1.5rem 1rem; /* Reduced padding */
+          }
+          
+          .main-title {
+            font-size: 1.4rem; /* Reduced from 1.5rem */
+            max-width: 100%;
+            word-break: break-word;
+            margin: 0 auto 0.75rem; /* Center with margin */
+          }
+          
+          .icon-container {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 1.75rem; /* Increased spacing between icon and title */
+          }
+          
+          .main-icon {
+            font-size: 1.5rem;
+          }
+          
+          .header-section {
+            margin-bottom: 1.5rem; /* Reduced overall header section margin */
           }
         }
       `}</style>
