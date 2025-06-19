@@ -15,7 +15,6 @@ function Offres() {
       
 
       <main className="offres-content">
-        <h1 className="offres-title">Offres disponibles</h1>
         <JobCardss />
       </main>
     </div><Footer/></>
