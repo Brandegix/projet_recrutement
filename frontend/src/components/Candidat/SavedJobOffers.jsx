@@ -55,13 +55,7 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
             <span className="job-type-badge">{job.type}</span>
           </div>
         </div>
-        <button
-          className="save-job-btn"
-          onClick={() => onSave(job.id)}
-          title={isSaved ? "Retirer des sauvegardés" : "Sauvegarder l'offre"}
-        >
-          {isSaved ? <FaHeart className="saved-icon" /> : <FaRegHeart />}
-        </button>
+       
       </div>
 
       <div className="job-card-body">
