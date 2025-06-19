@@ -240,97 +240,166 @@ const SavedJobsCTA = () => {
 };
 
 // Main Component
-const JobSearchAndOffers = () => {
-  // State management
+const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [candidateId, setCandidateId] = useState(null);
-  const [appliedJobs, setAppliedJobs] = useState([]);
-  const [savedJobs, setSavedJobs] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [candidate, setCandidate] = useState(null);
-  
-  // Filter states
-  const [searchTerm, setSearchTerm] = useState('');
   const [selectedPoste, setSelectedPoste] = useState('');
   const [selectedLieu, setSelectedLieu] = useState('');
   const [selectedSalaire, setSelectedSalaire] = useState('');
   const [selectedDomaine, setSelectedDomaine] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
+  const [appliedJobs, setAppliedJobs] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 3;
+  const [searchTerm, setSearchTerm] = useState('');
+  const [candidate, setCandidate] = useState(null);
+  const [savedJobs, setSavedJobs] = useState([]);
 
-  const jobsPerPage = 6;
-
-  // Fetch jobs data
   useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/je`);
-        const data = await response.json();
-        
-        const updatedJobs = data.map(job => ({
+    axios.get(`${process.env.REACT_APP_API_URL}/api/je`)
+    .then(response => {
+        const updatedJobs = response.data.map(job => ({
           ...job,
-          logo: job.logo || "https://via.placeholder.com/60x60/4f46e5/ffffff?text=" + job.company.charAt(0)
+          logo: job.logo || "https://dummyimage.com/80x80/000/fff.png&text=No+Logo"
         }));
-        
         setJobs(updatedJobs);
         setFilteredJobs(updatedJobs);
         setLoading(false);
-      } catch (error) {
+      })
+      .catch(error => {
         console.error("Erreur lors du chargement des offres :", error);
         setError(true);
         setLoading(false);
-      }
-    };
-
-    fetchJobs();
+      });
   }, []);
 
-  // Fetch saved jobs
   useEffect(() => {
-    const fetchSavedJobs = async () => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/saved-jobs`, { 
-          credentials: 'include' 
-        });
-        const data = await response.json();
-        const savedJobIds = data.map(job => job.id);
+    axios.get(`${process.env.REACT_APP_API_URL}/api/saved-jobs`, { withCredentials: true })
+    .then(response => {
+        const savedJobIds = response.data.map(job => job.id);
         setSavedJobs(savedJobIds);
-      } catch (error) {
+      })
+      .catch(error => {
         console.error("Erreur lors du chargement des jobs sauvegardés:", error);
-      }
-    };
-
-    if (candidateId) {
-      fetchSavedJobs();
-    }
+      });
   }, [candidateId]);
 
-  // Fetch candidate data and applications
-  useEffect(() => {
-    const fetchCandidateData = async () => {
-      try {
-        const candidateResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { 
-          credentials: 'include' 
-        });
-        const candidateData = await candidateResponse.json();
-        setCandidate(candidateData);
-        setCandidateId(candidateData.id);
+  const handleSavedJob = (jobId) => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Failed to save job');
+      return res.json();
+    })
+    .then(data => {
+      setSavedJobs(prev =>
+        prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId]
+      );
+    })
+    .catch(error => {
+      console.error('Erreur sauvegarde de l\'offre :', error);
+      alert("Impossible de sauvegarder l'offre pour le moment.");
+    });
+  };
 
-        const applicationsResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/getapplications`, {
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { credentials: 'include' })
+    .then(res => res.json())
+      .then(data => {
+        setCandidate(data);
+        setCandidateId(data.id);
+
+        return fetch(`${process.env.REACT_APP_API_URL}/api/getapplications`, {
           credentials: 'include'
         });
-        const applications = await applicationsResponse.json();
+      })
+      .then(res => res.json())
+      .then(applications => {
         const appliedJobIds = applications.map(app => app.job_offer_id);
         setAppliedJobs(appliedJobIds);
-      } catch (error) {
-        console.error("Erreur candidate ou applications:", error);
-      }
-    };
-
-    fetchCandidateData();
+      })
+      .catch(err => console.error("Erreur candidate ou applications:", err));
   }, []);
+
+  const handleSaveJob = (jobId, currentlySaved) => {
+    if (currentlySaved) {
+      handleUnsaveJob(jobId);
+    } else {
+      fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to save job');
+          return res.json();
+        })
+        .then(() => {
+          setSavedJobs(prev => [...prev, jobId]);
+        })
+        .catch(error => {
+          console.error('Erreur sauvegarde de l\'offre :', error);
+          alert("Impossible de sauvegarder l'offre pour le moment.");
+        });
+    }
+  };
+
+  const handleUnsaveJob = (jobId) => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/unsave-job`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to unsave job');
+        return res.json();
+      })
+      .then(() => {
+        setSavedJobs(prev => prev.filter(id => id !== jobId));
+      })
+      .catch(error => {
+        console.error("Erreur lors de la suppression de l'enregistrement :", error);
+        alert("Impossible de retirer l'offre des sauvegardés pour le moment.");
+      });
+  };
+
+ 
+
+  const handleApply = (jobId) => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/applications`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+    })
+      .then(response => response.json())
+      .then(data => {
+        alert("Votre candidature a été soumise avec succès !");
+        setAppliedJobs(prev => [...prev, jobId]);
+        setFilteredJobs(prev => prev.filter(job => job.id !== jobId));
+
+        fetch(`${process.env.REACT_APP_API_URL}/api/notify-recruiter/${jobId}`, {
+          method: 'POST',
+          credentials: 'include'
+        })
+          .then(res => res.json())
+          .then(response => console.log("Recruiter notified:", response))
+          .catch(err => console.error("Erreur notification recruteur:", err));
+      })
+      .catch(error => {
+        console.error('Erreur postulation :', error);
+        alert("Erreur lors de la soumission de la candidature.");
+      });
+  };
+
 
   // Filter jobs based on search criteria
   useEffect(() => {
@@ -363,58 +432,7 @@ const JobSearchAndOffers = () => {
     filterJobs();
   }, [searchTerm, selectedPoste, selectedLieu, selectedSalaire, selectedDomaine, jobs]);
 
-  // Handle job save/unsave
-  const handleSaveJob = useCallback(async (jobId, currentlySaved) => {
-    try {
-      const url = currentlySaved 
-        ? `${process.env.REACT_APP_API_URL}/api/unsave-job`
-        : `${process.env.REACT_APP_API_URL}/api/save-job`;
-      
-      const response = await fetch(url, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
-      });
-
-      if (!response.ok) throw new Error('Failed to save/unsave job');
-
-      setSavedJobs(prev => 
-        currentlySaved 
-          ? prev.filter(id => id !== jobId)
-          : [...prev, jobId]
-      );
-    } catch (error) {
-      console.error('Erreur sauvegarde de l\'offre :', error);
-      alert("Impossible de modifier la sauvegarde pour le moment.");
-    }
-  }, [candidateId]);
-
-  // Handle job application
-  const handleApply = useCallback(async (jobId) => {
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applications`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
-      });
-
-      const data = await response.json();
-      alert("Votre candidature a été soumise avec succès !");
-      setAppliedJobs(prev => [...prev, jobId]);
-
-      // Notify recruiter
-      fetch(`${process.env.REACT_APP_API_URL}/api/notify-recruiter/${jobId}`, {
-        method: 'POST',
-        credentials: 'include'
-      });
-    } catch (error) {
-      console.error('Erreur postulation :', error);
-      alert("Erreur lors de la soumission de la candidature.");
-    }
-  }, [candidateId]);
-
+ 
   // Get unique filter options
   const filterOptions = useMemo(() => ({
     postes: [...new Set(jobs.map(job => job.title))],
@@ -663,12 +681,12 @@ const JobSearchAndOffers = () => {
       <style jsx>{`
         .job-search-container {
           min-height: 100vh;
-          background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         }
 
         /* Hero Section */
         .hero-section {
-          background: linear-gradient(135deg, #fc8e20 0%, #ff7b00 100%);
+          background: linear-gradient(135deg, #000000 0%, #212529 100%);
           color: white;
           padding: 4rem 1rem 6rem;
           position: relative;
@@ -682,7 +700,7 @@ const JobSearchAndOffers = () => {
           left: 0;
           right: 0;
           bottom: 0;
-          background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100"><polygon fill="rgba(255,255,255,0.1)" points="0,0 1000,0 1000,60 0,100"/></svg>') no-repeat center bottom;
+          background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100"><polygon fill="rgba(255,165,0,0.1)" points="0,0 1000,0 1000,60 0,100"/></svg>') no-repeat center bottom;
           background-size: 100% 100px;
         }
 
@@ -727,6 +745,7 @@ const JobSearchAndOffers = () => {
           font-size: 2.5rem;
           font-weight: 700;
           line-height: 1;
+          color: #ff8c00;
         }
 
         .stat-label {
@@ -741,9 +760,10 @@ const JobSearchAndOffers = () => {
           background: white;
           margin: -3rem 1rem 0;
           border-radius: 1.5rem;
-          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
           position: relative;
           z-index: 10;
+          border: 2px solid #f8f9fa;
         }
 
         .search-container {
@@ -767,24 +787,29 @@ const JobSearchAndOffers = () => {
           left: 1.5rem;
           top: 50%;
           transform: translateY(-50%);
-          color: #64748b;
+          color: #6c757d;
         }
 
         .search-input {
           width: 100%;
           padding: 1.25rem 1.5rem 1.25rem 3.5rem;
-          border: 2px solid #e2e8f0;
+          border: 2px solid #e9ecef;
           border-radius: 1rem;
           font-size: 1.1rem;
-          background: #f8fafc;
+          background: #f8f9fa;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          color: #212529;
         }
 
         .search-input:focus {
           outline: none;
-          border-color: #fc8e20;
+          border-color: #ff8c00;
           background: white;
-          box-shadow: 0 0 0 4px rgba(252, 142, 32, 0.1);
+          box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.1);
+        }
+
+        .search-input::placeholder {
+          color: #6c757d;
         }
 
         .clear-search {
@@ -792,7 +817,7 @@ const JobSearchAndOffers = () => {
           right: 1rem;
           top: 50%;
           transform: translateY(-50%);
-          background: #e2e8f0;
+          background: #e9ecef;
           border: none;
           border-radius: 50%;
           width: 2rem;
@@ -802,10 +827,12 @@ const JobSearchAndOffers = () => {
           justify-content: center;
           cursor: pointer;
           transition: all 0.2s;
+          color: #495057;
         }
 
         .clear-search:hover {
-          background: #cbd5e1;
+          background: #dee2e6;
+          color: #212529;
         }
 
         .filters-toggle {
@@ -819,18 +846,21 @@ const JobSearchAndOffers = () => {
           align-items: center;
           gap: 0.5rem;
           padding: 0.75rem 1.5rem;
-          background: #f1f5f9;
-          border: 2px solid #e2e8f0;
+          background: #f8f9fa;
+          border: 2px solid #e9ecef;
           border-radius: 0.75rem;
           cursor: pointer;
           transition: all 0.3s;
           position: relative;
+          color: #495057;
+          font-weight: 500;
         }
 
         .filters-btn:hover, .filters-btn.active {
-          background: #fc8e20;
+          background: #ff8c00;
           color: white;
-          border-color: #fc8e20;
+          border-color: #ff8c00;
+          transform: translateY(-1px);
         }
 
         .filter-indicator {
@@ -839,15 +869,15 @@ const JobSearchAndOffers = () => {
           right: -0.25rem;
           width: 0.75rem;
           height: 0.75rem;
-          background: #ef4444;
+          background: #ff8c00;
           border-radius: 50%;
           border: 2px solid white;
         }
 
         .filters-panel {
-          background: #f8fafc;
+          background: #f8f9fa;
           border-radius: 1rem;
-          border: 1px solid #e2e8f0;
+          border: 2px solid #e9ecef;
           padding: 0;
           max-height: 0;
           overflow: hidden;
@@ -870,14 +900,14 @@ const JobSearchAndOffers = () => {
           margin: 0;
           font-size: 1.1rem;
           font-weight: 600;
-          color: #1e293b;
+          color: #212529;
         }
 
         .clear-filters {
           background: none;
           border: none;
-          color: #fc8e20;
-          font-weight: 500;
+          color: #ff8c00;
+          font-weight: 600;
           cursor: pointer;
           transition: opacity 0.2s;
         }
@@ -903,23 +933,28 @@ const JobSearchAndOffers = () => {
           align-items: center;
           gap: 0.5rem;
           font-size: 0.9rem;
-          font-weight: 500;
-          color: #475569;
+          font-weight: 600;
+          color: #495057;
+        }
+
+        .filter-label svg {
+          color: #ff8c00;
         }
 
         .filter-select {
           padding: 0.75rem 1rem;
-          border: 1px solid #d1d5db;
+          border: 2px solid #dee2e6;
           border-radius: 0.5rem;
           background: white;
           font-size: 0.95rem;
           transition: all 0.2s;
+          color: #495057;
         }
 
         .filter-select:focus {
           outline: none;
-          border-color: #fc8e20;
-          box-shadow: 0 0 0 3px rgba(252, 142, 32, 0.1);
+          border-color: #ff8c00;
+          box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
         }
 
         /* Results Section */
@@ -937,12 +972,12 @@ const JobSearchAndOffers = () => {
         .results-info h2 {
           font-size: 1.75rem;
           font-weight: 700;
-          color: #1e293b;
+          color: #212529;
           margin: 0 0 0.5rem;
         }
 
         .results-info p {
-          color: #64748b;
+          color: #6c757d;
           font-size: 1.1rem;
           margin: 0;
         }
@@ -959,7 +994,7 @@ const JobSearchAndOffers = () => {
         .job-card {
           background: white;
           border-radius: 1rem;
-          border: 1px solid #e2e8f0;
+          border: 2px solid #e9ecef;
           overflow: hidden;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
@@ -967,8 +1002,8 @@ const JobSearchAndOffers = () => {
 
         .job-card:hover {
           transform: translateY(-4px);
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-          border-color: #fc8e20;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+          border-color: #ff8c00;
         }
 
         .job-card-header {
@@ -976,7 +1011,7 @@ const JobSearchAndOffers = () => {
           display: flex;
           justify-content: space-between;
           align-items: flex-start;
-          border-bottom: 1px solid #f1f5f9;
+          border-bottom: 2px solid #f8f9fa;
         }
 
         .company-info {
@@ -990,11 +1025,12 @@ const JobSearchAndOffers = () => {
           height: 60px;
           border-radius: 0.75rem;
           overflow: hidden;
-          background: #f8fafc;
+          background: #f8f9fa;
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
+          border: 2px solid #e9ecef;
         }
 
         .company-logo img {
@@ -1010,16 +1046,17 @@ const JobSearchAndOffers = () => {
 
         .job-title {
           font-size: 1.25rem;
-          font-weight: 600;
-          color: #1e293b;
+          font-weight: 700;
+          color: #212529;
           margin: 0 0 0.25rem;
           line-height: 1.3;
         }
 
         .company-name {
-          color: #64748b;
+          color: #6c757d;
           font-size: 0.95rem;
           margin: 0;
+          font-weight: 500;
         }
 
         .job-type-badge {
@@ -1030,29 +1067,32 @@ const JobSearchAndOffers = () => {
           padding: 0.375rem 0.75rem;
           border-radius: 0.5rem;
           font-size: 0.8rem;
-          font-weight: 500;
+          font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.5px;
+          border: 2px solid transparent;
         }
 
         .badge.cdi {
-          background: #dcfce7;
-          color: #166534;
+          background: #212529;
+          color: white;
         }
 
         .badge.cdd {
-          background: #fef3c7;
-          color: #92400e;
+          background: #ff8c00;
+          color: white;
         }
 
         .badge.freelance {
-          background: #e0e7ff;
-          color: #3730a3;
+          background: white;
+          color: #212529;
+          border-color: #212529;
         }
 
         .badge.stage {
-          background: #fce7f3;
-          color: #be185d;
+          background: #f8f9fa;
+          color: #495057;
+          border-color: #dee2e6;
         }
 
         .job-card-body {
@@ -1070,21 +1110,22 @@ const JobSearchAndOffers = () => {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          color: #64748b;
+          color: #6c757d;
           font-size: 0.9rem;
+          font-weight: 500;
         }
 
         .meta-item svg {
-          color: #fc8e20;
+          color: #ff8c00;
         }
 
         .salary {
-          font-weight: 600;
-          color: #059669;
+          font-weight: 700;
+          color: #212529;
         }
 
         .job-description {
-          color: #475569;
+          color: #495057;
           line-height: 1.6;
           margin: 0 0 1rem;
           display: -webkit-box;
@@ -1105,21 +1146,23 @@ const JobSearchAndOffers = () => {
 
         .skill-tag {
           padding: 0.25rem 0.75rem;
-          background: #f1f5f9;
-          color: #475569;
+          background: #f8f9fa;
+          color: #495057;
           border-radius: 9999px;
           font-size: 0.8rem;
           font-weight: 500;
+          border: 1px solid #e9ecef;
         }
 
         .skill-tag.more {
-          background: #fc8e20;
+          background: #212529;
           color: white;
+          border-color: #212529;
         }
 
         .job-card-footer {
           padding: 1.5rem;
-          border-top: 1px solid #f1f5f9;
+          border-top: 2px solid #f8f9fa;
         }
 
         .action-buttons {
@@ -1134,48 +1177,53 @@ const JobSearchAndOffers = () => {
           padding: 0.75rem 1.25rem;
           border-radius: 0.5rem;
           font-size: 0.9rem;
-          font-weight: 500;
+          font-weight: 600;
           text-decoration: none;
           transition: all 0.2s;
           cursor: pointer;
-          border: none;
+          border: 2px solid transparent;
           flex: 1;
           justify-content: center;
         }
 
         .btn-primary {
-          background: #fc8e20;
+          background: #ff8c00;
           color: white;
+          border-color: #ff8c00;
         }
 
         .btn-primary:hover {
-          background: #ea7c08;
+          background: #e67e00;
+          border-color: #e67e00;
           transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
         }
 
         .btn-applied {
-          background: #e2e8f0;
-          color: #64748b;
+          background: #f8f9fa;
+          color: #6c757d;
+          border-color: #e9ecef;
           cursor: not-allowed;
         }
 
         .btn-save {
-          background: #f8fafc;
-          color: #64748b;
-          border: 1px solid #e2e8f0;
+          background: white;
+          color: #495057;
+          border-color: #dee2e6;
           flex: 0 0 auto;
           padding: 0.75rem;
         }
 
         .btn-save:hover {
-          background: #f1f5f9;
-          color: #fc8e20;
+          background: #f8f9fa;
+          color: #ff8c00;
+          border-color: #ff8c00;
         }
 
         .btn-save.saved {
-          background: #fc8e20;
+          background: #212529;
           color: white;
-          border-color: #fc8e20;
+          border-color: #212529;
         }
 
         /* Pagination */
@@ -1192,7 +1240,8 @@ const JobSearchAndOffers = () => {
           background: white;
           padding: 1rem;
           border-radius: 1rem;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          border: 2px solid #f8f9fa;
         }
 
         .pagination-btn {
@@ -1200,19 +1249,20 @@ const JobSearchAndOffers = () => {
           align-items: center;
           gap: 0.5rem;
           padding: 0.75rem 1rem;
-          background: #f8fafc;
-          border: 1px solid #e2e8f0;
+          background: #f8f9fa;
+          border: 2px solid #e9ecef;
           border-radius: 0.5rem;
-          color: #64748b;
-          font-weight: 500;
+          color: #495057;
+          font-weight: 600;
           cursor: pointer;
           transition: all 0.2s;
         }
 
         .pagination-btn:hover:not(:disabled) {
-          background: #fc8e20;
+          background: #ff8c00;
           color: white;
-          border-color: #fc8e20;
+          border-color: #ff8c00;
+          transform: translateY(-1px);
         }
 
         .pagination-btn:disabled {
@@ -1234,21 +1284,23 @@ const JobSearchAndOffers = () => {
           align-items: center;
           justify-content: center;
           border-radius: 0.5rem;
-          border: none;
+          border: 2px solid transparent;
           background: transparent;
-          color: #64748b;
-          font-weight: 500;
+          color: #6c757d;
+          font-weight: 600;
           cursor: pointer;
           transition: all 0.2s;
         }
 
         .pagination-number:hover {
-          background: #f1f5f9;
+          background: #f8f9fa;
+          color: #212529;
         }
 
         .pagination-number.active {
-          background: #fc8e20;
+          background: #ff8c00;
           color: white;
+          border-color: #ff8c00;
         }
 
         .pagination-dots {
@@ -1257,25 +1309,26 @@ const JobSearchAndOffers = () => {
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #94a3b8;
+          color: #adb5bd;
         }
 
         /* Empty State */
         .empty-state {
           text-align: center;
           padding: 4rem 2rem;
-          color: #64748b;
+          color: #6c757d;
         }
 
         .empty-icon {
           margin-bottom: 1rem;
-          color: #94a3b8;
+          color: #adb5bd;
         }
 
         .empty-state h3 {
           font-size: 1.5rem;
-          color: #1e293b;
+          color: #212529;
           margin: 0 0 0.5rem;
+          font-weight: 700;
         }
 
         .empty-state p {
@@ -1288,11 +1341,12 @@ const JobSearchAndOffers = () => {
 
         /* Saved Jobs CTA */
         .saved-jobs-cta {
-          background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+          background: linear-gradient(135deg, #212529 0%, #000000 100%);
           margin: 4rem 1rem 0;
           border-radius: 1.5rem;
           overflow: hidden;
           position: relative;
+          border: 2px solid #343a40;
         }
 
         .cta-content {
@@ -1314,7 +1368,7 @@ const JobSearchAndOffers = () => {
         .cta-icon {
           width: 80px;
           height: 80px;
-          background: linear-gradient(135deg, #fc8e20, #ff7b00);
+          background: linear-gradient(135deg, #ff8c00, #e67e00);
           border-radius: 1rem;
           display: flex;
           align-items: center;
@@ -1322,6 +1376,7 @@ const JobSearchAndOffers = () => {
           color: white;
           position: relative;
           z-index: 2;
+          border: 3px solid #343a40;
         }
 
         .floating-elements {
@@ -1336,7 +1391,7 @@ const JobSearchAndOffers = () => {
           position: absolute;
           width: 8px;
           height: 8px;
-          background: rgba(252, 142, 32, 0.3);
+          background: rgba(255, 140, 0, 0.4);
           border-radius: 50%;
           animation: float 6s ease-in-out infinite;
         }
@@ -1387,21 +1442,22 @@ const JobSearchAndOffers = () => {
           align-items: center;
           gap: 0.5rem;
           padding: 1rem 1.5rem;
-          background: #fc8e20;
+          background: #ff8c00;
           color: white;
-          border: none;
+          border: 2px solid #ff8c00;
           border-radius: 0.75rem;
           font-size: 1rem;
-          font-weight: 600;
+          font-weight: 700;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           flex-shrink: 0;
         }
 
         .cta-button:hover {
-          background: #ea7c08;
+          background: #e67e00;
+          border-color: #e67e00;
           transform: translateY(-2px);
-          box-shadow: 0 10px 20px rgba(252, 142, 32, 0.3);
+          box-shadow: 0 10px 20px rgba(255, 140, 0, 0.4);
         }
 
         /* Loading State */
@@ -1421,8 +1477,8 @@ const JobSearchAndOffers = () => {
         .spinner {
           width: 48px;
           height: 48px;
-          border: 4px solid #e2e8f0;
-          border-top: 4px solid #fc8e20;
+          border: 4px solid #e9ecef;
+          border-top: 4px solid #ff8c00;
           border-radius: 50%;
           animation: spin 1s linear infinite;
         }
@@ -1433,9 +1489,10 @@ const JobSearchAndOffers = () => {
         }
 
         .loading-text {
-          color: #64748b;
+          color: #6c757d;
           font-size: 1.1rem;
           margin: 0;
+          font-weight: 500;
         }
 
         /* Error State */
@@ -1455,13 +1512,14 @@ const JobSearchAndOffers = () => {
         }
 
         .error-container h2 {
-          color: #1e293b;
+          color: #212529;
           font-size: 1.75rem;
           margin: 0 0 0.5rem;
+          font-weight: 700;
         }
 
         .error-container p {
-          color: #64748b;
+          color: #6c757d;
           font-size: 1.1rem;
           margin: 0 0 2rem;
           max-width: 500px;
@@ -1678,6 +1736,23 @@ const JobSearchAndOffers = () => {
           }
         }
 
+        /* Dark mode friendly adjustments */
+        @media (prefers-color-scheme: dark) {
+          .job-search-container {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+          }
+          
+          .search-section {
+            background: #ffffff;
+            border-color: #e9ecef;
+          }
+          
+          .job-card {
+            background: #ffffff;
+            border-color: #e9ecef;
+          }
+        }
+
         /* Print styles */
         @media print {
           .hero-section,
@@ -1689,11 +1764,21 @@ const JobSearchAndOffers = () => {
           .job-card {
             break-inside: avoid;
             box-shadow: none;
-            border: 1px solid #ccc;
+            border: 2px solid #000;
           }
           
           .pagination-wrapper {
             display: none;
+          }
+          
+          .btn-primary {
+            background: #000 !important;
+            color: #fff !important;
+          }
+          
+          .btn-save.saved {
+            background: #000 !important;
+            color: #fff !important;
           }
         }
       `}</style>
