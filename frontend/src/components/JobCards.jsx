@@ -180,7 +180,7 @@ const JobCard = ({ job }) => {
 
 function JobCards() {
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 3;
+  const jobsPerPage = 9;
   const [filteredJobs, setFilteredJobs] = useState([]);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
