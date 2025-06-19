@@ -55,12 +55,7 @@
   font-weight: 500;
   transition: color 0.3s ease, transform 0.3s ease;
 }
-button {
-    
-    max-width: 50px !important;
-  padding: 0  !important;
-   
-}
+
 .nav-links li a:hover {
   transform: scale(1.05);
 }
