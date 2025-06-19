@@ -1762,9 +1762,10 @@ const JobSearchAndOffers = () => {
             background: #000 !important;
             color: #fff !important;
           }
+      
         }
-        `}</style>
-    </>
+      `}</style>
+    </div>
   );
 };
 
