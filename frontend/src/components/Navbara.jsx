@@ -9,7 +9,29 @@ const Navbar = ({ onAuthCheckComplete }) => {
   const [user, setUser] = useState(null);
   const [logoutMessage, setLogoutMessage] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true); // Add loading state
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // Inline styles for hamburger menu - completely independent
+  const hamburgerMenuStyles = {
+    display: 'none', // Hidden by default on desktop
+    background: 'none',
+    border: 'none',
+    fontSize: '1.8rem',
+    color: '#ffffff',
+    cursor: 'pointer',
+    padding: '8px',
+    borderRadius: '4px',
+    transition: 'background-color 0.3s ease',
+  };
+
+  const hamburgerMenuMobileStyles = {
+    ...hamburgerMenuStyles,
+    display: 'block', // Show on mobile
+  };
+
+  const hamburgerMenuHoverStyles = {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  };
 
   const handleLogout = () => {
     fetch(`${process.env.REACT_APP_API_URL}/api/logout`, {
@@ -53,7 +75,6 @@ const Navbar = ({ onAuthCheckComplete }) => {
         setUser(null);
       } finally {
         setIsCheckingAuth(false);
-        // Notify parent component that auth check is complete
         if (onAuthCheckComplete) {
           onAuthCheckComplete();
         }
@@ -72,7 +93,6 @@ const Navbar = ({ onAuthCheckComplete }) => {
             <span className="nav-logo-white">C</span>asajobs.<span className="nav-logo-orange">ma</span>
           </div>
         </div>
-        {/* Render minimal navbar structure while loading */}
         <div className="nav-right">
           <ul className="nav-links">
             {/* Empty or skeleton content */}
@@ -88,11 +108,22 @@ const Navbar = ({ onAuthCheckComplete }) => {
         <div className="nav-logo">
           <span className="nav-logo-white">C</span>asajobs.<span className="nav-logo-orange">ma</span>
         </div>
-        {/* Hamburger Menu Button */}
-        <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
-          <Menu size={28} color="#fff" />
-        </button>
       </div>
+      
+      {/* Hamburger Menu Button - Now separate from nav-left and nav-right */}
+      <button 
+        className="hamburger-menu-btn"
+        style={window.innerWidth <= 768 ? hamburgerMenuMobileStyles : hamburgerMenuStyles}
+        onClick={() => setMenuOpen(!menuOpen)}
+        onMouseEnter={(e) => {
+          e.target.style.backgroundColor = hamburgerMenuHoverStyles.backgroundColor;
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.backgroundColor = 'transparent';
+        }}
+      >
+        <Menu size={28} color="#fff" />
+      </button>
       
       {/* Nav content - collapsible */}
       <div className={`nav-right ${menuOpen ? 'open' : ''}`}>
@@ -124,7 +155,26 @@ const Navbar = ({ onAuthCheckComplete }) => {
         </ul>
         {isLoggedIn && user && (
           <div className="nav-userinfo">
-            <button onClick={handleLogout} className="nav-logout-btn">
+            <button 
+              onClick={handleLogout} 
+              style={{
+                background: '#ff6f00',
+                color: 'white',
+                border: 'none',
+                padding: '0.5rem 1rem',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                fontWeight: '500',
+                transition: 'background-color 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = '#ff8f33';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = '#ff6f00';
+              }}
+            >
               Se déconnecter
             </button>
           </div>
