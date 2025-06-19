@@ -57,7 +57,7 @@
 }
 button {
     
-    max-width: 50px;
+    max-width: 50px !important;
    
 }
 .nav-links li a:hover {
