@@ -677,4 +677,84 @@ function JobCards() {
                       backgroundColor: currentPage === page 
                         ? '#ff6b35' 
                         : 'rgba(255, 255, 255, 0.05)',
-                      color: currentPage === page ?
+                      color: currentPage === page ? '#ffffff' : '#cccccc',
+                      borderRadius: '10px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      boxShadow: currentPage === page 
+                        ? '0 4px 12px rgba(255, 107, 53, 0.4)' 
+                        : '0 2px 4px rgba(0, 0, 0, 0.2)',
+                      transform: 'translateY(0)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (currentPage !== page) {
+                        e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
+                        e.target.style.transform = 'translateY(-2px)';
+                        e.target.style.boxShadow = '0 4px 8px rgba(255, 107, 53, 0.3)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (currentPage !== page) {
+                        e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                        e.target.style.transform = 'translateY(0)';
+                        e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
+                      }
+                    }}
+                  >
+                    {page}
+                  </button>
+                )
+              ));
+            })()}
+          </div>
+
+          {/* Next Button */}
+          <button
+            onClick={() => paginate(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: isMobile ? '8px 12px' : '12px 16px',
+              fontSize: isMobile ? '0.8rem' : '0.9rem',
+              fontWeight: '600',
+              border: 'none',
+              backgroundColor: currentPage === totalPages ? '#333' : 'rgba(255, 107, 53, 0.1)',
+              color: currentPage === totalPages ? '#666' : '#ff6b35',
+              borderRadius: '12px',
+              cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: currentPage === totalPages ? 'none' : '0 2px 8px rgba(255, 107, 53, 0.15)',
+              transform: 'translateY(0)',
+              opacity: currentPage === totalPages ? 0.5 : 1,
+              order: isMobile ? '2' : '2'
+            }}
+            onMouseEnter={(e) => {
+              if (currentPage !== totalPages) {
+                e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 4px 12px rgba(255, 107, 53, 0.3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (currentPage !== totalPages) {
+                e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 2px 8px rgba(255, 107, 53, 0.15)';
+              }
+            }}
+          >
+            {!isMobile && <span>Suivant</span>}
+            <FaChevronRight size={12} />
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
+
+export default JobCards;
