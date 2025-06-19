@@ -665,58 +665,70 @@ const JobSearchAndOffers = () => {
           min-height: 100vh;
           background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         }
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(to right, #f8f9fa, #e9ecef);
+  color: #212529;
+  padding: 3rem 1rem 4rem;
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
 
-        /* Hero Section */
-        .hero-section {
-          background: white;
-          color: white;
-          padding: 4rem 1rem 6rem;
-          position: relative;
-          overflow: hidden;
-        }
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100"><polygon fill="rgba(0,0,0,0.03)" points="0,0 1000,0 1000,60 0,100"/></svg>') no-repeat center bottom;
+  background-size: cover;
+  opacity: 0.3;
+  z-index: 0;
+}
 
-        .hero-section::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100"><polygon fill="rgba(255,165,0,0.1)" points="0,0 1000,0 1000,60 0,100"/></svg>') no-repeat center bottom;
-          background-size: 100% 100px;
-        }
+.hero-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
 
-        .hero-content {
-          max-width: 1200px;
-          margin: 0 auto;
-          text-align: center;
-          position: relative;
-          z-index: 1;
-        }
+.hero-text h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  color: #343a40;
+  margin-bottom: 1rem;
+}
 
-        .hero-text h1 {
-          font-size: clamp(2.5rem, 5vw, 4rem);
-          font-weight: 800;
-          margin: 0 0 1rem;
-          line-height: 1.1;
-          letter-spacing: -0.02em;
-        }
+.hero-text p {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  margin-bottom: 2rem;
+  color: #6c757d;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
 
-        .hero-text p {
-          font-size: clamp(1.1rem, 2vw, 1.3rem);
-          margin: 0 0 2rem;
-          opacity: 0.9;
-          max-width: 600px;
-          margin-left: auto;
-          margin-right: auto;
-        }
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 2rem;
+}
 
-        .hero-stats {
-          display: flex;
-          justify-content: center;
-          gap: 3rem;
-          margin-top: 2rem;
-        }
+.hero-stats > div {
+  background: #fff;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  min-width: 120px;
+}
 
         .stat {
           text-align: center;
