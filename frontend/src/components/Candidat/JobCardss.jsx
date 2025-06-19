@@ -20,6 +20,7 @@ import {
   X,
   Menu
 } from 'lucide-react';
+import axios from 'axios';
 
 // Enhanced Job Card Component
 const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
