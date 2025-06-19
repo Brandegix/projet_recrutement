@@ -20,10 +20,6 @@ import {
   X,
   Menu
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import Footer from '../../components/Footer';
-import Navbar from "../Navbara";
-import axios from 'axios';
 
 // Enhanced Job Card Component
 const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
@@ -262,189 +258,163 @@ const JobSearchAndOffers = () => {
   const [selectedLieu, setSelectedLieu] = useState('');
   const [selectedSalaire, setSelectedSalaire] = useState('');
   const [selectedDomaine, setSelectedDomaine] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
 
   const jobsPerPage = 6;
 
- 
-  // Filter states
-  const [showFilters, setShowFilters] = useState(false);
+  // Fetch jobs data
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_API_URL}/api/je`)
-    .then(response => {
-        const updatedJobs = response.data.map(job => ({
+    const fetchJobs = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/je`);
+        const data = await response.json();
+        
+        const updatedJobs = data.map(job => ({
           ...job,
-          logo: job.logo || "https://dummyimage.com/80x80/000/fff.png&text=No+Logo"
+          logo: job.logo || "https://via.placeholder.com/60x60/4f46e5/ffffff?text=" + job.company.charAt(0)
         }));
+        
         setJobs(updatedJobs);
         setFilteredJobs(updatedJobs);
         setLoading(false);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error("Erreur lors du chargement des offres :", error);
         setError(true);
         setLoading(false);
-      });
+      }
+    };
+
+    fetchJobs();
   }, []);
 
+  // Fetch saved jobs
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_API_URL}/api/saved-jobs`, { withCredentials: true })
-    .then(response => {
-        const savedJobIds = response.data.map(job => job.id);
+    const fetchSavedJobs = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/saved-jobs`, { 
+          credentials: 'include' 
+        });
+        const data = await response.json();
+        const savedJobIds = data.map(job => job.id);
         setSavedJobs(savedJobIds);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error("Erreur lors du chargement des jobs sauvegardés:", error);
-      });
+      }
+    };
+
+    if (candidateId) {
+      fetchSavedJobs();
+    }
   }, [candidateId]);
 
-  const handleSavedJob = (jobId) => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
-    })
-    .then(res => {
-      if (!res.ok) throw new Error('Failed to save job');
-       res.json();
-    })
-    .then(data => {
-      setSavedJobs(prev =>
-        prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId]
-      );
-    })
-    .catch(error => {
-      console.error('Erreur sauvegarde de l\'offre :', error);
-      alert("Impossible de sauvegarder l'offre pour le moment.");
-    });
-  };
+  // Fetch candidate data and applications
+  useEffect(() => {
+    const fetchCandidateData = async () => {
+      try {
+        const candidateResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { 
+          credentials: 'include' 
+        });
+        const candidateData = await candidateResponse.json();
+        setCandidate(candidateData);
+        setCandidateId(candidateData.id);
 
-useEffect(() => {
-  fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { credentials: 'include' })
-    .then(res => res.json())
-    .then(data => {
-      setCandidate(data);
-      setCandidateId(data.id);
+        const applicationsResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/getapplications`, {
+          credentials: 'include'
+        });
+        const applications = await applicationsResponse.json();
+        const appliedJobIds = applications.map(app => app.job_offer_id);
+        setAppliedJobs(appliedJobIds);
+      } catch (error) {
+        console.error("Erreur candidate ou applications:", error);
+      }
+    };
 
-      // ✅ Return the fetch to continue the promise chain properly
-      return fetch(`${process.env.REACT_APP_API_URL}/api/getapplications`, {
-        credentials: 'include'
+    fetchCandidateData();
+  }, []);
+
+  // Filter jobs based on search criteria
+  useEffect(() => {
+    const filterJobs = () => {
+      const results = jobs.filter(job => {
+        const matchesSearch = searchTerm === '' || 
+          job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          job.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          job.company.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        const matchesPoste = selectedPoste === '' || 
+          job.title.toLowerCase().includes(selectedPoste.toLowerCase());
+        
+        const matchesLieu = selectedLieu === '' || 
+          job.location.toLowerCase().includes(selectedLieu.toLowerCase());
+        
+        const matchesSalaire = selectedSalaire === '' || 
+          (job.salary && job.salary.toLowerCase().includes(selectedSalaire.toLowerCase()));
+        
+        const matchesDomaine = selectedDomaine === '' || 
+          job.type.toLowerCase().includes(selectedDomaine.toLowerCase());
+
+        return matchesSearch && matchesPoste && matchesLieu && matchesSalaire && matchesDomaine;
       });
-    })
-    .then(res => res.json())
-    .then(applications => {
-      const appliedJobIds = applications.map(app => app.job_offer_id);
-      setAppliedJobs(appliedJobIds);
-    })
-    .catch(err => console.error("Erreur candidate ou applications:", err));
-}, []);
+      
+      setFilteredJobs(results);
+      setCurrentPage(1);
+    };
 
+    filterJobs();
+  }, [searchTerm, selectedPoste, selectedLieu, selectedSalaire, selectedDomaine, jobs]);
 
-  const handleSaveJob = (jobId, currentlySaved) => {
-    if (currentlySaved) {
-      handleUnsaveJob(jobId);
-    } else {
-      fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
+  // Handle job save/unsave
+  const handleSaveJob = useCallback(async (jobId, currentlySaved) => {
+    try {
+      const url = currentlySaved 
+        ? `${process.env.REACT_APP_API_URL}/api/unsave-job`
+        : `${process.env.REACT_APP_API_URL}/api/save-job`;
+      
+      const response = await fetch(url, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
-      })
-        .then(res => {
-          if (!res.ok) throw new Error('Failed to save job');
-           res.json();
-        })
-        .then(() => {
-          setSavedJobs(prev => [...prev, jobId]);
-        })
-        .catch(error => {
-          console.error('Erreur sauvegarde de l\'offre :', error);
-          alert("Impossible de sauvegarder l'offre pour le moment.");
-        });
+      });
+
+      if (!response.ok) throw new Error('Failed to save/unsave job');
+
+      setSavedJobs(prev => 
+        currentlySaved 
+          ? prev.filter(id => id !== jobId)
+          : [...prev, jobId]
+      );
+    } catch (error) {
+      console.error('Erreur sauvegarde de l\'offre :', error);
+      alert("Impossible de modifier la sauvegarde pour le moment.");
     }
-  };
+  }, [candidateId]);
 
-  const handleUnsaveJob = (jobId) => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/unsave-job`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
-    })
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to unsave job');
-         res.json();
-      })
-      .then(() => {
-        setSavedJobs(prev => prev.filter(id => id !== jobId));
-      })
-      .catch(error => {
-        console.error("Erreur lors de la suppression de l'enregistrement :", error);
-        alert("Impossible de retirer l'offre des sauvegardés pour le moment.");
+  // Handle job application
+  const handleApply = useCallback(async (jobId) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/applications`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
       });
-  };
 
- 
+      const data = await response.json();
+      alert("Votre candidature a été soumise avec succès !");
+      setAppliedJobs(prev => [...prev, jobId]);
 
-  const handleApply = (jobId) => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/applications`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
-    })
-      .then(response => response.json())
-      .then(data => {
-        alert("Votre candidature a été soumise avec succès !");
-        setAppliedJobs(prev => [...prev, jobId]);
-        setFilteredJobs(prev => prev.filter(job => job.id !== jobId));
-
-        fetch(`${process.env.REACT_APP_API_URL}/api/notify-recruiter/${jobId}`, {
-          method: 'POST',
-          credentials: 'include'
-        })
-          .then(res => res.json())
-          .then(response => console.log("Recruiter notified:", response))
-          .catch(err => console.error("Erreur notification recruteur:", err));
-      })
-      .catch(error => {
-        console.error('Erreur postulation :', error);
-        alert("Erreur lors de la soumission de la candidature.");
+      // Notify recruiter
+      fetch(`${process.env.REACT_APP_API_URL}/api/notify-recruiter/${jobId}`, {
+        method: 'POST',
+        credentials: 'include'
       });
-  };
+    } catch (error) {
+      console.error('Erreur postulation :', error);
+      alert("Erreur lors de la soumission de la candidature.");
+    }
+  }, [candidateId]);
 
-
-  // Filter jobs based on search criteria
-  // Filter jobs based on search criteria
-  useEffect(() => {
-    const filterJobs = () => {
-      const results = jobs.filter(job => {
-        const matchesSearch = searchTerm === '' || 
-          job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          job.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          job.company.toLowerCase().includes(searchTerm.toLowerCase());
-        
-        const matchesPoste = selectedPoste === '' || 
-          job.title.toLowerCase().includes(selectedPoste.toLowerCase());
-        
-        const matchesLieu = selectedLieu === '' || 
-          job.location.toLowerCase().includes(selectedLieu.toLowerCase());
-        
-        const matchesSalaire = selectedSalaire === '' || 
-          (job.salary && job.salary.toLowerCase().includes(selectedSalaire.toLowerCase()));
-        
-        const matchesDomaine = selectedDomaine === '' || 
-          job.type.toLowerCase().includes(selectedDomaine.toLowerCase());
-
-        return matchesSearch && matchesPoste && matchesLieu && matchesSalaire && matchesDomaine; // Corrected line
-      });
-      
-      setFilteredJobs(results);
-      setCurrentPage(1);
-    };
-
-    filterJobs();
-  }, [searchTerm, selectedPoste, selectedLieu, selectedSalaire, selectedDomaine, jobs]);
   // Get unique filter options
   const filterOptions = useMemo(() => ({
     postes: [...new Set(jobs.map(job => job.title))],
@@ -458,7 +428,7 @@ useEffect(() => {
   const currentJobs = useMemo(() => {
     const indexOfLastJob = currentPage * jobsPerPage;
     const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-     filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
+    return filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
   }, [filteredJobs, currentPage, jobsPerPage]);
 
   // Clear all filters
@@ -472,7 +442,7 @@ useEffect(() => {
 
   // Loading state
   if (loading) {
-     (
+    return (
       <div className="loading-container">
         <div className="loading-spinner">
           <div className="spinner"></div>
@@ -484,7 +454,7 @@ useEffect(() => {
 
   // Error state
   if (error) {
-     (
+    return (
       <div className="error-container">
         <div className="error-icon">⚠️</div>
         <h2>Erreur de chargement</h2>
@@ -496,7 +466,7 @@ useEffect(() => {
     );
   }
 
-   (
+  return (
     <div className="job-search-container">
       {/* Hero Section */}
       <div className="hero-section">
@@ -1793,8 +1763,8 @@ useEffect(() => {
             color: #fff !important;
           }
         }
-      `}</style>
-    </div>
+        `}</style>
+    </>
   );
 };
 
