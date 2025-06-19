@@ -20,7 +20,9 @@ import {
   X,
   Menu
 } from 'lucide-react';
-
+import { useNavigate } from 'react-router-dom';
+import Footer from '../../components/Footer';
+import axios from 'axios';
 // Enhanced Job Card Component
 const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -256,7 +258,8 @@ const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [candidate, setCandidate] = useState(null);
   const [savedJobs, setSavedJobs] = useState([]);
-
+  // Filter states
+  const [showFilters, setShowFilters] = useState(false);
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/je`)
     .then(response => {
