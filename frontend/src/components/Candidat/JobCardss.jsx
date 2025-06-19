@@ -668,7 +668,7 @@ const JobSearchAndOffers = () => {
 
         /* Hero Section */
         .hero-section {
-          background: linear-gradient(135deg, #000000 0%, #212529 100%);
+          background: white;
           color: white;
           padding: 4rem 1rem 6rem;
           position: relative;
