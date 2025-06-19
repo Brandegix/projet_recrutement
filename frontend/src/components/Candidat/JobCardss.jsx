@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   MapPin, 
@@ -22,23 +22,19 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../../components/Footer';
-import Navbar from "../Navbara";
+import Navbar from '../Navbara'; // Check that the path is correct
 import axios from 'axios';
-// Enhanced Job Card Component
+// import SEO from 'your/seo/component' // Add this if SEO is a custom component
+
+// ---------------------- JobCard ----------------------
 const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleViewDetails = () => {
-    // Replace with your navigation logic
     window.location.href = `/offres/${job.id}`;
   };
 
-   (
-   
-      <Navbar />
-      <SEO
-        title="Offres d'emploi"
-       /> 
+  return (
     <div 
       className={`job-card ${isHovered ? 'hovered' : ''}`}
       onMouseEnter={() => setIsHovered(true)}
@@ -83,11 +79,8 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
           </div>
         </div>
 
-        <p className="job-description">
-          {job.description}
-        </p>
+        <p className="job-description">{job.description}</p>
 
-        {/* Skills */}
         {job.skills && job.skills.length > 0 && (
           <div className="skills-container">
             <div className="skills-list">
@@ -123,7 +116,7 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
               Postuler
             </button>
           )}
-          
+
           <button 
             className={`btn btn-save ${isSaved ? 'saved' : ''}`}
             onClick={() => onSave(job.id, isSaved)}
@@ -137,26 +130,52 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
   );
 };
 
-// Enhanced Pagination Component
-const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
-  const getVisiblePages = () => {
-    const delta = 1;
-    const range = [];
-    const rangeWithDots = [];
+// ---------------------- Main Page ----------------------
+const JobListingPage = () => {
+  const [jobs, setJobs] = useState([]);
 
-    for (
-      let i = Math.max(2, currentPage - delta);
-      i <= Math.min(totalPages - 1, currentPage + delta);
-      i++
-    ) {
-      range.push(i);
-    }
+  useEffect(() => {
+    // Example API call
+    axios.get('/api/jobs')
+      .then(response => setJobs(response.data))
+      .catch(error => console.error('Error fetching jobs:', error));
+  }, []);
 
-    if (currentPage - delta > 2) {
-      rangeWithDots.push(1, '...');
-    } else {
-      rangeWithDots.push(1);
-    }
+  const handleApply = (jobId) => {
+    // Handle apply logic here
+    console.log(`Applied to job ID: ${jobId}`);
+  };
+
+  const handleSave = (jobId, isSaved) => {
+    // Handle save/unsave logic here
+    console.log(`${isSaved ? 'Unsaved' : 'Saved'} job ID: ${jobId}`);
+  };
+
+  return (
+    <>
+      <Navbar />
+      {/* <SEO title="Offres d'emploi" /> */}
+      
+      <div className="job-listing-container">
+        {jobs.map((job) => (
+          <JobCard 
+            key={job.id}
+            job={job}
+            isApplied={false}
+            isSaved={false}
+            onApply={handleApply}
+            onSave={handleSave}
+          />
+        ))}
+      </div>
+
+      <Footer />
+    </>
+  );
+};
+
+export default JobListingPage;
+
 
     rangeWithDots.push(...range);
 
