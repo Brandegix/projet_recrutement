@@ -696,9 +696,6 @@ function LoginCandidat() {
           .form-title {
             font-size: 1.5rem;
           }
-          input.form-input {
-            margin-bottom: -20px;
-          }
         }
       `}</style>
     </>
