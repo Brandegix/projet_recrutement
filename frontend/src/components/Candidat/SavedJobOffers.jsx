@@ -3,7 +3,7 @@ import axios from 'axios';
 import { FaMapMarkerAlt, FaBriefcase, FaBookmark, FaRegBookmark, 
 FaClock, FaHeart, FaRegHeart, FaSearch } from 'react-icons/fa';
 import "../../assets/css/JobCards.css"; // Ensure this CSS file is used 
-for JobCard specific styles
+
 import Footer from '../../components/Footer';
 import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
