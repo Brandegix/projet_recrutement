@@ -265,8 +265,7 @@ const JobSearchAndOffers = () => {
 
   const jobsPerPage = 6;
 
-  const [candidate, setCandidate] = useState(null);
-  const [savedJobs, setSavedJobs] = useState([]);
+ 
   // Filter states
   const [showFilters, setShowFilters] = useState(false);
   useEffect(() => {
