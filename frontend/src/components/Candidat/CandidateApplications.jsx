@@ -19,7 +19,19 @@ const CandidateApplications = () => {
     const [recruiterStartedMap, setRecruiterStartedMap] = useState({});
     const [notifications, setNotifications] = useState({});
     const [isChatModalOpen, setIsChatModalOpen] = useState(false);
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     const socketRef = useRef(null);
+
+    // Track window width for responsive design
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const isMobile = windowWidth < 768;
+    const isTablet = windowWidth >= 768 && windowWidth < 1024;
+    const isSmallMobile = windowWidth < 480;
 
     useEffect(() => {
         setLoading(true);
@@ -130,7 +142,7 @@ const CandidateApplications = () => {
         setSelectedApplicationId(null);
     };
 
-    const styles = {
+    const getResponsiveStyles = () => ({
         pageBackground: {
             background: '#f4f4f4',
             minHeight: '100vh',
@@ -139,22 +151,16 @@ const CandidateApplications = () => {
         wrapper: {
             maxWidth: "1200px",
             margin: "0 auto",
-            padding: "1rem",
+            padding: isMobile ? "1rem" : "2rem",
             fontFamily: "'Inter', 'Segoe UI', sans-serif",
-            '@media (min-width: 768px)': {
-                padding: "2rem",
-            },
         },
         header: {
             textAlign: 'center',
-            marginBottom: '2rem',
+            marginBottom: isMobile ? '2rem' : '3rem',
             color: 'white',
-            '@media (min-width: 768px)': {
-                marginBottom: '3rem',
-            },
         },
         title: {
-            fontSize: "2.5rem",
+            fontSize: isSmallMobile ? "2rem" : isMobile ? "2.5rem" : "3.5rem",
             fontWeight: "900",
             marginBottom: "1rem",
             background: 'linear-gradient(45deg, #ff6b35, #ff8c42)',
@@ -162,139 +168,97 @@ const CandidateApplications = () => {
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
             textShadow: '0 2px 4px rgba(0,0,0,0.1)',
-            '@media (min-width: 768px)': {
-                fontSize: "3.5rem",
-            },
         },
         subtitle: {
-            fontSize: "1rem",
+            fontSize: isMobile ? "1rem" : "1.2rem",
             opacity: 0.9,
             fontWeight: '400',
             maxWidth: '600px',
             margin: '0 auto',
             lineHeight: '1.6',
             color: '#000000',
-            padding: '0 1rem',
-            '@media (min-width: 768px)': {
-                fontSize: "1.2rem",
-                padding: '0',
-            },
+            padding: isMobile ? '0 1rem' : '0',
         },
         statsBar: {
             display: 'flex',
             justifyContent: 'center',
-            gap: '1rem',
-            marginBottom: '2rem',
+            gap: isMobile ? '0.5rem' : '2rem',
+            marginBottom: isMobile ? '2rem' : '3rem',
             flexWrap: 'wrap',
-            '@media (min-width: 768px)': {
-                gap: '2rem',
-                marginBottom: '3rem',
-            },
+            padding: isMobile ? '0 0.5rem' : '0',
         },
         statCard: {
             background: 'rgba(255, 255, 255, 0.1)',
             backdropFilter: 'blur(10px)',
             border: '1px solid rgba(255, 107, 53, 0.3)',
             borderRadius: '16px',
-            padding: '1rem',
+            padding: isMobile ? '1rem 0.8rem' : '1.5rem',
             textAlign: 'center',
             color: 'white',
-            minWidth: '120px',
+            minWidth: isMobile ? '100px' : '150px',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-            flex: '1',
-            maxWidth: '150px',
-            '@media (min-width: 768px)': {
-                padding: '1.5rem',
-                minWidth: '150px',
-                flex: 'none',
-            },
+            flex: isMobile ? '1' : 'none',
         },
         statNumber: {
-            fontSize: '1.5rem',
+            fontSize: isMobile ? '1.5rem' : '2rem',
             fontWeight: '700',
             display: 'block',
             color: '#ff6b35',
-            '@media (min-width: 768px)': {
-                fontSize: '2rem',
-            },
         },
         statLabel: {
-            fontSize: '0.8rem',
+            fontSize: isMobile ? '0.75rem' : '0.9rem',
             opacity: 0.8,
             marginTop: '0.5rem',
             color: 'black',
-            '@media (min-width: 768px)': {
-                fontSize: '0.9rem',
-            },
         },
         applicationGrid: {
             display: 'grid',
-            gridTemplateColumns: '1fr',
-            gap: '1.5rem',
+            gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(auto-fit, minmax(350px, 1fr))' : 'repeat(auto-fill, minmax(400px, 1fr))',
+            gap: isMobile ? '1.5rem' : '2rem',
             marginBottom: '2rem',
-            '@media (min-width: 640px)': {
-                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-            },
-            '@media (min-width: 768px)': {
-                gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
-                gap: '2rem',
-            },
         },
         applicationCard: {
             background: '#ffffff',
             borderRadius: '20px',
-            padding: '1.5rem',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+            padding: isMobile ? '1.5rem' : '2rem',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
             border: '1px solid #f0f0f0',
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             position: 'relative',
             overflow: 'hidden',
             cursor: 'pointer',
-            '@media (min-width: 768px)': {
-                padding: '2rem',
-            },
         },
-        cardHover: {
+        cardHover: !isMobile ? {
             transform: 'translateY(-5px)',
             boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
             borderColor: '#ff6b35',
-        },
+        } : {},
         cardHeader: {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'flex-start',
             marginBottom: '1.5rem',
-            flexDirection: 'column',
-            gap: '1rem',
-            '@media (min-width: 480px)': {
-                flexDirection: 'row',
-                gap: '0',
-            },
+            flexDirection: isMobile ? 'column' : 'row',
+            gap: isMobile ? '1rem' : '0',
         },
         jobTitle: {
-            fontSize: '1.2rem',
+            fontSize: isMobile ? '1.2rem' : '1.4rem',
             fontWeight: '700',
             color: '#1a1a1a',
             marginBottom: '0.5rem',
             lineHeight: '1.3',
-            '@media (min-width: 768px)': {
-                fontSize: '1.4rem',
-            },
         },
         statusBadge: {
             padding: '0.4rem 1rem',
             borderRadius: '20px',
-            fontSize: '0.75rem',
+            fontSize: isMobile ? '0.75rem' : '0.8rem',
             fontWeight: '600',
             textTransform: 'uppercase',
             letterSpacing: '0.5px',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            alignSelf: 'flex-start',
-            '@media (min-width: 768px)': {
-                fontSize: '0.8rem',
-            },
+            alignSelf: isMobile ? 'flex-start' : 'auto',
         },
         statusViewed: {
             background: 'linear-gradient(135deg, #ff6b35, #ff8c42)',
@@ -315,10 +279,8 @@ const CandidateApplications = () => {
             alignItems: 'center',
             gap: '0.8rem',
             color: '#666666',
-            fontSize: '0.9rem',
-            '@media (min-width: 768px)': {
-                fontSize: '0.95rem',
-            },
+            fontSize: isMobile ? '0.9rem' : '0.95rem',
+            flexWrap: 'wrap',
         },
         infoIcon: {
             width: '16px',
@@ -332,12 +294,8 @@ const CandidateApplications = () => {
             alignItems: 'center',
             paddingTop: '1.5rem',
             borderTop: '1px solid #e0e0e0',
-            flexDirection: 'column',
-            gap: '1rem',
-            '@media (min-width: 480px)': {
-                flexDirection: 'row',
-                gap: '0',
-            },
+            flexDirection: isMobile ? 'column' : 'row',
+            gap: isMobile ? '1rem' : '0',
         },
         chatButton: {
             background: 'linear-gradient(135deg, #ff6b35, #ff8c42)',
@@ -350,21 +308,19 @@ const CandidateApplications = () => {
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
+            justifyContent: 'center',
             gap: '0.6rem',
             transition: 'all 0.2s ease',
             position: 'relative',
             boxShadow: '0 4px 15px rgba(255, 107, 53, 0.3)',
-            width: '100%',
-            justifyContent: 'center',
-            '@media (min-width: 480px)': {
-                width: 'auto',
-            },
+            width: isMobile ? '100%' : 'auto',
+            minWidth: isMobile ? 'auto' : '140px',
         },
-        chatButtonHover: {
+        chatButtonHover: !isMobile ? {
             transform: 'translateY(-1px)',
             boxShadow: '0 6px 20px rgba(255, 107, 53, 0.4)',
             background: 'linear-gradient(135deg, #ff5722, #ff6b35)',
-        },
+        } : {},
         notificationDot: {
             position: 'absolute',
             top: '-4px',
@@ -378,51 +334,36 @@ const CandidateApplications = () => {
         },
         emptyState: {
             textAlign: 'center',
-            padding: '3rem 1.5rem',
+            padding: isMobile ? '3rem 1.5rem' : '4rem 2rem',
             background: '#ffffff',
             borderRadius: '20px',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
             color: '#666666',
-            '@media (min-width: 768px)': {
-                padding: '4rem 2rem',
-            },
         },
         emptyIcon: {
-            fontSize: '3rem',
+            fontSize: isMobile ? '3rem' : '4rem',
             color: '#cccccc',
             marginBottom: '1.5rem',
-            '@media (min-width: 768px)': {
-                fontSize: '4rem',
-            },
         },
         emptyTitle: {
-            fontSize: '1.3rem',
+            fontSize: isMobile ? '1.3rem' : '1.5rem',
             fontWeight: '600',
             color: '#1a1a1a',
             marginBottom: '0.5rem',
-            '@media (min-width: 768px)': {
-                fontSize: '1.5rem',
-            },
         },
         emptyText: {
-            fontSize: '1rem',
+            fontSize: isMobile ? '1rem' : '1.1rem',
             lineHeight: '1.6',
             color: '#666666',
-            '@media (min-width: 768px)': {
-                fontSize: '1.1rem',
-            },
         },
         loadingContainer: {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            padding: '3rem 1.5rem',
+            padding: isMobile ? '3rem 1.5rem' : '4rem',
             background: '#ffffff',
             borderRadius: '20px',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
-            '@media (min-width: 768px)': {
-                padding: '4rem',
-            },
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
         },
         loadingContent: {
             display: 'flex',
@@ -431,21 +372,15 @@ const CandidateApplications = () => {
             gap: '1rem',
         },
         loadingText: {
-            fontSize: '1.1rem',
+            fontSize: isMobile ? '1.1rem' : '1.2rem',
             color: '#666666',
             fontWeight: '500',
             textAlign: 'center',
-            '@media (min-width: 768px)': {
-                fontSize: '1.2rem',
-            },
         },
         spinner: {
-            fontSize: '1.8rem',
+            fontSize: isMobile ? '1.8rem' : '2rem',
             color: '#ff6b35',
             animation: 'spin 1s linear infinite',
-            '@media (min-width: 768px)': {
-                fontSize: '2rem',
-            },
         },
         modal: {
             overlay: {
@@ -455,75 +390,65 @@ const CandidateApplications = () => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                padding: '1rem',
+                padding: isMobile ? '1rem' : '2rem',
             },
             content: {
                 background: 'white',
-                borderRadius: '16px',
+                borderRadius: isMobile ? '16px' : '24px',
                 padding: '0',
                 maxWidth: '800px',
-                width: '100%',
+                width: isMobile ? '100%' : '95%',
                 maxHeight: '90vh',
                 overflow: 'hidden',
                 position: 'relative',
                 boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3)',
                 border: 'none',
                 margin: '0',
-                '@media (min-width: 768px)': {
-                    borderRadius: '24px',
-                    width: '95%',
-                },
             },
         },
         modalHeader: {
             background: 'linear-gradient(135deg, #1a1a1a, #2d2d2d)',
             color: 'white',
-            padding: '1.5rem',
+            padding: isMobile ? '1.5rem' : '2rem',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             borderBottom: '3px solid #ff6b35',
-            '@media (min-width: 768px)': {
-                padding: '2rem',
-            },
         },
         modalTitle: {
-            fontSize: '1.2rem',
+            fontSize: isMobile ? '1.2rem' : '1.5rem',
             fontWeight: '700',
             margin: 0,
             color: 'white',
-            '@media (min-width: 768px)': {
-                fontSize: '1.5rem',
-            },
         },
         closeButton: {
             background: 'rgba(255, 255, 255, 0.1)',
             border: '1px solid rgba(255, 107, 53, 0.3)',
             borderRadius: '8px',
-            width: '36px',
-            height: '36px',
+            width: isMobile ? '36px' : '40px',
+            height: isMobile ? '36px' : '40px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            color: 'black',
-            fontSize: '1rem',
+            color: 'white',
+            fontSize: isMobile ? '1rem' : '1.2rem',
             transition: 'all 0.2s ease',
-            '@media (min-width: 768px)': {
-                width: '40px',
-                height: '40px',
-                fontSize: '1.2rem',
-            },
         },
         modalBody: {
-            padding: '1.5rem',
+            padding: isMobile ? '1.5rem' : '2rem',
             maxHeight: 'calc(90vh - 100px)',
             overflow: 'auto',
-            '@media (min-width: 768px)': {
-                padding: '2rem',
-            },
         },
-    };
+        conversationAvailable: {
+            color: '#ff6b35', 
+            fontSize: '0.9rem', 
+            fontWeight: '500',
+            textAlign: isMobile ? 'center' : 'left',
+        }
+    });
+
+    const styles = getResponsiveStyles();
 
     // Ensure applications is always an array before calculating stats
     const applicationsArray = Array.isArray(applications) ? applications : [];
@@ -544,32 +469,6 @@ const CandidateApplications = () => {
                 @keyframes pulse {
                     0%, 100% { opacity: 1; }
                     50% { opacity: 0.5; }
-                }
-                
-                /* Custom responsive styles */
-                @media (max-width: 767px) {
-                    .mobile-full-width {
-                        width: 100% !important;
-                    }
-                    
-                    .mobile-text-center {
-                        text-align: center !important;
-                    }
-                    
-                    .mobile-stack {
-                        flex-direction: column !important;
-                        align-items: center !important;
-                    }
-                }
-                
-                @media (max-width: 479px) {
-                    .mobile-small-padding {
-                        padding: 1rem !important;
-                    }
-                    
-                    .mobile-small-gap {
-                        gap: 0.5rem !important;
-                    }
                 }
             `}</style>
             
@@ -626,14 +525,15 @@ const CandidateApplications = () => {
                                     key={application.id} 
                                     style={styles.applicationCard}
                                     onMouseEnter={(e) => {
-                                        if (window.innerWidth > 768) {
+                                        if (!isMobile) {
                                             Object.assign(e.currentTarget.style, styles.cardHover);
                                         }
                                     }}
                                     onMouseLeave={(e) => {
-                                        if (window.innerWidth > 768) {
+                                        if (!isMobile) {
                                             e.currentTarget.style.transform = 'translateY(0)';
                                             e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.1)';
+                                            e.currentTarget.style.borderColor = '#f0f0f0';
                                         }
                                     }}
                                 >
@@ -671,24 +571,19 @@ const CandidateApplications = () => {
 
                                     {recruiterStartedMap[application.id] && (
                                         <div style={styles.cardActions}>
-                                            <span style={{ 
-                                                color: '#ff6b35', 
-                                                fontSize: '0.9rem', 
-                                                fontWeight: '500',
-                                                textAlign: 'center'
-                                            }}>
+                                            <span style={styles.conversationAvailable}>
                                                 💬 Conversation disponible
                                             </span>
                                             <button
                                                 onClick={() => openChatModal(application.id)}
                                                 style={styles.chatButton}
                                                 onMouseEnter={(e) => {
-                                                    if (window.innerWidth > 768) {
+                                                    if (!isMobile) {
                                                         Object.assign(e.currentTarget.style, styles.chatButtonHover);
                                                     }
                                                 }}
                                                 onMouseLeave={(e) => {
-                                                    if (window.innerWidth > 768) {
+                                                    if (!isMobile) {
                                                         e.currentTarget.style.transform = 'translateY(0)';
                                                         e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 107, 53, 0.3)';
                                                         e.currentTarget.style.background = 'linear-gradient(135deg, #ff6b35, #ff8c42)';
@@ -718,7 +613,7 @@ const CandidateApplications = () => {
                     <div style={styles.modalHeader}>
                         <h2 style={styles.modalTitle}>Conversation avec le recruteur</h2>
                         <button onClick={closeChatModal} style={styles.closeButton}>
-                        <IoClose size={window.innerWidth > 768 ? 20 : 18} />
+                            <IoClose size={isMobile ? 18 : 20} />
                         </button>
                     </div>
                     <div style={styles.modalBody}>
