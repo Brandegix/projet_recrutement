@@ -536,7 +536,7 @@ const CandidateApplications = () => {
          <SEO
         title="Candidatures"
        /> 
-            <style jsx>`
+            <style jsx>{`
                 @keyframes spin {
                     from { transform: rotate(0deg); }
                     to { transform: rotate(360deg); }
@@ -571,7 +571,7 @@ const CandidateApplications = () => {
                         gap: 0.5rem !important;
                     }
                 }
-            `</style>
+            `}</style>
             
             <div style={styles.pageBackground}>
                 <Navbar />
