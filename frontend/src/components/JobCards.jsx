@@ -181,4 +181,186 @@ const JobCard = ({ job }) => {
   );
 };
 
-export default JobCards;
+function JobCards() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 9;
+  const [filteredJobs, setFilteredJobs] = useState([]);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const indexOfLastJob = currentPage * jobsPerPage;
+  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+  const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  const [selectedPoste, setSelectedPoste] = useState('');
+  const [selectedLieu, setSelectedLieu] = useState('');
+  const [selectedSalaire, setSelectedSalaire] = useState('');
+  const [selectedDomaine, setSelectedDomaine] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_API_URL}/api/je`)
+    .then(response => {
+        const updatedJobs = response.data.map(job => ({
+          ...job,
+          logo: job.logo && job.logo.startsWith("http")
+            ? job.logo
+            : "https://dummyimage.com/80x80/000/fff.png&text=No+Logo"
+        }));
+        setJobs(updatedJobs);
+        setFilteredJobs(updatedJobs);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Erreur lors du chargement des offres :", error);
+        setError(true);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleSearch = () => {
+    const results = jobs.filter(job =>
+      (selectedPoste === '' || job.title.toLowerCase().includes(selectedPoste.toLowerCase())) &&
+      (selectedLieu === '' || job.location.toLowerCase().includes(selectedLieu.toLowerCase())) &&
+      (selectedSalaire === '' || job.salary.toLowerCase().includes(selectedSalaire.toLowerCase())) &&
+      (selectedDomaine === '' || job.type.toLowerCase().includes(selectedDomaine.toLowerCase())) &&
+      (
+        searchTerm === '' ||
+        job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        job.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        job.company.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+    setFilteredJobs(results);
+    setCurrentPage(1);
+  };
+
+  if (loading) return <p>Chargement des offres...</p>;
+  if (error) return <p>Erreur de chargement des offres. Vérifiez le backend.</p>;
+
+  return (
+    <>
+      {/* Search Section */}
+      <div style={{
+        background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
+        border: '1px solid #333',
+        borderRadius: '20px',
+        padding: '30px',
+        marginBottom: '40px'
+      }}>
+        {/* Search Bar */}
+        <div style={{ position: 'relative', marginBottom: '25px' }}>
+          <FaSearch style={{
+            position: 'absolute',
+            left: '20px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            color: '#ff6b35',
+            fontSize: '1.1rem'
+          }} />
+          <input
+            type="text"
+            placeholder="Rechercher une offre d'emploi..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '15px 20px 15px 50px',
+              borderRadius: '25px',
+              border: '1px solid #444',
+              background: 'rgba(255, 255, 255, 0.05)',
+              color: '#ffffff',
+              fontSize: '1rem',
+              outline: 'none',
+              transition: 'all 0.3s ease',
+              boxSizing: 'border-box'
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#ff6b35';
+              e.target.style.boxShadow = '0 0 0 3px rgba(255, 107, 53, 0.1)';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = '#444';
+              e.target.style.boxShadow = 'none';
+            }}
+          />
+        </div>
+
+        {/* Filters */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '20px',
+          marginBottom: '20px'
+        }}>
+          <div>
+            <label style={{
+              display: 'block',
+              color: '#cccccc',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              marginBottom: '8px'
+            }}>
+              Poste
+            </label>
+            <select 
+              value={selectedPoste} 
+              onChange={(e) => setSelectedPoste(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 15px',
+                borderRadius: '12px',
+                border: '1px solid #444',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: '#ffffff',
+                fontSize: '0.95rem',
+                outline: 'none'
+              }}
+            >
+              <option value="">Tous les postes</option>
+              {[...new Set(jobs.map(job => job.title))].map((poste, index) => (
+                <option key={index} value={poste}>{poste}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label style={{
+              display: 'block',
+              color: '#cccccc',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              marginBottom: '8px'
+            }}>
+              Lieu
+            </label>
+            <select 
+              value={selectedLieu} 
+              onChange={(e) => setSelectedLieu(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 15px',
+                borderRadius: '12px',
+                border: '1px solid #444',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: '#ffffff',
+                fontSize: '0.95rem',
+                outline: 'none'
+              }}
+            >
+              <option value="">Toutes les villes</option>
+              {[...new Set(jobs.map(job => job.location))].map((lieu, index) => (
+                <option key={index} value={lieu}>{lieu}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label style={{
+              display: 'block',
+              color: '#cccccc',
+              fontSize: '0.9rem',
