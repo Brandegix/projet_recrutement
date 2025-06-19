@@ -137,6 +137,7 @@
     display: block;
     position: absolute;
     top: 1rem;
-    right: 1rem;
+    right: 0;
+    padding-right: 1rem;
   }
 }
