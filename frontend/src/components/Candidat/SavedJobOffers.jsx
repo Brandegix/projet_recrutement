@@ -3,7 +3,7 @@ import axios from 'axios';
 import { FaMapMarkerAlt, FaBriefcase, FaBookmark, FaRegBookmark, 
 FaClock, FaHeart, FaRegHeart, FaSearch } from 'react-icons/fa';
 import "../../assets/css/JobCards.css"; // Ensure this CSS file is used 
-
+for JobCard specific styles
 import Footer from '../../components/Footer';
 import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
@@ -49,8 +49,7 @@ className="job-description">{text}</p>;
 "https://via.placeholder.com/60x60/f8f9fa/6c757d?text=Logo"}
             alt="Company Logo"
             onError={(e) => {
-              e.target.src = 
-"https://via.placeholder.com/60x60/f8f9fa/6c757d?text=Logo";
+              e.target.src = "https://via.placeholder.com/60x60/f8f9fa/6c757d?text=Logo"; // <-- Fixed this line!
             }}
           />
         </div>
