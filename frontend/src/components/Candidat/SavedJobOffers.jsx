@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { FaMapMarkerAlt, FaBriefcase, FaBookmark, FaRegBookmark, FaClock, FaHeart, FaRegHeart, FaSearch } from 'react-icons/fa';
+import "../../assets/css/JobCards.css"; // Ensure this CSS file is used for JobCard specific styles
+import Footer from '../../components/Footer';
+import { useNavigate } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import Navbar from "../Navbara";
 
 const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
+  const navigate = useNavigate();
+
   const handleViewDetails = () => {
-    console.log(`Navigate to /offres/${job.id}`);
+    navigate(`/offres/${job.id}`);
   };
 
   const ReadMoreText = ({ text, maxLength = 120 }) => {
@@ -103,125 +111,177 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
 };
 
 const SavedJobOffers = () => {
-  // Mock data for demonstration
-  const [savedJobOffers] = useState([
-    {
-      id: 1,
-      title: "Développeur Full-Stack React/Node.js",
-      company: "TechCorp",
-      location: "Paris, France",
-      experience: "2-5 ans",
-      description: "Nous recherchons un développeur full-stack passionné pour rejoindre notre équipe dynamique. Vous travaillerez sur des projets innovants utilisant les dernières technologies.",
-      skills: ["React", "Node.js", "MongoDB", "TypeScript", "AWS"],
-      salary: "45 000 - 55 000 €",
-      type: "CDI",
-      logo: "https://via.placeholder.com/60x60/007bff/ffffff?text=TC"
-    },
-    {
-      id: 2,
-      title: "Designer UI/UX Senior",
-      company: "Creative Studio",
-      location: "Lyon, France",
-      experience: "5+ ans",
-      description: "Rejoignez notre studio créatif pour concevoir des expériences utilisateur exceptionnelles. Vous collaborerez avec des équipes multidisciplinaires sur des projets variés.",
-      skills: ["Figma", "Sketch", "Adobe XD", "HTML/CSS", "Prototyping"],
-      salary: "50 000 - 65 000 €",
-      type: "CDI",
-      logo: "https://via.placeholder.com/60x60/28a745/ffffff?text=CS"
-    },
-    {
-      id: 3,
-      title: "Data Scientist",
-      company: "AI Solutions",
-      location: "Toulouse, France",
-      experience: "3-7 ans",
-      description: "Analysez et modélisez des données complexes pour extraire des insights précieux. Vous développerez des modèles d'apprentissage automatique pour résoudre des problèmes métier.",
-      skills: ["Python", "Machine Learning", "SQL", "TensorFlow", "Pandas"],
-      salary: "55 000 - 70 000 €",
-      type: "CDI",
-      logo: "https://via.placeholder.com/60x60/ffc107/ffffff?text=AI"
-    }
-  ]);
+  const [jobs, setJobs] = useState([]);
+  const [filteredJobs, setFilteredJobs] = useState([]); // This state is not currently used in this component.
+  const [loading, setLoading] = useState(true); // This state is not currently used to display loading indicators.
+  const [error, setError] = useState(false); // This state is not currently used to display error messages.
+  const [candidateId, setCandidateId] = useState(null);
+  const [appliedJobs, setAppliedJobs] = useState([]);
+  const [candidate, setCandidate] = useState(null); // This state is not currently directly displayed.
+  const [savedJobs, setSavedJobs] = useState([]);
 
-  const [appliedJobs] = useState([2]); // Job ID 2 is applied
-  const [savedJobs] = useState([1, 2, 3]); // All jobs are saved
+  useEffect(() => {
+    // Fetch all job offers
+    axios.get(`${process.env.REACT_APP_API_URL}/api/je`)
+      .then(response => {
+        const updatedJobs = response.data.map(job => ({
+          ...job,
+          logo: job.logo || "https://via.placeholder.com/60x60/f8f9fa/6c757d?text=Logo"
+        }));
+        setJobs(updatedJobs);
+        setFilteredJobs(updatedJobs); // Keep this if filtering logic is added later
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Erreur lors du chargement des offres :", error);
+        setError(true);
+        setLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    // Fetch saved jobs for the current user
+    axios.get(`${process.env.REACT_APP_API_URL}/api/saved-jobs`, { withCredentials: true })
+      .then(response => {
+        const savedJobIds = response.data.map(job => job.id);
+        setSavedJobs(savedJobIds);
+      })
+      .catch(error => {
+        console.error("Erreur lors du chargement des jobs sauvegardés:", error);
+      });
+  }, [candidateId]); // Depend on candidateId to refetch if it changes
+
+  useEffect(() => {
+    // Fetch current candidate and their applications
+    fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { credentials: 'include' })
+      .then(res => res.json())
+      .then(data => {
+        setCandidate(data);
+        setCandidateId(data.id); // Set candidateId here
+
+        return fetch(`${process.env.REACT_APP_API_URL}/api/getapplications`, {
+          credentials: 'include'
+        });
+      })
+      .then(res => res.json())
+      .then(applications => {
+        const appliedJobIds = applications.map(app => app.job_offer_id);
+        setAppliedJobs(appliedJobIds);
+      })
+      .catch(err => console.error("Erreur candidate ou applications:", err));
+  }, []); // Empty dependency array means this runs once on mount
 
   const handleSaveJob = (jobId) => {
-    console.log(`Toggle save for job ${jobId}`);
+    // Optimistically update UI
+    setSavedJobs(prev =>
+      prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId]
+    );
+
+    fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+    })
+      .then(res => {
+        if (!res.ok) {
+          // If API call fails, revert UI change
+          setSavedJobs(prev =>
+            prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId] // Revert logic
+          );
+          throw new Error('Failed to save/unsave job');
+        }
+        return res.json();
+      })
+      .then(data => {
+        // UI is already updated, just confirm or handle success message if needed
+        console.log("Job save/unsave successful:", data);
+      })
+      .catch(error => {
+        console.error('Erreur sauvegarde de l\'offre :', error);
+        alert("Impossible de sauvegarder/désauvegarder l'offre pour le moment.");
+      });
   };
 
-  return (
-    <div className="saved-jobs-container">
-      {/* Enhanced Hero Section */}
-      <div className="page-hero">
-        <div className="hero-background">
-          <div className="hero-pattern"></div>
-          <div className="hero-gradient"></div>
-        </div>
-        <div className="hero-content">
-          <div className="hero-icon">
-            <FaBookmark />
-          </div>
-          <h1 className="hero-title">Mes offres sauvegardées</h1>
-          <p className="hero-subtitle">
-            Retrouvez et gérez toutes les offres d'emploi que vous avez mises de côté
-          </p>
-          <div className="hero-stats">
-            <div className="stat-card">
-              <div className="stat-number">{savedJobOffers.length}</div>
-              <div className="stat-label">
-                Offre{savedJobOffers.length !== 1 ? 's' : ''} sauvegardée{savedJobOffers.length !== 1 ? 's' : ''}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  // Filter jobs to only show saved ones
+  const savedJobOffers = jobs.filter(job => savedJobs.includes(job.id));
 
-      {/* Main Content */}
-      <div className="main-content">
-        <div className="content-wrapper">
-          {savedJobOffers.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-illustration">
-                <div className="empty-icon">
-                  <FaSearch />
-                </div>
-                <div className="empty-circle-1"></div>
-                <div className="empty-circle-2"></div>
-              </div>
-              <h3 className="empty-title">Aucune offre sauvegardée</h3>
-              <p className="empty-description">
-                Commencez à explorer nos offres d'emploi et sauvegardez celles qui vous intéressent pour les retrouver facilement ici.
-              </p>
-              <a href="/offres" className="cta-button">
-                <FaSearch className="cta-icon" />
-                Parcourir les offres
-              </a>
+  return (
+    <>
+      <Navbar />
+      <div className="saved-jobs-container">
+        {/* Enhanced Hero Section */}
+        <div className="page-hero">
+          <div className="hero-background">
+            <div className="hero-pattern"></div>
+            <div className="hero-gradient"></div>
+          </div>
+          <div className="hero-content">
+            <div className="hero-icon">
+              <FaBookmark />
             </div>
-          ) : (
-            <>
-              <div className="content-header">
-                <h2 className="section-title">Vos offres sauvegardées</h2>
-                <p className="section-subtitle">
-                  Cliquez sur une offre pour postuler ou gérer vos sauvegardes
+            <h1 className="hero-title">Mes offres sauvegardées</h1>
+            <p className="hero-subtitle">
+              Retrouvez et gérez toutes les offres d'emploi que vous avez mises de côté
+            </p>
+            <div className="hero-stats">
+              <div className="stat-card">
+                <div className="stat-number">{savedJobOffers.length}</div>
+                <div className="stat-label">
+                  Offre{savedJobOffers.length !== 1 ? 's' : ''} sauvegardée{savedJobOffers.length !== 1 ? 's' : ''}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="main-content">
+          <div className="content-wrapper">
+            {savedJobOffers.length === 0 ? (
+              <div className="empty-state">
+                <div className="empty-illustration">
+                  <div className="empty-icon">
+                    <FaSearch />
+                  </div>
+                  <div className="empty-circle-1"></div>
+                  <div className="empty-circle-2"></div>
+                </div>
+                <h3 className="empty-title">Aucune offre sauvegardée</h3>
+                <p className="empty-description">
+                  Commencez à explorer nos offres d'emploi et sauvegardez celles qui vous intéressent pour les retrouver facilement ici.
                 </p>
+                <Link to="/offres" className="cta-button">
+                  <FaSearch className="cta-icon" />
+                  Parcourir les offres
+                </Link>
               </div>
-              <div className="jobs-grid">
-                {savedJobOffers.map(job => (
-                  <JobCard
-                    key={job.id}
-                    job={job}
-                    onApply={() => { }}
-                    isApplied={appliedJobs.includes(job.id)}
-                    onSave={handleSaveJob}
-                    isSaved={savedJobs.includes(job.id)}
-                  />
-                ))}
-              </div>
-            </>
-          )}
+            ) : (
+              <>
+                <div className="content-header">
+                  <h2 className="section-title">Vos offres sauvegardées</h2>
+                  <p className="section-subtitle">
+                    Cliquez sur une offre pour postuler ou gérer vos sauvegardes
+                  </p>
+                </div>
+                <div className="jobs-grid">
+                  {savedJobOffers.map(job => (
+                    <JobCard
+                      key={job.id}
+                      job={job}
+                      onApply={() => { }} // No direct apply from this page, but keeping prop for consistency
+                      isApplied={appliedJobs.includes(job.id)}
+                      onSave={handleSaveJob}
+                      isSaved={savedJobs.includes(job.id)}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
+      <Footer />
 
       <style jsx>{`
         .saved-jobs-container {
@@ -487,13 +547,13 @@ const SavedJobOffers = () => {
           font-size: 0.875rem;
         }
 
-        /* FIXED Jobs Grid - This was the main issue */
+        /* Jobs Grid - Crucial for Correct Display */
         .jobs-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
           gap: 24px;
-          width: 100%;
-          max-width: 100%;
+          justify-content: center; /* Centers the whole grid track block */
+          justify-items: center;   /* Centers each individual job card within its cell */
         }
 
         /* Enhanced Job Cards */
@@ -506,7 +566,6 @@ const SavedJobOffers = () => {
           border: 1px solid #f0f0f0;
           position: relative;
           overflow: hidden;
-          width: 100%;
         }
 
         .modern-job-card::before {
@@ -740,7 +799,7 @@ const SavedJobOffers = () => {
         /* Responsive Design */
         @media (max-width: 1024px) {
           .jobs-grid {
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
           }
         }
 
@@ -776,7 +835,7 @@ const SavedJobOffers = () => {
           }
 
           .jobs-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr; /* On smaller screens, stack cards vertically */
             gap: 20px;
           }
 
@@ -826,13 +885,9 @@ const SavedJobOffers = () => {
           .empty-state {
             margin: 0 16px;
           }
-
-          .jobs-grid {
-            grid-template-columns: 1fr;
-          }
         }
       `}</style>
-    </div>
+    </>
   );
 };
 
