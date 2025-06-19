@@ -364,3 +364,304 @@ function JobCards() {
               display: 'block',
               color: '#cccccc',
               fontSize: '0.9rem',
+              fontWeight: '600',
+              marginBottom: '8px'
+            }}>
+              Salaire
+            </label>
+            <select 
+              value={selectedSalaire} 
+              onChange={(e) => setSelectedSalaire(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 15px',
+                borderRadius: '12px',
+                border: '1px solid #444',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: '#ffffff',
+                fontSize: '0.95rem',
+                outline: 'none'
+              }}
+            >
+              <option value="">Tous les salaires</option>
+              {[...new Set(jobs.map(job => job.salary))].map((salaire, index) => (
+                <option key={index} value={salaire}>{salaire}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label style={{
+              display: 'block',
+              color: '#cccccc',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              marginBottom: '8px'
+            }}>
+              Type
+            </label>
+            <select 
+              value={selectedDomaine} 
+              onChange={(e) => setSelectedDomaine(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 15px',
+                borderRadius: '12px',
+                border: '1px solid #444',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: '#ffffff',
+                fontSize: '0.95rem',
+                outline: 'none'
+              }}
+            >
+              <option value="">Tous les types</option>
+              {[...new Set(jobs.map(job => job.type))].map((domaine, index) => (
+                <option key={index} value={domaine}>{domaine}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div style={{ textAlign: 'center' }}>
+          <button 
+            onClick={handleSearch}
+            style={{
+              background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
+              color: '#ffffff',
+              border: 'none',
+              padding: '12px 30px',
+              borderRadius: '25px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '10px'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 10px 25px rgba(255, 107, 53, 0.3)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            <FaFilter />
+            Rechercher
+          </button>
+        </div>
+      </div>
+
+      {/* Job Cards Display */}
+      <div className="offers-wrapper">
+        {filteredJobs.length === 0 ? (
+          <p className="empty-message">Aucune offre disponible pour le moment.</p>
+        ) : (
+          <div className="offers-grid">
+            {currentJobs.map((job) => (
+              <JobCard key={job.id} job={job} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Enhanced Pagination - Integrated directly */}
+      {totalPages > 1 && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          marginTop: '40px',
+          padding: '24px',
+          background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
+          borderRadius: '16px',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+          border: '1px solid #333'
+        }}>
+          {/* Previous Button */}
+          <button
+            onClick={() => paginate(currentPage - 1)}
+            disabled={currentPage === 1}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '12px 16px',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              border: 'none',
+              backgroundColor: currentPage === 1 ? '#333' : 'rgba(255, 107, 53, 0.1)',
+              color: currentPage === 1 ? '#666' : '#ff6b35',
+              borderRadius: '12px',
+              cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: currentPage === 1 ? 'none' : '0 2px 8px rgba(255, 107, 53, 0.15)',
+              transform: 'translateY(0)',
+              opacity: currentPage === 1 ? 0.5 : 1
+            }}
+            onMouseEnter={(e) => {
+              if (currentPage !== 1) {
+                e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 4px 12px rgba(255, 107, 53, 0.3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (currentPage !== 1) {
+                e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 2px 8px rgba(255, 107, 53, 0.15)';
+              }
+            }}
+          >
+            <FaChevronLeft size={12} />
+            <span>Précédent</span>
+          </button>
+
+          {/* Page Numbers */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            {(() => {
+              const delta = 2;
+              const range = [];
+              const rangeWithDots = [];
+
+              if (totalPages <= 7) { // For small number of pages, show all
+                for (let i = 1; i <= totalPages; i++) {
+                  rangeWithDots.push(i);
+                }
+              } else { // For larger number of pages, show ellipsis
+                rangeWithDots.push(1);
+
+                if (currentPage > delta + 1) {
+                  rangeWithDots.push('...');
+                }
+
+                for (
+                  let i = Math.max(2, currentPage - delta);
+                  i <= Math.min(totalPages - 1, currentPage + delta);
+                  i++
+                ) {
+                  range.push(i);
+                }
+                rangeWithDots.push(...range);
+
+                if (currentPage < totalPages - delta) {
+                  rangeWithDots.push('...');
+                }
+
+                rangeWithDots.push(totalPages);
+              }
+
+
+              return rangeWithDots.map((page, index) => (
+                page === '...' ? (
+                  <div
+                    key={`dots-${index}`}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '40px',
+                      height: '40px',
+                      color: '#666',
+                      fontSize: '1rem'
+                    }}
+                  >
+                    <FaEllipsisH size={12} />
+                  </div>
+                ) : (
+                  <button
+                    key={page}
+                    onClick={() => paginate(page)}
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      border: 'none',
+                      backgroundColor: currentPage === page 
+                        ? '#ff6b35' 
+                        : 'rgba(255, 255, 255, 0.05)',
+                      color: currentPage === page ? '#ffffff' : '#cccccc',
+                      borderRadius: '10px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      boxShadow: currentPage === page 
+                        ? '0 4px 12px rgba(255, 107, 53, 0.4)' 
+                        : '0 2px 4px rgba(0, 0, 0, 0.2)',
+                      transform: 'translateY(0)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (currentPage !== page) {
+                        e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
+                        e.target.style.transform = 'translateY(-2px)';
+                        e.target.style.boxShadow = '0 4px 8px rgba(255, 107, 53, 0.3)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (currentPage !== page) {
+                        e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                        e.target.style.transform = 'translateY(0)';
+                        e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
+                      }
+                    }}
+                  >
+                    {page}
+                  </button>
+                )
+              ));
+            })()}
+          </div>
+
+          {/* Next Button */}
+          <button
+            onClick={() => paginate(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '12px 16px',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              border: 'none',
+              backgroundColor: currentPage === totalPages ? '#333' : 'rgba(255, 107, 53, 0.1)',
+              color: currentPage === totalPages ? '#666' : '#ff6b35',
+              borderRadius: '12px',
+              cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: currentPage === totalPages ? 'none' : '0 2px 8px rgba(255, 107, 53, 0.15)',
+              transform: 'translateY(0)',
+              opacity: currentPage === totalPages ? 0.5 : 1
+            }}
+            onMouseEnter={(e) => {
+              if (currentPage !== totalPages) {
+                e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 4px 12px rgba(255, 107, 53, 0.3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (currentPage !== totalPages) {
+                e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 2px 8px rgba(255, 107, 53, 0.15)';
+              }
+            }}
+          >
+            <span>Suivant</span>
+            <FaChevronRight size={12} />
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
+
+export default JobCards;
