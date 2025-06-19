@@ -139,16 +139,22 @@ const CandidateApplications = () => {
         wrapper: {
             maxWidth: "1200px",
             margin: "0 auto",
-            padding: "2rem",
+            padding: "1rem",
             fontFamily: "'Inter', 'Segoe UI', sans-serif",
+            '@media (min-width: 768px)': {
+                padding: "2rem",
+            },
         },
         header: {
             textAlign: 'center',
-            marginBottom: '3rem',
+            marginBottom: '2rem',
             color: 'white',
+            '@media (min-width: 768px)': {
+                marginBottom: '3rem',
+            },
         },
         title: {
-            fontSize: "3.5rem",
+            fontSize: "2.5rem",
             fontWeight: "900",
             marginBottom: "1rem",
             background: 'linear-gradient(45deg, #ff6b35, #ff8c42)',
@@ -156,62 +162,97 @@ const CandidateApplications = () => {
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
             textShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            '@media (min-width: 768px)': {
+                fontSize: "3.5rem",
+            },
         },
         subtitle: {
-            fontSize: "1.2rem",
+            fontSize: "1rem",
             opacity: 0.9,
             fontWeight: '400',
             maxWidth: '600px',
             margin: '0 auto',
             lineHeight: '1.6',
             color: '#000000',
+            padding: '0 1rem',
+            '@media (min-width: 768px)': {
+                fontSize: "1.2rem",
+                padding: '0',
+            },
         },
         statsBar: {
             display: 'flex',
             justifyContent: 'center',
-            gap: '2rem',
-            marginBottom: '3rem',
+            gap: '1rem',
+            marginBottom: '2rem',
             flexWrap: 'wrap',
+            '@media (min-width: 768px)': {
+                gap: '2rem',
+                marginBottom: '3rem',
+            },
         },
         statCard: {
             background: 'rgba(255, 255, 255, 0.1)',
             backdropFilter: 'blur(10px)',
             border: '1px solid rgba(255, 107, 53, 0.3)',
             borderRadius: '16px',
-            padding: '1.5rem',
+            padding: '1rem',
             textAlign: 'center',
             color: 'white',
-            minWidth: '150px',
+            minWidth: '120px',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+            flex: '1',
+            maxWidth: '150px',
+            '@media (min-width: 768px)': {
+                padding: '1.5rem',
+                minWidth: '150px',
+                flex: 'none',
+            },
         },
         statNumber: {
-            fontSize: '2rem',
+            fontSize: '1.5rem',
             fontWeight: '700',
             display: 'block',
             color: '#ff6b35',
+            '@media (min-width: 768px)': {
+                fontSize: '2rem',
+            },
         },
         statLabel: {
-            fontSize: '0.9rem',
+            fontSize: '0.8rem',
             opacity: 0.8,
             marginTop: '0.5rem',
             color: 'black',
+            '@media (min-width: 768px)': {
+                fontSize: '0.9rem',
+            },
         },
         applicationGrid: {
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
-            gap: '2rem',
+            gridTemplateColumns: '1fr',
+            gap: '1.5rem',
             marginBottom: '2rem',
+            '@media (min-width: 640px)': {
+                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+            },
+            '@media (min-width: 768px)': {
+                gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
+                gap: '2rem',
+            },
         },
         applicationCard: {
             background: '#ffffff',
             borderRadius: '20px',
-            padding: '2rem',
+            padding: '1.5rem',
             boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
             border: '1px solid #f0f0f0',
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             position: 'relative',
             overflow: 'hidden',
             cursor: 'pointer',
+            '@media (min-width: 768px)': {
+                padding: '2rem',
+            },
         },
         cardHover: {
             transform: 'translateY(-5px)',
@@ -223,24 +264,37 @@ const CandidateApplications = () => {
             justifyContent: 'space-between',
             alignItems: 'flex-start',
             marginBottom: '1.5rem',
+            flexDirection: 'column',
+            gap: '1rem',
+            '@media (min-width: 480px)': {
+                flexDirection: 'row',
+                gap: '0',
+            },
         },
         jobTitle: {
-            fontSize: '1.4rem',
+            fontSize: '1.2rem',
             fontWeight: '700',
             color: '#1a1a1a',
             marginBottom: '0.5rem',
             lineHeight: '1.3',
+            '@media (min-width: 768px)': {
+                fontSize: '1.4rem',
+            },
         },
         statusBadge: {
             padding: '0.4rem 1rem',
             borderRadius: '20px',
-            fontSize: '0.8rem',
+            fontSize: '0.75rem',
             fontWeight: '600',
             textTransform: 'uppercase',
             letterSpacing: '0.5px',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
+            alignSelf: 'flex-start',
+            '@media (min-width: 768px)': {
+                fontSize: '0.8rem',
+            },
         },
         statusViewed: {
             background: 'linear-gradient(135deg, #ff6b35, #ff8c42)',
@@ -261,12 +315,16 @@ const CandidateApplications = () => {
             alignItems: 'center',
             gap: '0.8rem',
             color: '#666666',
-            fontSize: '0.95rem',
+            fontSize: '0.9rem',
+            '@media (min-width: 768px)': {
+                fontSize: '0.95rem',
+            },
         },
         infoIcon: {
             width: '16px',
             height: '16px',
             color: '#ff6b35',
+            flexShrink: 0,
         },
         cardActions: {
             display: 'flex',
@@ -274,6 +332,12 @@ const CandidateApplications = () => {
             alignItems: 'center',
             paddingTop: '1.5rem',
             borderTop: '1px solid #e0e0e0',
+            flexDirection: 'column',
+            gap: '1rem',
+            '@media (min-width: 480px)': {
+                flexDirection: 'row',
+                gap: '0',
+            },
         },
         chatButton: {
             background: 'linear-gradient(135deg, #ff6b35, #ff8c42)',
@@ -290,6 +354,11 @@ const CandidateApplications = () => {
             transition: 'all 0.2s ease',
             position: 'relative',
             boxShadow: '0 4px 15px rgba(255, 107, 53, 0.3)',
+            width: '100%',
+            justifyContent: 'center',
+            '@media (min-width: 480px)': {
+                width: 'auto',
+            },
         },
         chatButtonHover: {
             transform: 'translateY(-1px)',
@@ -309,36 +378,51 @@ const CandidateApplications = () => {
         },
         emptyState: {
             textAlign: 'center',
-            padding: '4rem 2rem',
+            padding: '3rem 1.5rem',
             background: '#ffffff',
             borderRadius: '20px',
             boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
             color: '#666666',
+            '@media (min-width: 768px)': {
+                padding: '4rem 2rem',
+            },
         },
         emptyIcon: {
-            fontSize: '4rem',
+            fontSize: '3rem',
             color: '#cccccc',
             marginBottom: '1.5rem',
+            '@media (min-width: 768px)': {
+                fontSize: '4rem',
+            },
         },
         emptyTitle: {
-            fontSize: '1.5rem',
+            fontSize: '1.3rem',
             fontWeight: '600',
             color: '#1a1a1a',
             marginBottom: '0.5rem',
+            '@media (min-width: 768px)': {
+                fontSize: '1.5rem',
+            },
         },
         emptyText: {
-            fontSize: '1.1rem',
+            fontSize: '1rem',
             lineHeight: '1.6',
             color: '#666666',
+            '@media (min-width: 768px)': {
+                fontSize: '1.1rem',
+            },
         },
         loadingContainer: {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            padding: '4rem',
+            padding: '3rem 1.5rem',
             background: '#ffffff',
             borderRadius: '20px',
             boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+            '@media (min-width: 768px)': {
+                padding: '4rem',
+            },
         },
         loadingContent: {
             display: 'flex',
@@ -347,14 +431,21 @@ const CandidateApplications = () => {
             gap: '1rem',
         },
         loadingText: {
-            fontSize: '1.2rem',
+            fontSize: '1.1rem',
             color: '#666666',
             fontWeight: '500',
+            textAlign: 'center',
+            '@media (min-width: 768px)': {
+                fontSize: '1.2rem',
+            },
         },
         spinner: {
-            fontSize: '2rem',
+            fontSize: '1.8rem',
             color: '#ff6b35',
             animation: 'spin 1s linear infinite',
+            '@media (min-width: 768px)': {
+                fontSize: '2rem',
+            },
         },
         modal: {
             overlay: {
@@ -364,53 +455,73 @@ const CandidateApplications = () => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
+                padding: '1rem',
             },
             content: {
                 background: 'white',
-                borderRadius: '24px',
+                borderRadius: '16px',
                 padding: '0',
                 maxWidth: '800px',
-                width: '95%',
+                width: '100%',
                 maxHeight: '90vh',
                 overflow: 'hidden',
                 position: 'relative',
                 boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3)',
                 border: 'none',
+                margin: '0',
+                '@media (min-width: 768px)': {
+                    borderRadius: '24px',
+                    width: '95%',
+                },
             },
         },
         modalHeader: {
             background: 'linear-gradient(135deg, #1a1a1a, #2d2d2d)',
             color: 'white',
-            padding: '2rem',
+            padding: '1.5rem',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             borderBottom: '3px solid #ff6b35',
+            '@media (min-width: 768px)': {
+                padding: '2rem',
+            },
         },
         modalTitle: {
-            fontSize: '1.5rem',
+            fontSize: '1.2rem',
             fontWeight: '700',
             margin: 0,
             color: 'white',
+            '@media (min-width: 768px)': {
+                fontSize: '1.5rem',
+            },
         },
         closeButton: {
             background: 'rgba(255, 255, 255, 0.1)',
             border: '1px solid rgba(255, 107, 53, 0.3)',
             borderRadius: '8px',
-            width: '40px',
-            height: '40px',
+            width: '36px',
+            height: '36px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
             color: 'black',
-            fontSize: '1.2rem',
+            fontSize: '1rem',
             transition: 'all 0.2s ease',
+            '@media (min-width: 768px)': {
+                width: '40px',
+                height: '40px',
+                fontSize: '1.2rem',
+            },
         },
         modalBody: {
-            padding: '2rem',
+            padding: '1.5rem',
             maxHeight: 'calc(90vh - 100px)',
             overflow: 'auto',
+            '@media (min-width: 768px)': {
+                padding: '2rem',
+            },
         },
     };
 
@@ -425,7 +536,7 @@ const CandidateApplications = () => {
          <SEO
         title="Candidatures"
        /> 
-            <style jsx>{`
+            <style jsx>`
                 @keyframes spin {
                     from { transform: rotate(0deg); }
                     to { transform: rotate(360deg); }
@@ -434,7 +545,33 @@ const CandidateApplications = () => {
                     0%, 100% { opacity: 1; }
                     50% { opacity: 0.5; }
                 }
-            `}</style>
+                
+                /* Custom responsive styles */
+                @media (max-width: 767px) {
+                    .mobile-full-width {
+                        width: 100% !important;
+                    }
+                    
+                    .mobile-text-center {
+                        text-align: center !important;
+                    }
+                    
+                    .mobile-stack {
+                        flex-direction: column !important;
+                        align-items: center !important;
+                    }
+                }
+                
+                @media (max-width: 479px) {
+                    .mobile-small-padding {
+                        padding: 1rem !important;
+                    }
+                    
+                    .mobile-small-gap {
+                        gap: 0.5rem !important;
+                    }
+                }
+            `</style>
             
             <div style={styles.pageBackground}>
                 <Navbar />
@@ -489,11 +626,15 @@ const CandidateApplications = () => {
                                     key={application.id} 
                                     style={styles.applicationCard}
                                     onMouseEnter={(e) => {
-                                        Object.assign(e.currentTarget.style, styles.cardHover);
+                                        if (window.innerWidth > 768) {
+                                            Object.assign(e.currentTarget.style, styles.cardHover);
+                                        }
                                     }}
                                     onMouseLeave={(e) => {
-                                        e.currentTarget.style.transform = 'translateY(0)';
-                                        e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.1)';
+                                        if (window.innerWidth > 768) {
+                                            e.currentTarget.style.transform = 'translateY(0)';
+                                            e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.1)';
+                                        }
                                     }}
                                 >
                                     <div style={styles.cardHeader}>
@@ -530,19 +671,28 @@ const CandidateApplications = () => {
 
                                     {recruiterStartedMap[application.id] && (
                                         <div style={styles.cardActions}>
-                                            <span style={{ color: '#ff6b35', fontSize: '0.9rem', fontWeight: '500' }}>
+                                            <span style={{ 
+                                                color: '#ff6b35', 
+                                                fontSize: '0.9rem', 
+                                                fontWeight: '500',
+                                                textAlign: 'center'
+                                            }}>
                                                 💬 Conversation disponible
                                             </span>
                                             <button
                                                 onClick={() => openChatModal(application.id)}
                                                 style={styles.chatButton}
                                                 onMouseEnter={(e) => {
-                                                    Object.assign(e.currentTarget.style, styles.chatButtonHover);
+                                                    if (window.innerWidth > 768) {
+                                                        Object.assign(e.currentTarget.style, styles.chatButtonHover);
+                                                    }
                                                 }}
                                                 onMouseLeave={(e) => {
-                                                    e.currentTarget.style.transform = 'translateY(0)';
-                                                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 107, 53, 0.3)';
-                                                    e.currentTarget.style.background = 'linear-gradient(135deg, #ff6b35, #ff8c42)';
+                                                    if (window.innerWidth > 768) {
+                                                        e.currentTarget.style.transform = 'translateY(0)';
+                                                        e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 107, 53, 0.3)';
+                                                        e.currentTarget.style.background = 'linear-gradient(135deg, #ff6b35, #ff8c42)';
+                                                    }
                                                 }}
                                             >
                                                 <FaComments />
@@ -568,7 +718,7 @@ const CandidateApplications = () => {
                     <div style={styles.modalHeader}>
                         <h2 style={styles.modalTitle}>Conversation avec le recruteur</h2>
                         <button onClick={closeChatModal} style={styles.closeButton}>
-                        <IoClose size={20} />
+                        <IoClose size={window.innerWidth > 768 ? 20 : 18} />
                         </button>
                     </div>
                     <div style={styles.modalBody}>
