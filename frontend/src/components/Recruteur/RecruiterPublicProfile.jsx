@@ -65,7 +65,6 @@ function RecruiterPublicProfile() {
 
       const result = await res.json()
       alert(result.message || "Inscription réussie !")
-      e.target.reset()
     } catch (err) {
       console.error("Erreur:", err)
       alert("Erreur lors de l inscription.")
@@ -92,12 +91,11 @@ function RecruiterPublicProfile() {
 
   return (
     <>
-      <style>{responsiveStyles}</style>
       <Navbar />
       <div style={pageStyles.container}>
-        <div style={pageStyles.profileCard} className="profile-card">
+        <div style={pageStyles.profileCard}>
           {/* Header Section */}
-          <div style={pageStyles.headerSection} className="header-section">
+          <div style={pageStyles.headerSection}>
             <div
               style={{
                 ...pageStyles.coverImageLayer,
@@ -110,9 +108,9 @@ function RecruiterPublicProfile() {
             <div style={pageStyles.gradientOverlay}></div>
             <div style={pageStyles.premiumPattern}></div>
 
-            <div style={pageStyles.headerContent} className="header-content">
-              <div style={pageStyles.profileSection} className="profile-section">
-                <div style={pageStyles.profileImageContainer} className="profile-image-container">
+            <div style={pageStyles.headerContent}>
+              <div style={pageStyles.profileSection}>
+                <div style={pageStyles.profileImageContainer}>
                   <div style={pageStyles.profileImageBorder}>
                     <img
                       src={
@@ -122,26 +120,21 @@ function RecruiterPublicProfile() {
                       }
                       alt="Recruiter Profile"
                       style={pageStyles.profileImage}
-                      className="profile-image"
                     />
                   </div>
-                  <div style={pageStyles.statusBadge} className="status-badge">
+                  <div style={pageStyles.statusBadge}>
                     <div style={pageStyles.statusDot}></div>
                     ACTIF
                   </div>
                 </div>
 
-                <div style={pageStyles.headerInfo} className="header-info">
+                <div style={pageStyles.headerInfo}>
                   <div style={pageStyles.companyBadge}>ENTREPRISE CERTIFIÉE</div>
-                  <h1 style={pageStyles.companyName} className="company-name">
-                    {profile.companyName}
-                  </h1>
-                  <p style={pageStyles.companyTitle} className="company-title">
-                    {profile.company_title}
-                  </p>
+                  <h1 style={pageStyles.companyName}>{profile.companyName}</h1>
+                  <p style={pageStyles.companyTitle}>{profile.company_title}</p>
 
                   {(profile.selected_domains || []).length > 0 && (
-                    <div style={pageStyles.headerDomainsContainer} className="header-domains">
+                    <div style={pageStyles.headerDomainsContainer}>
                       {(profile.selected_domains || []).map((domain, index) => (
                         <div key={index} style={pageStyles.headerDomainTag}>
                           {domain}
@@ -155,8 +148,8 @@ function RecruiterPublicProfile() {
           </div>
 
           {/* Main Content */}
-          <div style={pageStyles.mainContent} className="main-content">
-            <div style={pageStyles.leftColumn} className="left-column">
+          <div style={pageStyles.mainContent}>
+            <div style={pageStyles.leftColumn}>
               {/* Contact Information */}
               <div style={pageStyles.card}>
                 <div style={pageStyles.cardHeader} onClick={() => setShowInfos(!showInfos)}>
@@ -203,7 +196,7 @@ function RecruiterPublicProfile() {
                     <h3 style={pageStyles.cardTitle}>Statistiques des offres</h3>
                   </div>
                   <div style={pageStyles.cardContent}>
-                    <div style={pageStyles.statsGrid} className="stats-grid">
+                    <div style={pageStyles.statsGrid}>
                       <div style={pageStyles.statItem}>
                         <div style={pageStyles.statNumber}>{jobStats.total}</div>
                         <div style={pageStyles.statLabel}>Total</div>
@@ -222,7 +215,7 @@ function RecruiterPublicProfile() {
               )}
             </div>
 
-            <div style={pageStyles.rightColumn} className="right-column">
+            <div style={pageStyles.rightColumn}>
               {/* About Section */}
               <div style={pageStyles.card}>
                 <div style={pageStyles.cardHeader} onClick={() => setShowAbout(!showAbout)}>
@@ -258,10 +251,10 @@ function RecruiterPublicProfile() {
                   <p style={pageStyles.emptyText}>Aucune offre disponible pour le moment</p>
                 </div>
               ) : (
-                <div style={pageStyles.jobsGrid} className="jobs-grid">
+                <div style={pageStyles.jobsGrid}>
                   {jobOffers.map((job) => (
-                    <div key={job.id} style={pageStyles.jobGridCard} className="job-card">
-                      <div style={pageStyles.jobGridHeader} className="job-header">
+                    <div key={job.id} style={pageStyles.jobGridCard}>
+                      <div style={pageStyles.jobGridHeader}>
                         <h4 style={pageStyles.jobGridTitle}>{job.title}</h4>
                         <span style={pageStyles.jobGridDate}>
                           {new Date(job.posted_at).toLocaleDateString("fr-FR")}
@@ -296,179 +289,52 @@ function RecruiterPublicProfile() {
           </div>
         </div>
 
-        {/* Newsletter Section - Enhanced and Responsive */}
-        <div style={pageStyles.newsletterSection} className="newsletter-section">
-          <div style={pageStyles.newsletterContainer} className="newsletter-container">
-            {/* Background Elements */}
-            <div style={pageStyles.newsletterBgPattern}></div>
-            <div style={pageStyles.newsletterBgCircle1}></div>
-            <div style={pageStyles.newsletterBgCircle2}></div>
+        {/* Newsletter Section */}
+        <div style={pageStyles.newsletterSection}>
+          <div style={pageStyles.newsletterContainer}>
+            <div style={pageStyles.newsletterSubtitle}>Restez connecté</div>
+            <h2 style={pageStyles.newsletterTitle}>Ne manquez aucune opportunité</h2>
+            <p style={pageStyles.newsletterText}>
+              Recevez les dernières offres d'emploi, actualités du secteur et conseils carrière directement dans votre
+              boîte mail.
+            </p>
 
-            {/* Main Content */}
-            <div style={pageStyles.newsletterContent} className="newsletter-content">
-              {/* Left Side - Text Content */}
-              <div style={pageStyles.newsletterTextSection} className="newsletter-text">
-                <div style={pageStyles.newsletterBadge}>
-                  <span style={pageStyles.newsletterBadgeIcon}>📧</span>
-                  Newsletter Exclusive
-                </div>
+            <form style={pageStyles.newsletterForm} onSubmit={handleSubmit}>
+              <input
+                type="email"
+                name="email"
+                placeholder="Entrez votre adresse email"
+                style={pageStyles.newsletterInput}
+                required
+              />
+              <button
+                type="submit"
+                style={pageStyles.newsletterButton}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = "#e05a28"
+                  e.target.style.transform = "scale(1.02)"
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = "#ff6b35"
+                  e.target.style.transform = "scale(1)"
+                }}
+              >
+                S'abonner
+              </button>
+            </form>
 
-                <h2 style={pageStyles.newsletterMainTitle} className="newsletter-title">
-                  Transformez votre
-                  <span style={pageStyles.newsletterHighlight}> carrière </span>
-                  avec nous
-                </h2>
-
-                <div style={pageStyles.newsletterDescription} className="newsletter-description">
-                  <p style={{ margin: "0 0 20px 0" }}>
-                    Rejoignez plus de <strong>10,000+ professionnels</strong> qui reçoivent nos conseils exclusifs,
-                    opportunités premium et insights du marché de l'emploi directement dans leur boîte mail.
-                  </p>
-
-                  {/* Additional text content area - easily customizable */}
-                  <div style={pageStyles.additionalContent}>
-                    <p style={{ margin: "0 0 15px 0", fontSize: "1rem", lineHeight: "1.6" }}>
-                      Notre newsletter vous donne accès à des informations privilégiées sur les tendances du marché, des
-                      conseils d'experts en recrutement, et des opportunités exclusives avant qu'elles ne soient
-                      publiées publiquement.
-                    </p>
-                    <p style={{ margin: "0", fontSize: "0.95rem", color: "#aaa" }}>
-                      Restez à la pointe de votre secteur avec nos analyses approfondies et nos recommandations
-                      personnalisées.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Benefits Grid */}
-                <div style={pageStyles.benefitsGrid} className="benefits-grid">
-                  <div style={pageStyles.benefitItem} className="benefit-item">
-                    <div style={pageStyles.benefitIcon}>🎯</div>
-                    <div>
-                      <h4 style={pageStyles.benefitTitle}>Offres Ciblées</h4>
-                      <p style={pageStyles.benefitText}>Opportunités personnalisées selon votre profil</p>
-                    </div>
-                  </div>
-
-                  <div style={pageStyles.benefitItem} className="benefit-item">
-                    <div style={pageStyles.benefitIcon}>⚡</div>
-                    <div>
-                      <h4 style={pageStyles.benefitTitle}>Accès Prioritaire</h4>
-                      <p style={pageStyles.benefitText}>Soyez les premiers informés des nouvelles offres</p>
-                    </div>
-                  </div>
-
-                  <div style={pageStyles.benefitItem} className="benefit-item">
-                    <div style={pageStyles.benefitIcon}>📈</div>
-                    <div>
-                      <h4 style={pageStyles.benefitTitle}>Conseils Expert</h4>
-                      <p style={pageStyles.benefitText}>Tips carrière et tendances du marché</p>
-                    </div>
-                  </div>
-
-                  <div style={pageStyles.benefitItem} className="benefit-item">
-                    <div style={pageStyles.benefitIcon}>🔒</div>
-                    <div>
-                      <h4 style={pageStyles.benefitTitle}>100% Gratuit</h4>
-                      <p style={pageStyles.benefitText}>Aucun spam, désabonnement en 1 clic</p>
-                    </div>
-                  </div>
-                </div>
+            <div style={pageStyles.newsletterFeatures}>
+              <div style={pageStyles.newsletterFeature}>
+                <div style={pageStyles.newsletterFeatureIcon}>✓</div>
+                <span>Offres exclusives</span>
               </div>
-
-              {/* Right Side - Form Card */}
-              <div style={pageStyles.newsletterFormCard} className="newsletter-form-card">
-                <div style={pageStyles.formCardHeader}>
-                  <h3 style={pageStyles.formCardTitle}>Rejoignez-nous maintenant</h3>
-                  <p style={pageStyles.formCardSubtitle}>Inscription gratuite en 30 secondes</p>
-
-                  {/* Additional form text content */}
-                  <div style={pageStyles.formAdditionalText}>
-                    <p
-                      style={{
-                        fontSize: "0.9rem",
-                        color: "#bbb",
-                        margin: "15px 0 0 0",
-                        lineHeight: "1.4",
-                      }}
-                    >
-                      Recevez chaque semaine une sélection personnalisée d'opportunités et de conseils adaptés à votre
-                      profil professionnel.
-                    </p>
-                  </div>
-                </div>
-
-                <form style={pageStyles.modernForm} onSubmit={handleSubmit}>
-                  <div style={pageStyles.inputGroup}>
-                    <div style={pageStyles.inputIcon}>✉️</div>
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="votre.email@exemple.com"
-                      style={pageStyles.modernInput}
-                      className="modern-input"
-                      required
-                    />
-                    {/* Input helper text */}
-                    <div style={pageStyles.inputHelperText}>
-                      Nous respectons votre vie privée et ne partageons jamais vos données
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    style={pageStyles.modernButton}
-                    className="modern-button"
-                    onMouseEnter={(e) => {
-                      e.target.style.background = "linear-gradient(135deg, #e05a28 0%, #ff8c42 100%)"
-                      e.target.style.transform = "translateY(-3px)"
-                      e.target.style.boxShadow = "0 15px 35px rgba(255, 107, 53, 0.4)"
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.background = "linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)"
-                      e.target.style.transform = "translateY(0)"
-                      e.target.style.boxShadow = "0 8px 25px rgba(255, 107, 53, 0.3)"
-                    }}
-                  >
-                    <span style={pageStyles.buttonText}>S'abonner gratuitement</span>
-                    <span style={pageStyles.buttonIcon}>→</span>
-                  </button>
-                </form>
-
-                {/* Trust Indicators */}
-                <div style={pageStyles.trustIndicators}>
-                  <div style={pageStyles.trustItem}>
-                    <span style={pageStyles.trustIcon}>✓</span>
-                    <span style={pageStyles.trustText}>Pas de spam</span>
-                  </div>
-                  <div style={pageStyles.trustItem}>
-                    <span style={pageStyles.trustIcon}>✓</span>
-                    <span style={pageStyles.trustText}>Désabonnement facile</span>
-                  </div>
-                  <div style={pageStyles.trustItem}>
-                    <span style={pageStyles.trustIcon}>✓</span>
-                    <span style={pageStyles.trustText}>Données sécurisées</span>
-                  </div>
-                </div>
+              <div style={pageStyles.newsletterFeature}>
+                <div style={pageStyles.newsletterFeatureIcon}>✓</div>
+                <span>Conseils carrière</span>
               </div>
-            </div>
-
-            {/* Stats Section */}
-            <div style={pageStyles.statsSection} className="stats-section">
-              <div style={pageStyles.statCard}>
-                <div style={pageStyles.statNumber}>10K+</div>
-                <div style={pageStyles.statLabel}>Abonnés actifs</div>
-              </div>
-              <div style={pageStyles.statCard}>
-                <div style={pageStyles.statNumber}>95%</div>
-                <div style={pageStyles.statLabel}>Taux de satisfaction</div>
-              </div>
-              <div style={pageStyles.statCard}>
-                <div style={pageStyles.statNumber}>500+</div>
-                <div style={pageStyles.statLabel}>Offres par mois</div>
-              </div>
-              <div style={pageStyles.statCard}>
-                <div style={pageStyles.statNumber}>24h</div>
-                <div style={pageStyles.statLabel}>Temps de réponse</div>
+              <div style={pageStyles.newsletterFeature}>
+                <div style={pageStyles.newsletterFeatureIcon}>✓</div>
+                <span>Actualités secteur</span>
               </div>
             </div>
           </div>
@@ -526,16 +392,6 @@ const pageStyles = {
     fontSize: "1rem",
     color: "#ccc",
     fontWeight: "400",
-  },
-  errorMessage: {
-    minHeight: "100vh",
-    backgroundColor: "#0a0a0a",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#ff6b35",
-    fontSize: "1.5rem",
-    fontWeight: "600",
   },
 
   container: {
@@ -606,7 +462,7 @@ const pageStyles = {
     alignItems: "center",
     gap: "40px",
     flexWrap: "wrap",
-    justifyContent: "center",
+    justifyContent: "center", // Centrer sur mobile
   },
 
   profileImageContainer: {
@@ -614,7 +470,7 @@ const pageStyles = {
     flexShrink: 0,
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
+    alignItems: "center", // Centrer la photo
   },
 
   profileImageBorder: {
@@ -662,7 +518,7 @@ const pageStyles = {
     color: "white",
     flex: 1,
     minWidth: "300px",
-    textAlign: "center",
+    textAlign: "center", // Centrer le texte sur mobile
   },
 
   companyBadge: {
@@ -703,7 +559,6 @@ const pageStyles = {
     flexWrap: "wrap",
     gap: "12px",
     marginTop: "5px",
-    justifyContent: "center",
   },
 
   headerDomainTag: {
@@ -927,9 +782,123 @@ const pageStyles = {
     padding: "10px 0",
   },
 
+  newsletterSection: {
+    backgroundColor: "#000",
+    padding: "80px 40px",
+    textAlign: "center",
+    position: "relative",
+    borderTop: "2px solid #ff6b35",
+    background: "linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%)",
+  },
+
+  newsletterContainer: {
+    maxWidth: "800px",
+    margin: "0 auto",
+  },
+
+  newsletterTitle: {
+    color: "#fff",
+    fontSize: "clamp(1.8rem, 5vw, 2.5rem)",
+    fontWeight: "900",
+    marginBottom: "15px",
+    letterSpacing: "-0.02em",
+    background: "linear-gradient(135deg, #ffffff 0%, #ff6b35 100%)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    backgroundClip: "text",
+  },
+
+  newsletterSubtitle: {
+    color: "#ff6b35",
+    fontSize: "1.1rem",
+    fontWeight: "600",
+    marginBottom: "10px",
+    textTransform: "uppercase",
+    letterSpacing: "2px",
+  },
+
+  newsletterText: {
+    color: "#ccc",
+    fontSize: "clamp(1rem, 3vw, 1.2rem)",
+    marginBottom: "40px",
+    lineHeight: "1.6",
+    maxWidth: "600px",
+    margin: "0 auto 40px auto",
+  },
+
+  newsletterForm: {
+    display: "flex",
+    maxWidth: "500px",
+    margin: "0 auto",
+    gap: "0",
+    borderRadius: "50px",
+    border: "2px solid #404040",
+    overflow: "hidden",
+    backgroundColor: "#1a1a1a",
+    transition: "all 0.3s ease",
+    flexWrap: "wrap",
+  },
+
+  newsletterInput: {
+    flex: 1,
+    minWidth: "250px",
+    padding: "18px 25px",
+    border: "none",
+    backgroundColor: "transparent",
+    color: "#fff",
+    fontSize: "1rem",
+    fontWeight: "500",
+    outline: "none",
+  },
+
+  newsletterButton: {
+    padding: "18px 30px",
+    backgroundColor: "#ff6b35",
+    color: "#fff",
+    border: "none",
+    fontWeight: "700",
+    fontSize: "1rem",
+    fontFamily: "inherit",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    textTransform: "uppercase",
+    letterSpacing: "1px",
+    minWidth: "120px",
+  },
+
+  newsletterFeatures: {
+    display: "flex",
+    justifyContent: "center",
+    gap: "40px",
+    marginTop: "50px",
+    flexWrap: "wrap",
+  },
+
+  newsletterFeature: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    color: "#ccc",
+    fontSize: "0.95rem",
+    fontWeight: "500",
+  },
+
+  newsletterFeatureIcon: {
+    width: "20px",
+    height: "20px",
+    backgroundColor: "#ff6b35",
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "12px",
+    fontWeight: "800",
+    color: "#000",
+  },
+
   emptyState: {
     textAlign: "center",
-    padding: "40px 20px",
+    padding: "50px 20px",
   },
 
   emptyText: {
@@ -938,538 +907,76 @@ const pageStyles = {
     margin: 0,
   },
 
-  // Newsletter Section - Enhanced and Responsive
-  newsletterSection: {
+  errorMessage: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: "60vh",
+    fontSize: "1.3rem",
+    color: "#ff6b35",
+    fontWeight: "500",
     backgroundColor: "#0a0a0a",
-    padding: "100px 40px",
-    position: "relative",
-    overflow: "hidden",
-    borderTop: "1px solid #333",
-  },
-
-  newsletterContainer: {
-    maxWidth: "1200px",
-    margin: "0 auto",
-    position: "relative",
-    zIndex: 2,
-  },
-
-  newsletterBgPattern: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    background: `
-      radial-gradient(circle at 20% 20%, rgba(255, 107, 53, 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 80% 80%, rgba(255, 140, 66, 0.03) 0%, transparent 50%),
-      linear-gradient(135deg, transparent 0%, rgba(255, 107, 53, 0.02) 50%, transparent 100%)
-    `,
-    zIndex: 1,
-  },
-
-  newsletterBgCircle1: {
-    position: "absolute",
-    top: "-100px",
-    right: "-100px",
-    width: "300px",
-    height: "300px",
-    borderRadius: "50%",
-    background: "radial-gradient(circle, rgba(255, 107, 53, 0.1) 0%, transparent 70%)",
-    filter: "blur(40px)",
-    zIndex: 1,
-  },
-
-  newsletterBgCircle2: {
-    position: "absolute",
-    bottom: "-150px",
-    left: "-150px",
-    width: "400px",
-    height: "400px",
-    borderRadius: "50%",
-    background: "radial-gradient(circle, rgba(255, 140, 66, 0.08) 0%, transparent 70%)",
-    filter: "blur(60px)",
-    zIndex: 1,
-  },
-
-  newsletterContent: {
-    display: "grid",
-    gridTemplateColumns: "1fr 400px",
-    gap: "60px",
-    alignItems: "start",
-    marginBottom: "80px",
-  },
-
-  newsletterTextSection: {
-    color: "#fff",
-  },
-
-  newsletterBadge: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "8px",
-    backgroundColor: "rgba(255, 107, 53, 0.1)",
-    border: "1px solid rgba(255, 107, 53, 0.3)",
-    padding: "8px 16px",
-    borderRadius: "25px",
-    fontSize: "0.9rem",
-    fontWeight: "600",
-    color: "#ff6b35",
-    marginBottom: "20px",
-    backdropFilter: "blur(10px)",
-  },
-
-  newsletterBadgeIcon: {
-    fontSize: "1.1rem",
-  },
-
-  newsletterMainTitle: {
-    fontSize: "clamp(2.5rem, 5vw, 3.5rem)",
-    fontWeight: "900",
-    lineHeight: "1.1",
-    marginBottom: "20px",
-    color: "#fff",
-  },
-
-  newsletterHighlight: {
-    background: "linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
-  },
-
-  newsletterDescription: {
-    fontSize: "1.1rem",
-    lineHeight: "1.6",
-    color: "#ccc",
-    marginBottom: "40px",
-  },
-
-  additionalContent: {
-    marginTop: "20px",
-    padding: "20px",
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
-    borderRadius: "12px",
-    border: "1px solid rgba(255, 255, 255, 0.05)",
-  },
-
-  benefitsGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(2, 1fr)",
-    gap: "20px",
-  },
-
-  benefitItem: {
-    display: "flex",
-    alignItems: "flex-start",
-    gap: "15px",
-    padding: "20px",
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
-    borderRadius: "12px",
-    border: "1px solid rgba(255, 255, 255, 0.05)",
-    transition: "all 0.3s ease",
-  },
-
-  benefitIcon: {
-    fontSize: "1.5rem",
-    width: "40px",
-    height: "40px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255, 107, 53, 0.1)",
-    borderRadius: "10px",
-    flexShrink: 0,
-  },
-
-  benefitTitle: {
-    fontSize: "1rem",
-    fontWeight: "700",
-    color: "#fff",
-    margin: "0 0 5px 0",
-  },
-
-  benefitText: {
-    fontSize: "0.9rem",
-    color: "#999",
-    margin: 0,
-    lineHeight: "1.4",
-  },
-
-  newsletterFormCard: {
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
-    backdropFilter: "blur(20px)",
-    border: "1px solid rgba(255, 255, 255, 0.1)",
-    borderRadius: "20px",
-    padding: "40px",
-    boxShadow: "0 20px 40px rgba(0, 0, 0, 0.3)",
-  },
-
-  formCardHeader: {
-    textAlign: "center",
-    marginBottom: "30px",
-  },
-
-  formCardTitle: {
-    fontSize: "1.5rem",
-    fontWeight: "800",
-    color: "#fff",
-    margin: "0 0 8px 0",
-  },
-
-  formCardSubtitle: {
-    fontSize: "0.95rem",
-    color: "#999",
-    margin: 0,
-  },
-
-  formAdditionalText: {
-    marginTop: "15px",
-  },
-
-  modernForm: {
-    marginBottom: "25px",
-  },
-
-  inputGroup: {
-    position: "relative",
-    marginBottom: "20px",
-  },
-
-  inputIcon: {
-    position: "absolute",
-    left: "15px",
-    top: "50%",
-    transform: "translateY(-50%)",
-    fontSize: "1.1rem",
-    zIndex: 2,
-  },
-
-  modernInput: {
-    width: "100%",
-    padding: "16px 16px 16px 50px",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    border: "2px solid rgba(255, 255, 255, 0.1)",
-    borderRadius: "12px",
-    color: "#fff",
-    fontSize: "1rem",
-    fontWeight: "500",
-    outline: "none",
-    transition: "all 0.3s ease",
-    boxSizing: "border-box",
-  },
-
-  inputHelperText: {
-    fontSize: "0.8rem",
-    color: "#888",
-    marginTop: "8px",
-    lineHeight: "1.3",
-  },
-
-  modernButton: {
-    width: "100%",
-    padding: "16px 24px",
-    background: "linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)",
-    border: "none",
-    borderRadius: "12px",
-    color: "#fff",
-    fontSize: "1rem",
-    fontWeight: "700",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "10px",
-    boxShadow: "0 8px 25px rgba(255, 107, 53, 0.3)",
-    textTransform: "none",
-    letterSpacing: "0.5px",
-  },
-
-  buttonText: {
-    flex: 1,
-  },
-
-  buttonIcon: {
-    fontSize: "1.2rem",
-    transition: "transform 0.3s ease",
-  },
-
-  trustIndicators: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-  },
-
-  trustItem: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    fontSize: "0.85rem",
-    color: "#999",
-  },
-
-  trustIcon: {
-    color: "#4ade80",
-    fontWeight: "bold",
-  },
-
-  trustText: {
-    color: "#ccc",
-  },
-
-  statsSection: {
-    display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
-    gap: "30px",
-    padding: "40px 0",
-    borderTop: "1px solid rgba(255, 255, 255, 0.1)",
-  },
-
-  statCard: {
     textAlign: "center",
     padding: "20px",
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
-    borderRadius: "12px",
-    border: "1px solid rgba(255, 255, 255, 0.05)",
-  },
-
-  statNumber: {
-    fontSize: "2rem",
-    fontWeight: "900",
-    color: "#ff6b35",
-    marginBottom: "5px",
-  },
-
-  statLabel: {
-    fontSize: "0.9rem",
-    color: "#999",
-    fontWeight: "500",
   },
 }
 
-// Responsive CSS styles
-const responsiveStyles = `
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-/* Tablet Styles */
-@media (max-width: 1024px) {
-  .newsletter-content {
-    grid-template-columns: 1fr !important;
-    gap: 40px !important;
+// Ajout des animations CSS via une balise style
+const styleSheet = document.createElement("style")
+styleSheet.type = "text/css"
+styleSheet.innerText = `
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
   
-  .benefits-grid {
-    grid-template-columns: 1fr !important;
-    gap: 15px !important;
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
   }
   
-  .stats-section {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 20px !important;
+  @media (max-width: 768px) {
+    .profileSection {
+      flex-direction: column !important;
+      text-align: center !important;
+      gap: 25px !important;
+      align-items: center !important;
+    }
+    
+    .headerContent {
+      padding: 30px 20px !important;
+      text-align: center !important;
   }
   
-  .main-content {
-    padding: 40px 30px 50px !important;
-  }
-  
-  .left-column, .right-column {
-    flex: 1 1 100% !important;
-    min-width: auto !important;
-  }
-}
-
-/* Mobile Styles */
-@media (max-width: 768px) {
-  .profile-card {
-    margin: 0 10px !important;
-    border-radius: 15px !important;
-  }
-  
-  .header-section {
-    height: 300px !important;
-  }
-  
-  .header-content {
-    padding: 30px 20px !important;
-  }
-  
-  .profile-section {
-    flex-direction: column !important;
-    gap: 25px !important;
-    text-align: center !important;
-  }
-  
-  .profile-image {
-    width: 120px !important;
-    height: 120px !important;
-  }
-  
-  .status-badge {
-    bottom: 5px !important;
-    right: 5px !important;
-    padding: 6px 12px !important;
-    font-size: 0.6rem !important;
-  }
-  
-  .company-name {
-    font-size: 2rem !important;
-  }
-  
-  .company-title {
-    font-size: 1.1rem !important;
-  }
-  
-  .header-domains {
-    justify-content: center !important;
-  }
-  
-  .main-content {
-    padding: 30px 20px 40px !important;
-    gap: 25px !important;
-  }
-  
-  .jobs-grid {
-    grid-template-columns: 1fr !important;
-    gap: 15px !important;
-  }
-  
-  .job-card {
-    padding: 15px !important;
-  }
-  
-  .job-header {
-    flex-direction: column !important;
-    gap: 10px !important;
-    align-items: flex-start !important;
-  }
-  
-  .stats-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 15px !important;
-  }
-  
-  /* Newsletter Mobile Styles */
-  .newsletter-section {
-    padding: 60px 20px !important;
-  }
-  
-  .newsletter-container {
-    max-width: 100% !important;
-  }
-  
-  .newsletter-content {
-    margin-bottom: 50px !important;
-  }
-  
-  .newsletter-title {
-    font-size: 2.2rem !important;
-    line-height: 1.2 !important;
-  }
-  
-  .newsletter-description {
-    font-size: 1rem !important;
-    margin-bottom: 30px !important;
-  }
-  
-  .newsletter-form-card {
-    padding: 30px 20px !important;
-    border-radius: 15px !important;
-  }
-  
-  .benefit-item {
-    padding: 15px !important;
-    flex-direction: row !important;
-    text-align: left !important;
-  }
-  
-  .stats-section {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 15px !important;
-    padding: 30px 0 !important;
-  }
-}
-
-/* Small Mobile Styles */
-@media (max-width: 480px) {
-  .newsletter-section {
-    padding: 40px 15px !important;
-  }
-  
-  .newsletter-form-card {
-    padding: 25px 15px !important;
-  }
-  
-  .stats-section {
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
-  }
-  
-  .newsletter-title {
-    font-size: 1.8rem !important;
-  }
-  
-  .modern-input {
-    padding: 14px 14px 14px 45px !important;
-    font-size: 0.95rem !important;
-  }
-  
-  .modern-button {
-    padding: 14px 20px !important;
-    font-size: 0.95rem !important;
-  }
-  
-  .benefit-icon {
-    width: 35px !important;
-    height: 35px !important;
-    font-size: 1.3rem !important;
-  }
-  
-  .profile-image {
+  .profileImage {
     width: 100px !important;
     height: 100px !important;
   }
   
-  .status-badge {
+  .statusBadge {
     bottom: 2px !important;
     right: 2px !important;
     padding: 4px 8px !important;
     font-size: 0.55rem !important;
   }
   
-  .main-content {
-    padding: 25px 15px 35px !important;
+  .headerInfo {
+    text-align: center !important;
   }
   
-  .stats-grid {
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
+  .companyName {
+    text-align: center !important;
+  }
+  
+  .companyTitle {
+    text-align: center !important;
+  }
+  
+  .headerDomainsContainer {
+    justify-content: center !important;
   }
 }
-
-/* Focus and Hover States */
-.modern-input:focus {
-  border-color: #ff6b35 !important;
-  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1) !important;
-}
-
-.benefit-item:hover {
-  background-color: rgba(255, 255, 255, 0.05) !important;
-  border-color: rgba(255, 107, 53, 0.2) !important;
-}
-
-.job-card:hover {
-  border-color: rgba(255, 107, 53, 0.5) !important;
-  transform: translateY(-2px) !important;
-}
 `
+document.head.appendChild(styleSheet)
 
 export default RecruiterPublicProfile
