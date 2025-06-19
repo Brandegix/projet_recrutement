@@ -1,70 +1,176 @@
-import React from 'react';
-import { MapPin, Calendar } from 'lucide-react';
+const JobCard = ({ job }) => {
+  const navigate = useNavigate();
+  const handleApplyClick = () => {
+    navigate('/login/candidat');
+  };
 
-export default function MobileJobCard() {
   return (
-    <div className="max-w-sm mx-auto bg-gray-900 text-white rounded-2xl overflow-hidden shadow-lg">
-      {/* Header with image and company info */}
-      <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-4 flex items-center space-x-3">
-        <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
-          <div className="w-8 h-8 bg-gradient-to-br from-teal-500 to-teal-600 rounded transform rotate-45 relative">
-            <div className="absolute inset-1 bg-white rounded-sm transform -rotate-45"></div>
+    <div style={{
+      background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
+      border: '1px solid #333',
+      borderRadius: '20px',
+      padding: '0',
+      marginBottom: '20px',
+      transition: 'all 0.3s ease',
+      cursor: 'pointer',
+      position: 'relative',
+      overflow: 'hidden'
+    }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.transform = 'translateY(-5px)';
+      e.currentTarget.style.boxShadow = '0 20px 40px rgba(255, 107, 53, 0.1)';
+      e.currentTarget.style.borderColor = '#ff6b35';
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.transform = 'translateY(0)';
+      e.currentTarget.style.boxShadow = 'none';
+      e.currentTarget.style.borderColor = '#333';
+    }}>
+      
+      {/* Header with gradient background and logo */}
+      <div style={{
+        background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
+        padding: '3px',
+        borderRadius: '20px 20px 0 0'
+      }}>
+        <div style={{
+          background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
+          padding: '20px',
+          borderRadius: '17px 17px 0 0',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', flex: 1 }}>
+            <div style={{
+              width: '60px',
+              height: '60px',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              border: '2px solid #333',
+              flexShrink: 0
+            }}>
+              <img
+                src={job.logo && job.logo.startsWith("http")
+                  ? job.logo
+                  : "https://dummyimage.com/60x60/333/fff.png&text=" + (job.company ? job.company.charAt(0) : 'C')}
+                alt={job.logo ? "Logo de l'entreprise" : "Logo par défaut"}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }}
+              />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <h3 style={{
+                color: '#ffffff',
+                fontSize: '1.3rem',
+                fontWeight: '600',
+                margin: '0 0 5px 0',
+                lineHeight: '1.3'
+              }}>
+                {job.title}
+              </h3>
+              <p style={{
+                color: '#cccccc',
+                fontSize: '1rem',
+                margin: '0',
+                fontWeight: '500'
+              }}>
+                {job.company}
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="flex-1 min-w-0">
-          <h1 className="text-lg font-bold text-white truncate">
-            Développeur Web React
-          </h1>
-          <p className="text-orange-100 text-sm">Brandegix</p>
-        </div>
-        <div className="bg-orange-700 bg-opacity-50 px-2 py-1 rounded-full">
-          <span className="text-xs font-medium text-white">CDI</span>
+          
+          <span style={{
+            background: 'rgba(255, 107, 53, 0.1)',
+            color: '#ff6b35',
+            padding: '6px 15px',
+            borderRadius: '20px',
+            fontSize: '0.85rem',
+            fontWeight: '600',
+            border: '1px solid rgba(255, 107, 53, 0.3)',
+            flexShrink: 0,
+            marginLeft: '10px'
+          }}>
+            {job.type}
+          </span>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-4">
-        {/* Location and Experience */}
-        <div className="flex items-center justify-between text-sm text-gray-300">
-          <div className="flex items-center space-x-1">
-            <MapPin className="w-4 h-4 text-orange-400" />
-            <span>Casablanca</span>
+      <div style={{ padding: '25px' }}>
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', marginBottom: '15px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#cccccc' }}>
+              <FaMapMarkerAlt style={{ color: '#ff6b35' }} />
+              <span>{job.location}</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#cccccc' }}>
+              <FaBriefcase style={{ color: '#ff6b35' }} />
+              <span>{job.experience}</span>
+            </div>
           </div>
-          <div className="flex items-center space-x-1">
-            <Calendar className="w-4 h-4 text-orange-400" />
-            <span>2+ ans</span>
-          </div>
-        </div>
-
-        {/* Job Description */}
-        <div className="text-gray-300 text-sm leading-relaxed">
-          <p>
-            Nous recherchons un développeur Front-End spécialisé en React.js pour rejoindre 
-            une équipe dynamique à Casablanca...
+          
+          <p style={{
+            color: '#aaaaaa',
+            fontSize: '0.95rem',
+            lineHeight: '1.6',
+            margin: '0 0 15px 0',
+            overflow: 'hidden',
+            display: '-webkit-box',
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: 'vertical',
+          }}>
+            {job.description}
           </p>
+          
+          {job.skills && job.skills.length > 0 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '20px' }}>
+              {job.skills.map((skill, index) => (
+                <span key={index} style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  color: '#ffffff',
+                  padding: '4px 12px',
+                  borderRadius: '15px',
+                  fontSize: '0.8rem',
+                  border: '1px solid rgba(255, 255, 255, 0.1)'
+                }}>
+                  {skill}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Skills Tags */}
-        <div className="flex flex-wrap gap-2">
-          <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-xs">
-            React.js
-          </span>
-          <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-xs">
-            JavaScript
-          </span>
-          <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-xs">
-            HTML/CSS
-          </span>
-          <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-xs">
-            REST API
-          </span>
-        </div>
-
-        {/* Wide Apply Button */}
-        <button className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]">
+        {/* Wide Apply Button - salary removed */}
+        <button 
+          onClick={handleApplyClick}
+          style={{
+            background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
+            color: '#ffffff',
+            border: 'none',
+            padding: '15px 25px',
+            borderRadius: '25px',
+            fontSize: '1rem',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            width: '100%'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 10px 20px rgba(255, 107, 53, 0.3)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
           Postuler
         </button>
       </div>
     </div>
   );
-}
+};
