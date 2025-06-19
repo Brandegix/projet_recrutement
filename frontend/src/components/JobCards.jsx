@@ -1,3 +1,8 @@
+import React, { useState, useEffect } from 'react';
+import { FaMapMarkerAlt, FaBriefcase, FaSearch, FaFilter, FaChevronLeft, FaChevronRight, FaEllipsisH } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
 const JobCard = ({ job }) => {
   const navigate = useNavigate();
   const handleApplyClick = () => {
