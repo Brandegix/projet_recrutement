@@ -478,6 +478,7 @@ const pageStyles = {
     borderRadius: "50%",
     background: "linear-gradient(135deg, #ff6b35 0%, #ff8c42 50%, #ffa366 100%)",
     boxShadow: `0 0 0 4px rgba(255, 107, 53, 0.2), 0 20px 40px rgba(255, 107, 53, 0.3), inset 0 0 0 2px rgba(255, 255, 255, 0.1)`,
+    marinBottom:-20px,
   },
 
   profileImage: {
