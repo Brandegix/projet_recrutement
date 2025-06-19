@@ -487,20 +487,19 @@ const ChoixRole = () => {
         }
 
         .select-button {
-          width: 100%;
-          padding: 1rem 1.5rem;
-          border: none;
-          border-radius: 12px;
-          font-size: 0.95rem;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          position: relative;
-          overflow: hidden;
-          color: white;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-        }
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  color: white;
+  /* Remove white-space: nowrap to allow text wrapping if needed */
+}
 
         .candidat-button {
           background: linear-gradient(135deg, #ff8c00, #ffa500);
@@ -519,15 +518,15 @@ const ChoixRole = () => {
           transform: translateY(-1px);
         }
 
-        .button-content {
-          position: relative;
-          z-index: 2;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-          width: 100%;
-        }
+.button-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+}
 
         .button-icon {
           margin-left: 0.5rem;
@@ -631,34 +630,40 @@ const ChoixRole = () => {
           }
           
           .select-button {
-            font-size: 0.85rem;
-            padding: 0.8rem 1rem;
-          }
+    font-size: 0.85rem;
+    padding: 0.8rem 1.2rem;
+    height: auto;
+    min-height: 44px;
+  }
+.button-content {
+    gap: 0.35rem; 
+  }
+  
+  .button-icon {
+    font-size: 0.85rem;
+  }
+  
+  .role-features li {
+    font-size: 0.9rem; 
+  }
         }
-        @media (max-width: 360px) {
-  .role-selection-content {
-    padding: 1.5rem 1rem; /* Reduced padding */
+       @media (max-width: 360px) {
+  .select-button {
+    padding: 0.7rem 1rem; /* Further reduced padding */
+    font-size: 0.8rem; /* Smaller font */
   }
   
-  .main-title {
-    font-size: 1.4rem; /* Reduced from 1.5rem */
-    max-width: 100%;
-    word-break: break-word;
-    margin: 0 auto 0.75rem; /* Center with margin */
+  .button-content {
+    gap: 0.25rem; /* Minimum gap */
   }
   
-  .icon-container {
-    width: 50px;
-    height: 50px;
-    margin-bottom: 1.75rem; /* Increased spacing between icon and title */
+  .role-features {
+    margin: 0 0 1.5rem 0; /* Reduced margin before buttons */
   }
   
-  .main-icon {
-    font-size: 1.5rem;
-  }
-  
-  .header-section {
-    margin-bottom: 1.5rem; /* Reduced overall header section margin */
+  .role-features li {
+    padding: 0.4rem 0 0.4rem 1.5rem; /* Adjusted padding */
+    font-size: 0.85rem; /* Smaller text */
   }
 }
       `}</style>
