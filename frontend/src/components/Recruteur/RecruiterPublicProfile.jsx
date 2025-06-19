@@ -289,52 +289,143 @@ function RecruiterPublicProfile() {
           </div>
         </div>
 
-        {/* Newsletter Section */}
+        {/* Newsletter Section - Nouveau Design */}
         <div style={pageStyles.newsletterSection}>
           <div style={pageStyles.newsletterContainer}>
-            <div style={pageStyles.newsletterSubtitle}>Restez connecté</div>
-            <h2 style={pageStyles.newsletterTitle}>Ne manquez aucune opportunité</h2>
-            <p style={pageStyles.newsletterText}>
-              Recevez les dernières offres d'emploi, actualités du secteur et conseils carrière directement dans votre
-              boîte mail.
-            </p>
+            {/* Background Elements */}
+            <div style={pageStyles.newsletterBgPattern}></div>
+            <div style={pageStyles.newsletterBgCircle1}></div>
+            <div style={pageStyles.newsletterBgCircle2}></div>
 
-            <form style={pageStyles.newsletterForm} onSubmit={handleSubmit}>
-              <input
-                type="email"
-                name="email"
-                placeholder="Entrez votre adresse email"
-                style={pageStyles.newsletterInput}
-                required
-              />
-              <button
-                type="submit"
-                style={pageStyles.newsletterButton}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = "#e05a28"
-                  e.target.style.transform = "scale(1.02)"
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = "#ff6b35"
-                  e.target.style.transform = "scale(1)"
-                }}
-              >
-                S'abonner
-              </button>
-            </form>
+            {/* Main Content */}
+            <div style={pageStyles.newsletterContent}>
+              {/* Left Side - Text Content */}
+              <div style={pageStyles.newsletterTextSection}>
+                <div style={pageStyles.newsletterBadge}>
+                  <span style={pageStyles.newsletterBadgeIcon}>📧</span>
+                  Newsletter Exclusive
+                </div>
 
-            <div style={pageStyles.newsletterFeatures}>
-              <div style={pageStyles.newsletterFeature}>
-                <div style={pageStyles.newsletterFeatureIcon}>✓</div>
-                <span>Offres exclusives</span>
+                <h2 style={pageStyles.newsletterMainTitle}>
+                  Transformez votre
+                  <span style={pageStyles.newsletterHighlight}> carrière </span>
+                  avec nous
+                </h2>
+
+                <p style={pageStyles.newsletterDescription}>
+                  Rejoignez plus de <strong>10,000+ professionnels</strong> qui reçoivent nos conseils exclusifs,
+                  opportunités premium et insights du marché de l'emploi directement dans leur boîte mail.
+                </p>
+
+                {/* Benefits Grid */}
+                <div style={pageStyles.benefitsGrid}>
+                  <div style={pageStyles.benefitItem}>
+                    <div style={pageStyles.benefitIcon}>🎯</div>
+                    <div>
+                      <h4 style={pageStyles.benefitTitle}>Offres Ciblées</h4>
+                      <p style={pageStyles.benefitText}>Opportunités personnalisées selon votre profil</p>
+                    </div>
+                  </div>
+
+                  <div style={pageStyles.benefitItem}>
+                    <div style={pageStyles.benefitIcon}>⚡</div>
+                    <div>
+                      <h4 style={pageStyles.benefitTitle}>Accès Prioritaire</h4>
+                      <p style={pageStyles.benefitText}>Soyez les premiers informés des nouvelles offres</p>
+                    </div>
+                  </div>
+
+                  <div style={pageStyles.benefitItem}>
+                    <div style={pageStyles.benefitIcon}>📈</div>
+                    <div>
+                      <h4 style={pageStyles.benefitTitle}>Conseils Expert</h4>
+                      <p style={pageStyles.benefitText}>Tips carrière et tendances du marché</p>
+                    </div>
+                  </div>
+
+                  <div style={pageStyles.benefitItem}>
+                    <div style={pageStyles.benefitIcon}>🔒</div>
+                    <div>
+                      <h4 style={pageStyles.benefitTitle}>100% Gratuit</h4>
+                      <p style={pageStyles.benefitText}>Aucun spam, désabonnement en 1 clic</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div style={pageStyles.newsletterFeature}>
-                <div style={pageStyles.newsletterFeatureIcon}>✓</div>
-                <span>Conseils carrière</span>
+
+              {/* Right Side - Form Card */}
+              <div style={pageStyles.newsletterFormCard}>
+                <div style={pageStyles.formCardHeader}>
+                  <h3 style={pageStyles.formCardTitle}>Rejoignez-nous maintenant</h3>
+                  <p style={pageStyles.formCardSubtitle}>Inscription gratuite en 30 secondes</p>
+                </div>
+
+                <form style={pageStyles.modernForm} onSubmit={handleSubmit}>
+                  <div style={pageStyles.inputGroup}>
+                    <div style={pageStyles.inputIcon}>✉️</div>
+                    <input
+                      type="email"
+                      name="email"
+                      placeholder="votre.email@exemple.com"
+                      style={pageStyles.modernInput}
+                      required
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    style={pageStyles.modernButton}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = "linear-gradient(135deg, #e05a28 0%, #ff8c42 100%)"
+                      e.target.style.transform = "translateY(-3px)"
+                      e.target.style.boxShadow = "0 15px 35px rgba(255, 107, 53, 0.4)"
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = "linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)"
+                      e.target.style.transform = "translateY(0)"
+                      e.target.style.boxShadow = "0 8px 25px rgba(255, 107, 53, 0.3)"
+                    }}
+                  >
+                    <span style={pageStyles.buttonText}>S'abonner gratuitement</span>
+                    <span style={pageStyles.buttonIcon}>→</span>
+                  </button>
+                </form>
+
+                {/* Trust Indicators */}
+                <div style={pageStyles.trustIndicators}>
+                  <div style={pageStyles.trustItem}>
+                    <span style={pageStyles.trustIcon}>✓</span>
+                    <span style={pageStyles.trustText}>Pas de spam</span>
+                  </div>
+                  <div style={pageStyles.trustItem}>
+                    <span style={pageStyles.trustIcon}>✓</span>
+                    <span style={pageStyles.trustText}>Désabonnement facile</span>
+                  </div>
+                  <div style={pageStyles.trustItem}>
+                    <span style={pageStyles.trustIcon}>✓</span>
+                    <span style={pageStyles.trustText}>Données sécurisées</span>
+                  </div>
+                </div>
               </div>
-              <div style={pageStyles.newsletterFeature}>
-                <div style={pageStyles.newsletterFeatureIcon}>✓</div>
-                <span>Actualités secteur</span>
+            </div>
+
+            {/* Stats Section */}
+            <div style={pageStyles.statsSection}>
+              <div style={pageStyles.statCard}>
+                <div style={pageStyles.statNumber}>10K+</div>
+                <div style={pageStyles.statLabel}>Abonnés actifs</div>
+              </div>
+              <div style={pageStyles.statCard}>
+                <div style={pageStyles.statNumber}>95%</div>
+                <div style={pageStyles.statLabel}>Taux de satisfaction</div>
+              </div>
+              <div style={pageStyles.statCard}>
+                <div style={pageStyles.statNumber}>500+</div>
+                <div style={pageStyles.statLabel}>Offres par mois</div>
+              </div>
+              <div style={pageStyles.statCard}>
+                <div style={pageStyles.statNumber}>24h</div>
+                <div style={pageStyles.statLabel}>Temps de réponse</div>
               </div>
             </div>
           </div>
@@ -783,280 +874,291 @@ const pageStyles = {
   },
 
   newsletterSection: {
-    backgroundColor: "#000",
-    padding: "80px 40px",
-    textAlign: "center",
+    backgroundColor: "#0a0a0a",
+    padding: "100px 40px",
     position: "relative",
-    borderTop: "2px solid #ff6b35",
-    background: "linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%)",
+    overflow: "hidden",
+    borderTop: "1px solid #333",
   },
 
   newsletterContainer: {
-    maxWidth: "800px",
+    maxWidth: "1200px",
     margin: "0 auto",
+    position: "relative",
+    zIndex: 2,
   },
 
-  newsletterTitle: {
+  newsletterBgPattern: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    background: `
+    radial-gradient(circle at 20% 20%, rgba(255, 107, 53, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 140, 66, 0.03) 0%, transparent 50%),
+    linear-gradient(135deg, transparent 0%, rgba(255, 107, 53, 0.02) 50%, transparent 100%)
+  `,
+    zIndex: 1,
+  },
+
+  newsletterBgCircle1: {
+    position: "absolute",
+    top: "-100px",
+    right: "-100px",
+    width: "300px",
+    height: "300px",
+    borderRadius: "50%",
+    background: "radial-gradient(circle, rgba(255, 107, 53, 0.1) 0%, transparent 70%)",
+    filter: "blur(40px)",
+    zIndex: 1,
+  },
+
+  newsletterBgCircle2: {
+    position: "absolute",
+    bottom: "-150px",
+    left: "-150px",
+    width: "400px",
+    height: "400px",
+    borderRadius: "50%",
+    background: "radial-gradient(circle, rgba(255, 140, 66, 0.08) 0%, transparent 70%)",
+    filter: "blur(60px)",
+    zIndex: 1,
+  },
+
+  newsletterContent: {
+    display: "grid",
+    gridTemplateColumns: "1fr 400px",
+    gap: "60px",
+    alignItems: "start",
+    marginBottom: "80px",
+  },
+
+  newsletterTextSection: {
     color: "#fff",
-    fontSize: "clamp(1.8rem, 5vw, 2.5rem)",
+  },
+
+  newsletterBadge: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "8px",
+    backgroundColor: "rgba(255, 107, 53, 0.1)",
+    border: "1px solid rgba(255, 107, 53, 0.3)",
+    padding: "8px 16px",
+    borderRadius: "25px",
+    fontSize: "0.9rem",
+    fontWeight: "600",
+    color: "#ff6b35",
+    marginBottom: "20px",
+    backdropFilter: "blur(10px)",
+  },
+
+  newsletterBadgeIcon: {
+    fontSize: "1.1rem",
+  },
+
+  newsletterMainTitle: {
+    fontSize: "clamp(2.5rem, 5vw, 3.5rem)",
     fontWeight: "900",
-    marginBottom: "15px",
-    letterSpacing: "-0.02em",
-    background: "linear-gradient(135deg, #ffffff 0%, #ff6b35 100%)",
+    lineHeight: "1.1",
+    marginBottom: "20px",
+    color: "#fff",
+  },
+
+  newsletterHighlight: {
+    background: "linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
     backgroundClip: "text",
   },
 
-  newsletterSubtitle: {
-    color: "#ff6b35",
+  newsletterDescription: {
     fontSize: "1.1rem",
-    fontWeight: "600",
-    marginBottom: "10px",
-    textTransform: "uppercase",
-    letterSpacing: "2px",
-  },
-
-  newsletterText: {
-    color: "#ccc",
-    fontSize: "clamp(1rem, 3vw, 1.2rem)",
-    marginBottom: "40px",
     lineHeight: "1.6",
-    maxWidth: "600px",
-    margin: "0 auto 40px auto",
-  },
-
-  newsletterForm: {
-    display: "flex",
-    maxWidth: "520px",
-    margin: "0 auto",
-    gap: "0",
-    borderRadius: "50px",
-    border: "2px solid #ff6b35",
-    overflow: "hidden",
-    backgroundColor: "#1a1a1a",
-    transition: "all 0.3s ease",
-    alignItems: "stretch",
-    boxShadow: "0 8px 25px rgba(0, 0, 0, 0.3)",
-  },
-
-  newsletterInput: {
-    flex: 1,
-    minWidth: "280px",
-    padding: "16px 25px",
-    border: "none",
-    backgroundColor: "transparent",
-    color: "#fff",
-    fontSize: "1rem",
-    fontWeight: "400",
-    outline: "none",
-    borderRadius: "50px 0 0 50px",
-  },
-
-  newsletterButton: {
-    padding: "16px 32px",
-    backgroundColor: "#ff6b35",
-    color: "#fff",
-    border: "none",
-    fontWeight: "600",
-    fontSize: "0.95rem",
-    fontFamily: "inherit",
-    cursor: "pointer",
-    transition: "all 0.3s ease",
-    textTransform: "none",
-    letterSpacing: "0.5px",
-    minWidth: "140px",
-    flexShrink: 0,
-    borderRadius: "0 50px 50px 0",
-    position: "relative",
-    overflow: "hidden",
-    boxShadow: "0 4px 15px rgba(255, 107, 53, 0.3)",
-  },
-
-  newsletterFeatures: {
-    display: "flex",
-    justifyContent: "center",
-    gap: "40px",
-    marginTop: "50px",
-    flexWrap: "wrap",
-  },
-
-  newsletterFeature: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
     color: "#ccc",
-    fontSize: "0.95rem",
-    fontWeight: "500",
+    marginBottom: "40px",
   },
 
-  newsletterFeatureIcon: {
-    width: "20px",
-    height: "20px",
-    backgroundColor: "#ff6b35",
-    borderRadius: "50%",
+  benefitsGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, 1fr)",
+    gap: "20px",
+  },
+
+  benefitItem: {
+    display: "flex",
+    alignItems: "flex-start",
+    gap: "15px",
+    padding: "20px",
+    backgroundColor: "rgba(255, 255, 255, 0.02)",
+    borderRadius: "12px",
+    border: "1px solid rgba(255, 255, 255, 0.05)",
+    transition: "all 0.3s ease",
+  },
+
+  benefitIcon: {
+    fontSize: "1.5rem",
+    width: "40px",
+    height: "40px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "12px",
-    fontWeight: "800",
-    color: "#000",
+    backgroundColor: "rgba(255, 107, 53, 0.1)",
+    borderRadius: "10px",
+    flexShrink: 0,
   },
 
-  emptyState: {
-    textAlign: "center",
-    padding: "50px 20px",
+  benefitTitle: {
+    fontSize: "1rem",
+    fontWeight: "700",
+    color: "#fff",
+    margin: "0 0 5px 0",
   },
 
-  emptyText: {
+  benefitText: {
+    fontSize: "0.9rem",
     color: "#999",
-    fontSize: "1.1rem",
+    margin: 0,
+    lineHeight: "1.4",
+  },
+
+  newsletterFormCard: {
+    backgroundColor: "rgba(255, 255, 255, 0.03)",
+    backdropFilter: "blur(20px)",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    borderRadius: "20px",
+    padding: "40px",
+    boxShadow: "0 20px 40px rgba(0, 0, 0, 0.3)",
+  },
+
+  formCardHeader: {
+    textAlign: "center",
+    marginBottom: "30px",
+  },
+
+  formCardTitle: {
+    fontSize: "1.5rem",
+    fontWeight: "800",
+    color: "#fff",
+    margin: "0 0 8px 0",
+  },
+
+  formCardSubtitle: {
+    fontSize: "0.95rem",
+    color: "#999",
     margin: 0,
   },
 
-  errorMessage: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: "60vh",
-    fontSize: "1.3rem",
-    color: "#ff6b35",
+  modernForm: {
+    marginBottom: "25px",
+  },
+
+  inputGroup: {
+    position: "relative",
+    marginBottom: "20px",
+  },
+
+  inputIcon: {
+    position: "absolute",
+    left: "15px",
+    top: "50%",
+    transform: "translateY(-50%)",
+    fontSize: "1.1rem",
+    zIndex: 2,
+  },
+
+  modernInput: {
+    width: "100%",
+    padding: "16px 16px 16px 50px",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    border: "2px solid rgba(255, 255, 255, 0.1)",
+    borderRadius: "12px",
+    color: "#fff",
+    fontSize: "1rem",
     fontWeight: "500",
-    backgroundColor: "#0a0a0a",
+    outline: "none",
+    transition: "all 0.3s ease",
+    boxSizing: "border-box",
+  },
+
+  modernButton: {
+    width: "100%",
+    padding: "16px 24px",
+    background: "linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)",
+    border: "none",
+    borderRadius: "12px",
+    color: "#fff",
+    fontSize: "1rem",
+    fontWeight: "700",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "10px",
+    boxShadow: "0 8px 25px rgba(255, 107, 53, 0.3)",
+    textTransform: "none",
+    letterSpacing: "0.5px",
+  },
+
+  buttonText: {
+    flex: 1,
+  },
+
+  buttonIcon: {
+    fontSize: "1.2rem",
+    transition: "transform 0.3s ease",
+  },
+
+  trustIndicators: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+  },
+
+  trustItem: {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    fontSize: "0.85rem",
+    color: "#999",
+  },
+
+  trustIcon: {
+    color: "#4ade80",
+    fontWeight: "bold",
+  },
+
+  trustText: {
+    color: "#ccc",
+  },
+
+  statsSection: {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, 1fr)",
+    gap: "30px",
+    padding: "40px 0",
+    borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+  },
+
+  statCard: {
     textAlign: "center",
     padding: "20px",
+    backgroundColor: "rgba(255, 255, 255, 0.02)",
+    borderRadius: "12px",
+    border: "1px solid rgba(255, 255, 255, 0.05)",
+  },
+
+  statNumber: {
+    fontSize: "2rem",
+    fontWeight: "900",
+    color: "#ff6b35",
+    marginBottom: "5px",
+  },
+
+  statLabel: {
+    fontSize: "0.9rem",
+    color: "#999",
+    fontWeight: "500",
   },
 }
-
-// Ajout des animations CSS via une balise style
-const styleSheet = document.createElement("style")
-styleSheet.type = "text/css"
-styleSheet.innerText = `
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-  
-@media (max-width: 768px) {
-  .profileSection {
-    flex-direction: column !important;
-    text-align: center !important;
-    gap: 25px !important;
-    align-items: center !important;
-  }
-  
-  .headerContent {
-    padding: 30px 20px !important;
-    text-align: center !important;
-}
-  
-  .profileImage {
-    width: 100px !important;
-    height: 100px !important;
-  }
-  
-  .statusBadge {
-    bottom: 2px !important;
-    right: 2px !important;
-    padding: 4px 8px !important;
-    font-size: 0.55rem !important;
-  }
-  
-  .headerInfo {
-    text-align: center !important;
-  }
-  
-  .companyName {
-    text-align: center !important;
-  }
-  
-  .companyTitle {
-    text-align: center !important;
-  }
-  
-  .headerDomainsContainer {
-    justify-content: center !important;
-  }
-}
-
-@media (max-width: 768px) {
-  .newsletterForm {
-    flex-direction: column !important;
-    border-radius: 20px !important;
-    max-width: 90% !important;
-    border: 2px solid #ff6b35 !important;
-  }
-  
-  .newsletterInput {
-    border-radius: 20px 20px 0 0 !important;
-    text-align: left !important;
-    padding: 18px 25px !important;
-    border-bottom: 1px solid #333 !important;
-  }
-  
-  .newsletterButton {
-    border-radius: 0 0 20px 20px !important;
-    width: 100% !important;
-    padding: 18px 25px !important;
-    font-size: 1rem !important;
-    font-weight: 700 !important;
-    background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%) !important;
-    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4) !important;
-  }
-  
-  .newsletterSection {
-    padding: 60px 20px !important;
-  }
-  
-  .newsletterFeatures {
-    gap: 20px !important;
-    justify-content: center !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .newsletterForm {
-    max-width: 95% !important;
-    border-radius: 15px !important;
-  }
-  
-  .newsletterInput {
-    padding: 16px 20px !important;
-    font-size: 0.95rem !important;
-    border-radius: 15px 15px 0 0 !important;
-  }
-  
-  .newsletterButton {
-    padding: 16px 20px !important;
-    font-size: 0.95rem !important;
-    border-radius: 0 0 15px 15px !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1px !important;
-  }
-}
-
-@media (min-width: 769px) {
-  .newsletterButton:hover {
-    background: linear-gradient(135deg, #e05a28 0%, #ff6b35 100%) !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 25px rgba(255, 107, 53, 0.5) !important;
-  }
-  
-  .newsletterButton:active {
-    transform: translateY(0) !important;
-  }
-  
-  .newsletterForm:hover {
-    border-color: #ff8c42 !important;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4) !important;
-  }
-}
-`
-document.head.appendChild(styleSheet)
-
-export default RecruiterPublicProfile
