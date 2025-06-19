@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaMapMarkerAlt, FaBriefcase, FaBookmark, FaRegBookmark, 
-FaClock, FaHeart, FaRegHeart, FaSearch } from 'react-icons/fa';
-import "../../assets/css/JobCards.css"; // Ensure this CSS file is used 
+import { FaMapMarkerAlt, FaBriefcase, FaBookmark, FaRegBookmark, FaClock, FaHeart, FaRegHeart, FaSearch } from 'react-icons/fa';
+import "../../assets/css/JobCards.css"; // Ensure this CSS file is used for JobCard specific styles
 import Footer from '../../components/Footer';
 import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
@@ -18,11 +17,9 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
   const ReadMoreText = ({ text, maxLength = 120 }) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
-    if (!text) return <p className="job-description">Aucune 
-description fournie</p>;
+    if (!text) return <p className="job-description">Aucune description fournie</p>;
 
-    if (text.length <= maxLength) return <p 
-className="job-description">{text}</p>;
+    if (text.length <= maxLength) return <p className="job-description">{text}</p>;
 
     return (
       <div className="job-description-container">
@@ -44,11 +41,10 @@ className="job-description">{text}</p>;
       <div className="job-card-header">
         <div className="company-logo">
           <img
-            src={job.logo || 
-"https://via.placeholder.com/60x60/f8f9fa/6c757d?text=Logo"}
+            src={job.logo || "https://via.placeholder.com/60x60/f8f9fa/6c757d?text=Logo"}
             alt="Company Logo"
             onError={(e) => {
-              e.target.src = "https://via.placeholder.com/60x60/f8f9fa/6c757d?text=Logo"; // <-- Fixed this line!
+              e.target.src = "https://via.placeholder.com/60x60/f8f9fa/6c757d?text=Logo";
             }}
           />
         </div>
@@ -56,18 +52,15 @@ className="job-description">{text}</p>;
           <h3 className="job-title">{job.title}</h3>
           <p className="company-name">{job.company}</p>
           <div className="job-meta">
-            <span 
-className="job-type-badge">{job.type}</span>
+            <span className="job-type-badge">{job.type}</span>
           </div>
         </div>
         <button
           className="save-job-btn"
           onClick={() => onSave(job.id)}
-          title={isSaved ? "Retirer des sauvegardés" : "Sauvegarder 
-l'offre"}
+          title={isSaved ? "Retirer des sauvegardés" : "Sauvegarder l'offre"}
         >
-          {isSaved ? <FaHeart className="saved-icon" /> : 
-<FaRegHeart />}
+          {isSaved ? <FaHeart className="saved-icon" /> : <FaRegHeart />}
         </button>
       </div>
 
@@ -88,12 +81,10 @@ l'offre"}
         {job.skills && job.skills.length > 0 && (
           <div className="skills-container">
             {job.skills.slice(0, 4).map((skill, index) => (
-              <span key={index} 
-className="skill-tag">{skill}</span>
+              <span key={index} className="skill-tag">{skill}</span>
             ))}
             {job.skills.length > 4 && (
-              <span className="skill-tag 
-more-skills">+{job.skills.length - 4}</span>
+              <span className="skill-tag more-skills">+{job.skills.length - 4}</span>
             )}
           </div>
         )}
@@ -101,8 +92,7 @@ more-skills">+{job.skills.length - 4}</span>
 
       <div className="job-card-footer">
         <div className="salary-section">
-          <span 
-className="salary-amount">{job.salary}</span>
+          <span className="salary-amount">{job.salary}</span>
         </div>
         <div className="action-buttons">
           {isApplied ? (
@@ -110,8 +100,7 @@ className="salary-amount">{job.salary}</span>
               ✓ Déjà postulé
             </button>
           ) : (
-            <button className="apply-button" 
-onClick={handleViewDetails}>
+            <button className="apply-button" onClick={handleViewDetails}>
               Postuler maintenant
             </button>
           )}
@@ -123,16 +112,12 @@ onClick={handleViewDetails}>
 
 const SavedJobOffers = () => {
   const [jobs, setJobs] = useState([]);
-  const [filteredJobs, setFilteredJobs] = useState([]); // This state is
- not currently used in this component.
-  const [loading, setLoading] = useState(true); // This state is not 
-currently used to display loading indicators.
-  const [error, setError] = useState(false); // This state is not 
-currently used to display error messages.
+  const [filteredJobs, setFilteredJobs] = useState([]); // This state is not currently used in this component.
+  const [loading, setLoading] = useState(true); // This state is not currently used to display loading indicators.
+  const [error, setError] = useState(false); // This state is not currently used to display error messages.
   const [candidateId, setCandidateId] = useState(null);
   const [appliedJobs, setAppliedJobs] = useState([]);
-  const [candidate, setCandidate] = useState(null); // This state is not
- currently directly displayed.
+  const [candidate, setCandidate] = useState(null); // This state is not currently directly displayed.
   const [savedJobs, setSavedJobs] = useState([]);
 
   useEffect(() => {
@@ -141,12 +126,10 @@ currently used to display error messages.
       .then(response => {
         const updatedJobs = response.data.map(job => ({
           ...job,
-          logo: job.logo || 
-"https://via.placeholder.com/60x60/f8f9fa/6c757d?text=Logo"
+          logo: job.logo || "https://via.placeholder.com/60x60/f8f9fa/6c757d?text=Logo"
         }));
         setJobs(updatedJobs);
-        setFilteredJobs(updatedJobs); // Keep this if filtering logic is
- added later
+        setFilteredJobs(updatedJobs); // Keep this if filtering logic is added later
         setLoading(false);
       })
       .catch(error => {
@@ -158,82 +141,70 @@ currently used to display error messages.
 
   useEffect(() => {
     // Fetch saved jobs for the current user
-    axios.get(`${process.env.REACT_APP_API_URL}/api/saved-jobs`, { 
-withCredentials: true })
+    axios.get(`${process.env.REACT_APP_API_URL}/api/saved-jobs`, { withCredentials: true })
       .then(response => {
         const savedJobIds = response.data.map(job => job.id);
         setSavedJobs(savedJobIds);
       })
       .catch(error => {
-        console.error("Erreur lors du chargement des jobs sauvegardés:",
- error);
+        console.error("Erreur lors du chargement des jobs sauvegardés:", error);
       });
   }, [candidateId]); // Depend on candidateId to refetch if it changes
 
   useEffect(() => {
     // Fetch current candidate and their applications
-    fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { 
-credentials: 'include' })
+    fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { credentials: 'include' })
       .then(res => res.json())
       .then(data => {
         setCandidate(data);
         setCandidateId(data.id); // Set candidateId here
 
-        return 
-fetch(`${process.env.REACT_APP_API_URL}/api/getapplications`, {
+        return fetch(`${process.env.REACT_APP_API_URL}/api/getapplications`, {
           credentials: 'include'
         });
       })
       .then(res => res.json())
       .then(applications => {
-        const appliedJobIds = applications.map(app => 
-app.job_offer_id);
+        const appliedJobIds = applications.map(app => app.job_offer_id);
         setAppliedJobs(appliedJobIds);
       })
-      .catch(err => console.error("Erreur candidate ou 
-applications:", err));
+      .catch(err => console.error("Erreur candidate ou applications:", err));
   }, []); // Empty dependency array means this runs once on mount
 
   const handleSaveJob = (jobId) => {
     // Optimistically update UI
     setSavedJobs(prev =>
-      prev.includes(jobId) ? prev.filter(id => id !== jobId) : 
-[...prev, jobId]
+      prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId]
     );
 
     fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ job_offer_id: jobId, candidate_id: 
-candidateId })
+      body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
     })
       .then(res => {
         if (!res.ok) {
           // If API call fails, revert UI change
           setSavedJobs(prev =>
-            prev.includes(jobId) ? prev.filter(id => id !== jobId) : 
-[...prev, jobId] // Revert logic
+            prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId] // Revert logic
           );
           throw new Error('Failed to save/unsave job');
         }
         return res.json();
       })
       .then(data => {
-        // UI is already updated, just confirm or handle success message
- if needed
+        // UI is already updated, just confirm or handle success message if needed
         console.log("Job save/unsave successful:", data);
       })
       .catch(error => {
         console.error('Erreur sauvegarde de l\'offre :', error);
-        alert("Impossible de sauvegarder/désauvegarder l'offre pour le 
-moment.");
+        alert("Impossible de sauvegarder/désauvegarder l'offre pour le moment.");
       });
   };
 
   // Filter jobs to only show saved ones
-  const savedJobOffers = jobs.filter(job => 
-savedJobs.includes(job.id));
+  const savedJobOffers = jobs.filter(job => savedJobs.includes(job.id));
 
   return (
     <>
@@ -249,19 +220,15 @@ savedJobs.includes(job.id));
             <div className="hero-icon">
               <FaBookmark />
             </div>
-            <h1 className="hero-title">Mes offres 
-sauvegardées</h1>
+            <h1 className="hero-title">Mes offres sauvegardées</h1>
             <p className="hero-subtitle">
-              Retrouvez et gérez toutes les offres d'emploi que vous 
-avez mises de côté
+              Retrouvez et gérez toutes les offres d'emploi que vous avez mises de côté
             </p>
             <div className="hero-stats">
               <div className="stat-card">
-                <div 
-className="stat-number">{savedJobOffers.length}</div>
+                <div className="stat-number">{savedJobOffers.length}</div>
                 <div className="stat-label">
-                  Offre{savedJobOffers.length !== 1 ? 's' : ''} 
-sauvegardée{savedJobOffers.length !== 1 ? 's' : ''}
+                  Offre{savedJobOffers.length !== 1 ? 's' : ''} sauvegardée{savedJobOffers.length !== 1 ? 's' : ''}
                 </div>
               </div>
             </div>
@@ -280,12 +247,9 @@ sauvegardée{savedJobOffers.length !== 1 ? 's' : ''}
                   <div className="empty-circle-1"></div>
                   <div className="empty-circle-2"></div>
                 </div>
-                <h3 className="empty-title">Aucune offre 
-sauvegardée</h3>
+                <h3 className="empty-title">Aucune offre sauvegardée</h3>
                 <p className="empty-description">
-                  Commencez à explorer nos offres d'emploi et 
-sauvegardez celles qui vous intéressent pour les retrouver facilement 
-ici.
+                  Commencez à explorer nos offres d'emploi et sauvegardez celles qui vous intéressent pour les retrouver facilement ici.
                 </p>
                 <Link to="/offres" className="cta-button">
                   <FaSearch className="cta-icon" />
@@ -295,11 +259,9 @@ ici.
             ) : (
               <>
                 <div className="content-header">
-                  <h2 className="section-title">Vos offres 
-sauvegardées</h2>
+                  <h2 className="section-title">Vos offres sauvegardées</h2>
                   <p className="section-subtitle">
-                    Cliquez sur une offre pour postuler ou gérer vos 
-sauvegardes
+                    Cliquez sur une offre pour postuler ou gérer vos sauvegardes
                   </p>
                 </div>
                 <div className="jobs-grid">
@@ -307,8 +269,7 @@ sauvegardes
                     <JobCard
                       key={job.id}
                       job={job}
-                      onApply={() => { }} // No direct apply from 
-this page, but keeping prop for consistency
+                      onApply={() => { }} // No direct apply from this page, but keeping prop for consistency
                       isApplied={appliedJobs.includes(job.id)}
                       onSave={handleSaveJob}
                       isSaved={savedJobs.includes(job.id)}
@@ -589,13 +550,12 @@ this page, but keeping prop for consistency
         /* Jobs Grid - Crucial for Correct Display */
         .jobs-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); /* Adjusted min-width */
+          grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
           gap: 24px;
-          /* These two properties are key for uniform height in a grid */
-          align-items: stretch; /* Stretches grid items to fill height of their grid area */
-          grid-auto-rows: 1fr; /* Makes all rows the same height if content allows, or at least ensures vertical space is distributed */
+          justify-content: center; /* Centers the whole grid track block */
+          justify-items: center;   /* Centers each individual job card within its cell */
         }
-        
+
         /* Enhanced Job Cards */
         .modern-job-card {
           background: white;
@@ -606,8 +566,6 @@ this page, but keeping prop for consistency
           border: 1px solid #f0f0f0;
           position: relative;
           overflow: hidden;
-          display: flex; /* Make card a flex container */
-          flex-direction: column; /* Stack children vertically */
         }
 
         .modern-job-card::before {
@@ -632,8 +590,6 @@ this page, but keeping prop for consistency
           gap: 16px;
           margin-bottom: 20px;
           position: relative;
-          padding-bottom: 16px; /* Add some padding for visual separation */
-          border-bottom: 1px solid #f5f5f5; /* Subtle separator */
         }
 
         .company-logo {
@@ -644,7 +600,7 @@ this page, but keeping prop for consistency
           width: 56px;
           height: 56px;
           border-radius: 12px;
-          object-fit: contain; /* Changed to contain */
+          object-fit: cover;
           border: 2px solid #f8f9fa;
         }
 
@@ -654,33 +610,33 @@ this page, but keeping prop for consistency
         }
 
         .job-title {
-          font-size: 1.25rem; /* Slightly larger for prominence */
+          font-size: 1.2rem;
           font-weight: 700;
           color: #1a1a1a;
-          margin: 0 0 4px; /* Reduced margin */
+          margin: 0 0 6px;
           line-height: 1.3;
         }
 
         .company-name {
-          font-size: 0.9rem;
+          font-size: 0.95rem;
           color: #666666;
-          margin: 0 0 10px; /* Reduced margin */
+          margin: 0 0 12px;
           font-weight: 500;
         }
 
         .job-meta {
           display: flex;
           align-items: center;
-          gap: 10px; /* Reduced gap */
+          gap: 12px;
           flex-wrap: wrap;
         }
 
         .job-type-badge {
           background: linear-gradient(135deg, #1a1a1a, #333333);
           color: white;
-          padding: 4px 10px; /* Slightly adjusted padding */
+          padding: 4px 12px;
           border-radius: 20px;
-          font-size: 0.7rem; /* Slightly smaller font */
+          font-size: 0.75rem;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.5px;
@@ -697,7 +653,6 @@ this page, but keeping prop for consistency
           color: #999999;
           transition: all 0.2s ease;
           border-radius: 50%;
-          font-size: 1.2rem; /* Larger icon */
         }
 
         .save-job-btn:hover {
@@ -711,13 +666,12 @@ this page, but keeping prop for consistency
         }
 
         .job-card-body {
-          flex-grow: 1; /* Allows body to take up available space */
           margin-bottom: 24px;
         }
 
         .job-details {
           display: flex;
-          gap: 16px; /* Adjusted gap */
+          gap: 20px;
           margin-bottom: 16px;
           flex-wrap: wrap;
         }
@@ -725,14 +679,14 @@ this page, but keeping prop for consistency
         .job-detail-item {
           display: flex;
           align-items: center;
-          gap: 6px; /* Adjusted gap */
+          gap: 8px;
           color: #666666;
-          font-size: 0.85rem; /* Slightly smaller font */
+          font-size: 0.875rem;
         }
 
         .detail-icon {
           color: #999999;
-          font-size: 0.7rem; /* Slightly smaller icon */
+          font-size: 0.75rem;
         }
 
         .job-description-container {
@@ -765,18 +719,17 @@ this page, but keeping prop for consistency
           display: flex;
           flex-wrap: wrap;
           gap: 8px;
-          margin-top: 10px; /* Add some space above skills */
         }
 
         .skill-tag {
-          background: #f0f0f0; /* Slightly darker background for better contrast */
-          color: #444444; /* Darker text */
+          background: #f8f9fa;
+          color: #555555;
           padding: 6px 12px;
           border-radius: 20px;
           font-size: 0.75rem;
           font-weight: 500;
           transition: all 0.2s ease;
-          border: 1px solid #e0e0e0;
+          border: 1px solid #e9ecef;
         }
 
         .skill-tag:hover {
@@ -797,7 +750,6 @@ this page, but keeping prop for consistency
           align-items: center;
           padding-top: 20px;
           border-top: 1px solid #f0f0f0;
-          margin-top: auto; /* Pushes footer to the bottom of the flex container */
         }
 
         .salary-section {
@@ -825,8 +777,6 @@ this page, but keeping prop for consistency
           font-size: 0.875rem;
           cursor: pointer;
           transition: all 0.3s ease;
-          min-width: 150px; /* Ensure button has a minimum width */
-          text-align: center;
         }
 
         .apply-button:hover {
@@ -844,27 +794,12 @@ this page, but keeping prop for consistency
           font-size: 0.875rem;
           cursor: not-allowed;
           opacity: 0.8;
-          min-width: 150px; /* Ensure button has a minimum width */
-          text-align: center;
         }
 
         /* Responsive Design */
-        @media (max-width: 1200px) { /* Adjust grid for slightly smaller desktops */
+        @media (max-width: 1024px) {
           .jobs-grid {
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-          }
-        }
-
-        @media (max-width: 992px) { /* Tablet landscape */
-          .jobs-grid {
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 20px;
-          }
-          .hero-title {
-            font-size: 3rem;
-          }
-          .hero-subtitle {
-            font-size: 1.15rem;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
           }
         }
 
@@ -920,7 +855,7 @@ this page, but keeping prop for consistency
           .job-card-footer {
             flex-direction: column;
             gap: 16px;
-            align-items: stretch; /* Stretch buttons to full width */
+            align-items: stretch;
           }
 
           .apply-button, .applied-button {
@@ -949,27 +884,6 @@ this page, but keeping prop for consistency
 
           .empty-state {
             margin: 0 16px;
-          }
-
-          .modern-job-card {
-            padding: 18px; /* Slightly reduced padding for very small screens */
-          }
-
-          .job-title {
-            font-size: 1.1rem;
-          }
-
-          .company-name {
-            font-size: 0.85rem;
-          }
-
-          .job-type-badge {
-            font-size: 0.65rem;
-            padding: 3px 8px;
-          }
-
-          .salary-amount {
-            font-size: 1rem;
           }
         }
       `}</style>
