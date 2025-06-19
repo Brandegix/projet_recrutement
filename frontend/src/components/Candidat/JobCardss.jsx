@@ -590,8 +590,7 @@ const SavedJobsSection = () => {
   );
 };
 
-const JobSearchAndOffers = () => {
-  // State variables
+const JobSearchAndOffers = (job, onApply, isApplied, onSave, isSaved) => {
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -605,13 +604,12 @@ const JobSearchAndOffers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 3;
   const [searchTerm, setSearchTerm] = useState('');
-  // const [candidate, setCandidate] = useState(null); // This state might be redundant, depending on usage
+  const [candidate, setCandidate] = useState(null);
   const [savedJobs, setSavedJobs] = useState([]);
 
-  // Effect to fetch all job offers on component mount
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/je`)
-      .then(response => {
+    .then(response => {
         const updatedJobs = response.data.map(job => ({
           ...job,
           logo: job.logo || "https://dummyimage.com/80x80/000/fff.png&text=No+Logo"
@@ -625,115 +623,124 @@ const JobSearchAndOffers = () => {
         setError(true);
         setLoading(false);
       });
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
-  // Effect to fetch saved jobs for the current candidate
   useEffect(() => {
-    if (candidateId) { // Only fetch if candidateId is available
-      axios.get(`${process.env.REACT_APP_API_URL}/api/saved-jobs`, { withCredentials: true })
-        .then(response => {
-          const savedJobIds = response.data.map(job => job.id);
-          setSavedJobs(savedJobIds);
-        })
-        .catch(error => {
-          console.error("Erreur lors du chargement des jobs sauvegardés:", error);
-        });
-    }
-  }, [candidateId]); // Re-run when candidateId changes
+    axios.get(`${process.env.REACT_APP_API_URL}/api/saved-jobs`, { withCredentials: true })
+    .then(response => {
+        const savedJobIds = response.data.map(job => job.id);
+        setSavedJobs(savedJobIds);
+      })
+      .catch(error => {
+        console.error("Erreur lors du chargement des jobs sauvegardés:", error);
+      });
+  }, [candidateId]);
 
-  // Effect to get current candidate and their applications
+  const handleSavedJob = (jobId) => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Failed to save job');
+      return res.json();
+    })
+    .then(data => {
+      setSavedJobs(prev =>
+        prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId]
+      );
+    })
+    .catch(error => {
+      console.error('Erreur sauvegarde de l\'offre :', error);
+      alert("Impossible de sauvegarder l'offre pour le moment.");
+    });
+  };
+
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { credentials: 'include' })
-      .then(res => {
-        if (!res.ok) {
-          // If not authenticated or error, handle it gracefully
-          console.error("Failed to fetch current candidate. Status:", res.status);
-          setCandidateId(null); // Ensure candidateId is null if not logged in
-          return Promise.reject('No current candidate');
-        }
-        return res.json();
-      })
+    .then(res => res.json())
       .then(data => {
-        // setCandidate(data); // If you still need the full candidate object
+        setCandidate(data);
         setCandidateId(data.id);
 
         return fetch(`${process.env.REACT_APP_API_URL}/api/getapplications`, {
           credentials: 'include'
         });
       })
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch applications');
-        return res.json();
-      })
+      .then(res => res.json())
       .then(applications => {
         const appliedJobIds = applications.map(app => app.job_offer_id);
         setAppliedJobs(appliedJobIds);
       })
-      .catch(err => {
-        console.error("Erreur candidate ou applications:", err);
-        // Handle cases where user is not logged in gracefully, e.g., by not fetching applied/saved jobs
-      });
-  }, []); // Runs once on mount
+      .catch(err => console.error("Erreur candidate ou applications:", err));
+  }, []);
 
-  // Handles saving a job
   const handleSaveJob = (jobId, currentlySaved) => {
-      if (currentlySaved) {
-        // Unsave job
-        handleUnsaveJob(jobId);
-      } else {
-        // Save job
-        fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+    if (currentlySaved) {
+      handleUnsaveJob(jobId);
+    } else {
+      fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to save job');
+          return res.json();
         })
-          .then(res => {
-            if (!res.ok) throw new Error('Failed to save job');
-            return res.json();
-          })
-          .then(() => {
-            setSavedJobs(prev => [...prev, jobId]);
-          })
-          .catch(error => {
-            console.error('Erreur sauvegarde de l\'offre :', error);
-            alert("Impossible de sauvegarder l'offre pour le moment.");
-          });
-      }
-    };
-  // Handles job application
-  const handleApply = (jobId) => {
-    if (!candidateId) {
-      alert("Veuillez vous connecter pour postuler.");
-      return;
+        .then(() => {
+          setSavedJobs(prev => [...prev, jobId]);
+        })
+        .catch(error => {
+          console.error('Erreur sauvegarde de l\'offre :', error);
+          alert("Impossible de sauvegarder l'offre pour le moment.");
+        });
     }
-     
+  };
 
+  const handleUnsaveJob = (jobId) => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/unsave-job`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to unsave job');
+        return res.json();
+      })
+      .then(() => {
+        setSavedJobs(prev => prev.filter(id => id !== jobId));
+      })
+      .catch(error => {
+        console.error("Erreur lors de la suppression de l'enregistrement :", error);
+        alert("Impossible de retirer l'offre des sauvegardés pour le moment.");
+      });
+  };
+
+  
+
+  const handleApply = (jobId) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/applications`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
     })
-      .then(response => {
-        if (!response.ok) throw new Error('Failed to apply');
-        return response.json();
-      })
+      .then(response => response.json())
       .then(data => {
         alert("Votre candidature a été soumise avec succès !");
         setAppliedJobs(prev => [...prev, jobId]);
-        // Optionally, you might want to remove the job from filteredJobs if it cannot be applied to again
-        // setFilteredJobs(prev => prev.filter(job => job.id !== jobId));
+        setFilteredJobs(prev => prev.filter(job => job.id !== jobId));
 
-        // Notify recruiter (optional, consider if this should be a backend responsibility after application)
         fetch(`${process.env.REACT_APP_API_URL}/api/notify-recruiter/${jobId}`, {
           method: 'POST',
           credentials: 'include'
         })
-          .then(res => {
-            if (!res.ok) throw new Error('Failed to notify recruiter');
-            return res.json();
-          })
+          .then(res => res.json())
           .then(response => console.log("Recruiter notified:", response))
           .catch(err => console.error("Erreur notification recruteur:", err));
       })
@@ -743,25 +750,6 @@ const JobSearchAndOffers = () => {
       });
   };
 
-  const handleUnsaveJob = (jobId) => {
-      fetch(`${process.env.REACT_APP_API_URL}/api/unsave-job`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
-      })
-        .then(res => {
-          if (!res.ok) throw new Error('Failed to unsave job');
-          return res.json();
-        })
-        .then(() => {
-          setSavedJobs(prev => prev.filter(id => id !== jobId));
-        })
-        .catch(error => {
-          console.error("Erreur lors de la suppression de l'enregistrement :", error);
-          alert("Impossible de retirer l'offre des sauvegardés pour le moment.");
-        });
-    };
   // Handles filtering jobs based on search term and selected filters
   useEffect(() => {
     const results = jobs.filter(job =>
