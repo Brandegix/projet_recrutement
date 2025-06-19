@@ -1459,7 +1459,6 @@ const JobSearchAndOffers = () => {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          padding: 1rem 1.5rem;
           background: #ff8c00;
           color: white;
           border: 2px solid #ff8c00;
