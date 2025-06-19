@@ -11,22 +11,53 @@ const Navbar = ({ onAuthCheckComplete }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
-  // Inline styles for hamburger menu - completely independent
+  // Inline styles for hamburger menu - completely independent with style reset
   const hamburgerMenuStyles = {
+    // Reset all inherited button styles first
+    all: 'unset',
+    boxSizing: 'border-box',
+    
+    // Apply new styles
     display: 'none', // Hidden by default on desktop
-    background: 'none',
+    background: 'transparent',
+    backgroundColor: 'transparent',
     border: 'none',
+    borderRadius: '0',
     fontSize: '1.8rem',
     color: '#ffffff',
     cursor: 'pointer',
     padding: '8px',
-    borderRadius: '4px',
+    fontWeight: 'normal',
+    textAlign: 'left',
     transition: 'background-color 0.3s ease',
+    outline: 'none',
+    appearance: 'none',
+    WebkitAppearance: 'none',
+    MozAppearance: 'none',
   };
 
   const hamburgerMenuMobileStyles = {
-    ...hamburgerMenuStyles,
+    // Reset all inherited button styles first
+    all: 'unset',
+    boxSizing: 'border-box',
+    
+    // Apply new styles
     display: 'block', // Show on mobile
+    background: 'transparent',
+    backgroundColor: 'transparent',
+    border: 'none',
+    borderRadius: '0',
+    fontSize: '1.8rem',
+    color: '#ffffff',
+    cursor: 'pointer',
+    padding: '8px',
+    fontWeight: 'normal',
+    textAlign: 'left',
+    transition: 'background-color 0.3s ease',
+    outline: 'none',
+    appearance: 'none',
+    WebkitAppearance: 'none',
+    MozAppearance: 'none',
   };
 
   const hamburgerMenuHoverStyles = {
@@ -158,15 +189,27 @@ const Navbar = ({ onAuthCheckComplete }) => {
             <button 
               onClick={handleLogout} 
               style={{
+                // Reset all inherited button styles first
+                all: 'unset',
+                boxSizing: 'border-box',
+                
+                // Apply logout button styles
+                display: 'inline-block',
                 background: '#ff6f00',
+                backgroundColor: '#ff6f00',
                 color: 'white',
                 border: 'none',
-                padding: '0.5rem 1rem',
                 borderRadius: '4px',
+                padding: '0.5rem 1rem',
                 cursor: 'pointer',
                 fontSize: '0.9rem',
                 fontWeight: '500',
-                transition: 'background-color 0.3s ease'
+                textAlign: 'center',
+                transition: 'background-color 0.3s ease',
+                outline: 'none',
+                appearance: 'none',
+                WebkitAppearance: 'none',
+                MozAppearance: 'none',
               }}
               onMouseEnter={(e) => {
                 e.target.style.backgroundColor = '#ff8f33';
