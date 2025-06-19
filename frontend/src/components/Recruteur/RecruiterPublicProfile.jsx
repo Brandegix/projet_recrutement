@@ -1162,3 +1162,6 @@ const pageStyles = {
     fontWeight: "500",
   },
 }
+
+export default RecruiterPublicProfile
+
