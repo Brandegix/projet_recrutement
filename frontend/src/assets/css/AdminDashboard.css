@@ -149,28 +149,6 @@
     white-space: nowrap;
 }
 
-/* Hamburger Button */
-.hamburger-btn {
-    position: fixed;
-    top: 16px;
-    left: 16px;
-    z-index: 1100;
-    display: none; /* Hidden by default on desktop */
-    background-color: var(--card-bg);
-    border: none;
-    padding: 12px;
-    font-size: 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-    transition: all 0.3s ease;
-    color: var(--text-color);
-}
-
-.hamburger-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Adjust for dark mode if needed */
-}
 
 /* Sidebar Overlay for mobile */
 .sidebar-overlay {
