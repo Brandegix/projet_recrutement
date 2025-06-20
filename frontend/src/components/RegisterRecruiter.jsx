@@ -280,13 +280,11 @@ const RegisterRecruteur = () => {
 
     try {
       // Construct the full API URL for registration
-      const registerApiUrl = `${API_BASE_URL}/api/recruiters/register`; // Corrected path to /api/recruiters/register
-
-      const response = await fetch(registerApiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+    const response = await fetch('${process.env.REACT_APP_API_URL}api/recruiters/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
         body: JSON.stringify({
           username: formData.username,
           password: formData.password,
