@@ -5,22 +5,22 @@ import {
     PieChart, Pie, Cell, ResponsiveContainer
 } from 'recharts';
 import { FiHome, FiUsers, FiBriefcase, FiClipboard, FiBarChart, FiLogOut } from 'react-icons/fi';
-import { Users, Briefcase, Clipboard, BarChart3, Activity, Palette } from 'lucide-react';
+import { Users, Briefcase, Clipboard, BarChart3, Activity, Palette } from 'lucide-react'; // Added Palette icon
 import SEO from "./SEO";
 
 const AdminDashboard = () => {
     const [totalCandidates, setTotalCandidates] = useState(0);
     const [totalRecruiters, setTotalRecruiters] = useState(0);
     const [totalJobs, setTotalJobs] = useState(0);
-    const [recentJobs, setRecentJobs] = useState([]);
-    const [systemStats, setSystemStats] = useState({});
+    const [recentJobs, setRecentJobs] = useState([]); // Not used in this render, but kept for data consistency
+    const [systemStats, setSystemStats] = useState({}); // Not used in this render, but kept for data consistency
     const [totalApplications, setTotalApplications] = useState(0);
 
     const [darkMode, setDarkMode] = useState(false);
     const [showColorInputs, setShowColorInputs] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true); // Add loading state
     const navigate = useNavigate();
 
     // Customizable colors - Orange palette
@@ -28,21 +28,12 @@ const AdminDashboard = () => {
     const [pieColor1, setPieColor1] = useState('#ff6b1a');
     const [pieColor2, setPieColor2] = useState('#e55100');
 
-    // State for screen width to handle responsiveness
-    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-
-    useEffect(() => {
-        const handleResize = () => {
-            setScreenWidth(window.innerWidth);
-        };
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
+    // Effect for initial authentication and data fetching
     useEffect(() => {
         const fetchAuthAndStats = async () => {
-            setLoading(true);
+            setLoading(true); // Set loading true at the start
             try {
+                // Check session
                 const sessionRes = await fetch(`${process.env.REACT_APP_API_URL}/api/session`, {
                     credentials: "include",
                 });
@@ -52,6 +43,7 @@ const AdminDashboard = () => {
                     setIsLoggedIn(true);
                     setUser(sessionData.user);
 
+                    // Fetch stats only if logged in and admin
                     const statsRes = await fetch(`${process.env.REACT_APP_API_URL}/api/stats`, {
                         method: "GET",
                         credentials: "include",
@@ -64,6 +56,7 @@ const AdminDashboard = () => {
                     setSystemStats(statsData.systemStats);
                     setTotalApplications(statsData.totalApplications);
                 } else {
+                    // Not logged in or not an admin, redirect
                     setIsLoggedIn(false);
                     setUser(null);
                     navigate('/');
@@ -74,12 +67,12 @@ const AdminDashboard = () => {
                 setUser(null);
                 navigate('/');
             } finally {
-                setLoading(false);
+                setLoading(false); // Set loading false after fetch, regardless of outcome
             }
         };
 
         fetchAuthAndStats();
-    }, [navigate]);
+    }, [navigate]); // navigate is a dependency for useEffect
 
     const handleLogout = () => {
         fetch(`${process.env.REACT_APP_API_URL}/api/logout`, {
@@ -121,7 +114,6 @@ const AdminDashboard = () => {
     ];
 
     // --- Embedded CSS String for full control including media queries and hovers ---
-    // This is placed inside a <style> tag in the render method below.
     const cssStyles = `
         :root {
             --sidebar-width: 260px;
@@ -823,16 +815,18 @@ const AdminDashboard = () => {
         }
     `;
 
+    // Display loading screen if data is being fetched
     if (loading) {
         return (
             <div className={`loading-container ${darkMode ? 'dark-mode' : ''}`}>
-                <style>{cssStyles}</style>
+                <style>{cssStyles}</style> {/* Apply CSS to loading screen */}
                 <div className={`spinner ${darkMode ? 'dark-mode' : ''}`}></div>
                 <p className={`loading-text ${darkMode ? 'dark-mode' : ''}`}>Chargement du tableau de bord...</p>
             </div>
         );
     }
 
+    // Redirect if not authorized after loading
     if (!isLoggedIn || user?.role !== 'admin') {
         return (
             <div className={`loading-container ${darkMode ? 'dark-mode' : ''}`}>
@@ -846,7 +840,7 @@ const AdminDashboard = () => {
         <div className={`dashboard-wrapper ${darkMode ? 'dark-mode' : ''}`}>
             <SEO title="Admin Dashboard - Statistiques" description="Tableau de bord administrateur avec statistiques des utilisateurs et des offres." />
 
-            {/* Embed the CSS directly in a style tag */}
+            {/* Inject the CSS styles directly into the DOM */}
             <style>{cssStyles}</style>
 
             <div className={`sidebar ${darkMode ? 'dark-mode' : ''}`}>
