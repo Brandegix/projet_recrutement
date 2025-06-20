@@ -8,7 +8,7 @@ import SEO from './components/SEO';
 import ScrollToTop from './components/ScrollToTop'; // adjust path if needed
 import GlobalSocket from './components/GlobalSocket.jsx';
 import ChatBot from './components/Chatbot/Chatbot.jsx'
-
+import AdminSidebar  from "./components/AdminSidebar";
 // Direct imports (no lazy loading)
 import JobOfferStatistics from "./components/JobOfferStatistics";
 import StageRecherche from "./StageRecherche";
@@ -187,7 +187,7 @@ const AppRoutes = () => {
                 <Route path="/RecruteurAjout" element={<RecruteurAjout />} />
                 <Route path="/ConseilsPage" element={<ConseilsPage />} />
                 <Route path="/dashboard/:recruiterId" element={<Dash />} />
-
+                <Route path="/AdminSidebar " element={<AdminSidebar  />} />
                 {/* Role Choice Page */}
                 <Route path="/edit-profile" element={<EditProfile />} />
                 {/* Role Choice Page */}
