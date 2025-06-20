@@ -1,397 +1,748 @@
-"use client"
-import { useState, useEffect, useRef } from "react"
-import {
-  User,
-  Mail,
-  Phone,
-  Building,
-  Lock,
-  CheckCircle,
-  MapPin,
-  FileText,
-  AlertCircle,
-  ArrowRight,
-  Eye,
-  EyeOff,
-} from "lucide-react"
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet"
-import "leaflet/dist/leaflet.css"
-import L from "leaflet"
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBuilding, 
+  FaUsers, FaLock, FaCheckCircle, FaArrowRight, FaInfoCircle,
+  FaBriefcase, FaGlobe, FaIndustry, FaEdit, FaEye, FaEyeSlash
+} from 'react-icons/fa';
 
-// Fix Leaflet icon issue
-delete L.Icon.Default.prototype._getIconUrl
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
-})
-
-// Location marker component for the map
-function LocationMarker({ position, setPosition, updateFormLocation }) {
-  useMapEvents({
-    click(e) {
-      setPosition([e.latlng.lat, e.latlng.lng])
-      updateFormLocation(e.latlng.lat, e.latlng.lng)
-    },
-  })
-  return <Marker position={position} />
-}
-
-const RegisterRecruteur = () => {
+function RegisterRecruiter() {
   const [formData, setFormData] = useState({
     username: "",
-    password: "",
-    name: "",
     email: "",
+    password: "",
+    confirmPassword: "",
+    firstName: "",
+    lastName: "",
     phoneNumber: "",
-    companyName: "",
+    company: "",
+    position: "",
+    companySize: "",
+    industry: "",
+    website: "",
     address: "",
-    rc: "",
-    latitude: 33.57311,
-    longitude: -7.589843,
-  })
+    city: "",
+    description: ""
+  });
 
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [focusedFields, setFocusedFields] = useState({})
-  const [position, setPosition] = useState([33.57311, -7.589843]) // Default Casablanca
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [validations, setValidations] = useState({
     username: false,
     email: false,
     password: false,
-    name: false,
+    confirmPassword: false,
+    firstName: false,
+    lastName: false,
     phoneNumber: false,
-    companyName: false,
-    address: false,
-    rc: false,
-  })
+    company: false,
+    position: false
+  });
+  
+  const registerCardRef = useRef(null);
+  const formRef = useRef(null);
 
-  const registerCardRef = useRef(null)
-
-  // Real-time validation
   useEffect(() => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    const phoneRegex = /^[0-9]{10}$/
-    const rcRegex = /^[0-9]+$/
+    // Animation d'entrée pour les éléments du formulaire
+    if (formRef.current) {
+      const elements = formRef.current.querySelectorAll('.form-section');
+      elements.forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        setTimeout(() => {
+          el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, 150 * index);
+      });
+    }
 
+    // Animation du titre
+    const title = document.querySelector('.register-title');
+    if (title) {
+      title.style.opacity = '0';
+      title.style.transform = 'scale(0.8)';
+      setTimeout(() => {
+        title.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+        title.style.opacity = '1';
+        title.style.transform = 'scale(1)';
+      }, 200);
+    }
+  }, [currentStep]);
+
+  // Validation en temps réel
+  useEffect(() => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[0-9]{10}$/;
+    
     setValidations({
       username: formData.username.length >= 3,
       email: emailRegex.test(formData.email),
       password: formData.password.length >= 6,
-      name: formData.name.length >= 3,
+      confirmPassword: formData.password === formData.confirmPassword && formData.confirmPassword.length > 0,
+      firstName: formData.firstName.length >= 2,
+      lastName: formData.lastName.length >= 2,
       phoneNumber: phoneRegex.test(formData.phoneNumber),
-      companyName: formData.companyName.length >= 2,
-      address: formData.address.length > 0,
-      rc: rcRegex.test(formData.rc) && formData.rc.length >= 4,
-    })
-  }, [formData])
-
-  // Function to get address from coordinates
-  const reverseGeocode = async (lat, lng) => {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
-      )
-      const data = await response.json()
-
-      if (data && data.display_name) {
-        setFormData((prev) => ({
-          ...prev,
-          address: data.display_name,
-        }))
-      }
-    } catch (error) {
-      console.error("Error reverse geocoding:", error)
-    }
-  }
-
-  // Update form location data
-  const updateFormLocation = (lat, lng) => {
-    setFormData((prev) => ({
-      ...prev,
-      latitude: lat,
-      longitude: lng,
-    }))
-    reverseGeocode(lat, lng)
-  }
+      company: formData.company.length >= 2,
+      position: formData.position.length >= 2
+    });
+  }, [formData]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
+    const { name, value } = e.target;
+    setFormData(prev => ({
       ...prev,
-      [name]: value,
-    }))
-  }
+      [name]: value
+    }));
+  };
 
-  const handleFocus = (fieldName) => {
-    setFocusedFields((prev) => ({ ...prev, [fieldName]: true }))
-  }
+  const nextStep = () => {
+    if (currentStep === 1 && (!validations.username || !validations.email || !validations.password || !validations.confirmPassword)) {
+      const invalidInputs = document.querySelectorAll('.form-section.active .input-invalid');
+      invalidInputs.forEach(input => {
+        input.style.animation = 'shake 0.5s ease-in-out';
+        setTimeout(() => {
+          input.style.animation = '';
+        }, 500);
+      });
+      return;
+    }
+    
+    if (currentStep === 2 && (!validations.firstName || !validations.lastName || !validations.phoneNumber)) {
+      const invalidInputs = document.querySelectorAll('.form-section.active .input-invalid');
+      invalidInputs.forEach(input => {
+        input.style.animation = 'shake 0.5s ease-in-out';
+        setTimeout(() => {
+          input.style.animation = '';
+        }, 500);
+      });
+      return;
+    }
+    
+    if (currentStep === 3 && (!validations.company || !validations.position)) {
+      const invalidInputs = document.querySelectorAll('.form-section.active .input-invalid');
+      invalidInputs.forEach(input => {
+        input.style.animation = 'shake 0.5s ease-in-out';
+        setTimeout(() => {
+          input.style.animation = '';
+        }, 500);
+      });
+      return;
+    }
+    
+    setCurrentStep(prev => prev + 1);
+  };
 
-  const handleBlur = (fieldName) => {
-    setFocusedFields((prev) => ({ ...prev, [fieldName]: false }))
-  }
+  const prevStep = () => {
+    setCurrentStep(prev => prev - 1);
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError("")
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Animation de succès
+      if (registerCardRef.current) {
+        registerCardRef.current.style.transform = 'scale(1.02)';
+        registerCardRef.current.style.boxShadow = '0 20px 40px rgba(34, 197, 94, 0.3)';
+        
+        setTimeout(() => {
+          alert("Inscription réussie! Redirection vers le tableau de bord...");
+        }, 500);
+      }
 
-      // Simulate success
-      console.log("Registration successful:", formData)
-
-      // Reset form
-      setFormData({
-        username: "",
-        password: "",
-        name: "",
-        email: "",
-        phoneNumber: "",
-        companyName: "",
-        address: "",
-        rc: "",
-        latitude: 33.57311,
-        longitude: -7.589843,
-      })
     } catch (err) {
-      setError("Erreur lors de l'inscription. Veuillez réessayer.")
+      setError("Erreur lors de l'inscription");
+      // Animation d'erreur
+      if (registerCardRef.current) {
+        registerCardRef.current.style.animation = 'shake 0.6s ease-in-out';
+        setTimeout(() => {
+          registerCardRef.current.style.animation = '';
+        }, 600);
+      }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const allFieldsValid = Object.values(validations).every((valid) => valid)
-
-  const InputField = ({
-    name,
-    type = "text",
-    placeholder,
-    icon: Icon,
-    label,
-    required = true,
-    showPasswordToggle = false,
-  }) => {
-    const isValid = validations[name] && formData[name]
-    const isInvalid = !validations[name] && formData[name]
-    const isFocused = focusedFields[name]
-
-    return (
-      <div className={`input-group ${isFocused ? "focused" : ""} ${isValid ? "valid" : ""}`}>
-        <label className="input-label">
-          <div className="label-content">
-            <Icon className="input-icon" />
-            <span className="label-text">{label}</span>
-            {required && <span className="required-asterisk">*</span>}
-          </div>
-          {isValid && <CheckCircle className="validation-icon success" />}
-          {isInvalid && <AlertCircle className="validation-icon error" />}
-        </label>
-
-        <div className="input-container">
-          <input
-            type={showPasswordToggle && showPassword ? "text" : type}
-            name={name}
-            value={formData[name]}
-            onChange={handleChange}
-            onFocus={() => handleFocus(name)}
-            onBlur={() => handleBlur(name)}
-            required={required}
-            placeholder={placeholder}
-            className={`form-input ${isValid ? "input-valid" : ""} ${isInvalid ? "input-invalid" : ""}`}
-          />
-
-          {showPasswordToggle && (
-            <button type="button" onClick={() => setShowPassword(!showPassword)} className="password-toggle">
-              {showPassword ? <EyeOff className="toggle-icon" /> : <Eye className="toggle-icon" />}
-            </button>
-          )}
-
-          <div className="input-border" />
-        </div>
-
-        {isInvalid && (
-          <div className="validation-message error">
-            {name === "email" && "Format d'email invalide"}
-            {name === "phoneNumber" && "Le numéro doit contenir 10 chiffres"}
-            {name === "password" && "Le mot de passe doit contenir au moins 6 caractères"}
-            {name === "rc" && "Le RC doit contenir au moins 4 chiffres"}
-            {(name === "name" || name === "username") && "Minimum 3 caractères requis"}
-            {name === "companyName" && "Minimum 2 caractères requis"}
-            {name === "address" && "Adresse requise"}
-          </div>
-        )}
-      </div>
-    )
-  }
+  // Calculer la progression
+  const progress = ((currentStep - 1) / 3) * 100;
 
   return (
     <div className="register-page">
-      {/* Background Elements */}
+      {/* Éléments décoratifs d'arrière-plan */}
       <div className="background-decoration">
-        <div className="floating-shape shape-1" />
-        <div className="floating-shape shape-2" />
-        <div className="floating-shape shape-3" />
-        <div className="grid-pattern" />
+        <div className="floating-shape shape-1"></div>
+        <div className="floating-shape shape-2"></div>
+        <div className="floating-shape shape-3"></div>
+        <div className="floating-shape shape-4"></div>
       </div>
 
-      <div className="register-container">
-        <div className="register-card" ref={registerCardRef}>
-          {/* Header */}
-          <div className="register-header">
-            <div className="icon-container">
-              <Building className="main-icon" />
-            </div>
-            <h1 className="register-title">Inscription Recruteur</h1>
-            <p className="register-subtitle">Créez votre compte entreprise pour recruter les meilleurs talents</p>
+      <div className="register-card" ref={registerCardRef}>
+        <div className="register-header">
+          <div className="icon-container">
+            <FaBriefcase className="main-icon" />
           </div>
+          <h2 className="register-title">
+            Inscription Recruteur
+          </h2>
+          <p className="register-subtitle">
+            Créez votre compte pour publier des offres d'emploi et recruter les meilleurs candidats
+          </p>
+        </div>
 
-          {/* Error Message */}
-          {error && (
-            <div className="error-message">
-              <AlertCircle className="error-icon" />
-              <span>{error}</span>
-            </div>
-          )}
-
-          {/* Registration Form */}
-          <form onSubmit={handleSubmit} className="register-form">
-            {/* Personal Information Section */}
-            <div className="form-section">
-              <h3 className="section-title">Informations Personnelles</h3>
-              <div className="form-grid">
-                <InputField name="name" placeholder="Votre nom complet" icon={User} label="Nom complet" />
-                <InputField name="email" type="email" placeholder="votre@email.com" icon={Mail} label="Email" />
-                <InputField name="phoneNumber" type="tel" placeholder="0123456789" icon={Phone} label="Téléphone" />
+        {/* Indicateur de progression */}
+        <div className="progress-container">
+          <div className="progress-bar-container">
+            <div 
+              className="progress-bar" 
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+          <div className="steps-indicator">
+            <div className={`step ${currentStep >= 1 ? 'active' : ''} ${currentStep > 1 ? 'completed' : ''}`}>
+              <div className="step-number">
+                {currentStep > 1 ? <FaCheckCircle /> : 1}
               </div>
+              <span className="step-label">Compte</span>
             </div>
-
-            {/* Company Information Section */}
-            <div className="form-section">
-              <h3 className="section-title">Informations Entreprise</h3>
-              <div className="form-grid">
-                <InputField
-                  name="companyName"
-                  placeholder="Nom de votre entreprise"
-                  icon={Building}
-                  label="Nom de l'entreprise"
-                />
-                <InputField
-                  name="rc"
-                  placeholder="Numéro de Registre du Commerce"
-                  icon={FileText}
-                  label="RC (Registre du Commerce)"
-                />
+            <div className={`step ${currentStep >= 2 ? 'active' : ''} ${currentStep > 2 ? 'completed' : ''}`}>
+              <div className="step-number">
+                {currentStep > 2 ? <FaCheckCircle /> : 2}
               </div>
+              <span className="step-label">Personnel</span>
             </div>
-
-            {/* Location Section - Separate section for better organization */}
-            <div className="form-section">
-              <h3 className="section-title">Localisation de l'entreprise</h3>
-
-              {/* Map Component */}
-              <div className="map-section">
-                <div className="map-header">
-                  <div className="label-content">
-                    <MapPin className="input-icon" />
-                    <span className="label-text">Sélectionnez l'emplacement sur la carte</span>
-                    <span className="required-asterisk">*</span>
-                  </div>
-                  {validations.address && formData.address && <CheckCircle className="validation-icon success" />}
+            <div className={`step ${currentStep >= 3 ? 'active' : ''} ${currentStep > 3 ? 'completed' : ''}`}>
+              <div className="step-number">
+                {currentStep > 3 ? <FaCheckCircle /> : 3}
+              </div>
+              <span className="step-label">Entreprise</span>
+            </div>
+            <div className={`step ${currentStep >= 4 ? 'active' : ''}`}>
+              <div className="step-number">4</div>
+              <span className="step-label">Finalisation</span>
+            </div>
+          </div>
+        </div>
+        
+        {error && (
+          <div className="error-message">
+            <div className="error-content">
+              <span className="error-icon">⚠️</span>
+              {error}
+            </div>
+          </div>
+        )}
+        
+        <form onSubmit={handleSubmit} className="register-form" ref={formRef}>
+          {/* Étape 1: Informations de compte */}
+          <div className={`form-section ${currentStep === 1 ? 'active' : ''}`}>
+            <h3 className="section-title">
+              <FaLock className="section-icon" />
+              Informations de compte
+            </h3>
+            
+            <div className="form-row">
+              <div className="input-group">
+                <label className="input-label">
+                  <FaUser className="input-icon" /> 
+                  Nom d'utilisateur *
+                  {validations.username && formData.username && <FaCheckCircle className="validation-icon" />}
+                </label>
+                <div className="input-container">
+                  <input
+                    type="text"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    required
+                    minLength={3}
+                    placeholder="Votre nom d'utilisateur"
+                    className={`form-input ${!validations.username && formData.username ? 'input-invalid' : ''} ${validations.username && formData.username ? 'input-valid' : ''}`}
+                  />
+                  <div className="input-border"></div>
                 </div>
-
-                <div className="map-container">
-                  <MapContainer center={position} zoom={13} style={{ height: "100%", width: "100%" }}>
-                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                    <LocationMarker
-                      position={position}
-                      setPosition={setPosition}
-                      updateFormLocation={updateFormLocation}
-                    />
-                  </MapContainer>
-                </div>
-
-                <p className="map-helper-text">
-                  <MapPin className="helper-icon" />
-                  Cliquez sur la carte pour sélectionner l'emplacement de votre entreprise
-                </p>
-              </div>
-
-              {/* Address Input - Now properly organized */}
-              <div className="address-input-section">
-                <InputField
-                  name="address"
-                  placeholder="Adresse (sera remplie automatiquement)"
-                  icon={MapPin}
-                  label="Adresse complète"
-                />
-              </div>
-            </div>
-
-            {/* Account Information Section */}
-            <div className="form-section">
-              <h3 className="section-title">Informations de Connexion</h3>
-              <div className="form-grid">
-                <InputField name="username" placeholder="Votre identifiant" icon={User} label="Nom d'utilisateur" />
-                <InputField
-                  name="password"
-                  type="password"
-                  placeholder="••••••••"
-                  icon={Lock}
-                  label="Mot de passe"
-                  showPasswordToggle={true}
-                />
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading || !allFieldsValid}
-              className={`submit-button ${loading ? "loading" : ""} ${allFieldsValid ? "ready" : ""}`}
-            >
-              <div className="button-content">
-                {loading ? (
-                  <>
-                    <div className="loading-spinner" />
-                    <span>Inscription en cours...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>S'inscrire</span>
-                    <ArrowRight className="button-icon" />
-                  </>
+                {!validations.username && formData.username && (
+                  <p className="input-error">Le nom d'utilisateur doit contenir au moins 3 caractères</p>
                 )}
               </div>
-            </button>
-          </form>
+            </div>
 
-          {/* Footer */}
-          <div className="form-footer">
-            <p>
-              Déjà inscrit ?{" "}
-              <a href="/login" className="login-link">
-                Se connecter
-              </a>
-            </p>
+            <div className="form-row">
+              <div className="input-group">
+                <label className="input-label">
+                  <FaEnvelope className="input-icon" /> 
+                  Adresse email *
+                  {validations.email && formData.email && <FaCheckCircle className="validation-icon" />}
+                </label>
+                <div className="input-container">
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    placeholder="votre@email.com"
+                    className={`form-input ${!validations.email && formData.email ? 'input-invalid' : ''} ${validations.email && formData.email ? 'input-valid' : ''}`}
+                  />
+                  <div className="input-border"></div>
+                </div>
+                {!validations.email && formData.email && (
+                  <p className="input-error">Veuillez entrer une adresse email valide</p>
+                )}
+              </div>
+            </div>
+
+            <div className="form-row-split">
+              <div className="input-group">
+                <label className="input-label">
+                  <FaLock className="input-icon" /> 
+                  Mot de passe *
+                  {validations.password && formData.password && <FaCheckCircle className="validation-icon" />}
+                </label>
+                <div className="input-container">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    minLength={6}
+                    placeholder="••••••••"
+                    className={`form-input ${!validations.password && formData.password ? 'input-invalid' : ''} ${validations.password && formData.password ? 'input-valid' : ''}`}
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                  <div className="input-border"></div>
+                </div>
+                {!validations.password && formData.password && (
+                  <p className="input-error">Le mot de passe doit contenir au moins 6 caractères</p>
+                )}
+              </div>
+
+              <div className="input-group">
+                <label className="input-label">
+                  <FaLock className="input-icon" /> 
+                  Confirmer le mot de passe *
+                  {validations.confirmPassword && formData.confirmPassword && <FaCheckCircle className="validation-icon" />}
+                </label>
+                <div className="input-container">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    required
+                    placeholder="••••••••"
+                    className={`form-input ${!validations.confirmPassword && formData.confirmPassword ? 'input-invalid' : ''} ${validations.confirmPassword && formData.confirmPassword ? 'input-valid' : ''}`}
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                  <div className="input-border"></div>
+                </div>
+                {!validations.confirmPassword && formData.confirmPassword && (
+                  <p className="input-error">Les mots de passe ne correspondent pas</p>
+                )}
+              </div>
+            </div>
+
+            <div className="form-navigation">
+              <button 
+                type="button" 
+                className="next-button"
+                onClick={nextStep}
+              >
+                Suivant <FaArrowRight className="button-icon" />
+              </button>
+            </div>
           </div>
+
+          {/* Étape 2: Informations personnelles */}
+          <div className={`form-section ${currentStep === 2 ? 'active' : ''}`}>
+            <h3 className="section-title">
+              <FaUser className="section-icon" />
+              Informations personnelles
+            </h3>
+
+            <div className="form-row-split">
+              <div className="input-group">
+                <label className="input-label">
+                  <FaUser className="input-icon" /> 
+                  Prénom *
+                  {validations.firstName && formData.firstName && <FaCheckCircle className="validation-icon" />}
+                </label>
+                <div className="input-container">
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    required
+                    placeholder="Votre prénom"
+                    className={`form-input ${!validations.firstName && formData.firstName ? 'input-invalid' : ''} ${validations.firstName && formData.firstName ? 'input-valid' : ''}`}
+                  />
+                  <div className="input-border"></div>
+                </div>
+                {!validations.firstName && formData.firstName && (
+                  <p className="input-error">Le prénom doit contenir au moins 2 caractères</p>
+                )}
+              </div>
+
+              <div className="input-group">
+                <label className="input-label">
+                  <FaUser className="input-icon" /> 
+                  Nom *
+                  {validations.lastName && formData.lastName && <FaCheckCircle className="validation-icon" />}
+                </label>
+                <div className="input-container">
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    required
+                    placeholder="Votre nom"
+                    className={`form-input ${!validations.lastName && formData.lastName ? 'input-invalid' : ''} ${validations.lastName && formData.lastName ? 'input-valid' : ''}`}
+                  />
+                  <div className="input-border"></div>
+                </div>
+                {!validations.lastName && formData.lastName && (
+                  <p className="input-error">Le nom doit contenir au moins 2 caractères</p>
+                )}
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="input-group">
+                <label className="input-label">
+                  <FaPhone className="input-icon" /> 
+                  Numéro de téléphone *
+                  {validations.phoneNumber && formData.phoneNumber && <FaCheckCircle className="validation-icon" />}
+                </label>
+                <div className="input-container">
+                  <input
+                    type="tel"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                    required
+                    pattern="[0-9]{10}"
+                    placeholder="0123456789"
+                    className={`form-input ${!validations.phoneNumber && formData.phoneNumber ? 'input-invalid' : ''} ${validations.phoneNumber && formData.phoneNumber ? 'input-valid' : ''}`}
+                  />
+                  <div className="input-border"></div>
+                </div>
+                {!validations.phoneNumber && formData.phoneNumber && (
+                  <p className="input-error">Le numéro de téléphone doit contenir 10 chiffres</p>
+                )}
+              </div>
+            </div>
+
+            <div className="form-navigation">
+              <button 
+                type="button" 
+                className="prev-button"
+                onClick={prevStep}
+              >
+                Précédent
+              </button>
+              <button 
+                type="button" 
+                className="next-button"
+                onClick={nextStep}
+              >
+                Suivant <FaArrowRight className="button-icon" />
+              </button>
+            </div>
+          </div>
+
+          {/* Étape 3: Informations entreprise */}
+          <div className={`form-section ${currentStep === 3 ? 'active' : ''}`}>
+            <h3 className="section-title">
+              <FaBuilding className="section-icon" />
+              Informations entreprise
+            </h3>
+
+            <div className="form-row">
+              <div className="input-group">
+                <label className="input-label">
+                  <FaBuilding className="input-icon" /> 
+                  Nom de l'entreprise *
+                  {validations.company && formData.company && <FaCheckCircle className="validation-icon" />}
+                </label>
+                <div className="input-container">
+                  <input
+                    type="text"
+                    name="company"
+                    value={formData.company}
+                    onChange={handleChange}
+                    required
+                    placeholder="Nom de votre entreprise"
+                    className={`form-input ${!validations.company && formData.company ? 'input-invalid' : ''} ${validations.company && formData.company ? 'input-valid' : ''}`}
+                  />
+                  <div className="input-border"></div>
+                </div>
+                {!validations.company && formData.company && (
+                  <p className="input-error">Le nom de l'entreprise est requis</p>
+                )}
+              </div>
+            </div>
+
+            <div className="form-row-split">
+              <div className="input-group">
+                <label className="input-label">
+                  <FaBriefcase className="input-icon" /> 
+                  Votre poste *
+                  {validations.position && formData.position && <FaCheckCircle className="validation-icon" />}
+                </label>
+                <div className="input-container">
+                  <input
+                    type="text"
+                    name="position"
+                    value={formData.position}
+                    onChange={handleChange}
+                    required
+                    placeholder="Votre poste dans l'entreprise"
+                    className={`form-input ${!validations.position && formData.position ? 'input-invalid' : ''} ${validations.position && formData.position ? 'input-valid' : ''}`}
+                  />
+                  <div className="input-border"></div>
+                </div>
+                {!validations.position && formData.position && (
+                  <p className="input-error">Votre poste est requis</p>
+                )}
+              </div>
+
+              <div className="input-group">
+                <label className="input-label">
+                  <FaUsers className="input-icon" /> 
+                  Taille de l'entreprise
+                </label>
+                <div className="input-container">
+                  <select
+                    name="companySize"
+                    value={formData.companySize}
+                    onChange={handleChange}
+                    className="form-input"
+                  >
+                    <option value="">Sélectionnez</option>
+                    <option value="1-10">1-10 employés</option>
+                    <option value="11-50">11-50 employés</option>
+                    <option value="51-200">51-200 employés</option>
+                    <option value="201-500">201-500 employés</option>
+                    <option value="500+">500+ employés</option>
+                  </select>
+                  <div className="input-border"></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row-split">
+              <div className="input-group">
+                <label className="input-label">
+                  <FaIndustry className="input-icon" /> 
+                  Secteur d'activité
+                </label>
+                <div className="input-container">
+                  <select
+                    name="industry"
+                    value={formData.industry}
+                    onChange={handleChange}
+                    className="form-input"
+                  >
+                    <option value="">Sélectionnez</option>
+                    <option value="Informatique">Informatique</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="RH">Ressources Humaines</option>
+                    <option value="Vente">Vente</option>
+                    <option value="Autre">Autre</option>
+                  </select>
+                  <div className="input-border"></div>
+                </div>
+              </div>
+
+              <div className="input-group">
+                <label className="input-label">
+                  <FaGlobe className="input-icon" /> 
+                  Site web
+                </label>
+                <div className="input-container">
+                  <input
+                    type="url"
+                    name="website"
+                    value={formData.website}
+                    onChange={handleChange}
+                    placeholder="https://www.exemple.com"
+                    className="form-input"
+                  />
+                  <div className="input-border"></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-navigation">
+              <button 
+                type="button" 
+                className="prev-button"
+                onClick={prevStep}
+              >
+                Précédent
+              </button>
+              <button 
+                type="button" 
+                className="next-button"
+                onClick={nextStep}
+              >
+                Suivant <FaArrowRight className="button-icon" />
+              </button>
+            </div>
+          </div>
+
+          {/* Étape 4: Finalisation */}
+          <div className={`form-section ${currentStep === 4 ? 'active' : ''}`}>
+            <h3 className="section-title">
+              <FaEdit className="section-icon" />
+              Finalisation du profil
+            </h3>
+
+            <div className="form-row-split">
+              <div className="input-group">
+                <label className="input-label">
+                  <FaMapMarkerAlt className="input-icon" /> 
+                  Adresse
+                </label>
+                <div className="input-container">
+                  <input
+                    type="text"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    placeholder="Adresse de l'entreprise"
+                    className="form-input"
+                  />
+                  <div className="input-border"></div>
+                </div>
+              </div>
+
+              <div className="input-group">
+                <label className="input-label">
+                  <FaMapMarkerAlt className="input-icon" /> 
+                  Ville
+                </label>
+                <div className="input-container">
+                  <input
+                    type="text"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    placeholder="Ville"
+                    className="form-input"
+                  />
+                  <div className="input-border"></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="input-group">
+                <label className="input-label">
+                  <FaInfoCircle className="input-icon" /> 
+                  Description de l'entreprise
+                </label>
+                <div className="input-container">
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    placeholder="Décrivez votre entreprise et votre activité..."
+                    className="form-textarea"
+                    rows="4"
+                  />
+                  <div className="input-border"></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="form-navigation">
+              <button 
+                type="button" 
+                className="prev-button"
+                onClick={prevStep}
+              >
+                Précédent
+              </button>
+              <button 
+                className={`submit-button ${loading ? 'loading' : ''}`}
+                type="submit"
+                disabled={loading}
+              >
+                <span className="button-content">
+                  {loading ? (
+                    <>
+                      <div className="loading-spinner"></div>
+                      Inscription en cours...
+                    </>
+                  ) : (
+                    "Créer mon compte recruteur"
+                  )}
+                </span>
+                <div className="button-overlay"></div>
+              </button>
+            </div>
+          </div>
+        </form>
+        
+        <div className="form-footer">
+          <p>
+            Déjà inscrit ? 
+            <a 
+              href="#" 
+              onClick={(e) => {
+                e.preventDefault();
+                alert("Redirection vers la page de connexion recruteur");
+              }}
+              className="login-link"
+            >
+              Se connecter
+            </a>
+          </p>
         </div>
       </div>
 
       <style jsx>{`
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
         .register-page {
           position: relative;
           min-height: 100vh;
           display: flex;
           align-items: center;
           justify-content: center;
-          background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+          background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
           padding: 2rem 1rem;
           overflow: hidden;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .background-decoration {
@@ -404,110 +755,71 @@ const RegisterRecruteur = () => {
           z-index: 1;
         }
 
-        .grid-pattern {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-image: linear-gradient(rgba(255, 140, 0, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 140, 0, 0.1) 1px, transparent 1px);
-          background-size: 50px 50px;
-          animation: gridMove 20s linear infinite;
-        }
-
-        @keyframes gridMove {
-          0% {
-            transform: translate(0, 0);
-          }
-          100% {
-            transform: translate(50px, 50px);
-          }
-        }
-
         .floating-shape {
           position: absolute;
           border-radius: 50%;
-          background: linear-gradient(45deg, rgba(255, 140, 0, 0.1), rgba(255, 140, 0, 0.05));
-          animation: float 6s ease-in-out infinite;
+          background: rgba(255, 255, 255, 0.08);
+          animation: float 12s ease-in-out infinite;
         }
 
         .shape-1 {
-          width: 100px;
-          height: 100px;
-          top: 20%;
+          width: 80px;
+          height: 80px;
+          top: 15%;
           left: 10%;
           animation-delay: 0s;
         }
 
         .shape-2 {
-          width: 150px;
-          height: 150px;
-          top: 60%;
+          width: 120px;
+          height: 120px;
+          top: 70%;
           right: 15%;
-          animation-delay: 2s;
+          animation-delay: 3s;
         }
 
         .shape-3 {
-          width: 80px;
-          height: 80px;
-          bottom: 20%;
+          width: 60px;
+          height: 60px;
+          bottom: 25%;
           left: 20%;
-          animation-delay: 4s;
+          animation-delay: 6s;
+        }
+
+        .shape-4 {
+          width: 100px;
+          height: 100px;
+          top: 40%;
+          right: 25%;
+          animation-delay: 9s;
         }
 
         @keyframes float {
-          0%,
-          100% {
+          0%, 100% {
             transform: translateY(0px) rotate(0deg);
           }
           50% {
-            transform: translateY(-20px) rotate(180deg);
+            transform: translateY(-30px) rotate(180deg);
           }
-        }
-
-        .register-container {
-          position: relative;
-          z-index: 100;
-          width: 100%;
-          max-width: 900px;
         }
 
         .register-card {
-          background: rgba(255, 255, 255, 0.98);
+          background: rgba(255, 255, 255, 0.95);
           backdrop-filter: blur(20px);
           border-radius: 24px;
           padding: 3rem;
-          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 140, 0, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          width: 100%;
+          max-width: 600px;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
           position: relative;
-          overflow: hidden;
-        }
-
-        .register-card::before {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 3px;
-          background: linear-gradient(90deg, transparent, #ff8c00, transparent);
-          animation: shimmer 2s ease-in-out infinite;
-        }
-
-        @keyframes shimmer {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
-            transform: translateX(100%);
-          }
+          z-index: 2;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          transition: all 0.3s ease;
         }
 
         .register-header {
           text-align: center;
-          margin-bottom: 3rem;
+          margin-bottom: 2.5rem;
         }
 
         .icon-container {
@@ -516,82 +828,148 @@ const RegisterRecruteur = () => {
           justify-content: center;
           width: 80px;
           height: 80px;
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
+          background: linear-gradient(135deg, #667eea 0%, #764ba2100%);
           border-radius: 50%;
           margin-bottom: 1.5rem;
-          box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3);
-          position: relative;
-        }
-
-        .icon-container::after {
-          content: "";
-          position: absolute;
-          top: -2px;
-          left: -2px;
-          right: -2px;
-          bottom: -2px;
-          background: linear-gradient(45deg, #ff8c00, transparent, #ff8c00);
-          border-radius: 50%;
-          z-index: -1;
-          animation: rotate 3s linear infinite;
-        }
-
-        @keyframes rotate {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
+          border: 3px solid rgba(255, 255, 255, 0.9);
+          box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
         }
 
         .main-icon {
-          width: 2rem;
-          height: 2rem;
+          font-size: 2rem;
           color: white;
         }
 
         .register-title {
-          font-size: 2.5rem;
-          font-weight: 800;
-          color: #1a1a1a;
-          margin: 0 0 0.5rem 0;
-          background: linear-gradient(135deg, #1a1a1a, #333);
+          font-size: 2.2rem;
+          font-weight: 700;
+          color: #2d3748;
+          margin-bottom: 0.5rem;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
         }
 
         .register-subtitle {
-          color: #666;
-          font-size: 1.1rem;
-          margin: 0;
-          max-width: 500px;
+          color: #718096;
+          font-size: 1rem;
+          line-height: 1.5;
+          max-width: 400px;
           margin: 0 auto;
-          line-height: 1.6;
+        }
+
+        .progress-container {
+          margin-bottom: 2rem;
+        }
+
+        .progress-bar-container {
+          width: 100%;
+          height: 4px;
+          background: #e2e8f0;
+          border-radius: 2px;
+          margin-bottom: 1.5rem;
+          overflow: hidden;
+        }
+
+        .progress-bar {
+          height: 100%;
+          background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+          border-radius: 2px;
+          transition: width 0.5s ease;
+        }
+
+        .steps-indicator {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .step {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          flex: 1;
+          position: relative;
+        }
+
+        .step:not(:last-child)::after {
+          content: '';
+          position: absolute;
+          top: 15px;
+          left: 60%;
+          width: 80%;
+          height: 2px;
+          background: #e2e8f0;
+          z-index: -1;
+        }
+
+        .step.completed:not(:last-child)::after {
+          background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .step-number {
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.8rem;
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+          transition: all 0.3s ease;
+          background: #e2e8f0;
+          color: #a0aec0;
+        }
+
+        .step.active .step-number {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          transform: scale(1.1);
+        }
+
+        .step.completed .step-number {
+          background: #48bb78;
+          color: white;
+        }
+
+        .step-label {
+          font-size: 0.7rem;
+          color: #a0aec0;
+          font-weight: 500;
+        }
+
+        .step.active .step-label {
+          color: #667eea;
+          font-weight: 600;
+        }
+
+        .step.completed .step-label {
+          color: #48bb78;
         }
 
         .error-message {
+          background: linear-gradient(135deg, #feb2b2 0%, #fc8181 100%);
+          color: #742a2a;
+          padding: 1rem;
+          border-radius: 12px;
+          margin-bottom: 1.5rem;
+          border: 1px solid #fed7d7;
+          animation: slideDown 0.3s ease;
+        }
+
+        .error-content {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
-          margin-bottom: 2rem;
-          padding: 1rem 1.25rem;
-          background: rgba(239, 68, 68, 0.1);
-          border: 1px solid rgba(239, 68, 68, 0.2);
-          border-radius: 12px;
-          color: #dc2626;
-          font-weight: 500;
-          animation: slideIn 0.3s ease-out;
+          gap: 0.5rem;
         }
 
         .error-icon {
-          width: 1.25rem;
-          height: 1.25rem;
-          flex-shrink: 0;
+          font-size: 1.2rem;
         }
 
-        @keyframes slideIn {
+        @keyframes slideDown {
           from {
             opacity: 0;
             transform: translateY(-10px);
@@ -603,157 +981,127 @@ const RegisterRecruteur = () => {
         }
 
         .register-form {
-          display: flex;
-          flex-direction: column;
-          gap: 2.5rem;
-        }
-
-        .form-section {
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-        }
-
-        .section-title {
-          font-size: 1.3rem;
-          font-weight: 700;
-          color: #1a1a1a;
-          margin: 0;
-          padding-bottom: 0.5rem;
-          border-bottom: 2px solid #f3f4f6;
           position: relative;
         }
 
-        .section-title::after {
-          content: "";
-          position: absolute;
-          bottom: -2px;
-          left: 0;
-          width: 60px;
-          height: 2px;
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
+        .form-section {
+          display: none;
+          opacity: 0;
+          transform: translateY(30px);
         }
 
-        .form-grid {
+        .form-section.active {
+          display: block;
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        .section-title {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          font-size: 1.3rem;
+          font-weight: 600;
+          color: #2d3748;
+          margin-bottom: 1.5rem;
+          padding-bottom: 0.5rem;
+          border-bottom: 2px solid #e2e8f0;
+        }
+
+        .section-icon {
+          color: #667eea;
+          font-size: 1.1rem;
+        }
+
+        .form-row {
+          margin-bottom: 1.5rem;
+        }
+
+        .form-row-split {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 1.5rem;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+          margin-bottom: 1.5rem;
         }
 
         .input-group {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .input-group.focused {
-          transform: translateY(-2px);
+          position: relative;
         }
 
         .input-label {
           display: flex;
           align-items: center;
-          justify-content: space-between;
-          font-weight: 600;
-          color: #374151;
-          font-size: 0.9rem;
-        }
-
-        .label-content {
-          display: flex;
-          align-items: center;
           gap: 0.5rem;
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: #4a5568;
+          margin-bottom: 0.5rem;
         }
 
         .input-icon {
-          width: 1.1rem;
-          height: 1.1rem;
-          color: #ff8c00;
-        }
-
-        .label-text {
-          font-weight: 600;
-        }
-
-        .required-asterisk {
-          color: #ef4444;
-          font-weight: 700;
+          color: #a0aec0;
+          font-size: 0.8rem;
         }
 
         .validation-icon {
-          width: 1.1rem;
-          height: 1.1rem;
-        }
-
-        .validation-icon.success {
-          color: #10b981;
-        }
-
-        .validation-icon.error {
-          color: #ef4444;
+          color: #48bb78;
+          margin-left: auto;
         }
 
         .input-container {
           position: relative;
         }
 
-        .form-input {
+        .form-input, .form-textarea {
           width: 100%;
-          padding: 1rem 1.25rem;
-          border: 2px solid #e5e7eb;
+          padding: 0.875rem 1rem;
+          border: 2px solid #e2e8f0;
           border-radius: 12px;
-          font-size: 1rem;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          background: rgba(255, 255, 255, 0.9);
-          backdrop-filter: blur(10px);
-          color: #1a1a1a;
-          font-family: inherit;
-          box-sizing: border-box;
-        }
-
-        .form-input::placeholder {
-          color: #9ca3af;
-        }
-
-        .form-input:focus {
+          font-size: 0.95rem;
+          background: white;
+          transition: all 0.3s ease;
           outline: none;
-          border-color: #ff8c00;
-          box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
-          background: rgba(255, 255, 255, 1);
+          font-family: inherit;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+          border-color: #667eea;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+          transform: translateY(-1px);
         }
 
         .form-input.input-valid {
-          border-color: #10b981;
-          background: rgba(16, 185, 129, 0.05);
+          border-color: #48bb78;
+          background: rgba(72, 187, 120, 0.05);
         }
 
         .form-input.input-invalid {
-          border-color: #ef4444;
-          background: rgba(239, 68, 68, 0.05);
+          border-color: #f56565;
+          background: rgba(245, 101, 101, 0.05);
+        }
+
+        .form-textarea {
+          resize: vertical;
+          min-height: 100px;
         }
 
         .password-toggle {
           position: absolute;
-          right: 1rem;
+          right: 12px;
           top: 50%;
           transform: translateY(-50%);
           background: none;
           border: none;
+          color: #a0aec0;
           cursor: pointer;
-          color: #6b7280;
-          transition: color 0.3s ease;
           padding: 0.25rem;
           border-radius: 4px;
+          font-size: 0.9rem;
+          transition: color 0.2s ease;
         }
 
         .password-toggle:hover {
-          color: #ff8c00;
-        }
-
-        .toggle-icon {
-          width: 1.1rem;
-          height: 1.1rem;
+          color: #667eea;
         }
 
         .input-border {
@@ -762,147 +1110,112 @@ const RegisterRecruteur = () => {
           left: 0;
           width: 0;
           height: 2px;
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
-          transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          border-radius: 1px;
+          background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+          transition: width 0.3s ease;
         }
 
-        .input-group.focused .input-border {
+        .form-input:focus + .input-border,
+        .form-textarea:focus + .input-border {
           width: 100%;
         }
 
-        .validation-message {
+        .input-error {
+          color: #e53e3e;
           font-size: 0.8rem;
-          font-weight: 500;
           margin-top: 0.25rem;
-        }
-
-        .validation-message.error {
-          color: #ef4444;
-        }
-
-        /* Map styling - Better organized */
-        .map-section {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-          margin-bottom: 1rem;
-        }
-
-        .map-header {
           display: flex;
           align-items: center;
+          gap: 0.25rem;
+        }
+
+        .form-navigation {
+          display: flex;
           justify-content: space-between;
+          gap: 1rem;
+          margin-top: 2rem;
+          padding-top: 1.5rem;
+          border-top: 1px solid #e2e8f0;
+        }
+
+        .prev-button {
+          background: #f7fafc;
+          color: #4a5568;
+          border: 2px solid #e2e8f0;
+          padding: 0.875rem 1.5rem;
+          border-radius: 12px;
           font-weight: 600;
-          color: #374151;
+          cursor: pointer;
+          transition: all 0.3s ease;
           font-size: 0.9rem;
         }
 
-        .map-container {
-          height: 300px;
+        .prev-button:hover {
+          background: #edf2f7;
+          border-color: #cbd5e0;
+          transform: translateY(-1px);
+        }
+
+        .next-button, .submit-button {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          border: none;
+          padding: 0.875rem 1.5rem;
           border-radius: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-size: 0.9rem;
+          position: relative;
           overflow: hidden;
-          border: 2px solid #e5e7eb;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .map-container:hover {
-          border-color: #ff8c00;
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .map-helper-text {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          color: #6b7280;
-          font-size: 0.85rem;
-          margin: 0;
-          padding: 0.5rem 0;
+          flex: 1;
+          justify-content: center;
+          max-width: 250px;
+          margin-left: auto;
         }
 
-        .helper-icon {
-          width: 0.9rem;
-          height: 0.9rem;
-          color: #ff8c00;
-        }
-
-        .address-input-section {
-          margin-top: 0.5rem;
-        }
-
-        /* Fix for Leaflet controls */
-        :global(.leaflet-control-container .leaflet-top),
-        :global(.leaflet-control-container .leaflet-bottom) {
-          z-index: 999 !important;
-        }
-
-        :global(.leaflet-container) {
-          font-family: inherit;
-          border-radius: 12px;
+        .next-button:hover, .submit-button:hover:not(.loading) {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
         }
 
         .submit-button {
-          width: 100%;
-          padding: 1.25rem 2rem;
-          background: linear-gradient(135deg, #6b7280, #4b5563);
-          color: white;
-          border: none;
-          border-radius: 12px;
-          font-size: 1.1rem;
-          font-weight: 700;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          max-width: none;
           position: relative;
-          overflow: hidden;
-          margin-top: 1rem;
-          font-family: inherit;
-        }
-
-        .submit-button:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        }
-
-        .submit-button:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-          transform: none;
-        }
-
-        .submit-button.ready {
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
-          box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3);
-        }
-
-        .submit-button.ready:hover:not(:disabled) {
-          background: linear-gradient(135deg, #ff6b35, #ff8c00);
-          box-shadow: 0 15px 35px rgba(255, 140, 0, 0.4);
         }
 
         .button-content {
           display: flex;
           align-items: center;
-          justify-content: center;
-          gap: 0.75rem;
-          position: relative;
+          gap: 0.5rem;
           z-index: 2;
+          position: relative;
+        }
+
+        .button-overlay {
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          transition: left 0.5s ease;
+        }
+
+        .next-button:hover .button-overlay,
+        .submit-button:hover:not(.loading) .button-overlay {
+          left: 100%;
         }
 
         .button-icon {
-          width: 1.25rem;
-          height: 1.25rem;
-          transition: transform 0.3s ease;
-        }
-
-        .submit-button:hover:not(:disabled) .button-icon {
-          transform: translateX(3px);
+          font-size: 0.8rem;
         }
 
         .loading-spinner {
-          width: 20px;
-          height: 20px;
+          width: 16px;
+          height: 16px;
           border: 2px solid rgba(255, 255, 255, 0.3);
           border-top: 2px solid white;
           border-radius: 50%;
@@ -910,54 +1223,44 @@ const RegisterRecruteur = () => {
         }
 
         @keyframes spin {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+
+        .submit-button.loading {
+          opacity: 0.8;
+          cursor: not-allowed;
         }
 
         .form-footer {
           text-align: center;
           margin-top: 2rem;
-          padding-top: 2rem;
-          border-top: 1px solid #e5e7eb;
-        }
-
-        .form-footer p {
-          color: #6b7280;
-          font-size: 0.95rem;
-          margin: 0;
+          padding-top: 1.5rem;
+          border-top: 1px solid #e2e8f0;
+          font-size: 0.9rem;
+          color: #718096;
         }
 
         .login-link {
-          color: #ff8c00;
+          color: #667eea;
           text-decoration: none;
           font-weight: 600;
-          transition: all 0.3s ease;
-          position: relative;
+          margin-left: 0.5rem;
+          transition: color 0.2s ease;
         }
 
         .login-link:hover {
-          color: #ff6b35;
+          color: #5a67d8;
+          text-decoration: underline;
         }
 
-        .login-link::after {
-          content: "";
-          position: absolute;
-          bottom: -2px;
-          left: 0;
-          width: 0;
-          height: 2px;
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
-          transition: width 0.3s ease;
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
         }
 
-        .login-link:hover::after {
-          width: 100%;
-        }
-
+        /* Responsive Design */
         @media (max-width: 768px) {
           .register-page {
             padding: 1rem;
@@ -965,37 +1268,42 @@ const RegisterRecruteur = () => {
 
           .register-card {
             padding: 2rem 1.5rem;
+            border-radius: 16px;
           }
 
           .register-title {
-            font-size: 2rem;
+            font-size: 1.8rem;
           }
 
-          .icon-container {
-            width: 60px;
-            height: 60px;
-          }
-
-          .main-icon {
-            width: 1.5rem;
-            height: 1.5rem;
-          }
-
-          .form-grid {
+          .form-row-split {
             grid-template-columns: 1fr;
             gap: 1rem;
           }
 
-          .form-section {
-            gap: 1rem;
+          .steps-indicator {
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
           }
 
-          .register-form {
-            gap: 2rem;
+          .step {
+            min-width: 80px;
           }
 
-          .map-container {
-            height: 250px;
+          .step-label {
+            font-size: 0.65rem;
+          }
+
+          .form-navigation {
+            flex-direction: column;
+          }
+
+          .next-button, .submit-button {
+            max-width: none;
+            margin-left: 0;
+          }
+
+          .floating-shape {
+            display: none;
           }
         }
 
@@ -1005,28 +1313,25 @@ const RegisterRecruteur = () => {
           }
 
           .register-title {
-            font-size: 1.75rem;
+            font-size: 1.6rem;
+          }
+
+          .register-subtitle {
+            font-size: 0.9rem;
           }
 
           .section-title {
             font-size: 1.1rem;
           }
 
-          .form-input {
-            padding: 0.875rem 1rem;
-          }
-
-          .submit-button {
-            padding: 1rem 1.5rem;
-          }
-
-          .map-container {
-            height: 200px;
+          .form-input, .form-textarea {
+            padding: 0.75rem;
+            font-size: 0.9rem;
           }
         }
       `}</style>
     </div>
-  )
+  );
 }
 
-export default RegisterRecruteur
+export default RegisterRecruiter;
