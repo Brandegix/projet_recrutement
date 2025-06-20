@@ -82,7 +82,7 @@ const RegisterRecruteur = () => {
       name: formData.name.length >= 3,
       phoneNumber: phoneRegex.test(formData.phoneNumber),
       companyName: formData.companyName.length >= 2,
-      address: formData.address.length > 0, // Address validation
+      address: formData.address.length > 0,
       rc: rcRegex.test(formData.rc) && formData.rc.length >= 4,
     })
   }, [formData])
@@ -174,7 +174,7 @@ const RegisterRecruteur = () => {
     label,
     required = true,
     showPasswordToggle = false,
-    readOnly = false, // Add readOnly prop
+    readOnly = false,
   }) => {
     const isValid = validations[name] && formData[name]
     const isInvalid = !validations[name] && formData[name]
@@ -202,7 +202,7 @@ const RegisterRecruteur = () => {
             onBlur={() => handleBlur(name)}
             required={required}
             placeholder={placeholder}
-            readOnly={readOnly} // Apply readOnly prop
+            readOnly={readOnly}
             className={`form-input ${isValid ? "input-valid" : ""} ${isInvalid ? "input-invalid" : ""}`}
           />
 
@@ -211,8 +211,6 @@ const RegisterRecruteur = () => {
               {showPassword ? <EyeOff className="toggle-icon" /> : <Eye className="toggle-icon" />}
             </button>
           )}
-
-          <div className="input-border" />
         </div>
 
         {isInvalid && (
@@ -232,14 +230,6 @@ const RegisterRecruteur = () => {
 
   return (
     <div className="register-page">
-      {/* Background Elements */}
-      <div className="background-decoration">
-        <div className="floating-shape shape-1" />
-        <div className="floating-shape shape-2" />
-        <div className="floating-shape shape-3" />
-        <div className="grid-pattern" />
-      </div>
-
       <div className="register-container">
         <div className="register-card" ref={registerCardRef}>
           {/* Header */}
@@ -290,11 +280,10 @@ const RegisterRecruteur = () => {
               </div>
             </div>
 
-            {/* Location Section - Separate section for better organization */}
+            {/* Location Section */}
             <div className="form-section">
               <h3 className="section-title">Localisation de l'entreprise</h3>
 
-              {/* Map Component */}
               <div className="map-section">
                 <div className="map-header">
                   <div className="label-content">
@@ -329,7 +318,7 @@ const RegisterRecruteur = () => {
                   placeholder="Adresse (sera remplie automatiquement ou modifiable)"
                   icon={MapPin}
                   label="Adresse complète"
-                  readOnly={false} // Explicitly set to false to make it editable
+                  readOnly={false}
                 />
               </div>
             </div>
@@ -391,82 +380,9 @@ const RegisterRecruteur = () => {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+          background: #f0f2f5; /* Light grey background */
           padding: 2rem 1rem;
-          overflow: hidden;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
-        .background-decoration {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          pointer-events: none;
-          z-index: 1;
-        }
-
-        .grid-pattern {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-image: linear-gradient(rgba(255, 140, 0, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 140, 0, 0.1) 1px, transparent 1px);
-          background-size: 50px 50px;
-          animation: gridMove 20s linear infinite;
-        }
-
-        @keyframes gridMove {
-          0% {
-            transform: translate(0, 0);
-          }
-          100% {
-            transform: translate(50px, 50px);
-          }
-        }
-
-        .floating-shape {
-          position: absolute;
-          border-radius: 50%;
-          background: linear-gradient(45deg, rgba(255, 140, 0, 0.1), rgba(255, 140, 0, 0.05));
-          animation: float 6s ease-in-out infinite;
-        }
-
-        .shape-1 {
-          width: 100px;
-          height: 100px;
-          top: 20%;
-          left: 10%;
-          animation-delay: 0s;
-        }
-
-        .shape-2 {
-          width: 150px;
-          height: 150px;
-          top: 60%;
-          right: 15%;
-          animation-delay: 2s;
-        }
-
-        .shape-3 {
-          width: 80px;
-          height: 80px;
-          bottom: 20%;
-          left: 20%;
-          animation-delay: 4s;
-        }
-
-        @keyframes float {
-          0%,
-          100% {
-            transform: translateY(0px) rotate(0deg);
-          }
-          50% {
-            transform: translateY(-20px) rotate(180deg);
-          }
+          font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         .register-container {
@@ -477,75 +393,32 @@ const RegisterRecruteur = () => {
         }
 
         .register-card {
-          background: rgba(255, 255, 255, 0.98);
-          backdrop-filter: blur(20px);
-          border-radius: 24px;
+          background: #ffffff;
+          border-radius: 16px;
           padding: 3rem;
-          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 140, 0, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          position: relative;
-          overflow: hidden;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.05);
+          transition: all 0.3s ease-in-out;
         }
 
-        .register-card::before {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 3px;
-          background: linear-gradient(90deg, transparent, #ff8c00, transparent);
-          animation: shimmer 2s ease-in-out infinite;
-        }
-
-        @keyframes shimmer {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
-            transform: translateX(100%);
-          }
+        .register-card:hover {
+          box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.07);
         }
 
         .register-header {
           text-align: center;
-          margin-bottom: 3rem;
+          margin-bottom: 2.5rem;
         }
 
         .icon-container {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          width: 80px;
-          height: 80px;
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
+          width: 70px;
+          height: 70px;
+          background: linear-gradient(45deg, #007bff, #00c6ff); /* Blue-green gradient */
           border-radius: 50%;
-          margin-bottom: 1.5rem;
-          box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3);
-          position: relative;
-        }
-
-        .icon-container::after {
-          content: "";
-          position: absolute;
-          top: -2px;
-          left: -2px;
-          right: -2px;
-          bottom: -2px;
-          background: linear-gradient(45deg, #ff8c00, transparent, #ff8c00);
-          border-radius: 50%;
-          z-index: -1;
-          animation: rotate 3s linear infinite;
-        }
-
-        @keyframes rotate {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
+          margin-bottom: 1.25rem;
+          box-shadow: 0 8px 20px rgba(0, 123, 255, 0.2);
         }
 
         .main-icon {
@@ -555,23 +428,19 @@ const RegisterRecruteur = () => {
         }
 
         .register-title {
-          font-size: 2.5rem;
-          font-weight: 800;
-          color: #1a1a1a;
-          margin: 0 0 0.5rem 0;
-          background: linear-gradient(135deg, #1a1a1a, #333);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          font-size: 2.25rem;
+          font-weight: 700;
+          color: #333333;
+          margin: 0 0 0.75rem 0;
         }
 
         .register-subtitle {
-          color: #666;
-          font-size: 1.1rem;
+          color: #666666;
+          font-size: 1rem;
           margin: 0;
           max-width: 500px;
           margin: 0 auto;
-          line-height: 1.6;
+          line-height: 1.5;
         }
 
         .error-message {
@@ -580,21 +449,22 @@ const RegisterRecruteur = () => {
           gap: 0.75rem;
           margin-bottom: 2rem;
           padding: 1rem 1.25rem;
-          background: rgba(239, 68, 68, 0.1);
-          border: 1px solid rgba(239, 68, 68, 0.2);
-          border-radius: 12px;
-          color: #dc2626;
+          background: #ffebeb; /* Light red background */
+          border: 1px solid #ffcccc; /* Red border */
+          border-radius: 8px;
+          color: #cc0000; /* Dark red text */
           font-weight: 500;
-          animation: slideIn 0.3s ease-out;
+          animation: fadeIn 0.3s ease-out;
         }
 
         .error-icon {
           width: 1.25rem;
           height: 1.25rem;
           flex-shrink: 0;
+          color: #cc0000;
         }
 
-        @keyframes slideIn {
+        @keyframes fadeIn {
           from {
             opacity: 0;
             transform: translateY(-10px);
@@ -614,27 +484,28 @@ const RegisterRecruteur = () => {
         .form-section {
           display: flex;
           flex-direction: column;
-          gap: 1.5rem;
+          gap: 1.25rem;
         }
 
         .section-title {
-          font-size: 1.3rem;
-          font-weight: 700;
-          color: #1a1a1a;
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: #333333;
           margin: 0;
-          padding-bottom: 0.5rem;
-          border-bottom: 2px solid #f3f4f6;
+          padding-bottom: 0.75rem;
+          border-bottom: 1px solid #eeeeee;
           position: relative;
         }
 
         .section-title::after {
           content: "";
           position: absolute;
-          bottom: -2px;
+          bottom: -1px;
           left: 0;
-          width: 60px;
-          height: 2px;
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
+          width: 40px;
+          height: 3px;
+          background: linear-gradient(45deg, #007bff, #00c6ff);
+          border-radius: 2px;
         }
 
         .form-grid {
@@ -647,32 +518,28 @@ const RegisterRecruteur = () => {
           display: flex;
           flex-direction: column;
           gap: 0.5rem;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .input-group.focused {
-          transform: translateY(-2px);
         }
 
         .input-label {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          font-weight: 600;
-          color: #374151;
+          font-weight: 500;
+          color: #555555;
           font-size: 0.9rem;
+          margin-bottom: 0.25rem;
         }
 
         .label-content {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.6rem;
         }
 
         .input-icon {
-          width: 1.1rem;
-          height: 1.1rem;
-          color: #ff8c00;
+          width: 1rem;
+          height: 1rem;
+          color: #007bff; /* Blue accent for icons */
         }
 
         .label-text {
@@ -680,21 +547,21 @@ const RegisterRecruteur = () => {
         }
 
         .required-asterisk {
-          color: #ef4444;
+          color: #e74c3c; /* Red for required */
           font-weight: 700;
         }
 
         .validation-icon {
-          width: 1.1rem;
-          height: 1.1rem;
+          width: 1rem;
+          height: 1rem;
         }
 
         .validation-icon.success {
-          color: #10b981;
+          color: #27ae60; /* Green for success */
         }
 
         .validation-icon.error {
-          color: #ef4444;
+          color: #e74c3c; /* Red for error */
         }
 
         .input-container {
@@ -703,37 +570,34 @@ const RegisterRecruteur = () => {
 
         .form-input {
           width: 100%;
-          padding: 1rem 1.25rem;
-          border: 2px solid #e5e7eb;
-          border-radius: 12px;
+          padding: 0.9rem 1.1rem;
+          border: 1px solid #dddddd;
+          border-radius: 8px;
           font-size: 1rem;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          background: rgba(255, 255, 255, 0.9);
-          backdrop-filter: blur(10px);
-          color: #1a1a1a;
+          transition: all 0.2s ease-in-out;
+          background: #fdfdfd;
+          color: #333333;
           font-family: inherit;
           box-sizing: border-box;
         }
 
         .form-input::placeholder {
-          color: #9ca3af;
+          color: #aaaaaa;
         }
 
         .form-input:focus {
           outline: none;
-          border-color: #ff8c00;
-          box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
-          background: rgba(255, 255, 255, 1);
+          border-color: #007bff; /* Accent color on focus */
+          box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+          background: #ffffff;
         }
 
         .form-input.input-valid {
-          border-color: #10b981;
-          background: rgba(16, 185, 129, 0.05);
+          border-color: #27ae60;
         }
 
         .form-input.input-invalid {
-          border-color: #ef4444;
-          background: rgba(239, 68, 68, 0.05);
+          border-color: #e74c3c;
         }
 
         .password-toggle {
@@ -744,91 +608,77 @@ const RegisterRecruteur = () => {
           background: none;
           border: none;
           cursor: pointer;
-          color: #6b7280;
-          transition: color 0.3s ease;
+          color: #888888;
+          transition: color 0.2s ease;
           padding: 0.25rem;
           border-radius: 4px;
         }
 
         .password-toggle:hover {
-          color: #ff8c00;
+          color: #007bff;
         }
 
         .toggle-icon {
-          width: 1.1rem;
-          height: 1.1rem;
-        }
-
-        .input-border {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 0;
-          height: 2px;
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
-          transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          border-radius: 1px;
-        }
-
-        .input-group.focused .input-border {
-          width: 100%;
+          width: 1rem;
+          height: 1rem;
         }
 
         .validation-message {
           font-size: 0.8rem;
-          font-weight: 500;
-          margin-top: 0.25rem;
+          font-weight: 400;
+          margin-top: 0.4rem;
         }
 
         .validation-message.error {
-          color: #ef4444;
+          color: #e74c3c;
         }
 
-        /* Map styling - Better organized */
+        /* Map styling */
         .map-section {
           display: flex;
           flex-direction: column;
           gap: 1rem;
-          margin-bottom: 1rem;
+          margin-bottom: 0.5rem;
         }
 
         .map-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          font-weight: 600;
-          color: #374151;
+          font-weight: 500;
+          color: #555555;
           font-size: 0.9rem;
+          margin-bottom: 0.25rem;
         }
 
         .map-container {
           height: 300px;
-          border-radius: 12px;
+          border-radius: 8px;
           overflow: hidden;
-          border: 2px solid #e5e7eb;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+          border: 1px solid #dddddd;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+          transition: all 0.2s ease-in-out;
         }
 
         .map-container:hover {
-          border-color: #ff8c00;
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+          border-color: #007bff;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         .map-helper-text {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          color: #6b7280;
+          color: #777777;
           font-size: 0.85rem;
           margin: 0;
-          padding: 0.5rem 0;
+          padding-top: 0.5rem;
         }
 
         .helper-icon {
           width: 0.9rem;
           height: 0.9rem;
-          color: #ff8c00;
+          color: #007bff;
         }
 
         .address-input-section {
@@ -843,45 +693,45 @@ const RegisterRecruteur = () => {
 
         :global(.leaflet-container) {
           font-family: inherit;
-          border-radius: 12px;
+          border-radius: 8px;
         }
 
         .submit-button {
           width: 100%;
-          padding: 1.25rem 2rem;
-          background: linear-gradient(135deg, #6b7280, #4b5563);
+          padding: 1rem 1.5rem;
+          background: #cccccc; /* Default grey for disabled */
           color: white;
           border: none;
-          border-radius: 12px;
-          font-size: 1.1rem;
-          font-weight: 700;
+          border-radius: 8px;
+          font-size: 1.05rem;
+          font-weight: 600;
           cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: all 0.3s ease;
           position: relative;
           overflow: hidden;
-          margin-top: 1rem;
+          margin-top: 1.5rem;
           font-family: inherit;
         }
 
         .submit-button:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+          transform: translateY(-1px);
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .submit-button:disabled {
-          opacity: 0.6;
+          opacity: 0.7;
           cursor: not-allowed;
           transform: none;
         }
 
         .submit-button.ready {
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
-          box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3);
+          background: linear-gradient(45deg, #007bff, #00c6ff); /* Blue-green gradient for active */
+          box-shadow: 0 5px 15px rgba(0, 123, 255, 0.2);
         }
 
         .submit-button.ready:hover:not(:disabled) {
-          background: linear-gradient(135deg, #ff6b35, #ff8c00);
-          box-shadow: 0 15px 35px rgba(255, 140, 0, 0.4);
+          background: linear-gradient(45deg, #0056b3, #0099cc); /* Darker gradient on hover */
+          box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
         }
 
         .button-content {
@@ -894,19 +744,19 @@ const RegisterRecruteur = () => {
         }
 
         .button-icon {
-          width: 1.25rem;
-          height: 1.25rem;
-          transition: transform 0.3s ease;
+          width: 1.1rem;
+          height: 1.1rem;
+          transition: transform 0.2s ease;
         }
 
-        .submit-button:hover:not(:disabled) .button-icon {
+        .submit-button.ready:hover:not(:disabled) .button-icon {
           transform: translateX(3px);
         }
 
         .loading-spinner {
-          width: 20px;
-          height: 20px;
-          border: 2px solid rgba(255, 255, 255, 0.3);
+          width: 18px;
+          height: 18px;
+          border: 2px solid rgba(255, 255, 255, 0.4);
           border-top: 2px solid white;
           border-radius: 50%;
           animation: spin 1s linear infinite;
@@ -924,48 +774,30 @@ const RegisterRecruteur = () => {
         .form-footer {
           text-align: center;
           margin-top: 2rem;
-          padding-top: 2rem;
-          border-top: 1px solid #e5e7eb;
+          padding-top: 1.5rem;
+          border-top: 1px solid #eeeeee;
         }
 
         .form-footer p {
-          color: #6b7280;
-          font-size: 0.95rem;
+          color: #777777;
+          font-size: 0.9rem;
           margin: 0;
         }
 
         .login-link {
-          color: #ff8c00;
+          color: #007bff;
           text-decoration: none;
           font-weight: 600;
-          transition: all 0.3s ease;
+          transition: color 0.2s ease;
           position: relative;
         }
 
         .login-link:hover {
-          color: #ff6b35;
-        }
-
-        .login-link::after {
-          content: "";
-          position: absolute;
-          bottom: -2px;
-          left: 0;
-          width: 0;
-          height: 2px;
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
-          transition: width 0.3s ease;
-        }
-
-        .login-link:hover::after {
-          width: 100%;
+          color: #0056b3;
+          text-decoration: underline;
         }
 
         @media (max-width: 768px) {
-          .register-page {
-            padding: 1rem;
-          }
-
           .register-card {
             padding: 2rem 1.5rem;
           }
@@ -1016,11 +848,11 @@ const RegisterRecruteur = () => {
           }
 
           .form-input {
-            padding: 0.875rem 1rem;
+            padding: 0.8rem 1rem;
           }
 
           .submit-button {
-            padding: 1rem 1.5rem;
+            padding: 0.9rem 1.2rem;
           }
 
           .map-container {
