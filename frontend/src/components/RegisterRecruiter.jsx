@@ -6,6 +6,7 @@ import {
   Phone,
   Building,
   Lock,
+  CheckCircle,
   MapPin,
   FileText,
   AlertCircle,
@@ -36,7 +37,7 @@ function LocationMarker({ position, setPosition, updateFormLocation }) {
   return <Marker position={position} />
 }
 
-// Move InputField component OUTSIDE of RegisterRecruteur
+// InputField component
 const InputField = ({
   name,
   type = "text",
@@ -50,18 +51,25 @@ const InputField = ({
   onChange,
   showPassword,
   setShowPassword,
+  isValid, // Added isValid prop
+  isInvalid, // Added isInvalid prop
+  isFocused, // Added isFocused prop
+  validationMessage, // Added validationMessage prop
+  onFocus, // Added onFocus prop
+  onBlur, // Added onBlur prop
 }) => {
-  // Determine the actual input type for password fields
-  const inputType = showPasswordToggle ? (showPassword ? "text" : "password") : type;
+  const inputType = showPasswordToggle ? (showPassword ? "text" : "password") : type
 
   return (
-    <div className={`input-group`}>
+    <div className={`input-group ${isFocused ? "focused" : ""} ${isValid ? "valid" : ""}`}>
       <label htmlFor={name} className="input-label">
         <div className="label-content">
           <Icon className="input-icon" />
           <span className="label-text">{label}</span>
           {required && <span className="required-asterisk">*</span>}
         </div>
+        {isValid && <CheckCircle className="validation-icon success" />}
+        {isInvalid && <AlertCircle className="validation-icon error" />}
       </label>
 
       <div className="input-container">
@@ -71,10 +79,12 @@ const InputField = ({
           name={name}
           value={value}
           onChange={onChange}
+          onFocus={onFocus}
+          onBlur={onBlur}
           required={required}
           placeholder={placeholder}
           readOnly={readOnly}
-          className={`form-input`}
+          className={`form-input ${isValid ? "input-valid" : ""} ${isInvalid ? "input-invalid" : ""}`}
         />
 
         {showPasswordToggle && (
@@ -85,6 +95,12 @@ const InputField = ({
 
         <div className="input-border" />
       </div>
+
+      {isInvalid && validationMessage && (
+        <div className="validation-message error">
+          {validationMessage}
+        </div>
+      )}
     </div>
   )
 }
@@ -106,8 +122,9 @@ const RegisterRecruteur = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [showPassword, setShowPassword] = useState(false)
-  const [position, setPosition] = useState([33.57311, -7.589843])
-  
+  const [focusedFields, setFocusedFields] = useState({})
+  const [position, setPosition] = useState([33.57311, -7.589843]) // Default Casablanca
+
   const [validations, setValidations] = useState({
     username: false,
     email: false,
@@ -176,30 +193,18 @@ const RegisterRecruteur = () => {
     }))
   }
 
+  const handleFocus = (fieldName) => {
+    setFocusedFields((prev) => ({ ...prev, [fieldName]: true }))
+  }
+
+  const handleBlur = (fieldName) => {
+    setFocusedFields((prev) => ({ ...prev, [fieldName]: false }))
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError("")
-
-    // Perform validation checks before submission
-    const currentValidations = {
-      username: formData.username.length >= 3,
-      email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email),
-      password: formData.password.length >= 6,
-      name: formData.name.length >= 3,
-      phoneNumber: /^[0-9]{10}$/.test(formData.phoneNumber),
-      companyName: formData.companyName.length >= 2,
-      address: formData.address.length > 0,
-      rc: /^[0-9]+$/.test(formData.rc) && formData.rc.length >= 4,
-    }
-
-    setValidations(currentValidations)
-
-    if (!Object.values(currentValidations).every((valid) => valid)) {
-      setError("Veuillez remplir correctement tous les champs requis.")
-      setLoading(false)
-      return
-    }
 
     try {
       // Simulate API call
@@ -221,7 +226,6 @@ const RegisterRecruteur = () => {
         latitude: 33.57311,
         longitude: -7.589843,
       })
-      setError("Inscription réussie !")
     } catch (err) {
       setError("Erreur lors de l'inscription. Veuillez réessayer.")
     } finally {
@@ -231,8 +235,33 @@ const RegisterRecruteur = () => {
 
   const allFieldsValid = Object.values(validations).every((valid) => valid)
 
+  // Function to get validation message
+  const getValidationMessage = (name) => {
+    if (validations[name]) return ""
+    switch (name) {
+      case "email":
+        return "Format d'email invalide"
+      case "phoneNumber":
+        return "Le numéro doit contenir 10 chiffres"
+      case "password":
+        return "Le mot de passe doit contenir au moins 6 caractères"
+      case "rc":
+        return "Le RC doit contenir au moins 4 chiffres"
+      case "name":
+      case "username":
+        return "Minimum 3 caractères requis"
+      case "companyName":
+        return "Minimum 2 caractères requis"
+      case "address":
+        return "Adresse requise"
+      default:
+        return ""
+    }
+  }
+
   return (
     <div className="register-page">
+      {/* Background Elements */}
       <div className="background-decoration">
         <div className="floating-shape shape-1" />
         <div className="floating-shape shape-2" />
@@ -265,31 +294,49 @@ const RegisterRecruteur = () => {
             <div className="form-section">
               <h3 className="section-title">Informations Personnelles</h3>
               <div className="form-grid">
-                <InputField 
-                  name="name" 
-                  placeholder="Votre nom complet" 
-                  icon={User} 
-                  label="Nom complet" 
-                  value={formData.name} 
-                  onChange={handleChange} 
+                <InputField
+                  name="name"
+                  placeholder="Votre nom complet"
+                  icon={User}
+                  label="Nom complet"
+                  value={formData.name}
+                  onChange={handleChange}
+                  isValid={validations.name && formData.name.length > 0}
+                  isInvalid={!validations.name && formData.name.length > 0}
+                  isFocused={focusedFields.name}
+                  onFocus={() => handleFocus("name")}
+                  onBlur={() => handleBlur("name")}
+                  validationMessage={getValidationMessage("name")}
                 />
-                <InputField 
-                  name="email" 
-                  type="email" 
-                  placeholder="votre@email.com" 
-                  icon={Mail} 
-                  label="Email" 
-                  value={formData.email} 
-                  onChange={handleChange} 
+                <InputField
+                  name="email"
+                  type="email"
+                  placeholder="votre@email.com"
+                  icon={Mail}
+                  label="Email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  isValid={validations.email && formData.email.length > 0}
+                  isInvalid={!validations.email && formData.email.length > 0}
+                  isFocused={focusedFields.email}
+                  onFocus={() => handleFocus("email")}
+                  onBlur={() => handleBlur("email")}
+                  validationMessage={getValidationMessage("email")}
                 />
-                <InputField 
-                  name="phoneNumber" 
-                  type="tel" 
-                  placeholder="0123456789" 
-                  icon={Phone} 
-                  label="Téléphone" 
-                  value={formData.phoneNumber} 
-                  onChange={handleChange} 
+                <InputField
+                  name="phoneNumber"
+                  type="tel"
+                  placeholder="0123456789"
+                  icon={Phone}
+                  label="Téléphone"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  isValid={validations.phoneNumber && formData.phoneNumber.length > 0}
+                  isInvalid={!validations.phoneNumber && formData.phoneNumber.length > 0}
+                  isFocused={focusedFields.phoneNumber}
+                  onFocus={() => handleFocus("phoneNumber")}
+                  onBlur={() => handleBlur("phoneNumber")}
+                  validationMessage={getValidationMessage("phoneNumber")}
                 />
               </div>
             </div>
@@ -303,31 +350,40 @@ const RegisterRecruteur = () => {
                   placeholder="Nom de votre entreprise"
                   icon={Building}
                   label="Nom de l'entreprise"
-                  value={formData.companyName} 
+                  value={formData.companyName}
                   onChange={handleChange}
+                  isValid={validations.companyName && formData.companyName.length > 0}
+                  isInvalid={!validations.companyName && formData.companyName.length > 0}
+                  isFocused={focusedFields.companyName}
+                  onFocus={() => handleFocus("companyName")}
+                  onBlur={() => handleBlur("companyName")}
+                  validationMessage={getValidationMessage("companyName")}
                 />
                 <InputField
                   name="rc"
                   placeholder="Numéro de Registre du Commerce"
                   icon={FileText}
                   label="RC (Registre du Commerce)"
-                  value={formData.rc} 
+                  value={formData.rc}
                   onChange={handleChange}
+                  isValid={validations.rc && formData.rc.length > 0}
+                  isInvalid={!validations.rc && formData.rc.length > 0}
+                  isFocused={focusedFields.rc}
+                  onFocus={() => handleFocus("rc")}
+                  onBlur={() => handleBlur("rc")}
+                  validationMessage={getValidationMessage("rc")}
                 />
               </div>
-            </div>
 
-            {/* Location Section */}
-            <div className="form-section">
-              <h3 className="section-title">Localisation de l'entreprise</h3>
-
+              {/* Map Component */}
               <div className="map-section">
                 <div className="map-header">
                   <div className="label-content">
                     <MapPin className="input-icon" />
-                    <span className="label-text">Sélectionnez l'emplacement sur la carte</span>
+                    <span className="label-text">Localisation de l'entreprise</span>
                     <span className="required-asterisk">*</span>
                   </div>
+                  {validations.address && formData.address && <CheckCircle className="validation-icon success" />}
                 </div>
 
                 <div className="map-container">
@@ -345,18 +401,23 @@ const RegisterRecruteur = () => {
                   <MapPin className="helper-icon" />
                   Cliquez sur la carte pour sélectionner l'emplacement de votre entreprise
                 </p>
-              </div>
 
-              {/* Address Input - Now editable */}
-              <div className="address-input-section">
                 <InputField
                   name="address"
-                  placeholder="Adresse (sera remplie automatiquement ou modifiable)"
-                  icon={MapPin}
-                  label="Adresse complète"
-                  readOnly={false}
-                  value={formData.address} 
-                  onChange={handleChange}
+                  type="text"
+                  placeholder="Adresse (cliquez sur la carte)"
+                  icon={MapPin} // Added MapPin icon to the address field
+                  label="Adresse de l'entreprise" // Added label for clarity
+                  required={true}
+                  readOnly={true} // Make the address field read-only as it's set by map click
+                  value={formData.address}
+                  onChange={handleChange} // Still allow onChange in case of manual entry if readOnly is false
+                  isValid={validations.address && formData.address.length > 0}
+                  isInvalid={!validations.address && formData.address.length > 0}
+                  isFocused={focusedFields.address}
+                  onFocus={() => handleFocus("address")}
+                  onBlur={() => handleBlur("address")}
+                  validationMessage={getValidationMessage("address")}
                 />
               </div>
             </div>
@@ -365,13 +426,19 @@ const RegisterRecruteur = () => {
             <div className="form-section">
               <h3 className="section-title">Informations de Connexion</h3>
               <div className="form-grid">
-                <InputField 
-                  name="username" 
-                  placeholder="Votre identifiant" 
-                  icon={User} 
-                  label="Nom d'utilisateur" 
-                  value={formData.username} 
-                  onChange={handleChange} 
+                <InputField
+                  name="username"
+                  placeholder="Votre identifiant"
+                  icon={User}
+                  label="Nom d'utilisateur"
+                  value={formData.username}
+                  onChange={handleChange}
+                  isValid={validations.username && formData.username.length > 0}
+                  isInvalid={!validations.username && formData.username.length > 0}
+                  isFocused={focusedFields.username}
+                  onFocus={() => handleFocus("username")}
+                  onBlur={() => handleBlur("username")}
+                  validationMessage={getValidationMessage("username")}
                 />
                 <InputField
                   name="password"
@@ -380,10 +447,16 @@ const RegisterRecruteur = () => {
                   icon={Lock}
                   label="Mot de passe"
                   showPasswordToggle={true}
-                  value={formData.password} 
+                  value={formData.password}
                   onChange={handleChange}
-                  showPassword={showPassword} 
+                  showPassword={showPassword}
                   setShowPassword={setShowPassword}
+                  isValid={validations.password && formData.password.length > 0}
+                  isInvalid={!validations.password && formData.password.length > 0}
+                  isFocused={focusedFields.password}
+                  onFocus={() => handleFocus("password")}
+                  onBlur={() => handleBlur("password")}
+                  validationMessage={getValidationMessage("password")}
                 />
               </div>
             </div>
@@ -677,7 +750,7 @@ const RegisterRecruteur = () => {
 
         .form-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
           gap: 1.5rem;
         }
 
@@ -685,394 +758,11 @@ const RegisterRecruteur = () => {
           display: flex;
           flex-direction: column;
           gap: 0.5rem;
-        }
-
-        .input-label {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          font-weight: 600;
-          color: #374151;
-          font-size: 0.9rem;
-        }
-
-        .label-content {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
-        .input-icon {
-          width: 1.1rem;
-          height: 1.1rem;
-          color: #ff8c00;
-        }
-
-        .label-text {
-          font-weight: 600;
-        }
-
-        .required-asterisk {
-          color: #ef4444;
-          font-weight: 700;
-        }
-
-        .input-container {
-          position: relative;
-        }
-
-        .form-input {
-          width: 100%;
-          padding: 1rem 1.25rem;
-          border: 2px solid #e5e7eb;
-          border-radius: 12px;
-          font-size: 1rem;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          background: rgba(255, 255, 255, 0.9);
-          backdrop-filter: blur(10px);
-          color: #1a1a1a;
-          font-family: inherit;
-          box-sizing: border-box;
         }
 
-        .form-input::placeholder {
-          color: #9ca3af;
-        }
-
-        .form-input:focus {
-          outline: none;
-          border-color: #ff8c00;
-          box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
-          background: rgba(255, 255, 255, 1);
-        }
-
-        .password-toggle {
-          position: absolute;
-          right: 1rem;
-          top: 50%;
-          transform: translateY(-50%);
-          background: none;
-          border: none;
-          cursor: pointer;
-          color: #6b7280;
-          transition: color 0.3s ease;
-          padding: 0.25rem;
-          border-radius: 4px;
-        }
-
-        .password-toggle:hover {
-          color: #ff8c00;
-        }
-
-        .toggle-icon {
-          width: 1.1rem;
-          height: 1.1rem;
-        }
-
-        .input-border {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 0;
-          height: 2px;
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
-          transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          border-radius: 1px;
-        }
-
-        .map-section {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-          margin-bottom: 1rem;
-        }
-
-        .map-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          font-weight: 600;
-          color: #374151;
-          font-size: 0.9rem;
-        }
-
-        .map-container {
-          height: 300px;
-          border-radius: 12px;
-          overflow: hidden;
-          border: 2px solid #e5e7eb;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .map-container:hover {
-          border-color: #ff8c00;
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .map-helper-text {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          color: #6b7280;
-          font-size: 0.85rem;
-          margin: 0;
-          padding: 0.5rem 0;
-        }
-
-        .helper-icon {
-          width: 0.9rem;
-          height: 0.9rem;
-          color: #ff8c00;
-        }
-
-        .address-input-section {
-          margin-top: 0.5rem;
-        }
-
-        /* Fix for Leaflet controls */
-        :global(.leaflet-control-container .leaflet-top),
-        :global(.leaflet-control-container .leaflet-bottom) {
-          z-index: 999 !important;
-        }
-
-        :global(.leaflet-container) {
-          font-family: inherit;
-          border-radius: 12px;
-        }
-
-        .submit-button {
-          width: 100%;
-          padding: 1.25rem 2rem;
-          background: linear-gradient(135deg, #6b7280, #4b5563);
-          color: white;
-          border: none;
-          border-radius: 12px;
-          font-size: 1.1rem;
-          font-weight: 700;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          position: relative;
-          overflow: hidden;
-          margin-top: 1rem;
-          font-family: inherit;
-        }
-
-        .submit-button:hover:not(:disabled) {
+        .input-group.focused {
           transform: translateY(-2px);
-          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        }
-
-        .submit-button:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-          transform: none;
-        }
-
-        .submit-button.ready {
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
-          box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3);
-        }
-
-        .submit-button.ready:hover:not(:disabled) {
-          background: linear-gradient(135deg, #ff6b35, #ff8c00);
-          box-shadow: 0 15px 35px rgba(255, 140, 0, 0.4);
-        }
-
-        .button-content {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.75rem;
-          position: relative;
-          z-index: 2;
-        }
-
-        .button-icon {
-          width: 1.25rem;
-          height: 1.25rem;
-          transition: transform 0.3s ease;
-        }
-
-        .submit-button:hover:not(:disabled) .button-icon {
-          transform: translateX(3px);
-        }
-
-        .loading-spinner {
-          width: 20px;
-          height: 20px;
-          border: 2px solid rgba(255, 255, 255, 0.3);
-          border-top: 2px solid white;
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
-        }
-
-        .form-footer {
-          text-align: center;
-          margin-top: 2rem;
-          padding-top: 2rem;
-          border-top: 1px solid #e5e7eb;
-        }
-
-        .form-footer p {
-          color: #6b7280;
-          font-size: 0.95rem;
-          margin: 0;
-        }
-
-        .login-link {
-          color: #ff8c00;
-          text-decoration: none;
-          font-weight: 600;
-          transition: all 0.3s ease;
-          position: relative;
-        }
-
-        .login-link:hover {
-          color: #ff6b35;
-        }
-
-        .login-link::after {
-          content: "";
-          position: absolute;
-          bottom: -2px;
-          left: 0;
-          width: 0;
-          height: 2px;
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
-          transition: width 0.3s ease;
-        }
-
-        .login-link:hover::after {
-          width: 100%;
-        }
-
-        @media (max-width: 768px) {
-          .register-page {
-            padding: 1rem;
-          }
-
-          .register-card {
-            padding: 2rem 1.5rem;
-          }
-
-          .register-title {
-            font-size: 2rem;
-          }
-
-          .icon-container {
-            width: 60px;
-            height: 60px;
-          }
-
-          .main-icon {
-            width: 1.5rem;
-            height: 1.5;
-          color: white;
-        }
-
-        .register-title {
-          font-size: 2.5rem;
-          font-weight: 800;
-          color: #1a1a1a;
-          margin: 0 0 0.5rem 0;
-          background: linear-gradient(135deg, #1a1a1a, #333);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        .register-subtitle {
-          color: #666;
-          font-size: 1.1rem;
-          margin: 0;
-          max-width: 500px;
-          margin: 0 auto;
-          line-height: 1.6;
-        }
-
-        .error-message {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          margin-bottom: 2rem;
-          padding: 1rem 1.25rem;
-          background: rgba(239, 68, 68, 0.1);
-          border: 1px solid rgba(239, 68, 68, 0.2);
-          border-radius: 12px;
-          color: #dc2626;
-          font-weight: 500;
-          animation: slideIn 0.3s ease-out;
-        }
-
-        .error-icon {
-          width: 1.25rem;
-          height: 1.25rem;
-          flex-shrink: 0;
-        }
-
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .register-form {
-          display: flex;
-          flex-direction: column;
-          gap: 2.5rem;
-        }
-
-        .form-section {
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-        }
-
-        .section-title {
-          font-size: 1.3rem;
-          font-weight: 700;
-          color: #1a1a1a;
-          margin: 0;
-          padding-bottom: 0.5rem;
-          border-bottom: 2px solid #f3f4f6;
-          position: relative;
-        }
-
-        .section-title::after {
-          content: "";
-          position: absolute;
-          bottom: -2px;
-          left: 0;
-          width: 60px;
-          height: 2px;
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
-        }
-
-        .form-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 1.5rem;
-        }
-
-        .input-group {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
         }
 
         .input-label {
@@ -1105,6 +795,19 @@ const RegisterRecruteur = () => {
           font-weight: 700;
         }
 
+        .validation-icon {
+          width: 1.1rem;
+          height: 1.1rem;
+        }
+
+        .validation-icon.success {
+          color: #10b981;
+        }
+
+        .validation-icon.error {
+          color: #ef4444;
+        }
+
         .input-container {
           position: relative;
         }
@@ -1120,7 +823,6 @@ const RegisterRecruteur = () => {
           backdrop-filter: blur(10px);
           color: #1a1a1a;
           font-family: inherit;
-          box-sizing: border-box;
         }
 
         .form-input::placeholder {
@@ -1132,6 +834,16 @@ const RegisterRecruteur = () => {
           border-color: #ff8c00;
           box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
           background: rgba(255, 255, 255, 1);
+        }
+
+        .form-input.input-valid {
+          border-color: #10b981;
+          background: rgba(16, 185, 129, 0.05);
+        }
+
+        .form-input.input-invalid {
+          border-color: #ef4444;
+          background: rgba(239, 68, 68, 0.05);
         }
 
         .password-toggle {
@@ -1168,11 +880,26 @@ const RegisterRecruteur = () => {
           border-radius: 1px;
         }
 
+        .input-group.focused .input-border {
+          width: 100%;
+        }
+
+        .validation-message {
+          font-size: 0.8rem;
+          font-weight: 500;
+          margin-top: 0.25rem;
+        }
+
+        .validation-message.error {
+          color: #ef4444;
+        }
+
+        /* Map styling */
         .map-section {
           display: flex;
           flex-direction: column;
           gap: 1rem;
-          margin-bottom: 1rem;
+          margin-top: 0.5rem;
         }
 
         .map-header {
@@ -1205,17 +932,12 @@ const RegisterRecruteur = () => {
           color: #6b7280;
           font-size: 0.85rem;
           margin: 0;
-          padding: 0.5rem 0;
         }
 
         .helper-icon {
           width: 0.9rem;
           height: 0.9rem;
           color: #ff8c00;
-        }
-
-        .address-input-section {
-          margin-top: 0.5rem;
         }
 
         /* Fix for Leaflet controls */
