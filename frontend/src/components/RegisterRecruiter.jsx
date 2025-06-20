@@ -129,18 +129,18 @@ const RegisterRecruteur = () => {
     const isFocused = focusedFields[name]
 
     return (
-      <div className={`field-wrapper ${isFocused ? "field-focused" : ""} ${isValid ? "field-valid" : ""}`}>
-        <label className="field-label">
+      <div className={`input-group ${isFocused ? "focused" : ""} ${isValid ? "valid" : ""}`}>
+        <label className="input-label">
           <div className="label-content">
-            <Icon className="label-icon" />
+            <Icon className="input-icon" />
             <span className="label-text">{label}</span>
-            {required && <span className="required-mark">*</span>}
+            {required && <span className="required-asterisk">*</span>}
           </div>
-          {isValid && <CheckCircle className="validation-indicator success-indicator" />}
-          {isInvalid && <AlertCircle className="validation-indicator error-indicator" />}
+          {isValid && <CheckCircle className="validation-icon success" />}
+          {isInvalid && <AlertCircle className="validation-icon error" />}
         </label>
 
-        <div className="input-wrapper">
+        <div className="input-container">
           <input
             type={showPasswordToggle && showPassword ? "text" : type}
             name={name}
@@ -150,20 +150,22 @@ const RegisterRecruteur = () => {
             onBlur={() => handleBlur(name)}
             required={required}
             placeholder={placeholder}
-            className={`text-input ${isValid ? "valid-input" : ""} ${isInvalid ? "invalid-input" : ""}`}
+            className={`form-inputs ${isValid ? "input-valid" : ""} ${isInvalid ? "input-invalid" : ""}`}
+            // Remove inline style pointer-events, user-select, zIndex from here
+            // They are better handled in the global CSS to ensure consistency and override
           />
 
           {showPasswordToggle && (
-            <button type="button" onClick={() => setShowPassword(!showPassword)} className="password-visibility-toggle">
-              {showPassword ? <EyeOff className="visibility-icon" /> : <Eye className="visibility-icon" />}
+            <button type="button" onClick={() => setShowPassword(!showPassword)} className="password-toggle">
+              {showPassword ? <EyeOff className="toggle-icon" /> : <Eye className="toggle-icon" />}
             </button>
           )}
 
-          <div className="input-underline" />
+          <div className="input-border" />
         </div>
 
         {isInvalid && (
-          <div className="validation-error-message">
+          <div className="validation-message error">
             {name === "email" && "Format d'email invalide"}
             {name === "phoneNumber" && "Le numéro doit contenir 10 chiffres"}
             {name === "password" && "Le mot de passe doit contenir au moins 6 caractères"}
@@ -187,41 +189,41 @@ const RegisterRecruteur = () => {
   }
 
   return (
-    <div className="registration-page">
+    <div className="register-page">
       {/* Background Elements */}
-      <div className="bg-decoration">
-        <div className="floating-element element-1" />
-        <div className="floating-element element-2" />
-        <div className="floating-element element-3" />
-        <div className="grid-overlay" />
+      <div className="background-decoration">
+        <div className="floating-shape shape-1" />
+        <div className="floating-shape shape-2" />
+        <div className="floating-shape shape-3" />
+        <div className="grid-pattern" />
       </div>
 
-      {/* Main content container */}
-      <div className="main-container">
-        <div className="registration-card" ref={registerCardRef}>
+      {/* Main content container - give it a higher z-index than background */}
+      <div className="register-container">
+        <div className="register-card" ref={registerCardRef}>
           {/* Header */}
-          <div className="card-header">
-            <div className="header-icon-container">
-              <Building className="header-icon" />
+          <div className="register-header">
+            <div className="icon-container">
+              <Building className="main-icon" />
             </div>
-            <h1 className="main-title">Inscription Recruteur</h1>
-            <p className="main-subtitle">Créez votre compte entreprise pour recruter les meilleurs talents</p>
+            <h1 className="register-title">Inscription Recruteur</h1>
+            <p className="register-subtitle">Créez votre compte entreprise pour recruter les meilleurs talents</p>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="error-alert">
-              <AlertCircle className="alert-icon" />
+            <div className="error-message">
+              <AlertCircle className="error-icon" />
               <span>{error}</span>
             </div>
           )}
 
           {/* Registration Form */}
-          <form onSubmit={handleSubmit} className="registration-form">
+          <form onSubmit={handleSubmit} className="register-form">
             {/* Personal Information Section */}
             <div className="form-section">
-              <h3 className="section-heading">Informations Personnelles</h3>
-              <div className="fields-grid">
+              <h3 className="section-title">Informations Personnelles</h3>
+              <div className="form-grid">
                 <InputField name="name" placeholder="Votre nom complet" icon={User} label="Nom complet" />
                 <InputField name="email" type="email" placeholder="votre@email.com" icon={Mail} label="Email" />
                 <InputField name="phoneNumber" type="tel" placeholder="0123456789" icon={Phone} label="Téléphone" />
@@ -230,8 +232,8 @@ const RegisterRecruteur = () => {
 
             {/* Company Information Section */}
             <div className="form-section">
-              <h3 className="section-heading">Informations Entreprise</h3>
-              <div className="fields-grid">
+              <h3 className="section-title">Informations Entreprise</h3>
+              <div className="form-grid">
                 <InputField
                   name="companyName"
                   placeholder="Nom de votre entreprise"
@@ -249,37 +251,37 @@ const RegisterRecruteur = () => {
 
             {/* Location Section */}
             <div className="form-section">
-              <h3 className="section-heading">Localisation de l'entreprise</h3>
+              <h3 className="section-title">Localisation de l'entreprise</h3>
 
               {/* Map Component */}
               <div className="map-section">
-                <div className="map-label">
+                <div className="map-header">
                   <div className="label-content">
-                    <MapPin className="label-icon" />
+                    <MapPin className="input-icon" />
                     <span className="label-text">Sélectionnez l'emplacement sur la carte</span>
-                    <span className="required-mark">*</span>
+                    <span className="required-asterisk">*</span>
                   </div>
-                  {validations.address && formData.address && <CheckCircle className="validation-indicator success-indicator" />}
+                  {validations.address && formData.address && <CheckCircle className="validation-icon success" />}
                 </div>
 
-                <div className="map-area" onClick={handleMapClick}>
+                <div className="map-container" onClick={handleMapClick}>
                   <div className="map-placeholder">
-                    <MapPin size={48} className="map-pin-icon" />
+                    <MapPin size={48} className="map-icon" />
                     <p>Cliquez ici pour sélectionner l'emplacement</p>
-                    <p className="coordinates-display">
+                    <p className="map-coordinates">
                       Lat: {formData.latitude.toFixed(6)}, Lng: {formData.longitude.toFixed(6)}
                     </p>
                   </div>
                 </div>
 
-                <p className="map-help-text">
-                  <MapPin className="help-icon" />
+                <p className="map-helper-text">
+                  <MapPin className="helper-icon" />
                   Cliquez sur la carte pour sélectionner l'emplacement de votre entreprise
                 </p>
               </div>
 
               {/* Address Input */}
-              <div className="address-section">
+              <div className="address-input-section">
                 <InputField
                   name="address"
                   placeholder="Adresse (sera remplie automatiquement)"
@@ -291,8 +293,8 @@ const RegisterRecruteur = () => {
 
             {/* Account Information Section */}
             <div className="form-section">
-              <h3 className="section-heading">Informations de Connexion</h3>
-              <div className="fields-grid">
+              <h3 className="section-title">Informations de Connexion</h3>
+              <div className="form-grid">
                 <InputField name="username" placeholder="Votre identifiant" icon={User} label="Nom d'utilisateur" />
                 <InputField
                   name="password"
@@ -309,9 +311,9 @@ const RegisterRecruteur = () => {
             <button
               type="submit"
               disabled={loading || !allFieldsValid}
-              className={`submit-btn ${loading ? "btn-loading" : ""} ${allFieldsValid ? "btn-ready" : ""}`}
+              className={`submit-button ${loading ? "loading" : ""} ${allFieldsValid ? "ready" : ""}`}
             >
-              <div className="btn-content">
+              <div className="button-content">
                 {loading ? (
                   <>
                     <div className="loading-spinner" />
@@ -320,7 +322,7 @@ const RegisterRecruteur = () => {
                 ) : (
                   <>
                     <span>S'inscrire</span>
-                    <ArrowRight className="btn-arrow" />
+                    <ArrowRight className="button-icon" />
                   </>
                 )}
               </div>
@@ -328,7 +330,7 @@ const RegisterRecruteur = () => {
           </form>
 
           {/* Footer */}
-          <div className="card-footer">
+          <div className="form-footer">
             <p>
               Déjà inscrit ?{" "}
               <a href="/login" className="login-link">
@@ -340,45 +342,7 @@ const RegisterRecruteur = () => {
       </div>
 
       <style jsx>{`
-        /* CSS Reset and Base Styles */
-        * {
-          box-sizing: border-box;
-          margin: 0;
-          padding: 0;
-          border: 0;
-          font-size: 100%;
-          font: inherit;
-          vertical-align: baseline;
-          outline: none;
-          text-decoration: none;
-          list-style: none;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* Remove all inherited styles and set defaults */
-        input, textarea, select, button {
-          all: unset;
-          display: block;
-          box-sizing: border-box;
-          font-family: inherit;
-          font-size: inherit;
-          line-height: inherit;
-          color: inherit;
-        }
-
-        a {
-          all: unset;
-          cursor: pointer;
-        }
-
-        button {
-          cursor: pointer;
-        }
-
-        /* Main Page Layout */
-        .registration-page {
-          all: unset;
+        .register-page {
           position: relative;
           min-height: 100vh;
           display: flex;
@@ -388,31 +352,27 @@ const RegisterRecruteur = () => {
           padding: 2rem 1rem;
           overflow: hidden;
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-          font-size: 16px;
-          line-height: 1.5;
-          color: #1a1a1a;
         }
 
-        /* Background Decorations */
-        .bg-decoration {
-          all: unset;
-          position: fixed;
+        /* Essential: Ensure background elements do not interfere with interaction */
+        .background-decoration {
+          position: fixed; /* Use fixed for full viewport coverage */
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
-          pointer-events: none;
-          z-index: 0;
+          /* IMPORTANT: These two properties are crucial */
+          pointer-events: none; /* Allows clicks to pass through */
+          z-index: 0; /* Ensures it's behind everything else */
         }
 
-        .floating-element,
-        .grid-overlay {
-          all: unset;
-          pointer-events: none;
-          z-index: 0;
+        .floating-shape,
+        .grid-pattern {
+          pointer-events: none; /* Redundant but good for explicit safety */
+          z-index: 0; /* Ensures it's behind everything else */
         }
 
-        .grid-overlay {
+        .grid-pattern {
           position: absolute;
           top: 0;
           left: 0;
@@ -421,22 +381,22 @@ const RegisterRecruteur = () => {
           background-image: linear-gradient(rgba(255, 140, 0, 0.1) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255, 140, 0, 0.1) 1px, transparent 1px);
           background-size: 50px 50px;
-          animation: gridAnimation 20s linear infinite;
+          animation: gridMove 20s linear infinite;
         }
 
-        @keyframes gridAnimation {
+        @keyframes gridMove {
           0% { transform: translate(0, 0); }
           100% { transform: translate(50px, 50px); }
         }
 
-        .floating-element {
+        .floating-shape {
           position: absolute;
           border-radius: 50%;
           background: linear-gradient(45deg, rgba(255, 140, 0, 0.1), rgba(255, 140, 0, 0.05));
-          animation: floatAnimation 6s ease-in-out infinite;
+          animation: float 6s ease-in-out infinite;
         }
 
-        .element-1 {
+        .shape-1 {
           width: 100px;
           height: 100px;
           top: 20%;
@@ -444,7 +404,7 @@ const RegisterRecruteur = () => {
           animation-delay: 0s;
         }
 
-        .element-2 {
+        .shape-2 {
           width: 150px;
           height: 150px;
           top: 60%;
@@ -452,7 +412,7 @@ const RegisterRecruteur = () => {
           animation-delay: 2s;
         }
 
-        .element-3 {
+        .shape-3 {
           width: 80px;
           height: 80px;
           bottom: 20%;
@@ -460,23 +420,20 @@ const RegisterRecruteur = () => {
           animation-delay: 4s;
         }
 
-        @keyframes floatAnimation {
+        @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
           50% { transform: translateY(-20px) rotate(180deg); }
         }
 
-        /* Main Container */
-        .main-container {
-          all: unset;
+        /* Ensure content container is above background */
+        .register-container {
           position: relative;
-          z-index: 100;
+          z-index: 10; /* Higher than background (0) */
           width: 100%;
           max-width: 900px;
         }
 
-        .registration-card {
-          all: unset;
-          display: block;
+        .register-card {
           background: rgba(255, 255, 255, 0.98);
           backdrop-filter: blur(20px);
           border-radius: 24px;
@@ -486,11 +443,10 @@ const RegisterRecruteur = () => {
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
           overflow: hidden;
-          z-index: 101;
+          z-index: 11; /* Higher than register-container (10) */
         }
 
-        .registration-card::before {
-          all: unset;
+        .register-card::before {
           content: "";
           position: absolute;
           top: 0;
@@ -498,28 +454,24 @@ const RegisterRecruteur = () => {
           right: 0;
           height: 3px;
           background: linear-gradient(90deg, transparent, #ff8c00, transparent);
-          animation: shimmerAnimation 2s ease-in-out infinite;
-          pointer-events: none;
-          z-index: -1;
+          animation: shimmer 2s ease-in-out infinite;
+          pointer-events: none; /* Prevent interference */
+          z-index: -1; /* Ensure it's behind card content */
         }
 
-        @keyframes shimmerAnimation {
+        @keyframes shimmer {
           0% { transform: translateX(-100%); }
           100% { transform: translateX(100%); }
         }
 
-        /* Header Styles */
-        .card-header {
-          all: unset;
-          display: block;
+        .register-header {
           text-align: center;
           margin-bottom: 3rem;
-          position: relative;
-          z-index: 102;
+          position: relative; /* Ensure it establishes its own stacking context */
+          z-index: 12;
         }
 
-        .header-icon-container {
-          all: unset;
+        .icon-container {
           display: inline-flex;
           align-items: center;
           justify-content: center;
@@ -530,11 +482,10 @@ const RegisterRecruteur = () => {
           margin-bottom: 1.5rem;
           box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3);
           position: relative;
-          z-index: 1;
+          z-index: 1; /* Stacking context for its pseudo-element */
         }
 
-        .header-icon-container::after {
-          all: unset;
+        .icon-container::after {
           content: "";
           position: absolute;
           top: -2px;
@@ -543,26 +494,17 @@ const RegisterRecruteur = () => {
           bottom: -2px;
           background: linear-gradient(45deg, #ff8c00, transparent, #ff8c00);
           border-radius: 50%;
-          z-index: -1;
-          animation: rotateAnimation 3s linear infinite;
-          pointer-events: none;
+          z-index: -1; /* Behind the icon itself */
+          animation: rotate 3s linear infinite;
+          pointer-events: none; /* Crucial for background effects */
         }
 
-        @keyframes rotateAnimation {
+        @keyframes rotate {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
         }
 
-        .header-icon {
-          all: unset;
-          width: 2rem;
-          height: 2rem;
-          color: white;
-        }
-
-        .main-title {
-          all: unset;
-          display: block;
+        .register-title {
           font-size: 2.5rem;
           font-weight: 800;
           color: #1a1a1a;
@@ -573,9 +515,7 @@ const RegisterRecruteur = () => {
           background-clip: text;
         }
 
-        .main-subtitle {
-          all: unset;
-          display: block;
+        .register-subtitle {
           color: #666;
           font-size: 1.1rem;
           margin: 0;
@@ -584,9 +524,7 @@ const RegisterRecruteur = () => {
           line-height: 1.6;
         }
 
-        /* Error Alert */
-        .error-alert {
-          all: unset;
+        .error-message {
           display: flex;
           align-items: center;
           gap: 0.75rem;
@@ -597,45 +535,40 @@ const RegisterRecruteur = () => {
           border-radius: 12px;
           color: #dc2626;
           font-weight: 500;
-          animation: slideInAnimation 0.3s ease-out;
-          position: relative;
-          z-index: 102;
+          animation: slideIn 0.3s ease-out;
+          position: relative; /* Ensure it's part of the main stacking context */
+          z-index: 12;
         }
 
-        .alert-icon {
-          all: unset;
+        .error-icon {
           width: 1.25rem;
           height: 1.25rem;
           flex-shrink: 0;
         }
 
-        @keyframes slideInAnimation {
+        @keyframes slideIn {
           from { opacity: 0; transform: translateY(-10px); }
           to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Form Styles */
-        .registration-form {
-          all: unset;
+        /* The form and its interactive elements */
+        .register-form {
           display: flex;
           flex-direction: column;
           gap: 2.5rem;
           position: relative;
-          z-index: 103;
+          z-index: 15; /* Crucial: This z-index should be higher than all non-interactive elements */
         }
 
         .form-section {
-          all: unset;
           display: flex;
           flex-direction: column;
           gap: 1.5rem;
           position: relative;
-          z-index: 1;
+          z-index: 1; /* Within the form's stacking context */
         }
 
-        .section-heading {
-          all: unset;
-          display: block;
+        .section-title {
           font-size: 1.3rem;
           font-weight: 700;
           color: #1a1a1a;
@@ -645,8 +578,7 @@ const RegisterRecruteur = () => {
           position: relative;
         }
 
-        .section-heading::after {
-          all: unset;
+        .section-title::after {
           content: "";
           position: absolute;
           bottom: -2px;
@@ -656,89 +588,77 @@ const RegisterRecruteur = () => {
           background: linear-gradient(135deg, #ff8c00, #ff6b35);
         }
 
-        .fields-grid {
-          all: unset;
+        .form-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
           gap: 1.5rem;
         }
 
-        /* Input Field Styles */
-        .field-wrapper {
-          all: unset;
+        .input-group {
           display: flex;
           flex-direction: column;
           gap: 0.5rem;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
-          z-index: 1;
+          z-index: 1; /* Each input group should have a stacking context */
         }
 
-        .field-wrapper.field-focused {
+        .input-group.focused {
           transform: translateY(-2px);
         }
 
-        .field-label {
-          all: unset;
+        .input-label {
           display: flex;
           align-items: center;
           justify-content: space-between;
           font-weight: 600;
           color: #374151;
           font-size: 0.9rem;
-          cursor: pointer;
         }
 
         .label-content {
-          all: unset;
           display: flex;
           align-items: center;
           gap: 0.5rem;
         }
 
-        .label-icon {
-          all: unset;
+        .input-icon {
           width: 1.1rem;
           height: 1.1rem;
           color: #ff8c00;
         }
 
         .label-text {
-          all: unset;
           font-weight: 600;
         }
 
-        .required-mark {
-          all: unset;
+        .required-asterisk {
           color: #ef4444;
           font-weight: 700;
         }
 
-        .validation-indicator {
-          all: unset;
+        .validation-icon {
           width: 1.1rem;
           height: 1.1rem;
-          pointer-events: none;
+          pointer-events: none; /* Ensure icons don't block input */
         }
 
-        .validation-indicator.success-indicator {
+        .validation-icon.success {
           color: #10b981;
         }
 
-        .validation-indicator.error-indicator {
+        .validation-icon.error {
           color: #ef4444;
         }
 
-        .input-wrapper {
-          all: unset;
+        .input-container {
           position: relative;
-          display: block;
-          z-index: 1;
+          /* isolation: isolate; */ /* Not always needed but can help create new stacking context */
+          z-index: 1; /* Ensures input and its children are on top within this group */
         }
 
-        .text-input {
-          all: unset;
-          display: block;
+        /* THIS IS THE MOST CRITICAL PART: Ensure all interactive form elements are fully clickable */
+        .form-inputs {
           width: 100%;
           padding: 1rem 1.25rem;
           border: 2px solid #e5e7eb;
@@ -750,43 +670,45 @@ const RegisterRecruteur = () => {
           color: #1a1a1a;
           font-family: inherit;
           box-sizing: border-box;
-          position: relative;
-          z-index: 2;
-          pointer-events: auto;
-          user-select: text;
+          position: relative; /* Essential for z-index to work */
+          z-index: 2; /* Higher than input-border, but within input-container's stacking context */
+          pointer-events: auto; /* Explicitly allow pointer events */
+          user-select: text; /* Allow text selection */
           -webkit-user-select: text;
-          cursor: text;
+          cursor: text; /* Show text cursor */
         }
 
-        .text-input::placeholder {
+        .form-input::placeholder {
           color: #9ca3af;
         }
 
-        .text-input:focus {
+        .form-input:focus {
+          outline: none;
           border-color: #ff8c00;
           box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
           background: rgba(255, 255, 255, 1);
-          z-index: 3;
+          z-index: 3; /* Even higher when focused */
         }
 
-        .text-input.valid-input {
+        .form-input.input-valid {
           border-color: #10b981;
           background: rgba(16, 185, 129, 0.05);
         }
 
-        .text-input.invalid-input {
+        .form-input.input-invalid {
           border-color: #ef4444;
           background: rgba(239, 68, 68, 0.05);
         }
 
-        .password-visibility-toggle {
-          all: unset;
+        .password-toggle {
           position: absolute;
           right: 1rem;
           top: 50%;
           transform: translateY(-50%);
+          background: none;
+          border: none;
           cursor: pointer;
-          z-index: 3;
+          z-index: 3; /* Ensure it's above the input field */
           display: flex;
           align-items: center;
           justify-content: center;
@@ -794,22 +716,20 @@ const RegisterRecruteur = () => {
           height: 30px;
           border-radius: 6px;
           transition: background-color 0.2s ease;
-          pointer-events: auto;
+          pointer-events: auto; /* Allow interaction */
         }
 
-        .password-visibility-toggle:hover {
+        .password-toggle:hover {
           background-color: rgba(255, 140, 0, 0.1);
         }
 
-        .visibility-icon {
-          all: unset;
+        .toggle-icon {
           width: 1.1rem;
           height: 1.1rem;
           color: #6b7280;
         }
 
-        .input-underline {
-          all: unset;
+        .input-border {
           position: absolute;
           bottom: 0;
           left: 0;
@@ -818,28 +738,28 @@ const RegisterRecruteur = () => {
           background: linear-gradient(135deg, #ff8c00, #ff6b35);
           transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           border-radius: 1px;
-          pointer-events: none;
-          z-index: 1;
+          pointer-events: none; /* Does not need to be clickable */
+          z-index: 1; /* Below the input field */
         }
 
-        .field-wrapper.field-focused .input-underline {
+        .input-group.focused .input-border {
           width: 100%;
         }
 
-        .validation-error-message {
-          all: unset;
-          display: block;
+        .validation-message {
           font-size: 0.8rem;
           font-weight: 500;
           margin-top: 0.25rem;
-          position: relative;
+          position: relative; /* Ensure it's part of the stacking context */
           z-index: 1;
+        }
+
+        .validation-message.error {
           color: #ef4444;
         }
 
-        /* Map Styles */
+        /* Map styling */
         .map-section {
-          all: unset;
           display: flex;
           flex-direction: column;
           gap: 1rem;
@@ -848,8 +768,7 @@ const RegisterRecruteur = () => {
           z-index: 1;
         }
 
-        .map-label {
-          all: unset;
+        .map-header {
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -860,9 +779,7 @@ const RegisterRecruteur = () => {
           z-index: 1;
         }
 
-        .map-area {
-          all: unset;
-          display: flex;
+        .map-container {
           height: 300px;
           border-radius: 12px;
           overflow: hidden;
@@ -870,51 +787,44 @@ const RegisterRecruteur = () => {
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
           cursor: pointer;
+          display: flex;
           align-items: center;
           justify-content: center;
           background: linear-gradient(135deg, #f8fafc, #f1f5f9);
           position: relative;
-          z-index: 2;
-          pointer-events: auto;
+          z-index: 2; /* Higher than map-header */
+          pointer-events: auto; /* Explicitly allow clicks */
         }
 
-        .map-area:hover {
+        .map-container:hover {
           border-color: #ff8c00;
           box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
 
         .map-placeholder {
-          all: unset;
-          display: block;
           text-align: center;
           color: #6b7280;
           position: relative;
-          z-index: 1;
+          z-index: 1; /* Ensure text/icons are visible */
         }
 
-        .map-pin-icon {
-          all: unset;
+        .map-icon {
           color: #ff8c00;
           margin-bottom: 1rem;
-          width: 48px;
-          height: 48px;
         }
 
         .map-placeholder p {
-          all: unset;
-          display: block;
           margin: 0.5rem 0;
           font-weight: 500;
         }
 
-        .coordinates-display {
+        .map-coordinates {
           font-size: 0.8rem;
           color: #9ca3af;
           font-family: monospace;
         }
 
-        .map-help-text {
-          all: unset;
+        .map-helper-text {
           display: flex;
           align-items: center;
           gap: 0.5rem;
@@ -926,197 +836,217 @@ const RegisterRecruteur = () => {
           z-index: 1;
         }
 
-        .help-icon {
-          all: unset;
+        .helper-icon {
           width: 0.9rem;
           height: 0.9rem;
           color: #ff8c00;
         }
 
-        .address-section {
-          all: unset;
-          display: block;
+        .address-input-section {
           margin-top: 0.5rem;
           position: relative;
           z-index: 1;
         }
 
-        /* Submit Button */
-        .submit-btn {
-          all: unset;
-          display: block;
+        .submit-button {
           width: 100%;
           padding: 1.25rem 2rem;
           background: linear-gradient(135deg, #6b7280, #4b5563);
           color: white;
+          border: none;
           border-radius: 12px;
           font-size: 1.1rem;
           font-weight: 700;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-          text-align: center;
           position: relative;
           overflow: hidden;
-          will-change: transform, background;
-          z-index: 1;
+          margin-top: 1rem;
+          font-family: inherit;
+          z-index: 1; /* Relative to the form, but still interactive */
+          pointer-events: auto; /* Explicitly allow clicks */
         }
 
-        .submit-btn:not(:disabled):hover {
-          transform: translateY(-3px);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        .submit-button:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
         }
 
-        .submit-btn:not(:disabled):active {
-          transform: translateY(0px);
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .submit-btn.btn-ready {
-          background: linear-gradient(135deg, #ff8c00, #ff6b35);
-          animation: pulseEffect 2s infinite;
-        }
-
-        .submit-btn:disabled {
+        .submit-button:disabled {
+          opacity: 0.6;
           cursor: not-allowed;
-          opacity: 0.7;
-          background: linear-gradient(135deg, #a0a0a0, #808080);
+          transform: none;
         }
 
-        .btn-content {
-          all: unset;
+        .submit-button.ready {
+          background: linear-gradient(135deg, #ff8c00, #ff6b35);
+          box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3);
+        }
+
+        .submit-button.ready:hover:not(:disabled) {
+          background: linear-gradient(135deg, #ff6b35, #ff8c00);
+          box-shadow: 0 15px 35px rgba(255, 140, 0, 0.4);
+        }
+
+        .button-content {
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 0.75rem;
           position: relative;
-          z-index: 2;
+          z-index: 2; /* Ensures content is above potential button effects */
         }
 
-        .btn-arrow {
-          all: unset;
-          width: 1.2rem;
-          height: 1.2rem;
-          transition: transform 0.2s ease-out;
-        }
-
-        .submit-btn:not(:disabled):hover .btn-arrow {
-          transform: translateX(5px);
-        }
-
-        .btn-loading .loading-spinner {
-          all: unset;
-          display: inline-block;
+        .button-icon {
           width: 1.25rem;
           height: 1.25rem;
-          border: 3px solid rgba(255, 255, 255, 0.3);
+          transition: transform 0.3s ease;
+        }
+
+        .submit-button:hover:not(:disabled) .button-icon {
+          transform: translateX(3px);
+        }
+
+        .loading-spinner {
+          width: 20px;
+          height: 20px;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-top: 2px solid white;
           border-radius: 50%;
-          border-top-color: #fff;
-          animation: spin 1s ease-in-out infinite;
-          margin-right: 0.5rem;
+          animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
-          to { transform: rotate(360deg); }
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
 
-        @keyframes pulseEffect {
-          0% { box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3); }
-          50% { box-shadow: 0 8px 25px rgba(255, 140, 0, 0.5); }
-          100% { box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3); }
-        }
-
-        /* Footer Styles */
-        .card-footer {
-          all: unset;
-          display: block;
+        .form-footer {
           text-align: center;
-          margin-top: 2.5rem;
-          font-size: 0.95rem;
-          color: #6b7280;
-          position: relative;
-          z-index: 104;
-        }
-
-        .login-link {
-          all: unset;
-          color: #ff8c00;
-          font-weight: 600;
-          margin-left: 0.25rem;
+          margin-top: 2rem;
+          padding-top: 2rem;
+          border-top: 1px solid #e5e7eb;
           position: relative;
           z-index: 1;
         }
 
+        .form-footer p {
+          color: #6b7280;
+          font-size: 0.95rem;
+          margin: 0;
+        }
+
+        .login-link {
+          color: #ff8c00;
+          text-decoration: none;
+          font-weight: 600;
+          transition: all 0.3s ease;
+          position: relative;
+          z-index: 1; /* Ensure link is clickable */
+          pointer-events: auto;
+        }
+
         .login-link:hover {
-          text-decoration: underline;
+          color: #ff6b35;
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-          .registration-card {
-            padding: 2rem;
-            margin: 1rem;
-          }
-
-          .main-title {
-            font-size: 2rem;
-          }
-
-          .main-subtitle {
-            font-size: 1rem;
-          }
-
-          .fields-grid {
-            grid-template-columns: 1fr; /* Stack fields on smaller screens */
-          }
+        .login-link::after {
+          content: "";
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 0;
+          height: 2px;
+          background: linear-gradient(90deg, transparent, #ff8c00, transparent);
+          animation: shimmer 2s ease-in-out infinite;
+          pointer-events: none; /* Should not block link */
         }
 
-        @media (max-width: 480px) {
-          .registration-card {
-            padding: 1.5rem;
-          }
+        /* --- Consolidated Z-index and Pointer Events Fixes --- */
 
-          .header-icon-container {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 1rem;
-          }
-
-          .header-icon {
-            width: 1.5rem;
-            height: 1.5rem;
-          }
-
-          .main-title {
-            font-size: 1.8rem;
-          }
-
-          .main-subtitle {
-            font-size: 0.9rem;
-          }
-
-          .form-section {
-            gap: 1rem;
-          }
-
-          .section-heading {
-            font-size: 1.1rem;
-          }
-
-          .text-input {
-            padding: 0.8rem 1rem;
-            font-size: 0.9rem;
-          }
-
-          .submit-btn {
-            padding: 1rem 1.5rem;
-            font-size: 1rem;
-          }
-;
-          .map-area {
-            height: 200px;
-          }
+        /* 1. Reset base pointer-events for all elements to auto where needed */
+        /* This rule targets common interactive elements */
+        input, textarea, select, button, a {
+          pointer-events: auto;
         }
+
+        /* 2. Ensure all background/decorative elements have pointer-events: none and a low z-index */
+        .background-decoration,
+        .floating-shape,
+        .grid-pattern,
+        .register-card::before, /* Shimmer on top of card */
+        .icon-container::after, /* Rotating border around icon */
+        .input-border, /* Underline animation */
+        .validation-icon, /* Check/Alert icons */
+        .login-link::after /* Shimmer under login link */
+        {
+          pointer-events: none;
+          z-index: -1; /* Place them safely behind all content */
+        }
+
+        /* 3. Establish clear stacking contexts and higher z-index for main content */
+
+        /* The overall container for the interactive card */
+        .register-container {
+          z-index: 100; /* A high base z-index for the entire card wrapper */
+          position: relative; /* Crucial for z-index to work */
+        }
+
+        /* The card itself */
+        .register-card {
+          z-index: 101; /* Slightly higher than its container */
+          position: relative; /* Crucial for z-index to work */
+        }
+
+        /* The form and all its contents should be above the card's background/decorations */
+        .register-form {
+          z-index: 102; /* Ensures the form is on top of the card's base elements */
+          position: relative; /* Establishes a stacking context for its children */
+        }
+
+        /* Input fields and their direct containers (including password toggle) */
+        .input-container {
+          position: relative; /* Creates stacking context for input and toggle */
+          z-index: 1; /* Relative to its parent .input-group */
+        }
+
+        .form-input {
+          z-index: 2; /* Above input-border within .input-container */
+        }
+
+        .password-toggle {
+          z-index: 3; /* Above form-input within .input-container */
+        }
+
+        .submit-button {
+          z-index: 103; /* Make sure the button is always clickable and on top */
+          position: relative;
+        }
+
+        /* Elements that might have pseudo-elements or specific animations */
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(180deg); }
+          /* pointer-events: none; is already on the element via .floating-shape */
+        }
+
+        @keyframes gridMove {
+          0% { transform: translate(0, 0); }
+          100% { transform: translate(50px, 50px); }
+          /* pointer-events: none; is already on the element via .grid-pattern */
+        }
+
+        /* Remove the problematic inline styles from InputField component */
+        /* style={{
+          zIndex: 1000,
+          position: 'relative',
+          pointerEvents: 'auto',
+          userSelect: 'text',
+          WebkitUserSelect: 'text',
+          cursor: 'text'
+        }} */
+        /* These properties are now handled universally in the CSS block */
+
       `}</style>
     </div>
   )
