@@ -313,7 +313,7 @@ const RegisterRecruteur = () => {
         
         // Redirect after 3 seconds
         setTimeout(() => {
-          window.location.href = '/login/recruteur';
+          window.location.href = '/CandidatePagefrom';
         }, 3000);
         
       } else {
