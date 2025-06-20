@@ -5,7 +5,7 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
     PieChart, Pie, Cell, ResponsiveContainer
 } from 'recharts';
-import { Users, Briefcase, Clipboard, BarChart3, TrendingUp } from 'lucide-react';
+import { Users, Briefcase, Clipboard, BarChart3, TrendingUp } from 'lucide-react'; // Importing Lucide icons
 import SEO from "./SEO";
 import AdminSidebar from './AdminSidebar'; // Import the new sidebar component
 
@@ -20,9 +20,10 @@ const AdminDashboard = () => {
     const [showColorInputs, setShowColorInputs] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState(null);
+    const [sidebarVisible, setSidebarVisible] = useState(false); // State for responsive sidebar toggle
     const navigate = useNavigate();
 
-    // Couleurs personnalisables - Orange palette
+    // Customizable colors - Orange palette
     const [barColor, setBarColor] = useState('#ff8c42');
     const [pieColor1, setPieColor1] = useState('#ff6b1a');
     const [pieColor2, setPieColor2] = useState('#e55100');
@@ -39,13 +40,13 @@ const AdminDashboard = () => {
                 } else {
                     setIsLoggedIn(false);
                     setUser(null);
-                    navigate('/');
+                    navigate('/'); // Redirect to home or login page
                 }
             })
             .catch(() => {
                 setIsLoggedIn(false);
                 setUser(null);
-                navigate('/');
+                navigate('/'); // Redirect if session check fails
             });
     }, [navigate]);
 
@@ -66,6 +67,16 @@ const AdminDashboard = () => {
                 });
         }
     }, [isLoggedIn, user?.role]);
+
+    const handleLogout = () => {
+        fetch(`${process.env.REACT_APP_API_URL}/api/logout`, {
+            method: "POST",
+            credentials: "include",
+        })
+            .then(res => res.ok ? res.json() : Promise.reject("Logout failed"))
+            .then(() => navigate("/"))
+            .catch(() => alert("Erreur lors de la déconnexion."));
+    };
 
     const chartData = [
         { name: 'Candidats', value: totalCandidates },
@@ -92,8 +103,9 @@ const AdminDashboard = () => {
             transition: 'all 0.3s ease',
             display: 'flex',
             flexDirection: 'column',
-            marginLeft: '250px', // Space for sidebar on desktop
+            marginLeft: '260px', // Space for sidebar on desktop
             width: '100%',
+            marginRight: '0px',
         },
         header: {
             padding: '20px 32px',
@@ -291,11 +303,14 @@ const AdminDashboard = () => {
         }
     };
 
-    // Responsive styles
+    // Responsive styles for main content adjustment
     const responsiveStyles = `
         @media (max-width: 768px) {
             .main-content {
                 margin-left: 0 !important;
+            }
+            .hamburger-btn {
+                display: block !important;
             }
         }
     `;
@@ -325,11 +340,42 @@ const AdminDashboard = () => {
     return (
         <>
             <style>{responsiveStyles}</style>
-            <div style={styles.dashboardContainer}>
-                <AdminSidebar 
-                    isLoggedIn={isLoggedIn} 
-                    user={user} 
-                    darkMode={darkMode} 
+            <SEO /> {/* SEO component remains here */}
+            <div
+                className={`dashboard-container ${darkMode ? 'dark-mode' : ''}`}
+                style={styles.dashboardContainer} // Apply styles.dashboardContainer directly
+            >
+                {/* Hamburger button for mobile, now part of AdminSidebar logic or its parent */}
+                <button
+                    className="hamburger-btn"
+                    onClick={() => setSidebarVisible(!sidebarVisible)}
+                    aria-label="Toggle sidebar"
+                    style={{
+                        position: 'fixed',
+                        top: '16px',
+                        left: '16px',
+                        zIndex: 1100,
+                        backgroundColor: darkMode ? '#2d2d2d' : '#ffffff',
+                        border: 'none',
+                        padding: '8px 12px',
+                        fontSize: '24px',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                        display: 'none', // hide by default, CSS will show on small screens
+                    }}
+                >
+                    ☰
+                </button>
+
+                {/* AdminSidebar component */}
+                <AdminSidebar
+                    isLoggedIn={isLoggedIn}
+                    user={user}
+                    darkMode={darkMode}
+                    handleLogout={handleLogout}
+                    sidebarVisible={sidebarVisible}
+                    setSidebarVisible={setSidebarVisible}
                 />
 
                 <div style={styles.mainContent} className="main-content">
@@ -435,35 +481,37 @@ const AdminDashboard = () => {
                                         <Bar dataKey="value" fill={barColor} />
                                     </BarChart>
                                 </ResponsiveContainer>
-                        </div>
+                            </div>
 
-                        <div style={styles.chartCard}>
-                            <h2 style={styles.chartTitle}>
-                                <TrendingUp style={styles.chartIcon} />
-                                Offres et candidatures
-                            </h2>
-                            <ResponsiveContainer width="100%" height={300}>
-                                <PieChart>
-                                    <Pie
-                                        data={chartData1}
-                                        cx="50%"
-                                        cy="50%"
-                                        labelLine={false}
-                                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                                        outerRadius={100}
-                                        fill="#8884d8"
-                                        dataKey="value"
-                                    >
-                                        <Cell key="cell-0" fill={pieColor1} />
-                                        <Cell key="cell-1" fill={pieColor2} />
-                                    </Pie>
-                                    <Tooltip />
-                                </PieChart>
-                            </ResponsiveContainer>
+                            <div style={styles.chartCard}>
+                                <h2 style={styles.chartTitle}>
+                                    <TrendingUp style={styles.chartIcon} />
+                                    Offres et candidatures
+                                </h2>
+                                <ResponsiveContainer width="100%" height={300}>
+                                    <PieChart>
+                                        <Pie
+                                            data={chartData1}
+                                            cx="50%"
+                                            cy="50%"
+                                            labelLine={false}
+                                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                                            outerRadius={100}
+                                            fill="#8884d8"
+                                            dataKey="value"
+                                        >
+                                            <Cell key="cell-0" fill={pieColor1} />
+                                            <Cell key="cell-1" fill={pieColor2} />
+                                        </Pie>
+                                        <Tooltip />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </div>
                         </div>
                     </div>
                 </div>
-        </div>
+            </div>
+        </>
     );
 };
 
