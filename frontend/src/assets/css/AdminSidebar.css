@@ -65,8 +65,7 @@
     font-size: 18px; /* Reduced font-size of the icon */
     border-radius: 8px;
     box-shadow: var(--shadow);
-    /* IMPORTANT: Added opacity to the transition property */
-    transition: all 0.3s ease, opacity 0.3s ease;
+    transition: all 0.3s ease, opacity 0.3s ease; /* Added opacity to the transition */
     color: black; /* Set the icon color to black */
     display: none; /* Hidden by default on desktop, shown by media query */
     align-items: center; /* Center the icon horizontally */
@@ -85,7 +84,7 @@
     color: black;
 }
 
-/* NEW: Style to hide the hamburger button when the sidebar is open */
+/* Style to hide the hamburger button when the sidebar is open */
 .hamburger-btn.is-hidden-when-sidebar-open {
     opacity: 0;
     pointer-events: none; /* Make it unclickable when hidden */
@@ -107,7 +106,7 @@
 
 /* --- Main Sidebar Styles --- */
 .admin-sidebar {
-    width: 250px;
+    width: 300px; /* MADE WIDER */
     height: 100vh;
     position: fixed;
     top: 0;
@@ -171,16 +170,21 @@
     border-left: 3px solid var(--primary-color); /* Active line indicator */
 }
 
-/* Ensure links and logout item inherit color from the sidebar or explicitly use var(--sidebar-text) */
+/*
+ * Updated styles for consistent alignment for both navigation links and logout item.
+ * Added min-height and white-space: nowrap.
+ */
 .sidebar-nav li a,
 .sidebar-nav li.logout-item {
-    color: inherit; /* Should inherit from .admin-sidebar's color */
+    color: inherit; /* Inherits color from parent (.admin-sidebar) */
     text-decoration: none;
     display: flex;
     align-items: center;
     width: 100%;
     padding: 0.8rem 1.5rem;
+    min-height: 2.8rem; /* Ensure consistent vertical height for all items */
     transition: all 0.2s ease;
+    white-space: nowrap; /* Prevent text from wrapping inside the item */
 }
 
 .sidebar-nav li.logout-item {
@@ -204,14 +208,14 @@
 .sidebar-nav li span {
     font-size: 0.95rem;
     font-weight: 500;
-    white-space: nowrap;
+    white-space: nowrap; /* This was already here, but now also on parent flex container */
 }
 
 /* --- Responsive Design - Media Queries --- */
 @media (max-width: 768px) {
     /* Show hamburger button on small screens */
     .hamburger-btn {
-        display: flex; /* Makes the hamburger button visible on mobile */
+        display: flex;
     }
 
     /* Hide the sidebar by default on mobile (slide it off-screen) */
@@ -224,9 +228,8 @@
     .admin-sidebar.mobile-visible {
         transform: translateX(0);
         box-shadow: 0 0 20px rgba(0,0,0,0.3); /* Add shadow when open for depth */
-        /* Re-affirm colors to ensure consistency, though typically not needed if inherited correctly */
-        background-color: var(--sidebar-bg);
-        color: var(--sidebar-text);
+        background-color: var(--sidebar-bg); /* Re-affirm colors */
+        color: var(--sidebar-text); /* Re-affirm colors */
     }
 
     /* Explicitly keep sidebar off-screen when `mobile-hidden` class is applied */
