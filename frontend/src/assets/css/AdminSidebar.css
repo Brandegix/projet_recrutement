@@ -1,4 +1,14 @@
-/* --- Root Variables for Theme (place these in a global CSS file like index.css or App.css for app-wide access) --- */
+/*
+ * AdminSidebar.css
+ * This file contains styles specifically for the AdminSidebar component.
+ *
+ * NOTE: The ':root' and '.dark-mode' variables are included here for completeness,
+ * but it's generally best practice to define them once in a global CSS file
+ * (e.g., 'src/index.css' or 'src/App.css') that is loaded at the root of your application,
+ * so all components can consistently access the theme.
+ */
+
+/* --- Root Variables for Theme --- */
 :root {
     --primary-color: #ff7001; /* A vibrant orange */
     --primary-dark: #d94e00;  /* Darker shade for accents */
@@ -29,22 +39,37 @@
 
 /* --- Hamburger Button Styles --- */
 .hamburger-btn {
+    /* Explicitly unset/reset common inherited button styles */
+    -webkit-appearance: none; /* Remove Safari/Chrome default button styles */
+    -moz-appearance: none;    /* Remove Firefox default button styles */
+    appearance: none;         /* Remove standard default button styles */
+    background: none;         /* Ensure no inherited background */
+    border: none;             /* Ensure no inherited border */
+    margin: 0;                /* Remove default margin */
+    padding: 0;               /* Remove default padding, then apply custom below */
+    font-family: inherit;     /* Inherit font family from root, or specify one */
+    font-size: inherit;       /* Inherit font size, then override below */
+    line-height: 1;           /* Reset line-height to prevent extra spacing */
+    color: inherit;           /* Inherit color, then override below */
+    text-align: left;         /* Reset text alignment (important for icon positioning) */
+    cursor: pointer;          /* Ensure cursor is a pointer */
+    outline: none;            /* Remove default browser focus outline (manage with :focus) */
+
+    /* Your custom styles for the hamburger button */
     position: fixed;
     top: 16px;
     left: 16px;
     z-index: 1100; /* Ensure it's above other content */
     background-color: var(--card-bg);
-    border: none;
     padding: 8px; /* Reduced padding to make it smaller */
     font-size: 18px; /* Reduced font-size of the icon */
     border-radius: 8px;
-    cursor: pointer;
     box-shadow: var(--shadow);
     transition: all 0.3s ease;
-    color: black; /* Set the color to black */
+    color: black; /* Set the icon color to black */
     display: none; /* Hidden by default on desktop, shown by media query */
-    align-items: center; /* Center the icon */
-    justify-content: center; /* Center the icon */
+    align-items: center; /* Center the icon horizontally */
+    justify-content: center; /* Center the icon vertically */
 }
 
 .hamburger-btn:hover {
@@ -52,8 +77,9 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* Ensure black color in dark mode as well (overrides default text-color) */
 .hamburger-btn.dark {
-    color: black; /* Ensure black color in dark mode as well */
+    color: black;
 }
 
 /* --- Sidebar Overlay for mobile --- */
@@ -66,7 +92,7 @@
     background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
     z-index: 998; /* Below sidebar, above main content */
     transition: opacity 0.3s ease; /* Smooth fade in/out */
-    opacity: 1; /* Default visible when rendered by React */
+    /* This element is conditionally rendered by React, so 'opacity: 1;' is its default visible state when rendered */
 }
 
 /* --- Main Sidebar Styles --- */
@@ -83,7 +109,7 @@
     z-index: 999; /* Higher than overlay */
     overflow-y: auto; /* Enable scrolling if content is long */
     overflow-x: hidden;
-    box-shadow: var(--shadow); /* Consistent shadow */
+    box-shadow: var(--shadow); /* Consistent shadow for desktop */
 }
 
 .admin-sidebar.dark-mode {
@@ -189,12 +215,8 @@
         transform: translateX(-100%);
     }
 
-    /* Adjust main content for mobile (if it has a margin-left for desktop sidebar) */
-    /* You might have a .main-content in AdminDashboard.js that needs this adjustment */
-    /* Example:
-    .dashboard-container .main-content {
-        margin-left: 0;
-    }
+    /* The .sidebar-overlay is conditionally rendered in JS, so its display is handled there.
+       Its presence implies it should be visible.
     */
 }
 
@@ -217,13 +239,16 @@
 }
 
 /* --- Focus styles for accessibility --- */
+/* Ensure focus indicators are clear for keyboard navigation */
 .sidebar-nav li a:focus,
 .sidebar-nav li.logout-item:focus {
     outline: 2px solid var(--primary-color);
-    outline-offset: -2px;
+    outline-offset: -2px; /* Pulls outline slightly inside border */
+    border-radius: 4px; /* Soften outline corners */
 }
 
 .hamburger-btn:focus {
     outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
+    outline-offset: 2px; /* Pushes outline slightly outside button */
+    border-radius: 8px; /* Match button border-radius */
 }
