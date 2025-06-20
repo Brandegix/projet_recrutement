@@ -60,13 +60,13 @@ const Footer = () => {
                     {user.role === "recruiter" ? (
                       <>
                         <li><Link to="/RecruiterProfile">Mon profil</Link></li>
-                        <li><Link to="/Subscribers">Newsletter</Link></li>
+                        <li><Link to="/RecruiterJobOffers">Offres d'emploi</Link></li>
                         <li><Link to="/job-offer-statistics">Statistiques</Link></li>
                       </>
                     ) : (
                       <>
                         <li><Link to="/candidate-profile">Mon profil</Link></li>
-                        <li><Link to="/applications">Mes candidatures</Link></li>
+                        <li><Link to="/Offres">Offres d'emploi</Link></li>
                       </>
                     )}
                   </>
