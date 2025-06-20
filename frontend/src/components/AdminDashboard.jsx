@@ -20,7 +20,9 @@ const AdminDashboard = () => {
     const [showColorInputs, setShowColorInputs] = useState(false); // <-- toggle
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState(null);
+    const [sidebarVisible, setSidebarVisible] = useState(false); // Added for responsive sidebar toggle
     const navigate = useNavigate(); // Initialize navigate
+
     // Couleurs personnalisables - Orange palette (from the first component)
     const [barColor, setBarColor] = useState('#ff8c42');
     const [pieColor1, setPieColor1] = useState('#ff6b1a');
@@ -38,7 +40,6 @@ const AdminDashboard = () => {
                 } else {
                     setIsLoggedIn(false);
                     setUser(null);
-                    // Optionally redirect non-admins
                     navigate('/'); // Redirect to home or login page
                 }
             })
@@ -317,46 +318,73 @@ const AdminDashboard = () => {
     ];
 
     if (!isLoggedIn || user?.role !== 'admin') {
-        // You can return a loading state, a "not authorized" message, or redirect to another page
         return <div>Accès refusé. Vous devez être administrateur pour voir cette page.</div>;
-        // Or, to redirect:
-        // useEffect(() => { navigate('/'); }, [navigate]);
-        // return null; // Render nothing while redirecting
     }
 
     return (
-      
-        <div className={`dashboard-container ${darkMode ? 'dark-mode' : ''}`} style={{ display: 'flex', minHeight: '100vh', backgroundColor: darkMode ? '#1a1a1a' : '#ffffff', fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif", transition: 'all 0.3s ease' }}>
-          
-            <div className="sidebar">
+        <div
+            className={`dashboard-container ${darkMode ? 'dark-mode' : ''}`}
+            style={{
+                display: 'flex',
+                minHeight: '100vh',
+                backgroundColor: darkMode ? '#1a1a1a' : '#ffffff',
+                fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+                transition: 'all 0.3s ease',
+                position: 'relative', // to contain absolute hamburger button
+            }}
+        >
+            {/* Hamburger button for mobile */}
+            <button
+                className="hamburger-btn"
+                onClick={() => setSidebarVisible(!sidebarVisible)}
+                aria-label="Toggle sidebar"
+                style={{
+                    position: 'fixed',
+                    top: '16px',
+                    left: '16px',
+                    zIndex: 1100,
+                    backgroundColor: darkMode ? '#2d2d2d' : '#ffffff',
+                    border: 'none',
+                    padding: '8px 12px',
+                    fontSize: '24px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                    display: 'none', // hide by default, CSS will show on small screens
+                }}
+            >
+                ☰
+            </button>
+
+            <div className={`sidebar ${sidebarVisible ? 'show' : ''}`}>
                 <div className="sidebar-header"><h2>Casajobs.ma</h2></div>
                 <nav className="sidebar-nav">
                     <ul>
-                        <li >
+                        <li>
                             <FiHome className="icon" />
-                            <Link to="/Dashboard_admin">
+                            <Link to="/Dashboard_admin" onClick={() => setSidebarVisible(false)}>
                                 <span>Tableau de bord</span>
                             </Link>
                         </li>
                         <li>
                             <FiUsers className="icon" />
-                            <Link to="/Candidatesadmin"><span>Gérer les candidats</span></Link>
+                            <Link to="/Candidatesadmin" onClick={() => setSidebarVisible(false)}><span>Gérer les candidats</span></Link>
                         </li>
                         <li>
                             <FiUsers className="icon" />
-                            <Link to="/ManageRecruiters"><span>Gérer les recruteurs</span></Link>
+                            <Link to="/ManageRecruiters" onClick={() => setSidebarVisible(false)}><span>Gérer les recruteurs</span></Link>
                         </li>
                         <li>
                             <FiClipboard className="icon" />
-                            <Link to="/applicationss"><span>Candidats et leurs postulations</span></Link>
+                            <Link to="/applicationss" onClick={() => setSidebarVisible(false)}><span>Candidats et leurs postulations</span></Link>
                         </li>
                         <li className="active">
                             <FiBarChart className="icon" />
-                            <Link to="/AdminDashboard"><span>Statistiques</span></Link>
+                            <Link to="/AdminDashboard" onClick={() => setSidebarVisible(false)}><span>Statistiques</span></Link>
                         </li>
                         <li>
                             <FiBriefcase className="icon" />
-                            <Link to="/ManageJobs"><span>Gérer les offres</span></Link>
+                            <Link to="/ManageJobs" onClick={() => setSidebarVisible(false)}><span>Gérer les offres</span></Link>
                         </li>
                         {isLoggedIn && user && (
                             <li onClick={handleLogout} className="logout-link">
@@ -367,7 +395,7 @@ const AdminDashboard = () => {
                     </ul>
                 </nav>
             </div>
-           
+
             <div style={styles.mainContent}>
                 <header style={styles.header}>
                     <h1 style={styles.headerTitle}>Statistiques</h1>
@@ -409,7 +437,6 @@ const AdminDashboard = () => {
                                 Personnaliser les couleurs des graphiques
                             </h3>
 
-
                             <button
                                 style={styles.toggleButton}
                                 onClick={() => setShowColorInputs(!showColorInputs)}
@@ -420,29 +447,32 @@ const AdminDashboard = () => {
                         {showColorInputs && (
                             <div style={styles.colorPicker}>
                                 <div style={styles.colorInput}>
-                                    <label style={styles.colorLabel}>Couleur des barres :</label>
+                                    <label style={styles.colorLabel} htmlFor="barColor">Couleur des barres (BarChart)</label>
                                     <input
+                                        id="barColor"
                                         type="color"
                                         value={barColor}
-                                        onChange={(e) => setBarColor(e.target.value)}
+                                        onChange={e => setBarColor(e.target.value)}
                                         style={styles.colorInputField}
                                     />
                                 </div>
                                 <div style={styles.colorInput}>
-                                    <label style={styles.colorLabel}>Couleur secteur 1 :</label>
+                                    <label style={styles.colorLabel} htmlFor="pieColor1">Couleur 1 (PieChart)</label>
                                     <input
+                                        id="pieColor1"
                                         type="color"
                                         value={pieColor1}
-                                        onChange={(e) => setPieColor1(e.target.value)}
+                                        onChange={e => setPieColor1(e.target.value)}
                                         style={styles.colorInputField}
                                     />
                                 </div>
                                 <div style={styles.colorInput}>
-                                    <label style={styles.colorLabel}>Couleur secteur 2 :</label>
+                                    <label style={styles.colorLabel} htmlFor="pieColor2">Couleur 2 (PieChart)</label>
                                     <input
+                                        id="pieColor2"
                                         type="color"
                                         value={pieColor2}
-                                        onChange={(e) => setPieColor2(e.target.value)}
+                                        onChange={e => setPieColor2(e.target.value)}
                                         style={styles.colorInputField}
                                     />
                                 </div>
@@ -452,65 +482,46 @@ const AdminDashboard = () => {
 
                     <div style={styles.chartsGrid}>
                         <div style={styles.chartCard}>
-                            <h3 style={styles.chartTitle}>
+                            <h2 style={styles.chartTitle}>
                                 <BarChart3 style={styles.chartIcon} />
-                                Répartition des Membres
-                            </h3>
-                            <ResponsiveContainer width="100%" height={250}>
-                                <BarChart data={chartData}>
-                                    <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.08} />
-                                    <XAxis dataKey="name" stroke={darkMode ? "#e5e5e5" : "#666666"} fontSize={11} />
-                                    <YAxis stroke={darkMode ? "#e5e5e5" : "#666666"} fontSize={11} />
-                                    <Tooltip
-                                        contentStyle={{
-                                            backgroundColor: darkMode ? '#2d2d2d' : '#ffffff',
-                                            border: darkMode ? '1px solid #404040' : '1px solid #e5e5e5',
-                                            borderRadius: '8px',
-                                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                                            color: darkMode ? '#ffffff' : '#1a1a1a',
-                                            fontSize: '12px'
-                                        }}
-                                    />
+                                Répartition des utilisateurs et offres
+                            </h2>
+                            <ResponsiveContainer width="100%" height={300}>
+                                <BarChart
+                                    data={chartData}
+                                    margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
+                                >
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip />
                                     <Legend />
-                                    <Bar
-                                        dataKey="value"
-                                        fill={barColor}
-                                        radius={[6, 6, 0, 0]}
-                                    />
+                                    <Bar dataKey="value" fill={barColor} />
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
 
                         <div style={styles.chartCard}>
-                            <h3 style={styles.chartTitle}>
-                                <Activity style={styles.chartIcon} />
-                                Taux de Candidatures par Rapport aux Offres
-                            </h3>
-                            <ResponsiveContainer width="100%" height={250}>
+                            <h2 style={styles.chartTitle}>
+                                <TrendingUp style={styles.chartIcon} />
+                                Offres et candidatures
+                            </h2>
+                            <ResponsiveContainer width="100%" height={300}>
                                 <PieChart>
                                     <Pie
                                         data={chartData1}
-                                        dataKey="value"
-                                        nameKey="name"
                                         cx="50%"
                                         cy="50%"
-                                        outerRadius={80}
+                                        labelLine={false}
                                         label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                                        labelStyle={{ fontSize: '12px', fontWeight: '600' }}
+                                        outerRadius={100}
+                                        fill="#8884d8"
+                                        dataKey="value"
                                     >
                                         <Cell key="cell-0" fill={pieColor1} />
                                         <Cell key="cell-1" fill={pieColor2} />
                                     </Pie>
-                                    <Tooltip
-                                        contentStyle={{
-                                            backgroundColor: darkMode ? '#2d2d2d' : '#ffffff',
-                                            border: darkMode ? '1px solid #404040' : '1px solid #e5e5e5',
-                                            borderRadius: '8px',
-                                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                                            color: darkMode ? '#ffffff' : '#1a1a1a',
-                                            fontSize: '12px'
-                                        }}
-                                    />
+                                    <Tooltip />
                                 </PieChart>
                             </ResponsiveContainer>
                         </div>
