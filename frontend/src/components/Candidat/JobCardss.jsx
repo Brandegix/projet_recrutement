@@ -687,7 +687,9 @@ const JobSearchAndOffers = () => {
       <style jsx>{`
         .job-search-container {
           min-height: 100vh;
-background: linear-gradient(to right, #f8f9fa, #e9ecef);        }
+background: linear-gradient(to right, #f8f9fa, #e9ecef);    
+border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);}
 /* Hero Section */
 .hero-section {
   background: linear-gradient(to right, #f8f9fa, #e9ecef);
