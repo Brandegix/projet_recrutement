@@ -65,11 +65,14 @@
     font-size: 18px; /* Reduced font-size of the icon */
     border-radius: 8px;
     box-shadow: var(--shadow);
-    transition: all 0.3s ease;
+    /* IMPORTANT: Added opacity to the transition property */
+    transition: all 0.3s ease, opacity 0.3s ease;
     color: black; /* Set the icon color to black */
     display: none; /* Hidden by default on desktop, shown by media query */
     align-items: center; /* Center the icon horizontally */
     justify-content: center; /* Center the icon vertically */
+    opacity: 1; /* Default state: fully visible */
+    pointer-events: auto; /* Default state: clickable */
 }
 
 .hamburger-btn:hover {
@@ -82,6 +85,13 @@
     color: black;
 }
 
+/* NEW: Style to hide the hamburger button when the sidebar is open */
+.hamburger-btn.is-hidden-when-sidebar-open {
+    opacity: 0;
+    pointer-events: none; /* Make it unclickable when hidden */
+}
+
+
 /* --- Sidebar Overlay for mobile --- */
 .sidebar-overlay {
     position: fixed;
@@ -92,7 +102,7 @@
     background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
     z-index: 998; /* Below sidebar, above main content */
     transition: opacity 0.3s ease; /* Smooth fade in/out */
-    /* This element is conditionally rendered by React, so 'opacity: 1;' is its default visible state when rendered */
+    opacity: 1; /* This element is conditionally rendered by React, so 'opacity: 1;' is its default visible state when rendered */
 }
 
 /* --- Main Sidebar Styles --- */
@@ -102,8 +112,8 @@
     position: fixed;
     top: 0;
     left: 0;
-    background-color: var(--sidebar-bg);
-    color: var(--sidebar-text);
+    background-color: var(--sidebar-bg); /* Use theme variable for background */
+    color: var(--sidebar-text); /* Use theme variable for text color */
     padding: 1.5rem 0;
     transition: all 0.3s ease-in-out; /* Smooth slide transition */
     z-index: 999; /* Higher than overlay */
@@ -112,9 +122,13 @@
     box-shadow: var(--shadow); /* Consistent shadow for desktop */
 }
 
+/* Ensure dark mode colors apply correctly to the sidebar when active */
 .admin-sidebar.dark-mode {
+    background-color: var(--sidebar-bg); /* Re-assert for dark mode */
+    color: var(--sidebar-text); /* Re-assert for dark mode */
     border-right: 1px solid var(--border-color); /* Subtle border in dark mode */
 }
+
 
 /* Sidebar Header */
 .sidebar-header {
@@ -122,6 +136,7 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* This H2 has a gradient text, so its 'color' property from parent is overridden */
 .sidebar-header h2 {
     color: white; /* Base for gradient text */
     font-size: 1.5rem;
@@ -143,7 +158,7 @@
 .sidebar-nav li {
     margin: 0.2rem 0;
     transition: all 0.2s ease;
-    border-left: 3px solid transparent; /* For active indicator */
+    border-left: 3px solid transparent;
     cursor: pointer;
 }
 
@@ -156,9 +171,10 @@
     border-left: 3px solid var(--primary-color); /* Active line indicator */
 }
 
+/* Ensure links and logout item inherit color from the sidebar or explicitly use var(--sidebar-text) */
 .sidebar-nav li a,
 .sidebar-nav li.logout-item {
-    color: inherit; /* Inherits color from parent (.admin-sidebar) */
+    color: inherit; /* Should inherit from .admin-sidebar's color */
     text-decoration: none;
     display: flex;
     align-items: center;
@@ -172,14 +188,14 @@
 }
 
 .sidebar-nav li.logout-item:hover {
-    background-color: rgba(239, 35, 60, 0.1); /* Light red for logout hover */
-    color: var(--danger-color); /* Red text for logout hover */
+    background-color: rgba(239, 35, 60, 0.1);
+    color: var(--danger-color);
 }
 
 .sidebar-nav li .icon {
     margin-right: 1rem;
     font-size: 1.2rem;
-    min-width: 20px; /* Consistent icon spacing */
+    min-width: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -188,7 +204,7 @@
 .sidebar-nav li span {
     font-size: 0.95rem;
     font-weight: 500;
-    white-space: nowrap; /* Prevent text wrapping */
+    white-space: nowrap;
 }
 
 /* --- Responsive Design - Media Queries --- */
@@ -200,24 +216,23 @@
 
     /* Hide the sidebar by default on mobile (slide it off-screen) */
     .admin-sidebar {
-        transform: translateX(-100%); /* Hides sidebar to the left */
-        box-shadow: none; /* Remove desktop shadow when hidden */
+        transform: translateX(-100%);
+        box-shadow: none; /* No shadow when hidden */
     }
 
     /* Slide sidebar into view when `mobile-visible` class is applied */
     .admin-sidebar.mobile-visible {
-        transform: translateX(0); /* Brings sidebar into view */
+        transform: translateX(0);
         box-shadow: 0 0 20px rgba(0,0,0,0.3); /* Add shadow when open for depth */
+        /* Re-affirm colors to ensure consistency, though typically not needed if inherited correctly */
+        background-color: var(--sidebar-bg);
+        color: var(--sidebar-text);
     }
 
     /* Explicitly keep sidebar off-screen when `mobile-hidden` class is applied */
     .admin-sidebar.mobile-hidden {
         transform: translateX(-100%);
     }
-
-    /* The .sidebar-overlay is conditionally rendered in JS, so its display is handled there.
-       Its presence implies it should be visible.
-    */
 }
 
 /* --- Scrollbar styling for sidebar (for when content overflows) --- */
@@ -230,7 +245,7 @@
 }
 
 .admin-sidebar::-webkit-scrollbar-thumb {
-    background: rgba(255, 140, 66, 0.5); /* Semi-transparent orange */
+    background: rgba(255, 140, 66, 0.5);
     border-radius: 2px;
 }
 
@@ -239,16 +254,15 @@
 }
 
 /* --- Focus styles for accessibility --- */
-/* Ensure focus indicators are clear for keyboard navigation */
 .sidebar-nav li a:focus,
 .sidebar-nav li.logout-item:focus {
     outline: 2px solid var(--primary-color);
-    outline-offset: -2px; /* Pulls outline slightly inside border */
-    border-radius: 4px; /* Soften outline corners */
+    outline-offset: -2px;
+    border-radius: 4px;
 }
 
 .hamburger-btn:focus {
     outline: 2px solid var(--primary-color);
-    outline-offset: 2px; /* Pushes outline slightly outside button */
-    border-radius: 8px; /* Match button border-radius */
+    outline-offset: 2px;
+    border-radius: 8px;
 }
