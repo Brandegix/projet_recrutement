@@ -84,12 +84,10 @@ const AdminSidebar = ({ isLoggedIn, user, darkMode }) => {
             {/* Hamburger Button: Only visible on mobile (`isMobile` is true) */}
             {isMobile && (
                 <button
-                    // Add 'is-hidden-when-sidebar-open' class if sidebar is visible
                     className={`hamburger-btn ${darkMode ? 'dark' : ''} ${isVisible ? 'is-hidden-when-sidebar-open' : ''}`}
                     onClick={toggleSidebar}
                     aria-label="Toggle sidebar"
                 >
-                    {/* The icon itself already changes, but the button will now hide */}
                     {isVisible ? <FiX /> : <FiMenu />}
                 </button>
             )}
@@ -126,10 +124,13 @@ const AdminSidebar = ({ isLoggedIn, user, darkMode }) => {
                             );
                         })}
 
-                        {/* Logout Button */}
+                        {/* Logout Button: Now with a wrapper div inside */}
                         <li className="logout-item" onClick={handleLogout}>
-                            <FiLogOut className="icon" />
-                            <span>Logout</span>
+                            {/* ADDED THIS WRAPPER DIV */}
+                            <div className="logout-content-wrapper">
+                                <FiLogOut className="icon" />
+                                <span>Logout</span>
+                            </div>
                         </li>
                     </ul>
                 </nav>
