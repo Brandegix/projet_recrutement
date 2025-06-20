@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FiHome, FiUsers, FiBriefcase, FiClipboard, FiBarChart, FiLogOut, FiMenu, FiX } from 'react-icons/fi';
-import './AdminSidebar.css'; // We'll create this CSS file
+import '../assets/css/AdminSidebar.css'; // We'll create this CSS file
 
 const AdminSidebar = ({ isLoggedIn, user, darkMode }) => {
     const [isVisible, setIsVisible] = useState(false);
