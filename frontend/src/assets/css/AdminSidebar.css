@@ -1,51 +1,50 @@
-/* Variables for Theme (already defined in your :root and .dark-mode, ensure they are accessible) */
-/*
+/* --- Root Variables for Theme (place these in a global CSS file like index.css or App.css for app-wide access) --- */
 :root {
-    --primary-color: #ff7001;
-    --primary-dark: #d94e00;
-    --text-color: #2c3e50;
-    --text-light: #7f8c8d;
-    --bg-color: #f8f9fa;
-    --card-bg: #ffffff;
-    --sidebar-bg: #2c3e50;
-    --sidebar-text: #ecf0f1;
-    --border-color: rgba(0, 0, 0, 0.08);
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    --primary-color: #ff7001; /* A vibrant orange */
+    --primary-dark: #d94e00;  /* Darker shade for accents */
+    --text-color: #2c3e50;    /* Dark text for light mode */
+    --text-light: #7f8c8d;    /* Lighter grey text */
+    --bg-color: #f8f9fa;      /* Light background */
+    --card-bg: #ffffff;       /* White card background */
+    --sidebar-bg: #2c3e50;    /* Dark sidebar background (e.g., charcoal) */
+    --sidebar-text: #ecf0f1;  /* Light text for dark sidebar */
+    --border-color: rgba(0, 0, 0, 0.08); /* Subtle border for light mode */
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Soft shadow */
+    --danger-color: #e74c3c; /* For logout/delete actions */
 }
 
+/* Dark Mode Overrides */
 .dark-mode {
-    --primary-color: #ff8c42;
-    --primary-dark: #ff7001;
-    --text-color: #ecf0f1;
-    --text-light: #bdc3c7;
-    --bg-color: #1a1a1a;
-    --card-bg: #2d2d2d;
-    --sidebar-bg: #1e1e1e;
-    --sidebar-text: #ecf0f1;
-    --border-color: rgba(255, 255, 255, 0.08);
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    --primary-color: #ff8c42; /* Brighter orange for dark mode */
+    --primary-dark: #ff7001;  /* Consistent darker orange */
+    --text-color: #ecf0f1;    /* Light text for dark mode */
+    --text-light: #bdc3c7;    /* Slightly darker light text */
+    --bg-color: #1a1a1a;      /* Dark background */
+    --card-bg: #2d2d2d;       /* Darker card background */
+    --sidebar-bg: #1e1e1e;    /* Even darker sidebar */
+    --sidebar-text: #ecf0f1;  /* Consistent light text */
+    --border-color: rgba(255, 255, 255, 0.08); /* Subtle border for dark mode */
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow */
 }
-*/
 
-/* Hamburger Button */
+/* --- Hamburger Button Styles --- */
 .hamburger-btn {
     position: fixed;
     top: 16px;
     left: 16px;
-    z-index: 1100; /* Higher than sidebar so it's always on top */
-    display: none; /* **Hidden by default on desktop, shown by media query** */
-    background-color: var(--card-bg); /* Uses theme variable */
+    z-index: 1100; /* Ensure it's above other content */
+    background-color: var(--card-bg);
     border: none;
     padding: 12px;
-    font-size: 20px;
+    font-size: 20px; /* Adjust size of the icon */
     border-radius: 8px;
     cursor: pointer;
-    box-shadow: var(--shadow); /* Uses theme variable */
+    box-shadow: var(--shadow);
     transition: all 0.3s ease;
-    color: var(--text-color); /* Uses theme variable */
-    display: flex; /* Ensures icon is centered */
-    align-items: center;
-    justify-content: center;
+    color: var(--text-color);
+    display: none; /* **Hidden by default on desktop, shown by media query** */
+    align-items: center; /* Center the icon */
+    justify-content: center; /* Center the icon */
 }
 
 .hamburger-btn:hover {
@@ -53,55 +52,59 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Sidebar Overlay for mobile */
+.hamburger-btn.dark {
+    color: var(--text-color); /* Adjust icon color for dark mode button */
+}
+
+/* --- Sidebar Overlay for mobile --- */
 .sidebar-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 998; /* Below sidebar, above content */
-    display: none; /* **Hidden by default, shown when sidebar is active** */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+    z-index: 998; /* Below sidebar, above main content */
+    transition: opacity 0.3s ease; /* Smooth fade in/out */
+    opacity: 1; /* Default visible when rendered by React */
 }
 
-/* Main Sidebar */
+/* --- Main Sidebar Styles --- */
 .admin-sidebar {
     width: 250px;
     height: 100vh;
     position: fixed;
     top: 0;
     left: 0;
-    background-color: var(--sidebar-bg); /* Uses theme variable */
-    color: var(--sidebar-text); /* Uses theme variable */
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
     padding: 1.5rem 0;
-    transition: all 0.3s ease;
-    z-index: 999; /* Higher than main content */
-    overflow-y: auto; /* Enables scrolling for long content */
+    transition: all 0.3s ease-in-out; /* Smooth slide transition */
+    z-index: 999; /* Higher than overlay */
+    overflow-y: auto; /* Enable scrolling if content is long */
     overflow-x: hidden;
-    /* On mobile, this will be transformed to slide in/out */
+    box-shadow: var(--shadow); /* Consistent shadow */
 }
 
 .admin-sidebar.dark-mode {
-    background-color: var(--sidebar-bg); /* Already defined by the variable */
-    border-right: 1px solid var(--border-color); /* Adds subtle border */
+    border-right: 1px solid var(--border-color); /* Subtle border in dark mode */
 }
 
 /* Sidebar Header */
 .sidebar-header {
     padding: 0 1.5rem 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Consistent border */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sidebar-header h2 {
-    color: white; /* Base color, but will be clipped */
+    color: white; /* Base for gradient text */
     font-size: 1.5rem;
     margin: 0;
     font-weight: 700;
     background: linear-gradient(135deg, #ff8c42 0%, #ff6b1a 50%, #e55100 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text; /* Creates gradient text effect */
+    background-clip: text;
 }
 
 /* Sidebar Navigation */
@@ -119,11 +122,11 @@
 }
 
 .sidebar-nav li:hover {
-    background-color: rgba(255, 255, 255, 0.05); /* Subtle hover effect */
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .sidebar-nav li.active {
-    background-color: rgba(255, 112, 1, 0.1); /* Specific active background */
+    background-color: rgba(255, 112, 1, 0.1); /* Active background color */
     border-left: 3px solid var(--primary-color); /* Active line indicator */
 }
 
@@ -150,7 +153,7 @@
 .sidebar-nav li .icon {
     margin-right: 1rem;
     font-size: 1.2rem;
-    min-width: 20px; /* Ensures consistent icon spacing */
+    min-width: 20px; /* Consistent icon spacing */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -159,35 +162,43 @@
 .sidebar-nav li span {
     font-size: 0.95rem;
     font-weight: 500;
-    white-space: nowrap; /* Prevents text wrapping */
+    white-space: nowrap; /* Prevent text wrapping */
 }
 
-/* Responsive Design - Media Queries */
+/* --- Responsive Design - Media Queries --- */
 @media (max-width: 768px) {
+    /* Show hamburger button on small screens */
     .hamburger-btn {
-        display: flex; /* Show hamburger button on small screens */
+        display: flex; /* Makes the hamburger button visible on mobile */
     }
 
+    /* Hide the sidebar by default on mobile (slide it off-screen) */
     .admin-sidebar {
-        transform: translateX(-100%); /* **Initially hide sidebar off-screen** */
-        position: fixed; /* Keep it fixed even when moved */
-        box-shadow: 0 0 20px rgba(0,0,0,0.3); /* Add shadow for visual depth when open */
+        transform: translateX(-100%); /* Hides sidebar to the left */
+        box-shadow: none; /* Remove desktop shadow when hidden */
     }
 
+    /* Slide sidebar into view when `mobile-visible` class is applied */
     .admin-sidebar.mobile-visible {
-        transform: translateX(0); /* **Slide sidebar into view** */
+        transform: translateX(0); /* Brings sidebar into view */
+        box-shadow: 0 0 20px rgba(0,0,0,0.3); /* Add shadow when open for depth */
     }
 
+    /* Explicitly keep sidebar off-screen when `mobile-hidden` class is applied */
     .admin-sidebar.mobile-hidden {
-        transform: translateX(-100%); /* **Slide sidebar out of view** */
+        transform: translateX(-100%);
     }
 
-    .sidebar-overlay {
-        display: block; /* Show overlay when sidebar is active */
+    /* Adjust main content for mobile (if it has a margin-left for desktop sidebar) */
+    /* You might have a .main-content in AdminDashboard.js that needs this adjustment */
+    /* Example:
+    .dashboard-container .main-content {
+        margin-left: 0;
     }
+    */
 }
 
-/* Scrollbar styling for sidebar */
+/* --- Scrollbar styling for sidebar (for when content overflows) --- */
 .admin-sidebar::-webkit-scrollbar {
     width: 4px;
 }
@@ -205,31 +216,10 @@
     background: rgba(255, 140, 66, 0.7);
 }
 
-/* Animation for smooth transitions (already in your CSS) */
-/*
-@keyframes slideIn {
-    from {
-        transform: translateX(-100%);
-    }
-    to {
-        transform: translateX(0);
-    }
-}
-
-@keyframes slideOut {
-    from {
-        transform: translateX(0);
-    }
-    to {
-        transform: translateX(-100%);
-    }
-}
-*/
-
-/* Focus styles for accessibility (good practice!) */
+/* --- Focus styles for accessibility --- */
 .sidebar-nav li a:focus,
 .sidebar-nav li.logout-item:focus {
-    outline: 2px solid var(--primary-color); /* Use primary color for focus ring */
+    outline: 2px solid var(--primary-color);
     outline-offset: -2px;
 }
 
