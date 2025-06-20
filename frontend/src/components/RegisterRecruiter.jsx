@@ -15,16 +15,11 @@ import {
   EyeOff,
 } from "lucide-react"
 
-// IMPORTANT: No more direct imports for react-leaflet or leaflet here.
-// Leaflet CSS and JS will be loaded dynamically via script tags.
+// API Configuration
+// Replace this with your actual backend URL
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000"
 
-// Define your API Base URL here.
-// When deploying your actual application, replace "YOUR_PRODUCTION_API_URL_HERE"
-// with the actual URL of your Flask backend (e.g., "https://api.yourdomain.com/").
-// In development, it might be "http://localhost:5000/".
-const API_BASE_URL = "https://your-casajobs-api.com"; // <<<--- REMPLACEZ CECI PAR VOTRE VRAIE URL API
-
-// InputField component (moved outside for clarity and reusability)
+// InputField component
 const InputField = ({
   name,
   type = "text",
@@ -38,12 +33,12 @@ const InputField = ({
   onChange,
   showPassword,
   setShowPassword,
-  isValid, // Props for validation status
-  isInvalid, // Props for invalid status
-  isFocused, // Props for focus status
-  validationMessage, // Prop for displaying validation messages
-  onFocus, // Handler for input focus
-  onBlur, // Handler for input blur
+  isValid,
+  isInvalid,
+  isFocused,
+  validationMessage,
+  onFocus,
+  onBlur,
 }) => {
   const inputType = showPasswordToggle ? (showPassword ? "text" : "password") : type
 
@@ -55,7 +50,6 @@ const InputField = ({
           <span className="label-text">{label}</span>
           {required && <span className="required-asterisk">*</span>}
         </div>
-        {/* Display validation icons */}
         {isValid && <CheckCircle className="validation-icon success" />}
         {isInvalid && <AlertCircle className="validation-icon error" />}
       </label>
@@ -73,7 +67,7 @@ const InputField = ({
           placeholder={placeholder}
           readOnly={readOnly}
           className={`form-input ${isValid ? "input-valid" : ""} ${isInvalid ? "input-invalid" : ""}`}
-          style={{ zIndex: 2, position: 'relative' }} // Ensure input is clickable
+          style={{ zIndex: 2, position: 'relative' }}
         />
 
         {showPasswordToggle && (
@@ -102,7 +96,7 @@ const RegisterRecruteur = () => {
     email: "",
     phoneNumber: "",
     companyName: "",
-    address: "", // Will be updated by map click
+    address: "",
     rc: "",
     latitude: 33.57311, // Default Casablanca latitude
     longitude: -7.589843, // Default Casablanca longitude
@@ -110,9 +104,10 @@ const RegisterRecruteur = () => {
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [focusedFields, setFocusedFields] = useState({})
-  const [mapPosition, setMapPosition] = useState([33.57311, -7.589843]) // Separate state for map's internal position
+  const [mapPosition, setMapPosition] = useState([33.57311, -7.589843])
 
   const [validations, setValidations] = useState({
     username: false,
@@ -125,9 +120,9 @@ const RegisterRecruteur = () => {
     rc: false,
   })
 
-  const mapRef = useRef(null) // Ref for the map container DOM element
-  const leafletMapInstance = useRef(null) // Ref for the Leaflet map object
-  const markerInstance = useRef(null) // Ref for the Leaflet marker object
+  const mapRef = useRef(null)
+  const leafletMapInstance = useRef(null)
+  const markerInstance = useRef(null)
 
   // Effect to load Leaflet and initialize the map
   useEffect(() => {
@@ -135,19 +130,15 @@ const RegisterRecruteur = () => {
     let marker = null;
 
     const loadLeaflet = () => {
-      // Load Leaflet CSS
       const link = document.createElement('link');
       link.rel = 'stylesheet';
       link.href = 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.css';
       document.head.appendChild(link);
 
-      // Load Leaflet JS
       const script = document.createElement('script');
       script.src = 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.js';
       script.onload = () => {
-        // Ensure Leaflet 'L' object is available
         if (window.L) {
-          // Fix Leaflet's default icon paths, necessary for markers to display
           delete window.L.Icon.Default.prototype._getIconUrl;
           window.L.Icon.Default.mergeOptions({
             iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
@@ -162,46 +153,40 @@ const RegisterRecruteur = () => {
 
     const initializeMap = () => {
       if (mapRef.current && !leafletMapInstance.current && window.L) {
-        // Initialize the map
         map = window.L.map(mapRef.current).setView(mapPosition, 13);
         leafletMapInstance.current = map;
 
-        // Add a tile layer (OpenStreetMap)
         window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Add a marker at the initial position
         marker = window.L.marker(mapPosition).addTo(map);
         markerInstance.current = marker;
 
-        // Add a click listener to the map to update the marker position
         map.on('click', function(e) {
           const newLat = e.latlng.lat;
           const newLng = e.latlng.lng;
-          setMapPosition([newLat, newLng]); // Update map's internal position
-          updateFormLocation(newLat, newLng); // Update form data
-          marker.setLatLng([newLat, newLng]); // Move the marker
+          setMapPosition([newLat, newLng]);
+          updateFormLocation(newLat, newLng);
+          marker.setLatLng([newLat, newLng]);
         });
       }
     };
 
-    // Check if Leaflet is already globally available (e.g., if another component loaded it)
     if (typeof window.L === 'undefined') {
       loadLeaflet();
     } else {
-      initializeMap(); // Leaflet is already there, just initialize map
+      initializeMap();
     }
 
-    // Cleanup function for when the component unmounts
     return () => {
       if (leafletMapInstance.current) {
-        leafletMapInstance.current.remove(); // Remove map to prevent memory leaks
+        leafletMapInstance.current.remove();
         leafletMapInstance.current = null;
         markerInstance.current = null;
       }
     };
-  }, [mapPosition]); // Re-initialize map if mapPosition changes (e.g., initial load)
+  }, [mapPosition]);
 
   // Real-time validation
   useEffect(() => {
@@ -221,7 +206,7 @@ const RegisterRecruteur = () => {
     })
   }, [formData])
 
-  // Function to get address from coordinates using Nominatim (OpenStreetMap)
+  // Function to get address from coordinates using Nominatim
   const reverseGeocode = async (lat, lng) => {
     try {
       const response = await fetch(
@@ -256,6 +241,8 @@ const RegisterRecruteur = () => {
       ...prev,
       [name]: value,
     }))
+    // Clear error when user starts typing
+    if (error) setError("")
   }
 
   const handleFocus = (fieldName) => {
@@ -269,7 +256,8 @@ const RegisterRecruteur = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    setError("") // Clear previous errors
+    setError("")
+    setSuccess("")
 
     // Check if all fields are valid before submission
     if (!Object.values(validations).every((valid) => valid)) {
@@ -278,44 +266,74 @@ const RegisterRecruteur = () => {
       return
     }
 
-   try {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}api/recruiters/register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      username: formData.username,
-      password: formData.password,
-      name: formData.name,
-      email: formData.email,
-      phoneNumber: formData.phoneNumber,
-      companyName: formData.companyName,
-      address: formData.address,
-      rc: formData.rc,
-      latitude: formData.latitude,
-      longitude: formData.longitude,
-    }),
-  });
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/recruiters/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+          name: formData.name,
+          email: formData.email,
+          phoneNumber: formData.phoneNumber,
+          companyName: formData.companyName,
+          address: formData.address,
+          rc: formData.rc,
+          latitude: formData.latitude,
+          longitude: formData.longitude,
+        }),
+      });
 
-  let data;
-  try {
-    data = await response.json();
-  } catch (e) {
-    data = {};
-  }
+      let data;
+      try {
+        data = await response.json();
+      } catch (e) {
+        data = {};
+      }
 
-  if (response.ok) {
-    console.log("📦 Inscription réussie:", data);
-    window.location.href = '/CandidatePagefrom';
-  } else {
-    setError(data.message || data.error || 'Erreur lors de l\'inscription. Veuillez réessayer.');
-  }
-} catch (err) {
-  console.error("Error during registration API call:", err);
-  setError('Erreur de connexion au serveur. Veuillez vérifier votre connexion ou réessayer plus tard.');
-}
- finally {
+      if (response.ok) {
+        console.log("📦 Inscription réussie:", data);
+        setSuccess(`Inscription réussie ! Bienvenue ${data.username}. Un email de confirmation a été envoyé.`);
+        
+        // Reset form
+        setFormData({
+          username: "",
+          password: "",
+          name: "",
+          email: "",
+          phoneNumber: "",
+          companyName: "",
+          address: "",
+          rc: "",
+          latitude: 33.57311,
+          longitude: -7.589843,
+        });
+        
+        // Redirect after 3 seconds
+        setTimeout(() => {
+          window.location.href = '/login/recruteur';
+        }, 3000);
+        
+      } else {
+        // Handle specific error cases
+        if (response.status === 409) {
+          if (data.error && data.error.includes('Username')) {
+            setError('Ce nom d\'utilisateur est déjà pris. Veuillez en choisir un autre.');
+          } else if (data.error && data.error.includes('Email')) {
+            setError('Cette adresse email est déjà enregistrée. Veuillez utiliser une autre adresse.');
+          } else {
+            setError(data.error || 'Nom d\'utilisateur ou email déjà utilisé.');
+          }
+        } else {
+          setError(data.error || data.message || 'Erreur lors de l\'inscription. Veuillez réessayer.');
+        }
+      }
+    } catch (err) {
+      console.error("Error during registration API call:", err);
+      setError('Erreur de connexion au serveur. Veuillez vérifier votre connexion ou réessayer plus tard.');
+    } finally {
       setLoading(false);
     }
   }
@@ -324,8 +342,7 @@ const RegisterRecruteur = () => {
 
   // Function to get validation message for InputField
   const getValidationMessage = (name) => {
-    // Only return a message if the field is not valid AND has been interacted with (not focused)
-    if (validations[name] || focusedFields[name]) return "" // No message if valid or currently focused
+    if (validations[name] || focusedFields[name]) return ""
 
     switch (name) {
       case "email":
@@ -350,7 +367,7 @@ const RegisterRecruteur = () => {
 
   return (
     <div className="register-page">
-      {/* Background Elements - Minimalist version, using pointer-events: none */}
+      {/* Background Elements */}
       <div className="background-decoration">
         <div className="floating-shape shape-1" />
         <div className="floating-shape shape-2" />
@@ -368,6 +385,14 @@ const RegisterRecruteur = () => {
             <h1 className="register-title">Inscription Recruteur</h1>
             <p className="register-subtitle">Créez votre compte entreprise pour recruter les meilleurs talents</p>
           </div>
+
+          {/* Success Message */}
+          {success && (
+            <div className="success-message">
+              <CheckCircle className="success-icon" />
+              <span>{success}</span>
+            </div>
+          )}
 
           {/* Error Message */}
           {error && (
@@ -476,7 +501,7 @@ const RegisterRecruteur = () => {
                 </div>
 
                 <div className="map-container" ref={mapRef}>
-                  {/* Leaflet map will be rendered here by useEffect */}
+                  {/* Leaflet map will be rendered here */}
                 </div>
 
                 <p className="map-helper-text">
@@ -491,9 +516,9 @@ const RegisterRecruteur = () => {
                   icon={MapPin}
                   label="Adresse complète"
                   required={true}
-                  readOnly={true} // Address field is set by map click
+                  readOnly={true}
                   value={formData.address}
-                  onChange={handleChange} // Keep onChange for consistency, though readOnly
+                  onChange={handleChange}
                   isValid={validations.address && formData.address.length > 0}
                   isInvalid={!validations.address && formData.address.length > 0 && !focusedFields.address}
                   isFocused={focusedFields.address}
@@ -569,7 +594,7 @@ const RegisterRecruteur = () => {
           <div className="form-footer">
             <p>
               Déjà inscrit ?{" "}
-              <a href="/login" className="login-link">
+              <a href="/login/recruteur" className="login-link">
                 Se connecter
               </a>
             </p>
