@@ -278,43 +278,44 @@ const RegisterRecruteur = () => {
       return
     }
 
-    try {
-      // Construct the full API URL for registration
-    const response = await fetch('${process.env.REACT_APP_API_URL}api/recruiters/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-        body: JSON.stringify({
-          username: formData.username,
-          password: formData.password,
-          name: formData.name,
-          email: formData.email,
-          phoneNumber: formData.phoneNumber,
-          companyName: formData.companyName,
-          // Include address, rc, latitude, longitude if your backend expects them
-          address: formData.address,
-          rc: formData.rc,
-          latitude: formData.latitude,
-          longitude: formData.longitude,
-        }),
-      });
+   try {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}api/recruiters/register`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      username: formData.username,
+      password: formData.password,
+      name: formData.name,
+      email: formData.email,
+      phoneNumber: formData.phoneNumber,
+      companyName: formData.companyName,
+      address: formData.address,
+      rc: formData.rc,
+      latitude: formData.latitude,
+      longitude: formData.longitude,
+    }),
+  });
 
-      const data = await response.json();
+  let data;
+  try {
+    data = await response.json();
+  } catch (e) {
+    data = {};
+  }
 
-      if (response.ok) {
-        console.log("📦 Inscription réussie:", data);
-        // Simulate navigation (replace with actual React Router DOM navigation if available)
-        // If react-router-dom is not available, you can use:
-        window.location.href = '/CandidatePagefrom'; // Direct page reload/navigation
-      } else {
-        // Use data.message or data.error from the backend response if available
-        setError(data.message || data.error || 'Erreur lors de l\'inscription. Veuillez réessayer.');
-      }
-    } catch (err) {
-      console.error("Error during registration API call:", err);
-      setError('Erreur de connexion au serveur. Veuillez vérifier votre connexion ou réessayer plus tard.');
-    } finally {
+  if (response.ok) {
+    console.log("📦 Inscription réussie:", data);
+    window.location.href = '/CandidatePagefrom';
+  } else {
+    setError(data.message || data.error || 'Erreur lors de l\'inscription. Veuillez réessayer.');
+  }
+} catch (err) {
+  console.error("Error during registration API call:", err);
+  setError('Erreur de connexion au serveur. Veuillez vérifier votre connexion ou réessayer plus tard.');
+}
+ finally {
       setLoading(false);
     }
   }
