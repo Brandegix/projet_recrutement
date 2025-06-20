@@ -70,7 +70,7 @@ const AdminSidebar = ({ isLoggedIn, user, darkMode }) => {
         { path: '/Dashboard_admin', icon: FiHome, label: 'Dashboard' },
         { path: '/Candidatesadmin', icon: FiUsers, label: 'Manage Candidates' },
         { path: '/ManageRecruiters', icon: FiUsers, label: 'Manage Recruiters' },
-        { path: '/applicationss', icon: FiClipboard, label: 'Candidates & Applications' },
+        { path: '/applicationss', icon: FiClipboard, label: 'Applications' },
         { path: '/AdminDashboard', icon: FiBarChart, label: 'Statistics' },
         { path: '/ManageJobs', icon: FiBriefcase, label: 'Manage Job Offers' }
     ];
