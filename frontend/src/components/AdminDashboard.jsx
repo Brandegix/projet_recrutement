@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../assets/css/AdminDashboard.css';
+import '../assets/css/AdminDashboard.css'; // Make sure this path is correct for your main CSS
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
     PieChart, Pie, Cell, ResponsiveContainer
 } from 'recharts';
-import { Users, Briefcase, Clipboard, BarChart3, TrendingUp } from 'lucide-react'; // Importing Lucide icons
+import { Users, Briefcase, Clipboard, BarChart3, TrendingUp } from 'lucide-react';
 import SEO from "./SEO";
 import AdminSidebar from './AdminSidebar'; // Import the new sidebar component
 
@@ -40,13 +40,13 @@ const AdminDashboard = () => {
                 } else {
                     setIsLoggedIn(false);
                     setUser(null);
-                    navigate('/'); // Redirect to home or login page
+                    navigate('/');
                 }
             })
             .catch(() => {
                 setIsLoggedIn(false);
                 setUser(null);
-                navigate('/'); // Redirect if session check fails
+                navigate('/');
             });
     }, [navigate]);
 
@@ -90,36 +90,29 @@ const AdminDashboard = () => {
     ];
 
     const styles = {
-        dashboardContainer: {
-            display: 'flex',
-            minHeight: '100vh',
-            backgroundColor: darkMode ? '#1a1a1a' : '#ffffff',
-            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
-            transition: 'all 0.3s ease',
-        },
+        // dashboardContainer styles moved to CSS :root and .dashboard-container
         mainContent: {
             flex: 1,
-            backgroundColor: darkMode ? '#1a1a1a' : '#f8f9fa',
-            transition: 'all 0.3s ease',
+            // background-color, color, transition handled by CSS .main-content and .dark-mode
             display: 'flex',
             flexDirection: 'column',
-            marginLeft: '260px', // Space for sidebar on desktop
+            marginLeft: '250px', // Matches sidebar width, managed by CSS for responsiveness
             width: '100%',
-            marginRight: '0px',
+            // marginRight:'0px' is default and not needed as inline style
         },
         header: {
             padding: '20px 32px',
-            backgroundColor: darkMode ? '#2d2d2d' : '#ffffff',
-            borderBottom: darkMode ? '1px solid #404040' : '1px solid #e5e5e5',
+            backgroundColor: darkMode ? 'var(--card-bg)' : 'var(--card-bg)', // Use CSS variables
+            borderBottom: darkMode ? '1px solid var(--border-color)' : '1px solid var(--border-color)', // Use CSS variables
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+            boxShadow: 'var(--shadow)' // Use CSS variable
         },
         headerTitle: {
             fontSize: '24px',
             fontWeight: '700',
-            color: darkMode ? '#ffffff' : '#1a1a1a',
+            color: 'var(--text-color)', // Use CSS variable
             margin: 0,
             background: 'linear-gradient(135deg, #ff8c42 0%, #ff6b1a 50%, #e55100 100%)',
             WebkitBackgroundClip: 'text',
@@ -137,7 +130,7 @@ const AdminDashboard = () => {
             gap: '12px',
             padding: '6px 12px',
             borderRadius: '50px',
-            backgroundColor: darkMode ? '#404040' : '#f0f0f0',
+            backgroundColor: darkMode ? '#404040' : '#f0f0f0', // Can use CSS variables if defined specifically
             transition: 'all 0.3s ease'
         },
         switch: {
@@ -172,11 +165,11 @@ const AdminDashboard = () => {
             marginBottom: '28px'
         },
         statCard: {
-            backgroundColor: darkMode ? '#2d2d2d' : '#ffffff',
+            backgroundColor: 'var(--card-bg)', // Use CSS variable
             borderRadius: '12px',
             padding: '20px',
-            boxShadow: darkMode ? '0 4px 20px rgba(0,0,0,0.2)' : '0 4px 20px rgba(0,0,0,0.06)',
-            border: darkMode ? '1px solid #404040' : '1px solid #e5e5e5',
+            boxShadow: 'var(--shadow)', // Use CSS variable
+            border: '1px solid var(--border-color)', // Use CSS variable
             transition: 'all 0.3s ease',
             cursor: 'pointer',
             position: 'relative',
@@ -209,22 +202,22 @@ const AdminDashboard = () => {
         statTitle: {
             fontSize: '14px',
             fontWeight: '600',
-            color: darkMode ? '#cccccc' : '#666666',
+            color: 'var(--text-light)', // Use CSS variable
             margin: 0
         },
         statValue: {
             fontSize: '28px',
             fontWeight: '700',
-            color: darkMode ? '#ffffff' : '#1a1a1a',
+            color: 'var(--text-color)', // Use CSS variable (or primary if preferred)
             margin: '6px 0 0 0'
         },
         colorSection: {
-            backgroundColor: darkMode ? '#2d2d2d' : '#ffffff',
+            backgroundColor: 'var(--card-bg)', // Use CSS variable
             borderRadius: '12px',
             padding: '20px',
             marginBottom: '24px',
-            boxShadow: darkMode ? '0 4px 20px rgba(0,0,0,0.2)' : '0 4px 20px rgba(0,0,0,0.06)',
-            border: darkMode ? '1px solid #404040' : '1px solid #e5e5e5'
+            boxShadow: 'var(--shadow)', // Use CSS variable
+            border: '1px solid var(--border-color)' // Use CSS variable
         },
         colorSectionHeader: {
             display: 'flex',
@@ -235,14 +228,14 @@ const AdminDashboard = () => {
         colorSectionTitle: {
             fontSize: '16px',
             fontWeight: '600',
-            color: darkMode ? '#ffffff' : '#1a1a1a',
+            color: 'var(--text-color)', // Use CSS variable
             margin: 0,
             display: 'flex',
             alignItems: 'center',
             gap: '8px'
         },
         toggleButton: {
-            backgroundColor: darkMode ? '#404040' : '#f0f0f0',
+            backgroundColor: darkMode ? '#404040' : '#f0f0f0', // Can be refined with CSS vars if available
             border: '2px solid #ff8c42',
             borderRadius: '6px',
             padding: '6px 12px',
@@ -266,7 +259,7 @@ const AdminDashboard = () => {
         colorLabel: {
             fontSize: '12px',
             fontWeight: '600',
-            color: darkMode ? '#cccccc' : '#666666'
+            color: 'var(--text-light)' // Use CSS variable
         },
         colorInputField: {
             width: '100%',
@@ -281,17 +274,17 @@ const AdminDashboard = () => {
             gap: '24px'
         },
         chartCard: {
-            backgroundColor: darkMode ? '#2d2d2d' : '#ffffff',
+            backgroundColor: 'var(--card-bg)', // Use CSS variable
             borderRadius: '12px',
             padding: '24px',
-            boxShadow: darkMode ? '0 4px 20px rgba(0,0,0,0.2)' : '0 4px 20px rgba(0,0,0,0.06)',
-            border: darkMode ? '1px solid #404040' : '1px solid #e5e5e5',
+            boxShadow: 'var(--shadow)', // Use CSS variable
+            border: '1px solid var(--border-color)', // Use CSS variable
             minHeight: '350px'
         },
         chartTitle: {
             fontSize: '16px',
             fontWeight: '600',
-            color: darkMode ? '#ffffff' : '#1a1a1a',
+            color: 'var(--text-color)', // Use CSS variable
             marginBottom: '20px',
             display: 'flex',
             alignItems: 'center',
@@ -302,18 +295,6 @@ const AdminDashboard = () => {
             color: '#ff8c42'
         }
     };
-
-    // Responsive styles for main content adjustment
-    const responsiveStyles = `
-        @media (max-width: 768px) {
-            .main-content {
-                margin-left: 0 !important;
-            }
-            .hamburger-btn {
-                display: block !important;
-            }
-        }
-    `;
 
     const statCards = [
         {
@@ -339,36 +320,12 @@ const AdminDashboard = () => {
 
     return (
         <>
-            <style>{responsiveStyles}</style>
             <SEO /> {/* SEO component remains here */}
             <div
                 className={`dashboard-container ${darkMode ? 'dark-mode' : ''}`}
-                style={styles.dashboardContainer} // Apply styles.dashboardContainer directly
+                // styles.dashboardContainer handled by CSS .dashboard-container
             >
-                {/* Hamburger button for mobile, now part of AdminSidebar logic or its parent */}
-                <button
-                    className="hamburger-btn"
-                    onClick={() => setSidebarVisible(!sidebarVisible)}
-                    aria-label="Toggle sidebar"
-                    style={{
-                        position: 'fixed',
-                        top: '16px',
-                        left: '16px',
-                        zIndex: 1100,
-                        backgroundColor: darkMode ? '#2d2d2d' : '#ffffff',
-                        border: 'none',
-                        padding: '8px 12px',
-                        fontSize: '24px',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                        display: 'none', // hide by default, CSS will show on small screens
-                    }}
-                >
-                    ☰
-                </button>
-
-                {/* AdminSidebar component */}
+                {/* AdminSidebar component - passes necessary props */}
                 <AdminSidebar
                     isLoggedIn={isLoggedIn}
                     user={user}
@@ -378,12 +335,15 @@ const AdminDashboard = () => {
                     setSidebarVisible={setSidebarVisible}
                 />
 
-                <div style={styles.mainContent} className="main-content">
+                <div
+                    style={styles.mainContent}
+                    className={`main-content ${darkMode ? 'dark-mode' : ''}`} // Add dark-mode class here
+                >
                     <header style={styles.header}>
                         <h1 style={styles.headerTitle}>Statistiques</h1>
                         <div style={styles.themeToggleContainer}>
                             <div style={styles.themeToggle}>
-                                <span style={{ color: darkMode ? '#e5e5e5' : '#666666', fontSize: '12px', fontWeight: '600' }}>
+                                <span style={{ color: darkMode ? 'var(--text-light)' : 'var(--text-light)', fontSize: '12px', fontWeight: '600' }}>
                                     {darkMode ? "Mode sombre" : "Mode clair"}
                                 </span>
                                 <div style={styles.switch} onClick={() => setDarkMode(!darkMode)}>
