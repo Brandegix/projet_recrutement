@@ -150,7 +150,7 @@ const RegisterRecruteur = () => {
             onBlur={() => handleBlur(name)}
             required={required}
             placeholder={placeholder}
-            className={`form-input ${isValid ? "input-valid" : ""} ${isInvalid ? "input-invalid" : ""}`}
+            className={`form-inputs ${isValid ? "input-valid" : ""} ${isInvalid ? "input-invalid" : ""}`}
             // Remove inline style pointer-events, user-select, zIndex from here
             // They are better handled in the global CSS to ensure consistency and override
           />
@@ -658,7 +658,7 @@ const RegisterRecruteur = () => {
         }
 
         /* THIS IS THE MOST CRITICAL PART: Ensure all interactive form elements are fully clickable */
-        .form-input {
+        .form-inputs {
           width: 100%;
           padding: 1rem 1.25rem;
           border: 2px solid #e5e7eb;
