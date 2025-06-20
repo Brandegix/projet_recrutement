@@ -18,9 +18,11 @@ import {
 // IMPORTANT: No more direct imports for react-leaflet or leaflet here.
 // Leaflet CSS and JS will be loaded dynamically via script tags.
 
-// Define your API Base URL here
-// In a real application, this would come from environment variables (e.g., .env)
-const API_BASE_URL = "http://localhost:5000/"; // <<<--- REMPLACEZ CECI PAR VOTRE VRAIE URL API
+// Define your API Base URL here.
+// When deploying your actual application, replace "YOUR_PRODUCTION_API_URL_HERE"
+// with the actual URL of your Flask backend (e.g., "https://api.yourdomain.com/").
+// In development, it might be "http://localhost:5000/".
+const API_BASE_URL = "https://your-casajobs-api.com"; // <<<--- REMPLACEZ CECI PAR VOTRE VRAIE URL API
 
 // InputField component (moved outside for clarity and reusability)
 const InputField = ({
@@ -277,7 +279,10 @@ const RegisterRecruteur = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}api/recruiters/register`, {
+      // Construct the full API URL for registration
+      const registerApiUrl = `${API_BASE_URL}/api/recruiters/register`; // Corrected path to /api/recruiters/register
+
+      const response = await fetch(registerApiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -289,9 +294,11 @@ const RegisterRecruteur = () => {
           email: formData.email,
           phoneNumber: formData.phoneNumber,
           companyName: formData.companyName,
-          // Note: address, rc, latitude, longitude are not in the provided API snippet body,
-          // but you might need to add them to your actual API endpoint if required.
-          // For now, only sending what the API snippet consumes.
+          // Include address, rc, latitude, longitude if your backend expects them
+          address: formData.address,
+          rc: formData.rc,
+          latitude: formData.latitude,
+          longitude: formData.longitude,
         }),
       });
 
@@ -303,7 +310,8 @@ const RegisterRecruteur = () => {
         // If react-router-dom is not available, you can use:
         window.location.href = '/CandidatePagefrom'; // Direct page reload/navigation
       } else {
-        setError(data.error || 'Erreur lors de l\'inscription. Veuillez réessayer.');
+        // Use data.message or data.error from the backend response if available
+        setError(data.message || data.error || 'Erreur lors de l\'inscription. Veuillez réessayer.');
       }
     } catch (err) {
       console.error("Error during registration API call:", err);
@@ -317,7 +325,9 @@ const RegisterRecruteur = () => {
 
   // Function to get validation message for InputField
   const getValidationMessage = (name) => {
-    if (validations[name]) return ""
+    // Only return a message if the field is not valid AND has been interacted with (not focused)
+    if (validations[name] || focusedFields[name]) return "" // No message if valid or currently focused
+
     switch (name) {
       case "email":
         return "Format d'email invalide"
