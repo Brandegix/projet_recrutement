@@ -14,30 +14,15 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react"
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet"
-import "leaflet/dist/leaflet.css"
-import L from "leaflet"
 
-// Fix Leaflet icon issue
-delete L.Icon.Default.prototype._getIconUrl
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
-})
+// IMPORTANT: No more direct imports for react-leaflet or leaflet here.
+// Leaflet CSS and JS will be loaded dynamically via script tags.
 
-// Location marker component for the map
-function LocationMarker({ position, setPosition, updateFormLocation }) {
-  useMapEvents({
-    click(e) {
-      setPosition([e.latlng.lat, e.latlng.lng])
-      updateFormLocation(e.latlng.lat, e.latlng.lng)
-    },
-  })
-  return <Marker position={position} />
-}
+// Define your API Base URL here
+// In a real application, this would come from environment variables (e.g., .env)
+const API_BASE_URL = "http://localhost:5000/"; // <<<--- REMPLACEZ CECI PAR VOTRE VRAIE URL API
 
-// InputField component
+// InputField component (moved outside for clarity and reusability)
 const InputField = ({
   name,
   type = "text",
@@ -51,12 +36,12 @@ const InputField = ({
   onChange,
   showPassword,
   setShowPassword,
-  isValid, // Added isValid prop
-  isInvalid, // Added isInvalid prop
-  isFocused, // Added isFocused prop
-  validationMessage, // Added validationMessage prop
-  onFocus, // Added onFocus prop
-  onBlur, // Added onBlur prop
+  isValid, // Props for validation status
+  isInvalid, // Props for invalid status
+  isFocused, // Props for focus status
+  validationMessage, // Prop for displaying validation messages
+  onFocus, // Handler for input focus
+  onBlur, // Handler for input blur
 }) => {
   const inputType = showPasswordToggle ? (showPassword ? "text" : "password") : type
 
@@ -64,10 +49,11 @@ const InputField = ({
     <div className={`input-group ${isFocused ? "focused" : ""} ${isValid ? "valid" : ""}`}>
       <label htmlFor={name} className="input-label">
         <div className="label-content">
-          <Icon className="input-icon" />
+          {Icon && <Icon className="input-icon" />}
           <span className="label-text">{label}</span>
           {required && <span className="required-asterisk">*</span>}
         </div>
+        {/* Display validation icons */}
         {isValid && <CheckCircle className="validation-icon success" />}
         {isInvalid && <AlertCircle className="validation-icon error" />}
       </label>
@@ -85,6 +71,7 @@ const InputField = ({
           placeholder={placeholder}
           readOnly={readOnly}
           className={`form-input ${isValid ? "input-valid" : ""} ${isInvalid ? "input-invalid" : ""}`}
+          style={{ zIndex: 2, position: 'relative' }} // Ensure input is clickable
         />
 
         {showPasswordToggle && (
@@ -113,17 +100,17 @@ const RegisterRecruteur = () => {
     email: "",
     phoneNumber: "",
     companyName: "",
-    address: "",
+    address: "", // Will be updated by map click
     rc: "",
-    latitude: 33.57311,
-    longitude: -7.589843,
+    latitude: 33.57311, // Default Casablanca latitude
+    longitude: -7.589843, // Default Casablanca longitude
   })
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [focusedFields, setFocusedFields] = useState({})
-  const [position, setPosition] = useState([33.57311, -7.589843]) // Default Casablanca
+  const [mapPosition, setMapPosition] = useState([33.57311, -7.589843]) // Separate state for map's internal position
 
   const [validations, setValidations] = useState({
     username: false,
@@ -136,7 +123,83 @@ const RegisterRecruteur = () => {
     rc: false,
   })
 
-  const registerCardRef = useRef(null)
+  const mapRef = useRef(null) // Ref for the map container DOM element
+  const leafletMapInstance = useRef(null) // Ref for the Leaflet map object
+  const markerInstance = useRef(null) // Ref for the Leaflet marker object
+
+  // Effect to load Leaflet and initialize the map
+  useEffect(() => {
+    let map = null;
+    let marker = null;
+
+    const loadLeaflet = () => {
+      // Load Leaflet CSS
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.css';
+      document.head.appendChild(link);
+
+      // Load Leaflet JS
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.js';
+      script.onload = () => {
+        // Ensure Leaflet 'L' object is available
+        if (window.L) {
+          // Fix Leaflet's default icon paths, necessary for markers to display
+          delete window.L.Icon.Default.prototype._getIconUrl;
+          window.L.Icon.Default.mergeOptions({
+            iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
+            iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+            shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+          });
+          initializeMap();
+        }
+      };
+      document.body.appendChild(script);
+    };
+
+    const initializeMap = () => {
+      if (mapRef.current && !leafletMapInstance.current && window.L) {
+        // Initialize the map
+        map = window.L.map(mapRef.current).setView(mapPosition, 13);
+        leafletMapInstance.current = map;
+
+        // Add a tile layer (OpenStreetMap)
+        window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Add a marker at the initial position
+        marker = window.L.marker(mapPosition).addTo(map);
+        markerInstance.current = marker;
+
+        // Add a click listener to the map to update the marker position
+        map.on('click', function(e) {
+          const newLat = e.latlng.lat;
+          const newLng = e.latlng.lng;
+          setMapPosition([newLat, newLng]); // Update map's internal position
+          updateFormLocation(newLat, newLng); // Update form data
+          marker.setLatLng([newLat, newLng]); // Move the marker
+        });
+      }
+    };
+
+    // Check if Leaflet is already globally available (e.g., if another component loaded it)
+    if (typeof window.L === 'undefined') {
+      loadLeaflet();
+    } else {
+      initializeMap(); // Leaflet is already there, just initialize map
+    }
+
+    // Cleanup function for when the component unmounts
+    return () => {
+      if (leafletMapInstance.current) {
+        leafletMapInstance.current.remove(); // Remove map to prevent memory leaks
+        leafletMapInstance.current = null;
+        markerInstance.current = null;
+      }
+    };
+  }, [mapPosition]); // Re-initialize map if mapPosition changes (e.g., initial load)
 
   // Real-time validation
   useEffect(() => {
@@ -156,7 +219,7 @@ const RegisterRecruteur = () => {
     })
   }, [formData])
 
-  // Function to get address from coordinates
+  // Function to get address from coordinates using Nominatim (OpenStreetMap)
   const reverseGeocode = async (lat, lng) => {
     try {
       const response = await fetch(
@@ -175,7 +238,7 @@ const RegisterRecruteur = () => {
     }
   }
 
-  // Update form location data
+  // Update form location data and trigger reverse geocoding
   const updateFormLocation = (lat, lng) => {
     setFormData((prev) => ({
       ...prev,
@@ -204,38 +267,55 @@ const RegisterRecruteur = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    setError("")
+    setError("") // Clear previous errors
+
+    // Check if all fields are valid before submission
+    if (!Object.values(validations).every((valid) => valid)) {
+      setError("Veuillez remplir correctement tous les champs requis.")
+      setLoading(false)
+      return
+    }
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      const response = await fetch(`${API_BASE_URL}api/recruiters/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+          name: formData.name,
+          email: formData.email,
+          phoneNumber: formData.phoneNumber,
+          companyName: formData.companyName,
+          // Note: address, rc, latitude, longitude are not in the provided API snippet body,
+          // but you might need to add them to your actual API endpoint if required.
+          // For now, only sending what the API snippet consumes.
+        }),
+      });
 
-      // Simulate success
-      console.log("Registration successful:", formData)
+      const data = await response.json();
 
-      // Reset form
-      setFormData({
-        username: "",
-        password: "",
-        name: "",
-        email: "",
-        phoneNumber: "",
-        companyName: "",
-        address: "",
-        rc: "",
-        latitude: 33.57311,
-        longitude: -7.589843,
-      })
+      if (response.ok) {
+        console.log("📦 Inscription réussie:", data);
+        // Simulate navigation (replace with actual React Router DOM navigation if available)
+        // If react-router-dom is not available, you can use:
+        window.location.href = '/CandidatePagefrom'; // Direct page reload/navigation
+      } else {
+        setError(data.error || 'Erreur lors de l\'inscription. Veuillez réessayer.');
+      }
     } catch (err) {
-      setError("Erreur lors de l'inscription. Veuillez réessayer.")
+      console.error("Error during registration API call:", err);
+      setError('Erreur de connexion au serveur. Veuillez vérifier votre connexion ou réessayer plus tard.');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   const allFieldsValid = Object.values(validations).every((valid) => valid)
 
-  // Function to get validation message
+  // Function to get validation message for InputField
   const getValidationMessage = (name) => {
     if (validations[name]) return ""
     switch (name) {
@@ -253,7 +333,7 @@ const RegisterRecruteur = () => {
       case "companyName":
         return "Minimum 2 caractères requis"
       case "address":
-        return "Adresse requise"
+        return "Adresse requise (cliquez sur la carte)"
       default:
         return ""
     }
@@ -261,7 +341,7 @@ const RegisterRecruteur = () => {
 
   return (
     <div className="register-page">
-      {/* Background Elements */}
+      {/* Background Elements - Minimalist version, using pointer-events: none */}
       <div className="background-decoration">
         <div className="floating-shape shape-1" />
         <div className="floating-shape shape-2" />
@@ -270,7 +350,7 @@ const RegisterRecruteur = () => {
       </div>
 
       <div className="register-container">
-        <div className="register-card" ref={registerCardRef}>
+        <div className="register-card">
           {/* Header */}
           <div className="register-header">
             <div className="icon-container">
@@ -302,7 +382,7 @@ const RegisterRecruteur = () => {
                   value={formData.name}
                   onChange={handleChange}
                   isValid={validations.name && formData.name.length > 0}
-                  isInvalid={!validations.name && formData.name.length > 0}
+                  isInvalid={!validations.name && formData.name.length > 0 && !focusedFields.name}
                   isFocused={focusedFields.name}
                   onFocus={() => handleFocus("name")}
                   onBlur={() => handleBlur("name")}
@@ -317,7 +397,7 @@ const RegisterRecruteur = () => {
                   value={formData.email}
                   onChange={handleChange}
                   isValid={validations.email && formData.email.length > 0}
-                  isInvalid={!validations.email && formData.email.length > 0}
+                  isInvalid={!validations.email && formData.email.length > 0 && !focusedFields.email}
                   isFocused={focusedFields.email}
                   onFocus={() => handleFocus("email")}
                   onBlur={() => handleBlur("email")}
@@ -332,7 +412,7 @@ const RegisterRecruteur = () => {
                   value={formData.phoneNumber}
                   onChange={handleChange}
                   isValid={validations.phoneNumber && formData.phoneNumber.length > 0}
-                  isInvalid={!validations.phoneNumber && formData.phoneNumber.length > 0}
+                  isInvalid={!validations.phoneNumber && formData.phoneNumber.length > 0 && !focusedFields.phoneNumber}
                   isFocused={focusedFields.phoneNumber}
                   onFocus={() => handleFocus("phoneNumber")}
                   onBlur={() => handleBlur("phoneNumber")}
@@ -353,7 +433,7 @@ const RegisterRecruteur = () => {
                   value={formData.companyName}
                   onChange={handleChange}
                   isValid={validations.companyName && formData.companyName.length > 0}
-                  isInvalid={!validations.companyName && formData.companyName.length > 0}
+                  isInvalid={!validations.companyName && formData.companyName.length > 0 && !focusedFields.companyName}
                   isFocused={focusedFields.companyName}
                   onFocus={() => handleFocus("companyName")}
                   onBlur={() => handleBlur("companyName")}
@@ -367,7 +447,7 @@ const RegisterRecruteur = () => {
                   value={formData.rc}
                   onChange={handleChange}
                   isValid={validations.rc && formData.rc.length > 0}
-                  isInvalid={!validations.rc && formData.rc.length > 0}
+                  isInvalid={!validations.rc && formData.rc.length > 0 && !focusedFields.rc}
                   isFocused={focusedFields.rc}
                   onFocus={() => handleFocus("rc")}
                   onBlur={() => handleBlur("rc")}
@@ -386,15 +466,8 @@ const RegisterRecruteur = () => {
                   {validations.address && formData.address && <CheckCircle className="validation-icon success" />}
                 </div>
 
-                <div className="map-container">
-                  <MapContainer center={position} zoom={13} style={{ height: "100%", width: "100%" }}>
-                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                    <LocationMarker
-                      position={position}
-                      setPosition={setPosition}
-                      updateFormLocation={updateFormLocation}
-                    />
-                  </MapContainer>
+                <div className="map-container" ref={mapRef}>
+                  {/* Leaflet map will be rendered here by useEffect */}
                 </div>
 
                 <p className="map-helper-text">
@@ -405,15 +478,15 @@ const RegisterRecruteur = () => {
                 <InputField
                   name="address"
                   type="text"
-                  placeholder="Adresse (cliquez sur la carte)"
-                  icon={MapPin} // Added MapPin icon to the address field
-                  label="Adresse de l'entreprise" // Added label for clarity
+                  placeholder="Adresse (sera remplie automatiquement par la carte)"
+                  icon={MapPin}
+                  label="Adresse complète"
                   required={true}
-                  readOnly={true} // Make the address field read-only as it's set by map click
+                  readOnly={true} // Address field is set by map click
                   value={formData.address}
-                  onChange={handleChange} // Still allow onChange in case of manual entry if readOnly is false
+                  onChange={handleChange} // Keep onChange for consistency, though readOnly
                   isValid={validations.address && formData.address.length > 0}
-                  isInvalid={!validations.address && formData.address.length > 0}
+                  isInvalid={!validations.address && formData.address.length > 0 && !focusedFields.address}
                   isFocused={focusedFields.address}
                   onFocus={() => handleFocus("address")}
                   onBlur={() => handleBlur("address")}
@@ -434,7 +507,7 @@ const RegisterRecruteur = () => {
                   value={formData.username}
                   onChange={handleChange}
                   isValid={validations.username && formData.username.length > 0}
-                  isInvalid={!validations.username && formData.username.length > 0}
+                  isInvalid={!validations.username && formData.username.length > 0 && !focusedFields.username}
                   isFocused={focusedFields.username}
                   onFocus={() => handleFocus("username")}
                   onBlur={() => handleBlur("username")}
@@ -452,7 +525,7 @@ const RegisterRecruteur = () => {
                   showPassword={showPassword}
                   setShowPassword={setShowPassword}
                   isValid={validations.password && formData.password.length > 0}
-                  isInvalid={!validations.password && formData.password.length > 0}
+                  isInvalid={!validations.password && formData.password.length > 0 && !focusedFields.password}
                   isFocused={focusedFields.password}
                   onFocus={() => handleFocus("password")}
                   onBlur={() => handleBlur("password")}
@@ -496,6 +569,9 @@ const RegisterRecruteur = () => {
       </div>
 
       <style jsx>{`
+        /* Using a more robust font-family stack */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
         .register-page {
           position: relative;
           min-height: 100vh;
@@ -505,17 +581,19 @@ const RegisterRecruteur = () => {
           background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
           padding: 2rem 1rem;
           overflow: hidden;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          font-family: 'Inter', sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          color: #1a1a1a; /* Default text color for the card */
         }
 
+        /* Background elements */
         .background-decoration {
           position: absolute;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
-          pointer-events: none;
-          z-index: 1;
+          pointer-events: none; /* Crucial: ensures clicks go through to elements below */
+          z-index: 1; /* Low z-index to stay behind main content */
         }
 
         .grid-pattern {
@@ -531,12 +609,8 @@ const RegisterRecruteur = () => {
         }
 
         @keyframes gridMove {
-          0% {
-            transform: translate(0, 0);
-          }
-          100% {
-            transform: translate(50px, 50px);
-          }
+          0% { transform: translate(0, 0); }
+          100% { transform: translate(50px, 50px); }
         }
 
         .floating-shape {
@@ -544,47 +618,27 @@ const RegisterRecruteur = () => {
           border-radius: 50%;
           background: linear-gradient(45deg, rgba(255, 140, 0, 0.1), rgba(255, 140, 0, 0.05));
           animation: float 6s ease-in-out infinite;
+          filter: blur(20px); /* Add blur for softer look */
         }
 
-        .shape-1 {
-          width: 100px;
-          height: 100px;
-          top: 20%;
-          left: 10%;
-          animation-delay: 0s;
-        }
-
-        .shape-2 {
-          width: 150px;
-          height: 150px;
-          top: 60%;
-          right: 15%;
-          animation-delay: 2s;
-        }
-
-        .shape-3 {
-          width: 80px;
-          height: 80px;
-          bottom: 20%;
-          left: 20%;
-          animation-delay: 4s;
-        }
+        .shape-1 { width: 100px; height: 100px; top: 20%; left: 10%; animation-delay: 0s; }
+        .shape-2 { width: 150px; height: 150px; top: 60%; right: 15%; animation-delay: 2s; }
+        .shape-3 { width: 80px; height: 80px; bottom: 20%; left: 20%; animation-delay: 4s; }
 
         @keyframes float {
-          0%,
-          100% {
-            transform: translateY(0px) rotate(0deg);
-          }
-          50% {
-            transform: translateY(-20px) rotate(180deg);
-          }
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(180deg); }
         }
 
+        /* Main registration container and card */
         .register-container {
           position: relative;
-          z-index: 100;
+          z-index: 10; /* Higher than background */
           width: 100%;
           max-width: 900px;
+          display: flex; /* Ensure centering within container */
+          justify-content: center;
+          align-items: center;
         }
 
         .register-card {
@@ -596,7 +650,9 @@ const RegisterRecruteur = () => {
           border: 1px solid rgba(255, 255, 255, 0.2);
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
-          overflow: hidden;
+          overflow: hidden; /* Keep overflow hidden for pseudo-element */
+          z-index: 10; /* Ensure card is on top of container's potential children */
+          width: 100%; /* Take full width of its container */
         }
 
         .register-card::before {
@@ -611,14 +667,11 @@ const RegisterRecruteur = () => {
         }
 
         @keyframes shimmer {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
-            transform: translateX(100%);
-          }
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
         }
 
+        /* Header styles */
         .register-header {
           text-align: center;
           margin-bottom: 3rem;
@@ -635,6 +688,7 @@ const RegisterRecruteur = () => {
           margin-bottom: 1.5rem;
           box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3);
           position: relative;
+          z-index: 2; /* Ensure icon is above its pseudo-element */
         }
 
         .icon-container::after {
@@ -646,17 +700,13 @@ const RegisterRecruteur = () => {
           bottom: -2px;
           background: linear-gradient(45deg, #ff8c00, transparent, #ff8c00);
           border-radius: 50%;
-          z-index: -1;
+          z-index: -1; /* Keep behind icon */
           animation: rotate 3s linear infinite;
         }
 
         @keyframes rotate {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
 
         .main-icon {
@@ -685,6 +735,7 @@ const RegisterRecruteur = () => {
           line-height: 1.6;
         }
 
+        /* Error message styles */
         .error-message {
           display: flex;
           align-items: center;
@@ -697,6 +748,8 @@ const RegisterRecruteur = () => {
           color: #dc2626;
           font-weight: 500;
           animation: slideIn 0.3s ease-out;
+          position: relative; /* Ensure it respects z-index if needed */
+          z-index: 15; /* Ensure error message is always visible */
         }
 
         .error-icon {
@@ -706,16 +759,11 @@ const RegisterRecruteur = () => {
         }
 
         @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Form styles */
         .register-form {
           display: flex;
           flex-direction: column;
@@ -750,15 +798,18 @@ const RegisterRecruteur = () => {
 
         .form-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
           gap: 1.5rem;
         }
 
+        /* Input field group styles */
         .input-group {
           display: flex;
           flex-direction: column;
           gap: 0.5rem;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative; /* Establish stacking context for elements inside */
+          z-index: auto; /* Default auto, but can be set if input fields need to overlap others */
         }
 
         .input-group.focused {
@@ -772,6 +823,8 @@ const RegisterRecruteur = () => {
           font-weight: 600;
           color: #374151;
           font-size: 0.9rem;
+          position: relative; /* Needed for validation icons to float */
+          z-index: 2; /* Keep label above border effect */
         }
 
         .label-content {
@@ -809,7 +862,7 @@ const RegisterRecruteur = () => {
         }
 
         .input-container {
-          position: relative;
+          position: relative; /* Crucial: This makes form-input z-index work within this wrapper */
         }
 
         .form-input {
@@ -823,6 +876,9 @@ const RegisterRecruteur = () => {
           backdrop-filter: blur(10px);
           color: #1a1a1a;
           font-family: inherit;
+          box-sizing: border-box;
+          position: relative; /* Explicitly positioned for z-index */
+          z-index: 2; /* Ensures the input field itself is above its border and any other low-level elements */
         }
 
         .form-input::placeholder {
@@ -858,6 +914,7 @@ const RegisterRecruteur = () => {
           transition: color 0.3s ease;
           padding: 0.25rem;
           border-radius: 4px;
+          z-index: 3; /* Ensures the toggle button is on top of the input field */
         }
 
         .password-toggle:hover {
@@ -878,6 +935,7 @@ const RegisterRecruteur = () => {
           background: linear-gradient(135deg, #ff8c00, #ff6b35);
           transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           border-radius: 1px;
+          z-index: 1; /* Sits below the input field but still positioned */
         }
 
         .input-group.focused .input-border {
@@ -899,7 +957,7 @@ const RegisterRecruteur = () => {
           display: flex;
           flex-direction: column;
           gap: 1rem;
-          margin-top: 0.5rem;
+          margin-bottom: 1rem;
         }
 
         .map-header {
@@ -918,6 +976,8 @@ const RegisterRecruteur = () => {
           border: 2px solid #e5e7eb;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+          position: relative; /* Crucial for z-index of Leaflet internals */
+          z-index: 5; /* Mid-level z-index for the map to ensure it's above background but below form elements */
         }
 
         .map-container:hover {
@@ -932,6 +992,7 @@ const RegisterRecruteur = () => {
           color: #6b7280;
           font-size: 0.85rem;
           margin: 0;
+          padding: 0.5rem 0;
         }
 
         .helper-icon {
@@ -940,17 +1001,40 @@ const RegisterRecruteur = () => {
           color: #ff8c00;
         }
 
-        /* Fix for Leaflet controls */
+        /* Global Leaflet CSS overrides - ensure these target the actual Leaflet elements */
         :global(.leaflet-control-container .leaflet-top),
         :global(.leaflet-control-container .leaflet-bottom) {
-          z-index: 999 !important;
+          z-index: 999 !important; /* Ensure controls are always on top */
         }
-
         :global(.leaflet-container) {
           font-family: inherit;
           border-radius: 12px;
+          /* z-index should be managed by .map-container now */
+        }
+        /* More specific Leaflet internal z-index adjustments for clickability */
+        :global(.leaflet-pane) {
+            z-index: 0; /* Base map pane */
+        }
+        :global(.leaflet-pane > svg),
+        :global(.leaflet-pane > canvas) { /* Tile layers, paths */
+            z-index: 1;
+        }
+        :global(.leaflet-marker-pane) { /* Markers */
+            z-index: 2;
+        }
+        :global(.leaflet-tooltip-pane),
+        :global(.leaflet-popup-pane) { /* Tooltips and popups */
+            z-index: 3;
+        }
+        :global(.leaflet-control-zoom) { /* Zoom controls */
+            z-index: 10; /* Higher z-index for direct user interaction */
+        }
+        :global(.leaflet-marker-icon) {
+            pointer-events: auto; /* Ensure markers are clickable */
         }
 
+
+        /* Submit button styles */
         .submit-button {
           width: 100%;
           padding: 1.25rem 2rem;
@@ -966,6 +1050,7 @@ const RegisterRecruteur = () => {
           overflow: hidden;
           margin-top: 1rem;
           font-family: inherit;
+          z-index: 10; /* Ensure submit button is clickable and on top */
         }
 
         .submit-button:hover:not(:disabled) {
@@ -1018,14 +1103,11 @@ const RegisterRecruteur = () => {
         }
 
         @keyframes spin {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
 
+        /* Footer styles */
         .form-footer {
           text-align: center;
           margin-top: 2rem;
@@ -1066,71 +1148,26 @@ const RegisterRecruteur = () => {
           width: 100%;
         }
 
+        /* Responsive adjustments */
         @media (max-width: 768px) {
-          .register-page {
-            padding: 1rem;
-          }
-
-          .register-card {
-            padding: 2rem 1.5rem;
-          }
-
-          .register-title {
-            font-size: 2rem;
-          }
-
-          .icon-container {
-            width: 60px;
-            height: 60px;
-          }
-
-          .main-icon {
-            width: 1.5rem;
-            height: 1.5rem;
-          }
-
-          .form-grid {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-          }
-
-          .form-section {
-            gap: 1rem;
-          }
-
-          .register-form {
-            gap: 2rem;
-          }
-
-          .map-container {
-            height: 250px;
-          }
+          .register-page { padding: 1rem; }
+          .register-card { padding: 2rem 1.5rem; }
+          .register-title { font-size: 2rem; }
+          .icon-container { width: 60px; height: 60px; }
+          .main-icon { width: 1.5rem; height: 1.5rem; }
+          .form-grid { grid-template-columns: 1fr; gap: 1rem; }
+          .form-section { gap: 1rem; }
+          .register-form { gap: 2rem; }
+          .map-container { height: 250px; }
         }
 
         @media (max-width: 480px) {
-          .register-card {
-            padding: 1.5rem 1rem;
-          }
-
-          .register-title {
-            font-size: 1.75rem;
-          }
-
-          .section-title {
-            font-size: 1.1rem;
-          }
-
-          .form-input {
-            padding: 0.875rem 1rem;
-          }
-
-          .submit-button {
-            padding: 1rem 1.5rem;
-          }
-
-          .map-container {
-            height: 200px;
-          }
+          .register-card { padding: 1.5rem 1rem; }
+          .register-title { font-size: 1.75rem; }
+          .section-title { font-size: 1.1rem; }
+          .form-input { padding: 0.875rem 1rem; }
+          .submit-button { padding: 1rem 1.5rem; }
+          .map-container { height: 200px; }
         }
       `}</style>
     </div>
