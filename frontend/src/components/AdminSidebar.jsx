@@ -1,154 +1,84 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { FiHome, FiUsers, FiBriefcase, FiClipboard, FiBarChart, FiLogOut, FiMenu, FiX } from 'react-icons/fi';
-import '../assets/css/AdminSidebar.css'; // We'll create this CSS file
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Home, Users, Briefcase, Clipboard, BarChart3, LogOut } from 'lucide-react';
+import '../assets/css/AdminDashboard.css'; // Assuming your shared CSS is here
 
-const AdminSidebar = ({ isLoggedIn, user, darkMode }) => {
-    const [isVisible, setIsVisible] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
-    const navigate = useNavigate();
-    const location = useLocation();
-
-    // Check if current screen is mobile
-    useEffect(() => {
-        const checkScreenSize = () => {
-            setIsMobile(window.innerWidth <= 768);
-            if (window.innerWidth > 768) {
-                setIsVisible(false); // Hide mobile menu on desktop
-            }
-        };
-
-        checkScreenSize();
-        window.addEventListener('resize', checkScreenSize);
-        return () => window.removeEventListener('resize', checkScreenSize);
-    }, []);
-
-    // Close sidebar when clicking outside (mobile only)
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (isMobile && isVisible && !event.target.closest('.admin-sidebar') && !event.target.closest('.hamburger-btn')) {
-                setIsVisible(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [isMobile, isVisible]);
-
-    const handleLogout = async () => {
-        try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/logout`, {
-                method: "POST",
-                credentials: "include",
-            });
-
-            if (response.ok) {
-                navigate("/");
-            } else {
-                throw new Error("Logout failed");
-            }
-        } catch (error) {
-            console.error("Erreur lors de la déconnexion:", error);
-            alert("Erreur lors de la déconnexion.");
-        }
-    };
-
-    const handleLinkClick = () => {
-        if (isMobile) {
-            setIsVisible(false);
-        }
-    };
-
-    const toggleSidebar = () => {
-        setIsVisible(!isVisible);
-    };
-
-    // Navigation items
-    const navigationItems = [
-        {
-            path: '/Dashboard_admin',
-            icon: FiHome,
-            label: 'Tableau de bord'
-        },
-        {
-            path: '/Candidatesadmin',
-            icon: FiUsers,
-            label: 'Gérer les candidats'
-        },
-        {
-            path: '/ManageRecruiters',
-            icon: FiUsers,
-            label: 'Gérer les recruteurs'
-        },
-        {
-            path: '/applicationss',
-            icon: FiClipboard,
-            label: 'Candidats et leurs postulations'
-        },
-        {
-            path: '/AdminDashboard',
-            icon: FiBarChart,
-            label: 'Statistiques'
-        },
-        {
-            path: '/ManageJobs',
-            icon: FiBriefcase,
-            label: 'Gérer les offres'
-        }
-    ];
-
-    if (!isLoggedIn || user?.role !== 'admin') {
-        return null;
-    }
-
+const AdminSidebar = ({ isLoggedIn, user, darkMode, handleLogout, sidebarVisible, setSidebarVisible }) => {
     return (
         <>
-            {/* Mobile Hamburger Button */}
-            {isMobile && (
-                <button
-                    className={`hamburger-btn ${darkMode ? 'dark' : ''}`}
-                    onClick={toggleSidebar}
-                    aria-label="Toggle sidebar"
-                >
-                    {isVisible ? <FiX /> : <FiMenu />}
-                </button>
-            )}
+            {/* Hamburger button for mobile */}
+            <button
+                className={`hamburger-btn ${darkMode ? 'dark' : ''}`}
+                onClick={() => setSidebarVisible(!sidebarVisible)}
+                aria-label="Toggle sidebar"
+                // Inline styles from CSS are preferred, keeping basic ones for quick adjustments
+                style={{
+                    position: 'fixed',
+                    top: '16px',
+                    left: '16px',
+                    zIndex: 1100,
+                    // backgroundColor, border, padding, font-size, border-radius, cursor, boxShadow, color handled by CSS classes
+                    display: 'none', // Controlled by CSS media query
+                }}
+            >
+                ☰
+            </button>
 
-            {/* Overlay for mobile */}
-            {isMobile && isVisible && (
-                <div 
-                    className="sidebar-overlay"
-                    onClick={() => setIsVisible(false)}
-                />
-            )}
+            {/* Sidebar Overlay for mobile */}
+            {sidebarVisible && <div className="sidebar-overlay" onClick={() => setSidebarVisible(false)}></div>}
 
-            {/* Sidebar */}
-            <div className={`admin-sidebar ${darkMode ? 'dark-mode' : ''} ${isMobile ? (isVisible ? 'mobile-visible' : 'mobile-hidden') : ''}`}>
+            {/* Main Sidebar */}
+            <div
+                className={`admin-sidebar ${darkMode ? 'dark-mode' : ''} ${sidebarVisible ? 'mobile-visible' : 'mobile-hidden'}`}
+                // Styles for width, height, position, background-color, color, padding, transition, z-index are in CSS
+            >
                 <div className="sidebar-header">
                     <h2>Casajobs.ma</h2>
                 </div>
-                
                 <nav className="sidebar-nav">
                     <ul>
-                        {navigationItems.map((item) => {
-                            const IconComponent = item.icon;
-                            const isActive = location.pathname === item.path;
-                            
-                            return (
-                                <li key={item.path} className={isActive ? 'active' : ''}>
-                                    <Link to={item.path} onClick={handleLinkClick}>
-                                        <IconComponent className="icon" />
-                                        <span>{item.label}</span>
-                                    </Link>
-                                </li>
-                            );
-                        })}
-                        
-                        {/* Logout Button */}
-                        <li className="logout-item" onClick={handleLogout}>
-                            <FiLogOut className="icon" />
-                            <span>Se déconnecter</span>
+                        <li>
+                            <Home className="icon" />
+                            <Link to="/Dashboard_admin" onClick={() => setSidebarVisible(false)}>
+                                <span>Tableau de bord</span>
+                            </Link>
                         </li>
+                        <li>
+                            <Users className="icon" />
+                            <Link to="/Candidatesadmin" onClick={() => setSidebarVisible(false)}>
+                                <span>Gérer les candidats</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Users className="icon" />
+                            <Link to="/ManageRecruiters" onClick={() => setSidebarVisible(false)}>
+                                <span>Gérer les recruteurs</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Clipboard className="icon" />
+                            <Link to="/applicationss" onClick={() => setSidebarVisible(false)}>
+                                <span>Candidats et leurs postulations</span>
+                            </Link>
+                        </li>
+                        <li className="active">
+                            <BarChart3 className="icon" />
+                            <Link to="/AdminDashboard" onClick={() => setSidebarVisible(false)}>
+                                <span>Statistiques</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Briefcase className="icon" />
+                            <Link to="/ManageJobs" onClick={() => setSidebarVisible(false)}>
+                                <span>Gérer les offres</span>
+                            </Link>
+                        </li>
+                        {isLoggedIn && user && (
+                            <li onClick={handleLogout} className="logout-item"> {/* Use logout-item for specific styling */}
+                                <LogOut className="icon" />
+                                <span>Se déconnecter</span>
+                            </li>
+                        )}
                     </ul>
                 </nav>
             </div>
