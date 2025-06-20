@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import '../assets/css/AdminDashboard.css';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
     PieChart, Pie, Cell, ResponsiveContainer
 } from 'recharts';
-import { FiHome, FiUsers, FiBriefcase, FiClipboard, FiBarChart ,FiLogOut} from 'react-icons/fi';
-import { Home, Users, Briefcase, Clipboard, BarChart3, LogOut, TrendingUp, Activity } from 'lucide-react'; // Importing Lucide icons
+import { Users, Briefcase, Clipboard, BarChart3, TrendingUp } from 'lucide-react';
 import SEO from "./SEO";
+import AdminSidebar from './AdminSidebar'; // Import the new sidebar component
 
 const AdminDashboard = () => {
     const [totalCandidates, setTotalCandidates] = useState(0);
@@ -17,13 +17,12 @@ const AdminDashboard = () => {
     const [systemStats, setSystemStats] = useState({});
     const [darkMode, setDarkMode] = useState(false);
     const [totalApplications, setTotalApplications] = useState(0);
-    const [showColorInputs, setShowColorInputs] = useState(false); // <-- toggle
+    const [showColorInputs, setShowColorInputs] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState(null);
-    const [sidebarVisible, setSidebarVisible] = useState(false); // Added for responsive sidebar toggle
-    const navigate = useNavigate(); // Initialize navigate
+    const navigate = useNavigate();
 
-    // Couleurs personnalisables - Orange palette (from the first component)
+    // Couleurs personnalisables - Orange palette
     const [barColor, setBarColor] = useState('#ff8c42');
     const [pieColor1, setPieColor1] = useState('#ff6b1a');
     const [pieColor2, setPieColor2] = useState('#e55100');
@@ -40,13 +39,13 @@ const AdminDashboard = () => {
                 } else {
                     setIsLoggedIn(false);
                     setUser(null);
-                    navigate('/'); // Redirect to home or login page
+                    navigate('/');
                 }
             })
             .catch(() => {
                 setIsLoggedIn(false);
                 setUser(null);
-                navigate('/'); // Redirect if session check fails
+                navigate('/');
             });
     }, [navigate]);
 
@@ -68,18 +67,6 @@ const AdminDashboard = () => {
         }
     }, [isLoggedIn, user?.role]);
 
-
-    const handleLogout = () => {
-        fetch(`${process.env.REACT_APP_API_URL}/api/logout`, {
-            method: "POST",
-            credentials: "include",
-        })
-            .then(res => res.ok ? res.json() : Promise.reject("Logout failed"))
-            .then(() => navigate("/"))
-            .catch(() => alert("Erreur lors de la déconnexion."));
-    };
-
-
     const chartData = [
         { name: 'Candidats', value: totalCandidates },
         { name: 'Recruteurs', value: totalRecruiters },
@@ -91,17 +78,22 @@ const AdminDashboard = () => {
         { name: 'Candidatures', value: totalApplications },
     ];
 
-    // Styles from the first AdminDashboard component
     const styles = {
+        dashboardContainer: {
+            display: 'flex',
+            minHeight: '100vh',
+            backgroundColor: darkMode ? '#1a1a1a' : '#ffffff',
+            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+            transition: 'all 0.3s ease',
+        },
         mainContent: {
             flex: 1,
             backgroundColor: darkMode ? '#1a1a1a' : '#f8f9fa',
             transition: 'all 0.3s ease',
             display: 'flex',
             flexDirection: 'column',
-            marginLeft: '260px',
+            marginLeft: '250px', // Space for sidebar on desktop
             width: '100%',
-            marginRight:'0px',
         },
         header: {
             padding: '20px 32px',
@@ -299,6 +291,15 @@ const AdminDashboard = () => {
         }
     };
 
+    // Responsive styles
+    const responsiveStyles = `
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
+    `;
+
     const statCards = [
         {
             title: 'Total des Candidats',
@@ -322,183 +323,118 @@ const AdminDashboard = () => {
     }
 
     return (
-        <div
-            className={`dashboard-container ${darkMode ? 'dark-mode' : ''}`}
-            style={{
-                display: 'flex',
-                minHeight: '100vh',
-                backgroundColor: darkMode ? '#1a1a1a' : '#ffffff',
-                fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
-                transition: 'all 0.3s ease',
-                position: 'relative', // to contain absolute hamburger button
-            }}
-        >
-            {/* Hamburger button for mobile */}
-            <button
-                className="hamburger-btn"
-                onClick={() => setSidebarVisible(!sidebarVisible)}
-                aria-label="Toggle sidebar"
-                style={{
-                    position: 'fixed',
-                    top: '16px',
-                    left: '16px',
-                    zIndex: 1100,
-                    backgroundColor: darkMode ? '#2d2d2d' : '#ffffff',
-                    border: 'none',
-                    padding: '8px 12px',
-                    fontSize: '24px',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                    display: 'none', // hide by default, CSS will show on small screens
-                }}
-            >
-                ☰
-            </button>
+        <>
+            <style>{responsiveStyles}</style>
+            <div style={styles.dashboardContainer}>
+                <AdminSidebar 
+                    isLoggedIn={isLoggedIn} 
+                    user={user} 
+                    darkMode={darkMode} 
+                />
 
-            <div className={`sidebar ${sidebarVisible ? 'show' : ''}`}>
-                <div className="sidebar-header"><h2>Casajobs.ma</h2></div>
-                <nav className="sidebar-nav">
-                    <ul>
-                        <li>
-                            <FiHome className="icon" />
-                            <Link to="/Dashboard_admin" onClick={() => setSidebarVisible(false)}>
-                                <span>Tableau de bord</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <FiUsers className="icon" />
-                            <Link to="/Candidatesadmin" onClick={() => setSidebarVisible(false)}><span>Gérer les candidats</span></Link>
-                        </li>
-                        <li>
-                            <FiUsers className="icon" />
-                            <Link to="/ManageRecruiters" onClick={() => setSidebarVisible(false)}><span>Gérer les recruteurs</span></Link>
-                        </li>
-                        <li>
-                            <FiClipboard className="icon" />
-                            <Link to="/applicationss" onClick={() => setSidebarVisible(false)}><span>Candidats et leurs postulations</span></Link>
-                        </li>
-                        <li className="active">
-                            <FiBarChart className="icon" />
-                            <Link to="/AdminDashboard" onClick={() => setSidebarVisible(false)}><span>Statistiques</span></Link>
-                        </li>
-                        <li>
-                            <FiBriefcase className="icon" />
-                            <Link to="/ManageJobs" onClick={() => setSidebarVisible(false)}><span>Gérer les offres</span></Link>
-                        </li>
-                        {isLoggedIn && user && (
-                            <li onClick={handleLogout} className="logout-link">
-                                <FiLogOut className="icon" />
-                                <span>Se déconnecter</span>
-                            </li>
-                        )}
-                    </ul>
-                </nav>
-            </div>
-
-            <div style={styles.mainContent}>
-                <header style={styles.header}>
-                    <h1 style={styles.headerTitle}>Statistiques</h1>
-                    <div style={styles.themeToggleContainer}>
-                        <div style={styles.themeToggle}>
-                            <span style={{ color: darkMode ? '#e5e5e5' : '#666666', fontSize: '12px', fontWeight: '600' }}>
-                                {darkMode ? "Mode sombre" : "Mode clair"}
-                            </span>
-                            <div style={styles.switch} onClick={() => setDarkMode(!darkMode)}>
-                                <div style={styles.slider}></div>
+                <div style={styles.mainContent} className="main-content">
+                    <header style={styles.header}>
+                        <h1 style={styles.headerTitle}>Statistiques</h1>
+                        <div style={styles.themeToggleContainer}>
+                            <div style={styles.themeToggle}>
+                                <span style={{ color: darkMode ? '#e5e5e5' : '#666666', fontSize: '12px', fontWeight: '600' }}>
+                                    {darkMode ? "Mode sombre" : "Mode clair"}
+                                </span>
+                                <div style={styles.switch} onClick={() => setDarkMode(!darkMode)}>
+                                    <div style={styles.slider}></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </header>
+                    </header>
 
-                <div style={styles.contentArea}>
-                    <div style={styles.statsGrid}>
-                        {statCards.map((card, index) => (
-                            <div key={index} style={styles.statCard}>
-                                <div style={styles.statCardGradient}></div>
-                                <div style={styles.statCardHeader}>
-                                    <div style={styles.statIcon}>
-                                        {card.icon}
+                    <div style={styles.contentArea}>
+                        <div style={styles.statsGrid}>
+                            {statCards.map((card, index) => (
+                                <div key={index} style={styles.statCard}>
+                                    <div style={styles.statCardGradient}></div>
+                                    <div style={styles.statCardHeader}>
+                                        <div style={styles.statIcon}>
+                                            {card.icon}
+                                        </div>
+                                    </div>
+                                    <h3 style={styles.statTitle}>{card.title}</h3>
+                                    <p style={styles.statValue}>{card.value.toLocaleString()}</p>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div style={styles.colorSection}>
+                            <div style={styles.colorSectionHeader}>
+                                <h3 style={styles.colorSectionTitle}>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px' }}>
+                                        <path d="M12 2v20M17 5h-4l-2 7H7"/>
+                                        <path d="M22 16.3a5 5 0 0 0-1.5-2.7l-4-4L9 13a5 5 0 0 0-3 8.7"/>
+                                    </svg>
+                                    Personnaliser les couleurs des graphiques
+                                </h3>
+
+                                <button
+                                    style={styles.toggleButton}
+                                    onClick={() => setShowColorInputs(!showColorInputs)}
+                                >
+                                    {showColorInputs ? '▲' : '▼'}
+                                </button>
+                            </div>
+                            {showColorInputs && (
+                                <div style={styles.colorPicker}>
+                                    <div style={styles.colorInput}>
+                                        <label style={styles.colorLabel} htmlFor="barColor">Couleur des barres (BarChart)</label>
+                                        <input
+                                            id="barColor"
+                                            type="color"
+                                            value={barColor}
+                                            onChange={e => setBarColor(e.target.value)}
+                                            style={styles.colorInputField}
+                                        />
+                                    </div>
+                                    <div style={styles.colorInput}>
+                                        <label style={styles.colorLabel} htmlFor="pieColor1">Couleur 1 (PieChart)</label>
+                                        <input
+                                            id="pieColor1"
+                                            type="color"
+                                            value={pieColor1}
+                                            onChange={e => setPieColor1(e.target.value)}
+                                            style={styles.colorInputField}
+                                        />
+                                    </div>
+                                    <div style={styles.colorInput}>
+                                        <label style={styles.colorLabel} htmlFor="pieColor2">Couleur 2 (PieChart)</label>
+                                        <input
+                                            id="pieColor2"
+                                            type="color"
+                                            value={pieColor2}
+                                            onChange={e => setPieColor2(e.target.value)}
+                                            style={styles.colorInputField}
+                                        />
                                     </div>
                                 </div>
-                                <h3 style={styles.statTitle}>{card.title}</h3>
-                                <p style={styles.statValue}>{card.value.toLocaleString()}</p>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div style={styles.colorSection}>
-                        <div style={styles.colorSectionHeader}>
-                        <h3 style={styles.colorSectionTitle}>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '16px', height: '16px' }}>
-                                    <path d="M12 2v20M17 5h-4l-2 7H7"/>
-                                    <path d="M22 16.3a5 5 0 0 0-1.5-2.7l-4-4L9 13a5 5 0 0 0-3 8.7"/>
-                                </svg>
-                                Personnaliser les couleurs des graphiques
-                            </h3>
-
-                            <button
-                                style={styles.toggleButton}
-                                onClick={() => setShowColorInputs(!showColorInputs)}
-                            >
-                                {showColorInputs ? '▲' : '▼'}
-                            </button>
+                            )}
                         </div>
-                        {showColorInputs && (
-                            <div style={styles.colorPicker}>
-                                <div style={styles.colorInput}>
-                                    <label style={styles.colorLabel} htmlFor="barColor">Couleur des barres (BarChart)</label>
-                                    <input
-                                        id="barColor"
-                                        type="color"
-                                        value={barColor}
-                                        onChange={e => setBarColor(e.target.value)}
-                                        style={styles.colorInputField}
-                                    />
-                                </div>
-                                <div style={styles.colorInput}>
-                                    <label style={styles.colorLabel} htmlFor="pieColor1">Couleur 1 (PieChart)</label>
-                                    <input
-                                        id="pieColor1"
-                                        type="color"
-                                        value={pieColor1}
-                                        onChange={e => setPieColor1(e.target.value)}
-                                        style={styles.colorInputField}
-                                    />
-                                </div>
-                                <div style={styles.colorInput}>
-                                    <label style={styles.colorLabel} htmlFor="pieColor2">Couleur 2 (PieChart)</label>
-                                    <input
-                                        id="pieColor2"
-                                        type="color"
-                                        value={pieColor2}
-                                        onChange={e => setPieColor2(e.target.value)}
-                                        style={styles.colorInputField}
-                                    />
-                                </div>
-                            </div>
-                        )}
-                    </div>
 
-                    <div style={styles.chartsGrid}>
-                        <div style={styles.chartCard}>
-                            <h2 style={styles.chartTitle}>
-                                <BarChart3 style={styles.chartIcon} />
-                                Répartition des utilisateurs et offres
-                            </h2>
-                            <ResponsiveContainer width="100%" height={300}>
-                                <BarChart
-                                    data={chartData}
-                                    margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
-                                >
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="name" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Legend />
-                                    <Bar dataKey="value" fill={barColor} />
-                                </BarChart>
-                            </ResponsiveContainer>
+                        <div style={styles.chartsGrid}>
+                            <div style={styles.chartCard}>
+                                <h2 style={styles.chartTitle}>
+                                    <BarChart3 style={styles.chartIcon} />
+                                    Répartition des utilisateurs et offres
+                                </h2>
+                                <ResponsiveContainer width="100%" height={300}>
+                                    <BarChart
+                                        data={chartData}
+                                        margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
+                                    >
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="name" />
+                                        <YAxis />
+                                        <Tooltip />
+                                        <Legend />
+                                        <Bar dataKey="value" fill={barColor} />
+                                    </BarChart>
+                                </ResponsiveContainer>
                         </div>
 
                         <div style={styles.chartCard}>
