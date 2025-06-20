@@ -35,14 +35,14 @@
     z-index: 1100; /* Ensure it's above other content */
     background-color: var(--card-bg);
     border: none;
-    padding: 12px;
-    font-size: 20px; /* Adjust size of the icon */
+    padding: 8px; /* Reduced padding to make it smaller */
+    font-size: 18px; /* Reduced font-size of the icon */
     border-radius: 8px;
     cursor: pointer;
     box-shadow: var(--shadow);
     transition: all 0.3s ease;
-    color: var(--text-color);
-    display: none; /* **Hidden by default on desktop, shown by media query** */
+    color: black; /* Set the color to black */
+    display: none; /* Hidden by default on desktop, shown by media query */
     align-items: center; /* Center the icon */
     justify-content: center; /* Center the icon */
 }
@@ -53,7 +53,7 @@
 }
 
 .hamburger-btn.dark {
-    color: var(--text-color); /* Adjust icon color for dark mode button */
+    color: black; /* Ensure black color in dark mode as well */
 }
 
 /* --- Sidebar Overlay for mobile --- */
