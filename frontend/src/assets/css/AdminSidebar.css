@@ -40,38 +40,38 @@
 /* --- Hamburger Button Styles --- */
 .hamburger-btn {
     /* Explicitly unset/reset common inherited button styles */
-    -webkit-appearance: none; /* Remove Safari/Chrome default button styles */
-    -moz-appearance: none;    /* Remove Firefox default button styles */
-    appearance: none;         /* Remove standard default button styles */
-    background: none;         /* Ensure no inherited background */
-    border: none;             /* Ensure no inherited border */
-    margin: 0;                /* Remove default margin */
-    padding: 0;               /* Remove default padding, then apply custom below */
-    font-family: inherit;     /* Inherit font family from root, or specify one */
-    font-size: inherit;       /* Inherit font size, then override below */
-    line-height: 1;           /* Reset line-height to prevent extra spacing */
-    color: inherit;           /* Inherit color, then override below */
-    text-align: left;         /* Reset text alignment (important for icon positioning) */
-    cursor: pointer;          /* Ensure cursor is a pointer */
-    outline: none;            /* Remove default browser focus outline (manage with :focus) */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 1;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
 
     /* Your custom styles for the hamburger button */
     position: fixed;
     top: 16px;
     left: 16px;
-    z-index: 1100; /* Ensure it's above other content */
+    z-index: 1100;
     background-color: var(--card-bg);
-    padding: 8px; /* Reduced padding to make it smaller */
-    font-size: 18px; /* Reduced font-size of the icon */
+    padding: 8px;
+    font-size: 18px;
     border-radius: 8px;
     box-shadow: var(--shadow);
-    transition: all 0.3s ease, opacity 0.3s ease; /* Added opacity to the transition */
-    color: black; /* Set the icon color to black */
-    display: none; /* Hidden by default on desktop, shown by media query */
-    align-items: center; /* Center the icon horizontally */
-    justify-content: center; /* Center the icon vertically */
-    opacity: 1; /* Default state: fully visible */
-    pointer-events: auto; /* Default state: clickable */
+    transition: all 0.3s ease, opacity 0.3s ease;
+    color: black;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .hamburger-btn:hover {
@@ -79,15 +79,13 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Ensure black color in dark mode as well (overrides default text-color) */
 .hamburger-btn.dark {
     color: black;
 }
 
-/* Style to hide the hamburger button when the sidebar is open */
 .hamburger-btn.is-hidden-when-sidebar-open {
     opacity: 0;
-    pointer-events: none; /* Make it unclickable when hidden */
+    pointer-events: none;
 }
 
 
@@ -98,34 +96,33 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
-    z-index: 998; /* Below sidebar, above main content */
-    transition: opacity 0.3s ease; /* Smooth fade in/out */
-    opacity: 1; /* This element is conditionally rendered by React, so 'opacity: 1;' is its default visible state when rendered */
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    transition: opacity 0.3s ease;
+    opacity: 1;
 }
 
 /* --- Main Sidebar Styles --- */
 .admin-sidebar {
-    width: 300px; /* MADE WIDER */
+    width: 280px; /* MADE WIDER: Changed from 250px to 280px */
     height: 100vh;
     position: fixed;
     top: 0;
     left: 0;
-    background-color: var(--sidebar-bg); /* Use theme variable for background */
-    color: var(--sidebar-text); /* Use theme variable for text color */
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
     padding: 1.5rem 0;
-    transition: all 0.3s ease-in-out; /* Smooth slide transition */
-    z-index: 999; /* Higher than overlay */
-    overflow-y: auto; /* Enable scrolling if content is long */
+    transition: all 0.3s ease-in-out;
+    z-index: 999;
+    overflow-y: auto;
     overflow-x: hidden;
-    box-shadow: var(--shadow); /* Consistent shadow for desktop */
+    box-shadow: var(--shadow);
 }
 
-/* Ensure dark mode colors apply correctly to the sidebar when active */
 .admin-sidebar.dark-mode {
-    background-color: var(--sidebar-bg); /* Re-assert for dark mode */
-    color: var(--sidebar-text); /* Re-assert for dark mode */
-    border-right: 1px solid var(--border-color); /* Subtle border in dark mode */
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    border-right: 1px solid var(--border-color);
 }
 
 
@@ -135,9 +132,8 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* This H2 has a gradient text, so its 'color' property from parent is overridden */
 .sidebar-header h2 {
-    color: white; /* Base for gradient text */
+    color: white;
     font-size: 1.5rem;
     margin: 0;
     font-weight: 700;
@@ -159,6 +155,7 @@
     transition: all 0.2s ease;
     border-left: 3px solid transparent;
     cursor: pointer;
+    /* The li itself will handle hover/active background, but the inner content will be flex */
 }
 
 .sidebar-nav li:hover {
@@ -166,34 +163,38 @@
 }
 
 .sidebar-nav li.active {
-    background-color: rgba(255, 112, 1, 0.1); /* Active background color */
-    border-left: 3px solid var(--primary-color); /* Active line indicator */
+    background-color: rgba(255, 112, 1, 0.1);
+    border-left: 3px solid var(--primary-color);
 }
 
 /*
- * Updated styles for consistent alignment for both navigation links and logout item.
- * Added min-height and white-space: nowrap.
+ * UPDATED: Shared styles for navigation links (<a>) and the new logout content wrapper (div).
+ * This ensures identical layout for all clickable items' content.
  */
-.sidebar-nav li a,
-.sidebar-nav li.logout-item {
+.sidebar-nav li a, /* Applies to Link components */
+.sidebar-nav li .logout-content-wrapper { /* Applies to the new wrapper div for logout */
     color: inherit; /* Inherits color from parent (.admin-sidebar) */
     text-decoration: none;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding: 0.8rem 1.5rem;
-    min-height: 2.8rem; /* Ensure consistent vertical height for all items */
+    display: flex; /* Makes the icon and text flex items */
+    align-items: center; /* Vertically centers icon and text */
+    width: 100%; /* Ensures it fills the list item width */
+    padding: 0.8rem 1.5rem; /* Consistent padding inside the item */
+    min-height: 2.8rem; /* Ensures consistent vertical height for all items */
     transition: all 0.2s ease;
-    white-space: nowrap; /* Prevent text from wrapping inside the item */
+    white-space: nowrap; /* Prevents text from wrapping inside the item */
+    /* Remove padding and min-height from .sidebar-nav li.logout-item directly if you had them there */
 }
 
+/* Specific styles for the logout item's overall behavior (hover, cursor) */
 .sidebar-nav li.logout-item {
-    cursor: pointer;
+    cursor: pointer; /* Makes the entire li clickable for logout */
+    /* Background and border-left on hover/active are already handled by .sidebar-nav li:hover and .sidebar-nav li.active */
+    /* If you had padding or min-height here previously, remove them as they are now on .logout-content-wrapper */
 }
 
 .sidebar-nav li.logout-item:hover {
     background-color: rgba(239, 35, 60, 0.1);
-    color: var(--danger-color);
+    color: var(--danger-color); /* Red text for logout hover */
 }
 
 .sidebar-nav li .icon {
@@ -208,31 +209,27 @@
 .sidebar-nav li span {
     font-size: 0.95rem;
     font-weight: 500;
-    white-space: nowrap; /* This was already here, but now also on parent flex container */
+    white-space: nowrap;
 }
 
 /* --- Responsive Design - Media Queries --- */
 @media (max-width: 768px) {
-    /* Show hamburger button on small screens */
     .hamburger-btn {
         display: flex;
     }
 
-    /* Hide the sidebar by default on mobile (slide it off-screen) */
     .admin-sidebar {
         transform: translateX(-100%);
-        box-shadow: none; /* No shadow when hidden */
+        box-shadow: none;
     }
 
-    /* Slide sidebar into view when `mobile-visible` class is applied */
     .admin-sidebar.mobile-visible {
         transform: translateX(0);
-        box-shadow: 0 0 20px rgba(0,0,0,0.3); /* Add shadow when open for depth */
-        background-color: var(--sidebar-bg); /* Re-affirm colors */
-        color: var(--sidebar-text); /* Re-affirm colors */
+        box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        background-color: var(--sidebar-bg);
+        color: var(--sidebar-text);
     }
 
-    /* Explicitly keep sidebar off-screen when `mobile-hidden` class is applied */
     .admin-sidebar.mobile-hidden {
         transform: translateX(-100%);
     }
@@ -257,8 +254,9 @@
 }
 
 /* --- Focus styles for accessibility --- */
+/* Target both the <a> and the new logout wrapper for consistent focus */
 .sidebar-nav li a:focus,
-.sidebar-nav li.logout-item:focus {
+.sidebar-nav li .logout-content-wrapper:focus {
     outline: 2px solid var(--primary-color);
     outline-offset: -2px;
     border-radius: 4px;
