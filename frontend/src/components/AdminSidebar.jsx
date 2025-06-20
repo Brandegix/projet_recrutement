@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 // Using react-icons/fi for feather icons - make sure you've installed it: npm install react-icons
-import { FiHome, FiUsers, FiBriefcase, FiClipboard, FiBarChart, FiLogOut, FiMenu, FiX } from 'react-icons/fi';
-import './AdminSidebar.css'; // Make sure this path is correct
+import '../assets/css/AdminSidebar.css'; // Make sure this path is correct
 
 const AdminSidebar = ({ isLoggedIn, user, darkMode }) => {
     // isVisible controls if the sidebar is open/closed (mainly for mobile)
