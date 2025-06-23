@@ -16,7 +16,7 @@ function useWindowWidth() {
   return windowWidth;
 }
 
-// --- Modified JobCard Component (pagination logic doesn't directly affect this, but included for completeness) ---
+// --- JobCard Component (No changes needed for pagination) ---
 const JobCard = ({ job, isLoggedIn, user }) => {
   const navigate = useNavigate();
   const windowWidth = useWindowWidth();
@@ -388,7 +388,7 @@ const JobCard = ({ job, isLoggedIn, user }) => {
   );
 };
 
-// --- Enhanced JobCards Component ---
+// --- Enhanced JobCards Component with updated Pagination ---
 function JobCards() {
   const navigate = useNavigate();
   const windowWidth = useWindowWidth();
@@ -504,13 +504,14 @@ function JobCards() {
     marginBottom: isMobile ? '25px' : '40px'
   };
 
+  // --- UPDATED PAGINATION CONTAINER STYLE ---
   const paginationContainerStyle = {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: isMobile ? '6px' : '10px', // Slightly increased gap for better separation
+    justifyContent: 'center', // Centers items horizontally
+    gap: isMobile ? '6px' : '10px',
     marginTop: isMobile ? '30px' : '40px',
-    padding: isMobile ? '15px' : '20px', // Slightly reduced padding for a tighter look
+    padding: isMobile ? '15px' : '20px',
     background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
     borderRadius: '16px',
     boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
@@ -534,17 +535,21 @@ function JobCards() {
     textDecoration: 'none', // For anchor tags if used instead of buttons
   };
 
-  // Style for Prev/Next buttons
+  // --- UPDATED STYLE FOR PREV/NEXT BUTTONS (ARROWS) ---
   const prevNextButtonStyle = (isDisabled) => ({
     ...paginationButtonBase,
-    padding: isMobile ? '0 12px' : '0 18px', // Adjusted padding for width
-    backgroundColor: isDisabled ? '#333' : 'rgba(255, 107, 53, 0.1)',
-    color: isDisabled ? '#666' : '#ff6b35',
+    padding: isMobile ? '0 12px' : '0 18px',
+    // Always white color for the arrow icon
+    color: 'white',
+    // Background changes based on disabled state
+    backgroundColor: isDisabled ? '#6c757d' : '#ff6b35', // Grey for blocked, orange for active
+    borderColor: isDisabled ? '#6c757d' : '#ff6b35', // Match border color
     boxShadow: isDisabled ? 'none' : '0 2px 8px rgba(255, 107, 53, 0.15)',
-    opacity: isDisabled ? 0.6 : 1,
+    opacity: isDisabled ? 0.7 : 1, // Slight dim for disabled
     cursor: isDisabled ? 'not-allowed' : 'pointer',
     '&:hover': isDisabled ? {} : { // Hover effects for non-disabled state
-      backgroundColor: 'rgba(255, 107, 53, 0.2)',
+      backgroundColor: '#ff8c42', // Slightly lighter orange on hover
+      borderColor: '#ff8c42',
       transform: 'translateY(-2px)',
       boxShadow: '0 4px 12px rgba(255, 107, 53, 0.3)',
     }
@@ -825,22 +830,25 @@ function JobCards() {
             disabled={currentPage === 1}
             style={prevNextButtonStyle(currentPage === 1)}
             onMouseEnter={(e) => {
+              // Apply hover styles only if not disabled
               if (currentPage !== 1) {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
+                e.currentTarget.style.backgroundColor = '#ff8c42';
+                e.currentTarget.style.borderColor = '#ff8c42';
                 e.currentTarget.style.transform = 'translateY(-2px)';
                 e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 107, 53, 0.3)';
               }
             }}
             onMouseLeave={(e) => {
+              // Revert to non-hover styles if not disabled
               if (currentPage !== 1) {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
+                e.currentTarget.style.backgroundColor = '#ff6b35';
+                e.currentTarget.style.borderColor = '#ff6b35';
                 e.currentTarget.style.transform = 'translateY(0)';
                 e.currentTarget.style.boxShadow = '0 2px 8px rgba(255, 107, 53, 0.15)';
               }
             }}
           >
-            <FaChevronLeft size={12} />
-            {!isMobile && <span>Précédent</span>}
+            <FaChevronLeft size={16} /> {/* Larger icon size for better visibility */}
           </button>
 
           {/* Page Numbers */}
@@ -848,51 +856,45 @@ function JobCards() {
             display: 'flex',
             alignItems: 'center',
             gap: '4px',
-            order: isMobile ? '0' : '1',
+            order: isMobile ? '0' : '1', // Mobile moves page numbers above prev/next
             width: isMobile ? '100%' : 'auto',
             justifyContent: 'center',
             margin: isMobile ? '10px 0' : '0'
           }}>
             {(() => {
-              const delta = isMobile ? 1 : 2;
+              const delta = isMobile ? 1 : 2; // How many pages around current
               const rangeWithDots = [];
-              const showEllipsis = totalPages > (isMobile ? 5 : 7);
 
-              if (!showEllipsis) {
-                for (let i = 1; i <= totalPages; i++) {
-                  rangeWithDots.push(i);
-                }
-              } else {
-                rangeWithDots.push(1); // Always show first page
+              let start = Math.max(1, currentPage - delta);
+              let end = Math.min(totalPages, currentPage + delta);
 
-                if (currentPage > delta + 1) {
-                  rangeWithDots.push('...'); // Left ellipsis
-                }
-
-                // Pages around current page
-                for (
-                  let i = Math.max(2, currentPage - delta);
-                  i <= Math.min(totalPages - 1, currentPage + delta);
-                  i++
-                ) {
-                  rangeWithDots.push(i);
-                }
-
-                if (currentPage < totalPages - delta) {
-                  rangeWithDots.push('...'); // Right ellipsis
-                }
-
-                if (totalPages > 1) { // Ensure totalPages is not 0 or 1 before adding last page
-                    rangeWithDots.push(totalPages); // Always show last page
+              // Adjust start/end to always show a consistent number of pages
+              if (start === 1) {
+                  end = Math.min(totalPages, delta * 2 + 1);
+              }
+              if (end === totalPages) {
+                  start = Math.max(1, totalPages - delta * 2);
+              }
+              
+              if (start > 1) {
+                rangeWithDots.push(1);
+                if (start > 2) {
+                  rangeWithDots.push('...');
                 }
               }
 
-              // Filter out duplicate '...' if they appear next to each other
-              const finalRangeWithDots = rangeWithDots.filter((item, index, arr) => {
-                return item !== '...' || arr[index - 1] !== '...';
-              });
+              for (let i = start; i <= end; i++) {
+                rangeWithDots.push(i);
+              }
 
-              return finalRangeWithDots.map((page, index) => (
+              if (end < totalPages) {
+                if (end < totalPages - 1) {
+                  rangeWithDots.push('...');
+                }
+                rangeWithDots.push(totalPages);
+              }
+
+              return rangeWithDots.map((page, index) => (
                 page === '...' ? (
                   <div
                     key={`dots-${index}`}
@@ -936,21 +938,22 @@ function JobCards() {
             style={prevNextButtonStyle(currentPage === totalPages)}
             onMouseEnter={(e) => {
               if (currentPage !== totalPages) {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
+                e.currentTarget.style.backgroundColor = '#ff8c42';
+                e.currentTarget.style.borderColor = '#ff8c42';
                 e.currentTarget.style.transform = 'translateY(-2px)';
                 e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 107, 53, 0.3)';
               }
             }}
             onMouseLeave={(e) => {
               if (currentPage !== totalPages) {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
+                e.currentTarget.style.backgroundColor = '#ff6b35';
+                e.currentTarget.style.borderColor = '#ff6b35';
                 e.currentTarget.style.transform = 'translateY(0)';
                 e.currentTarget.style.boxShadow = '0 2px 8px rgba(255, 107, 53, 0.15)';
               }
             }}
           >
-            {!isMobile && <span>Suivant</span>}
-            <FaChevronRight size={12} />
+            <FaChevronRight size={16} /> {/* Larger icon size for better visibility */}
           </button>
         </div>
       )}
