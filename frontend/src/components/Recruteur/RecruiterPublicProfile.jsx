@@ -470,7 +470,7 @@ const pageStyles = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center", 
-    bottom : "200px"
+    bottom : "180px"
   },
 
   profileImageBorder: {
