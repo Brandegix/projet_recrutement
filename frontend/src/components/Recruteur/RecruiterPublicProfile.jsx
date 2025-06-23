@@ -466,11 +466,12 @@ const pageStyles = {
   },
 
   profileImageContainer: {
-    position: "relative",
+    position: "absolute",
     flexShrink: 0,
     display: "flex",
     flexDirection: "column",
-    alignItems: "center", // Centrer la photo
+    alignItems: "center", 
+    bottom : "20px"
   },
 
   profileImageBorder: {
