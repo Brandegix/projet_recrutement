@@ -3,7 +3,7 @@ import { FaMapMarkerAlt, FaBriefcase, FaSearch, FaFilter, FaChevronLeft, FaChevr
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-// Custom hook for responsive design
+// Custom hook for responsive design (unchanged, good to keep)
 function useWindowWidth() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -16,34 +16,29 @@ function useWindowWidth() {
   return windowWidth;
 }
 
-// --- Modified JobCard Component ---
-const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user as props
+// --- Modified JobCard Component (pagination logic doesn't directly affect this, but included for completeness) ---
+const JobCard = ({ job, isLoggedIn, user }) => {
   const navigate = useNavigate();
   const windowWidth = useWindowWidth();
-  const isMobile = windowWidth < 768; // Mobile breakpoint
+  const isMobile = windowWidth < 768;
 
   const handleApplyClick = () => {
     if (isLoggedIn) {
       if (user && user.role === 'candidate') {
-        // If the user is a candidate, navigate to their applications or a specific job application page
-        navigate('/Offres'); // Or a more specific path like `/apply/${job.id}`
+        navigate('/Offres');
       } else if (user && user.role === 'recruiter') {
-        // If the user is a recruiter, navigate them to their job offers dashboard
-       navigate('/'); // Or a general logged-in user dashboard
-        alert("Veuillez vous connecter en tant que candidat pour postuler."); // For demonstration
+        navigate('/');
+        alert("Veuillez vous connecter en tant que candidat pour postuler.");
       } else {
-        // Fallback for logged-in users with unexpected or no role
-        navigate('/'); // Or a general logged-in user dashboard
-        alert("Redirection vers le tableau de bord."); // For demonstration
+        navigate('/');
+        alert("Redirection vers le tableau de bord.");
       }
     } else {
-      // If not logged in, redirect to the login page for candidates
-      navigate('/ChoixRole2'); // Assuming '/ChoixRole2' is your login page
-      alert("Veuillez vous connecter pour postuler."); // For demonstration
+      navigate('/ChoixRole2');
+      alert("Veuillez vous connecter pour postuler.");
     }
   };
 
-  // MOBILE CARD LAYOUT (unchanged visually, only logic for handleApplyClick updated)
   if (isMobile) {
     return (
       <div style={{
@@ -68,7 +63,6 @@ const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user a
           e.currentTarget.style.borderColor = '#333';
         }}>
 
-        {/* Gradient accent line */}
         <div style={{
           position: 'absolute',
           top: 0,
@@ -78,7 +72,6 @@ const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user a
           background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)'
         }} />
 
-        {/* Company Logo - Mobile: Centered at top */}
         <div style={{
           display: 'flex',
           justifyContent: 'center',
@@ -105,7 +98,6 @@ const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user a
           </div>
         </div>
 
-        {/* Job Title and Company - Mobile: Centered */}
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <h3 style={{
             color: '#ffffff',
@@ -125,7 +117,6 @@ const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user a
             {job.company}
           </p>
 
-          {/* Job Type Badge - Mobile: Centered */}
           <span style={{
             background: 'rgba(255, 107, 53, 0.1)',
             color: '#ff6b35',
@@ -141,7 +132,6 @@ const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user a
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          {/* Mobile: Centered icons */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', marginBottom: '15px', justifyContent: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#cccccc' }}>
               <FaMapMarkerAlt style={{ color: '#ff6b35' }} />
@@ -153,7 +143,6 @@ const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user a
             </div>
           </div>
 
-          {/* Mobile: Centered text */}
           <p style={{
             color: '#aaaaaa',
             fontSize: '0.95rem',
@@ -168,7 +157,6 @@ const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user a
             {job.description}
           </p>
 
-          {/* Skills - Mobile: Centered */}
           {job.skills && job.skills.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '15px', justifyContent: 'center' }}>
               {job.skills.map((skill, index) => (
@@ -187,7 +175,6 @@ const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user a
           )}
         </div>
 
-        {/* Mobile: Centered full-width button */}
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <button
             onClick={handleApplyClick}
@@ -220,7 +207,6 @@ const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user a
     );
   }
 
-  // DESKTOP CARD LAYOUT (unchanged visually, only logic for handleApplyClick updated)
   return (
     <div style={{
       background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
@@ -244,7 +230,6 @@ const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user a
         e.currentTarget.style.borderColor = '#333';
       }}>
 
-      {/* Gradient accent line */}
       <div style={{
         position: 'absolute',
         top: 0,
@@ -254,91 +239,83 @@ const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user a
         background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)'
       }} />
 
-      {/* Desktop: Horizontal layout for logo, title and badge */}
-     <div style={{
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'flex-start',
-  marginBottom: '20px'
-}}>
-  {/* company-info */}
-  <div style={{
-    display: 'flex',
-    gap: '15px', /* Keeping your original gap, which is close to 1rem */
-    flex: '1'
-  }}>
-    {/* company-logo */}
-    <div style={{
-      width: '60px',
-      height: '60px',
-      borderRadius: '12px', /* Converted 0.75rem to 12px */
-      overflow: 'hidden',
-      background: 'transparent', /* Keeping your original theme's transparent background */
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexShrink: '0',
-      border: '2px solid #333' /* Keeping your original border color */
-    }}>
-      <img
-        src={job.logo && job.logo.startsWith("http")
-          ? job.logo
-          : `/api/placeholder/60/60?text=${job.company ? job.company.charAt(0) : 'C'}`}
-        alt={`${job.company} logo`}
-        onError={(e) => {
-          e.target.src = `https://dummyimage.com/60x60/333/fff.png&text=${job.company ? job.company.charAt(0) : 'C'}`;
-        }}
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover'
-        }}
-      />
-    </div>
-    {/* job-title-info */}
-    <div style={{
-      flex: '1',
-      minWidth: '0'
-    }}>
-      {/* job-title */}
-      <h3 style={{
-        color: '#ffffff', /* Keeping your original theme's white text */
-        fontSize: '1.3rem', /* Keeping your original font size */
-        fontWeight: '600', /* Keeping your original font weight */
-        margin: '0 0 5px 0', /* Keeping your original margin */
-        lineHeight: '1.3'
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        marginBottom: '20px'
       }}>
-        {job.title}
-      </h3>
-      {/* company-name */}
-      <p style={{
-        color: '#cccccc', /* Keeping your original theme's grey text */
-        fontSize: '1rem',
-        margin: '0',
-        fontWeight: '500'
-      }}>
-        {job.company}
-      </p>
-    </div>
-  </div>
+        <div style={{
+          display: 'flex',
+          gap: '15px',
+          flex: '1'
+        }}>
+          <div style={{
+            width: '60px',
+            height: '60px',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            background: 'transparent',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: '0',
+            border: '2px solid #333'
+          }}>
+            <img
+              src={job.logo && job.logo.startsWith("http")
+                ? job.logo
+                : `/api/placeholder/60/60?text=${job.company ? job.company.charAt(0) : 'C'}`}
+              alt={`${job.company} logo`}
+              onError={(e) => {
+                e.target.src = `https://dummyimage.com/60x60/333/fff.png&text=${job.company ? job.company.charAt(0) : 'C'}`;
+              }}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover'
+              }}
+            />
+          </div>
+          <div style={{
+            flex: '1',
+            minWidth: '0'
+          }}>
+            <h3 style={{
+              color: '#ffffff',
+              fontSize: '1.3rem',
+              fontWeight: '600',
+              margin: '0 0 5px 0',
+              lineHeight: '1.3'
+            }}>
+              {job.title}
+            </h3>
+            <p style={{
+              color: '#cccccc',
+              fontSize: '1rem',
+              margin: '0',
+              fontWeight: '500'
+            }}>
+              {job.company}
+            </p>
+          </div>
+        </div>
 
-  {/* Desktop: Badge at right */}
-  <span style={{
-    background: 'rgba(255, 107, 53, 0.1)',
-    color: '#ff6b35',
-    padding: '6px 15px',
-    borderRadius: '20px',
-    fontSize: '0.85rem',
-    fontWeight: '600',
-    border: '1px solid rgba(255, 107, 53, 0.3)'
-  }}>
-    {job.type}
-  </span>
-</div>
-       
+        <span style={{
+          background: 'rgba(255, 107, 53, 0.1)',
+          color: '#ff6b35',
+          padding: '6px 15px',
+          borderRadius: '20px',
+          fontSize: '0.85rem',
+          fontWeight: '600',
+          border: '1px solid rgba(255, 107, 53, 0.3)'
+        }}>
+          {job.type}
+        </span>
+      </div>
+
 
       <div style={{ marginBottom: '20px' }}>
-        {/* Desktop: Left-aligned icons */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', marginBottom: '15px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#cccccc' }}>
             <FaMapMarkerAlt style={{ color: '#ff6b35' }} />
@@ -350,7 +327,6 @@ const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user a
           </div>
         </div>
 
-        {/* Desktop: Left-aligned description */}
         <p style={{
           color: '#aaaaaa',
           fontSize: '0.95rem',
@@ -364,7 +340,6 @@ const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user a
           {job.description}
         </p>
 
-        {/* Skills - Desktop: Left aligned */}
         {job.skills && job.skills.length > 0 && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '15px' }}>
             {job.skills.map((skill, index) => (
@@ -383,10 +358,7 @@ const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user a
         )}
       </div>
 
-      {/* Desktop: Salary on left, button on right */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-
-
         <button
           onClick={handleApplyClick}
           style={{
@@ -416,23 +388,22 @@ const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user a
   );
 };
 
-// --- Modified JobCards Component ---
+// --- Enhanced JobCards Component ---
 function JobCards() {
-  const navigate = useNavigate(); // Add navigate here if not already present
+  const navigate = useNavigate();
   const windowWidth = useWindowWidth();
   const isMobile = windowWidth < 768;
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = isMobile ? 3 : 3;
+  const jobsPerPage = isMobile ? 3 : 3; // Keep consistency for now, could be different
   const [filteredJobs, setFilteredJobs] = useState([]);
 
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  // --- Authentication States ---
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true); // New state for auth check loading
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   const [selectedPoste, setSelectedPoste] = useState('');
   const [selectedLieu, setSelectedLieu] = useState('');
@@ -440,7 +411,6 @@ function JobCards() {
   const [selectedDomaine, setSelectedDomaine] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // --- Auth Check Logic (Copied from Navbar) ---
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
@@ -449,15 +419,13 @@ function JobCards() {
         });
 
         if (!res.ok) {
-          // If not OK, it means no active session or an error
           setIsLoggedIn(false);
           setUser(null);
-          // throw new Error('Not logged in'); // Don't throw, just set state
         } else {
           const data = await res.json();
           if (data && data.isLoggedIn) {
             setIsLoggedIn(true);
-            setUser(data.user); // data.user should contain { id, name, role }
+            setUser(data.user);
           } else {
             setIsLoggedIn(false);
             setUser(null);
@@ -473,9 +441,8 @@ function JobCards() {
     };
 
     checkAuthStatus();
-  }, []); // Run once on component mount
+  }, []);
 
-  // --- Job Fetching Logic ---
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/je`)
       .then(response => {
@@ -500,7 +467,7 @@ function JobCards() {
     const results = jobs.filter(job =>
       (selectedPoste === '' || job.title.toLowerCase().includes(selectedPoste.toLowerCase())) &&
       (selectedLieu === '' || job.location.toLowerCase().includes(selectedLieu.toLowerCase())) &&
-      (selectedSalaire === '' || (job.salary && job.salary.toLowerCase().includes(selectedSalaire.toLowerCase()))) && // Check for job.salary existence
+      (selectedSalaire === '' || (job.salary && job.salary.toLowerCase().includes(selectedSalaire.toLowerCase()))) &&
       (selectedDomaine === '' || job.type.toLowerCase().includes(selectedDomaine.toLowerCase())) &&
       (
         searchTerm === '' ||
@@ -519,7 +486,6 @@ function JobCards() {
   const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
   const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
-  // Display loading for both jobs and auth check
   if (loading || isCheckingAuth) {
     return <p style={{ textAlign: 'center', color: '#fff', fontSize: '1.2rem', padding: '50px' }}>
       Chargement des offres et vérification de l'authentification...
@@ -529,7 +495,7 @@ function JobCards() {
     Erreur de chargement des offres. Veuillez réessayer plus tard.
   </p>;
 
-  // Responsive search and pagination styles (unchanged)
+  // Responsive search and pagination styles (unchanged, as they are container styles)
   const searchSectionStyle = {
     background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
     border: '1px solid #333',
@@ -538,13 +504,13 @@ function JobCards() {
     marginBottom: isMobile ? '25px' : '40px'
   };
 
-  const paginationStyle = {
+  const paginationContainerStyle = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: isMobile ? '5px' : '8px',
+    gap: isMobile ? '6px' : '10px', // Slightly increased gap for better separation
     marginTop: isMobile ? '30px' : '40px',
-    padding: isMobile ? '15px' : '24px',
+    padding: isMobile ? '15px' : '20px', // Slightly reduced padding for a tighter look
     background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
     borderRadius: '16px',
     boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
@@ -552,11 +518,69 @@ function JobCards() {
     flexWrap: isMobile ? 'wrap' : 'nowrap'
   };
 
+  // Base style for all pagination buttons
+  const paginationButtonBase = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    border: '1px solid transparent', // Prevent layout shift on hover
+    borderRadius: '12px', // Consistent border-radius for all buttons
+    fontSize: isMobile ? '0.85rem' : '0.95rem',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    height: isMobile ? '36px' : '44px', // Standard height for all buttons
+    boxSizing: 'border-box',
+    textDecoration: 'none', // For anchor tags if used instead of buttons
+  };
+
+  // Style for Prev/Next buttons
+  const prevNextButtonStyle = (isDisabled) => ({
+    ...paginationButtonBase,
+    padding: isMobile ? '0 12px' : '0 18px', // Adjusted padding for width
+    backgroundColor: isDisabled ? '#333' : 'rgba(255, 107, 53, 0.1)',
+    color: isDisabled ? '#666' : '#ff6b35',
+    boxShadow: isDisabled ? 'none' : '0 2px 8px rgba(255, 107, 53, 0.15)',
+    opacity: isDisabled ? 0.6 : 1,
+    cursor: isDisabled ? 'not-allowed' : 'pointer',
+    '&:hover': isDisabled ? {} : { // Hover effects for non-disabled state
+      backgroundColor: 'rgba(255, 107, 53, 0.2)',
+      transform: 'translateY(-2px)',
+      boxShadow: '0 4px 12px rgba(255, 107, 53, 0.3)',
+    }
+  });
+
+  // Style for individual page number buttons
+  const pageNumberButtonStyle = (isActive) => ({
+    ...paginationButtonBase,
+    width: isMobile ? '36px' : '44px', // Fixed width matching height
+    padding: '0', // No horizontal padding for number buttons, width/height handle size
+    backgroundColor: isActive ? '#ff6b35' : 'rgba(255, 255, 255, 0.05)',
+    color: isActive ? '#ffffff' : '#cccccc',
+    boxShadow: isActive ? '0 4px 12px rgba(255, 107, 53, 0.3)' : 'none',
+    '&:not(:active):hover': isActive ? {} : { // Hover for inactive pages
+      backgroundColor: 'rgba(255, 107, 53, 0.15)',
+      color: '#ff8c42',
+      transform: 'translateY(-2px)',
+      boxShadow: '0 4px 10px rgba(255, 107, 53, 0.25)',
+    },
+  });
+
+  // Style for ellipsis
+  const ellipsisStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: isMobile ? '36px' : '44px',
+    height: isMobile ? '36px' : '44px',
+    color: '#666',
+    fontSize: '1rem'
+  };
+
   return (
     <>
-      {/* Search Section */}
+      {/* Search Section (unchanged) */}
       <div style={searchSectionStyle}>
-        {/* Search Bar */}
         <div style={{ position: 'relative', marginBottom: '25px' }}>
           <FaSearch style={{
             position: 'absolute',
@@ -594,7 +618,6 @@ function JobCards() {
           />
         </div>
 
-        {/* Filters */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: isMobile
@@ -690,7 +713,7 @@ function JobCards() {
               }}
             >
               <option value="">Tous les salaires</option>
-              {[...new Set(jobs.map(job => job.salary).filter(Boolean))].map((salaire, index) => ( // Filter out undefined/null salaries
+              {[...new Set(jobs.map(job => job.salary).filter(Boolean))].map((salaire, index) => (
                 <option key={index} value={salaire}>{salaire}</option>
               ))}
             </select>
@@ -760,7 +783,7 @@ function JobCards() {
         </div>
       </div>
 
-      {/* Job Cards Display */}
+      {/* Job Cards Display (unchanged) */}
       <div className="offers-wrapper">
         {filteredJobs.length === 0 ? (
           <p style={{
@@ -785,51 +808,34 @@ function JobCards() {
               <JobCard
                 key={job.id}
                 job={job}
-                isLoggedIn={isLoggedIn} // Pass isLoggedIn prop
-                user={user}         // Pass user prop
+                isLoggedIn={isLoggedIn}
+                user={user}
               />
             ))}
           </div>
         )}
       </div>
 
-      {/* Enhanced Pagination - Integrated directly */}
+      {/* Enhanced Pagination */}
       {totalPages > 1 && (
-        <div style={paginationStyle}>
+        <div style={paginationContainerStyle}>
           {/* Previous Button */}
           <button
             onClick={() => paginate(currentPage - 1)}
             disabled={currentPage === 1}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: isMobile ? '8px 12px' : '12px 16px',
-              fontSize: isMobile ? '0.8rem' : '0.9rem',
-              fontWeight: '600',
-              border: 'none',
-              backgroundColor: currentPage === 1 ? '#333' : 'rgba(255, 107, 53, 0.1)',
-              color: currentPage === 1 ? '#666' : '#ff6b35',
-              borderRadius: '12px',
-              cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              boxShadow: currentPage === 1 ? 'none' : '0 2px 8px rgba(255, 107, 53, 0.15)',
-              transform: 'translateY(0)',
-              opacity: currentPage === 1 ? 0.5 : 1,
-              order: isMobile ? '1' : '0'
-            }}
+            style={prevNextButtonStyle(currentPage === 1)}
             onMouseEnter={(e) => {
               if (currentPage !== 1) {
-                e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 4px 12px rgba(255, 107, 53, 0.3)';
+                e.currentTarget.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 107, 53, 0.3)';
               }
             }}
             onMouseLeave={(e) => {
               if (currentPage !== 1) {
-                e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 2px 8px rgba(255, 107, 53, 0.15)';
+                e.currentTarget.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 2px 8px rgba(255, 107, 53, 0.15)';
               }
             }}
           >
@@ -849,49 +855,48 @@ function JobCards() {
           }}>
             {(() => {
               const delta = isMobile ? 1 : 2;
-              const range = [];
               const rangeWithDots = [];
+              const showEllipsis = totalPages > (isMobile ? 5 : 7);
 
-              if (totalPages <= (isMobile ? 5 : 7)) {
+              if (!showEllipsis) {
                 for (let i = 1; i <= totalPages; i++) {
                   rangeWithDots.push(i);
                 }
               } else {
-                rangeWithDots.push(1);
+                rangeWithDots.push(1); // Always show first page
 
                 if (currentPage > delta + 1) {
-                  rangeWithDots.push('...');
+                  rangeWithDots.push('...'); // Left ellipsis
                 }
 
+                // Pages around current page
                 for (
                   let i = Math.max(2, currentPage - delta);
                   i <= Math.min(totalPages - 1, currentPage + delta);
                   i++
                 ) {
-                  range.push(i);
+                  rangeWithDots.push(i);
                 }
-                rangeWithDots.push(...range);
 
                 if (currentPage < totalPages - delta) {
-                  rangeWithDots.push('...');
+                  rangeWithDots.push('...'); // Right ellipsis
                 }
 
-                rangeWithDots.push(totalPages);
+                if (totalPages > 1) { // Ensure totalPages is not 0 or 1 before adding last page
+                    rangeWithDots.push(totalPages); // Always show last page
+                }
               }
 
-              return rangeWithDots.map((page, index) => (
+              // Filter out duplicate '...' if they appear next to each other
+              const finalRangeWithDots = rangeWithDots.filter((item, index, arr) => {
+                return item !== '...' || arr[index - 1] !== '...';
+              });
+
+              return finalRangeWithDots.map((page, index) => (
                 page === '...' ? (
                   <div
                     key={`dots-${index}`}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: isMobile ? '32px' : '40px',
-                      height: isMobile ? '32px' : '40px',
-                      color: '#666',
-                      fontSize: '1rem'
-                    }}
+                    style={ellipsisStyle}
                   >
                     <FaEllipsisH size={12} />
                   </div>
@@ -899,39 +904,21 @@ function JobCards() {
                   <button
                     key={page}
                     onClick={() => paginate(page)}
-                    style={{
-                      width: isMobile ? '32px' : '40px',
-                      height: isMobile ? '32px' : '40px',
-                      fontSize: '0.9rem',
-                      fontWeight: '600',
-                      border: 'none',
-                      backgroundColor: currentPage === page
-                        ? '#ff6b35'
-                        : 'rgba(255, 255, 255, 0.05)',
-                      color: currentPage === page ? '#ffffff' : '#cccccc',
-                      borderRadius: '10px',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                      boxShadow: currentPage === page
-                        ? '0 4px 12px rgba(255, 107, 53, 0.4)'
-                        : '0 2px 4px rgba(0, 0, 0, 0.2)',
-                      transform: 'translateY(0)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
+                    style={pageNumberButtonStyle(currentPage === page)}
                     onMouseEnter={(e) => {
                       if (currentPage !== page) {
-                        e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
-                        e.target.style.transform = 'translateY(-2px)';
-                        e.target.style.boxShadow = '0 4px 8px rgba(255, 107, 53, 0.3)';
+                        e.currentTarget.style.backgroundColor = 'rgba(255, 107, 53, 0.15)';
+                        e.currentTarget.style.color = '#ff8c42';
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 4px 10px rgba(255, 107, 53, 0.25)';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (currentPage !== page) {
-                        e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
-                        e.target.style.transform = 'translateY(0)';
-                        e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
+                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                        e.currentTarget.style.color = '#cccccc';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
                       }
                     }}
                   >
@@ -946,36 +933,19 @@ function JobCards() {
           <button
             onClick={() => paginate(currentPage + 1)}
             disabled={currentPage === totalPages}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: isMobile ? '8px 12px' : '12px 16px',
-              fontSize: isMobile ? '0.8rem' : '0.9rem',
-              fontWeight: '600',
-              border: 'none',
-              backgroundColor: currentPage === totalPages ? '#333' : 'rgba(255, 107, 53, 0.1)',
-              color: currentPage === totalPages ? '#666' : '#ff6b35',
-              borderRadius: '12px',
-              cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              boxShadow: currentPage === totalPages ? 'none' : '0 2px 8px rgba(255, 107, 53, 0.15)',
-              transform: 'translateY(0)',
-              opacity: currentPage === totalPages ? 0.5 : 1,
-              order: isMobile ? '2' : '2'
-            }}
+            style={prevNextButtonStyle(currentPage === totalPages)}
             onMouseEnter={(e) => {
               if (currentPage !== totalPages) {
-                e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 4px 12px rgba(255, 107, 53, 0.3)';
+                e.currentTarget.style.backgroundColor = 'rgba(255, 107, 53, 0.2)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 107, 53, 0.3)';
               }
             }}
             onMouseLeave={(e) => {
               if (currentPage !== totalPages) {
-                e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 2px 8px rgba(255, 107, 53, 0.15)';
+                e.currentTarget.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 2px 8px rgba(255, 107, 53, 0.15)';
               }
             }}
           >
