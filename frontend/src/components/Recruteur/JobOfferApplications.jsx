@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Navbar from '../Navbara';
 import Footer from '../Footer';
-import ApplicationChat from './ApplicationChat';
+import ApplicationChat from './ApplicationChat'; // Make sure this path is correct
 import Modal from 'react-modal';
 
-Modal.setAppElement('#root');
+Modal.setAppElement('#root'); // Important for accessibility
 
 const JobOfferApplications = () => {
     const { offerId } = useParams();
@@ -234,7 +234,7 @@ const JobOfferApplications = () => {
                                             <h4 style={jobAppStyles.applicantName}>{app.candidate?.name}</h4>
                                             <div style={jobAppStyles.applicationMeta}>
                                                 <span style={jobAppStyles.applicationDate}>
-                                                     Reçu le {formatDate(app.application_date)}
+                                                        Reçu le {formatDate(app.application_date)}
                                                 </span>
                                                 {app.viewed && (
                                                     <span style={jobAppStyles.viewedTag}>
@@ -299,17 +299,20 @@ const JobOfferApplications = () => {
                     </button>
                 </div>
                 {chatApplicationId && user?.id && (
-                    <ApplicationChat
-                        userId={user.id}
-                        userType={'recruiter'}
-                        applicationId={chatApplicationId}
-                    />
+                    // This div will serve as the scrollable area for your chat
+                    <div style={jobAppStyles.chatContentArea}>
+                        <ApplicationChat
+                            userId={user.id}
+                            userType={'recruiter'}
+                            applicationId={chatApplicationId}
+                        />
+                    </div>
                 )}
                 <button
                     onClick={closeChatModal}
                     style={jobAppStyles.closeChatButton}
                 >
-                    Fermer le chat
+                    Fermer
                 </button>
             </Modal>
         </>
@@ -717,7 +720,7 @@ const jobAppStyles = {
         transition: 'all 0.3s ease',
     },
 
-    // Modal Styles
+    // Modal Styles - UPDATED FOR SCROLLING
     chatModal: {
         overlay: {
             backgroundColor: 'rgba(0, 0, 0, 0.7)',
@@ -734,15 +737,17 @@ const jobAppStyles = {
             bottom: 'auto',
             transform: 'none',
             margin: '20px',
-            padding: '0',
+            padding: '0', // No padding here, padding will be inside sub-components
             borderRadius: '20px',
             maxWidth: '800px',
             width: '100%',
-            maxHeight: '90vh',
+            maxHeight: '90vh', // Limit modal height to 90% of viewport height
             border: 'none',
-            overflow: 'hidden',
             backgroundColor: '#ffffff',
             boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+            display: 'flex',         // Use flexbox for layout
+            flexDirection: 'column', // Arrange items vertically
+            overflow: 'hidden',      // Hide overflow of the main modal content, we'll scroll specific areas
         }
     },
     modalHeader: {
@@ -752,6 +757,7 @@ const jobAppStyles = {
         padding: '24px 32px',
         borderBottom: '1px solid #e9ecef',
         backgroundColor: '#fafafa',
+        flexShrink: 0, // Prevent header from shrinking
     },
     modalTitle: {
         color: '#212529',
@@ -769,6 +775,14 @@ const jobAppStyles = {
         borderRadius: '4px',
         transition: 'color 0.3s ease',
     },
+    // New style for the area containing the chat component
+    chatContentArea: {
+        flexGrow: 1,       // This allows the chat area to take up all available vertical space
+        overflowY: 'auto', // THIS IS CRUCIAL: enables scrolling within this area
+        padding: '20px 32px', // Add padding here if you want space around the chat component
+        display: 'flex', // If ApplicationChat is also a flex container, this helps
+        flexDirection: 'column', // Align chat content properly
+    },
     closeChatButton: {
         backgroundColor: '#212529',
         color: '#ffffff',
@@ -777,10 +791,11 @@ const jobAppStyles = {
         borderRadius: '12px',
         cursor: 'pointer',
         fontSize: '1em',
-        margin: '24px 32px',
+        margin: '24px 32px', // Apply margin here
         fontWeight: '600',
         transition: 'all 0.3s ease',
-        width: 'calc(100% - 64px)',
+        width: 'calc(100% - 64px)', // Adjust width for margins
+        flexShrink: 0, // Prevent button from shrinking
     },
 };
 
