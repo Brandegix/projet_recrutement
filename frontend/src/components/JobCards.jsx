@@ -341,13 +341,7 @@ const JobCard = ({ job }) => {
 
       {/* Desktop: Salary on left, button on right */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <strong style={{
-          color: '#ff6b35',
-          fontSize: '1.2rem',
-          fontWeight: '700'
-        }}>
-          {job.salary}
-        </strong>
+       
         
         <button 
           onClick={handleApplyClick}
