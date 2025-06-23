@@ -100,7 +100,7 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
              style={{
                background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
                color: '#ffffff',
-               border: 'none',
+               
                padding: '15px 0',
                borderRadius: '25px',
                fontSize: '1rem',
@@ -108,7 +108,7 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
                cursor: 'pointer',
                transition: 'all 0.3s ease',
                width: '100%',
-               maxWidth: '280px'
+               maxWidth: '500px'
              }}
              onMouseEnter={(e) => {
                e.currentTarget.style.transform = 'translateY(-2px)';
