@@ -291,12 +291,7 @@ const JobOfferApplications = () => {
             >
                 <div style={jobAppStyles.modalHeader}>
                     <h2 style={jobAppStyles.modalTitle}>💬 Chat avec le candidat</h2>
-                    <button
-                        onClick={closeChatModal}
-                        style={jobAppStyles.modalCloseButton}
-                    >
-                       
-                    </button>
+                  
                 </div>
                 {chatApplicationId && user?.id && (
                     // This div will serve as the scrollable area for your chat
