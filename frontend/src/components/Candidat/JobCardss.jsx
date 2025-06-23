@@ -1010,7 +1010,7 @@ const JobSearchAndOffers = () => {
           flex: 1;
         }
 
-        .company-logo {
+          .company-logo {
           width: 60px;
           height: 60px;
           border-radius: 0.75rem;
