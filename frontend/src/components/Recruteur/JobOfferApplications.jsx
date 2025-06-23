@@ -184,7 +184,7 @@ const JobOfferApplications = () => {
                     <div style={jobAppStyles.searchWrapper}>
                         <input
                             type="text"
-                            placeholder="🔍 Rechercher par nom du candidat..."
+                            placeholder=" Rechercher par nom du candidat..."
                             value={searchName}
                             onChange={(e) => setSearchName(e.target.value)}
                             style={jobAppStyles.searchInput}
@@ -202,7 +202,7 @@ const JobOfferApplications = () => {
 
                 {filteredApplications.length === 0 ? (
                     <div style={jobAppStyles.emptyState}>
-                        <div style={jobAppStyles.emptyStateIcon}>📄</div>
+                        <div style={jobAppStyles.emptyStateIcon}></div>
                         <h3 style={jobAppStyles.emptyStateTitle}>
                             {searchName ? 'Aucun résultat trouvé' : 'Aucune candidature'}
                         </h3>
@@ -234,7 +234,7 @@ const JobOfferApplications = () => {
                                             <h4 style={jobAppStyles.applicantName}>{app.candidate?.name}</h4>
                                             <div style={jobAppStyles.applicationMeta}>
                                                 <span style={jobAppStyles.applicationDate}>
-                                                    📅 Reçu le {formatDate(app.application_date)}
+                                                     Reçu le {formatDate(app.application_date)}
                                                 </span>
                                                 {app.viewed && (
                                                     <span style={jobAppStyles.viewedTag}>
@@ -248,15 +248,15 @@ const JobOfferApplications = () => {
 
                                 <div style={jobAppStyles.contactGrid}>
                                     <div style={jobAppStyles.contactItem}>
-                                        <span style={jobAppStyles.contactLabel}>📧 Email:</span>
+                                        <span style={jobAppStyles.contactLabel}> Email:</span>
                                         <span style={jobAppStyles.contactValue}>{app.candidate?.email || "N/A"}</span>
                                     </div>
                                     <div style={jobAppStyles.contactItem}>
-                                        <span style={jobAppStyles.contactLabel}>📱 Téléphone:</span>
+                                        <span style={jobAppStyles.contactLabel}> Téléphone:</span>
                                         <span style={jobAppStyles.contactValue}>{app.candidate?.phoneNumber || "N/A"}</span>
                                     </div>
                                     <div style={jobAppStyles.contactItem}>
-                                        <span style={jobAppStyles.contactLabel}>📄 CV:</span>
+                                        <span style={jobAppStyles.contactLabel}> CV:</span>
                                         <a
                                             href={`${process.env.REACT_APP_API_URL}/uploads/cv/${app.candidate?.cv_filename}`}
                                             target="_blank"
