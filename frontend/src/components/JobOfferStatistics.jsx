@@ -437,13 +437,10 @@ const modalStyle = {
 const modalHeaderStyle = {
     background: '#ff9800',
     color: '#fff',
-    padding: '10px',
+    padding: '20px',
     borderBottom: '1px solid #f57c00',
-    position: 'relative',
-    height: '40px' 
-
+    position: 'relative'
 };
-
 const modalTitleStyle = {
     fontSize: '1.5em',
     fontWeight: 'bold',
