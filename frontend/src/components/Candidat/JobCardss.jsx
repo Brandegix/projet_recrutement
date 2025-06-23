@@ -1422,127 +1422,222 @@ const JobSearchAndOffers = () => {
         }
 
         /* Saved Jobs CTA */
-         /* Saved Jobs CTA */
-        .saved-jobs-cta {
-          background: linear-gradient(135deg, #212529 0%, #000000 100%);
-          margin: 4rem 1rem 0;
-          border-radius: 1.5rem;
-          overflow: hidden;
-          position: relative;
-          border: 2px solid #343a40;
-        }
+       /* Saved Jobs CTA */
+.saved-jobs-cta {
+  background: linear-gradient(135deg, #212529 0%, #000000 100%);
+  margin: 4rem 1rem 0;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  position: relative;
+  border: 2px solid #343a40;
+}
 
-        .cta-content {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 3rem 2rem;
-          display: flex;
-          align-items: center;
-          gap: 2rem;
-          position: relative;
-          z-index: 1;
-        }
+.cta-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  position: relative;
+  z-index: 1;
+}
 
-        .cta-visual {
-          position: relative;
-          flex-shrink: 0;
-        }
+.cta-visual {
+  position: relative;
+  flex-shrink: 0;
+}
 
-        .cta-icon {
-          width: 80px;
-          height: 80px;
-          background: linear-gradient(135deg, #ff8c00, #e67e00);
-          border-radius: 1rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          position: relative;
-          z-index: 2;
-          border: 3px solid #343a40;
-        }
+.cta-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #ff8c00, #e67e00);
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  position: relative;
+  z-index: 2;
+  border: 3px solid #343a40;
+}
 
-        .floating-elements {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-        }
+.floating-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
 
-        .floating-element {
-          position: absolute;
-          width: 8px;
-          height: 8px;
-          background: rgba(255, 140, 0, 0.4);
-          border-radius: 50%;
-          animation: float 6s ease-in-out infinite;
-        }
+.floating-element {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 140, 0, 0.4);
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+}
 
-        .floating-element:nth-child(1) {
-          top: -10px;
-          left: -10px;
-          animation-delay: 0s;
-        }
+.floating-element:nth-child(1) {
+  top: -10px;
+  left: -10px;
+  animation-delay: 0s;
+}
 
-        .floating-element:nth-child(2) {
-          top: -5px;
-          right: -15px;
-          animation-delay: 2s;
-        }
+.floating-element:nth-child(2) {
+  top: -5px;
+  right: -15px;
+  animation-delay: 2s;
+}
 
-        .floating-element:nth-child(3) {
-          bottom: -10px;
-          left: 50%;
-          animation-delay: 4s;
-        }
+.floating-element:nth-child(3) {
+  bottom: -10px;
+  left: 50%;
+  animation-delay: 4s;
+}
 
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) scale(1); opacity: 0.7; }
-          50% { transform: translateY(-20px) scale(1.1); opacity: 1; }
-        }
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.1);
+    opacity: 1;
+  }
+}
 
-        .cta-text {
-          flex: 1;
-          color: white;
-        }
+.cta-text {
+  flex: 1;
+  color: white;
+}
 
-        .cta-text h3 {
-          font-size: 1.75rem;
-          font-weight: 700;
-          margin: 0 0 0.5rem;
-        }
+.cta-text h3 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
 
-        .cta-text p {
-          font-size: 1.1rem;
-          opacity: 0.8;
-          margin: 0;
-          line-height: 1.6;
-        }
+.cta-text p {
+  font-size: 1.1rem;
+  opacity: 0.8;
+  margin: 0;
+  line-height: 1.6;
+}
 
-        .cta-button {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          background: #ff8c00;
-          color: white;
-          border: 2px solid #ff8c00;
-          border-radius: 0.75rem;
-          font-size: 1rem;
-          font-weight: 700;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          flex-shrink: 0;
-          width: 200px;
-        }
+.cta-button {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center content when it takes full width */
+  gap: 0.5rem;
+  background: #ff8c00;
+  color: white;
+  border: 2px solid #ff8c00;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 1rem 1.5rem; /* Add padding for better button size */
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  width: 200px;
+  text-align: center; /* Ensure text is centered if it wraps */
+}
 
-        .cta-button:hover {
-          background: #e67e00;
-          border-color: #e67e00;
-          transform: translateY(-2px);
-          box-shadow: 0 10px 20px rgba(255, 140, 0, 0.4);
-        }
+.cta-button:hover {
+  background: #e67e00;
+  border-color: #e67e00;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(255, 140, 0, 0.4);
+}
 
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .cta-content {
+    flex-wrap: wrap; /* Allow items to wrap to the next line */
+    justify-content: center; /* Center items when they wrap */
+    text-align: center; /* Center text for wrapped content */
+    padding: 2.5rem 1.5rem;
+  }
+
+  .cta-visual {
+    margin-bottom: 1.5rem; /* Add space between visual and text when wrapped */
+  }
+
+  .cta-text h3 {
+    font-size: 1.5rem;
+  }
+
+  .cta-text p {
+    font-size: 1rem;
+  }
+
+  .cta-button {
+    width: 100%; /* Make button full width on smaller screens */
+    max-width: 300px; /* Limit max width of button for better aesthetics */
+    margin-top: 1.5rem; /* Add space above the button */
+  }
+}
+
+@media (max-width: 768px) {
+  .saved-jobs-cta {
+    margin: 3rem 0.5rem 0; /* Adjust margin for smaller screens */
+    border-radius: 1rem;
+  }
+
+  .cta-content {
+    padding: 2rem 1rem; /* Further reduce padding */
+    flex-direction: column; /* Stack items vertically */
+    gap: 1.5rem;
+  }
+
+  .cta-visual {
+    margin-bottom: 1rem;
+  }
+
+  .cta-icon {
+    width: 70px;
+    height: 70px;
+  }
+
+  .cta-text h3 {
+    font-size: 1.3rem;
+  }
+
+  .cta-text p {
+    font-size: 0.95rem;
+  }
+
+  .cta-button {
+    font-size: 0.9rem;
+    padding: 0.8rem 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .cta-content {
+    padding: 1.5rem 0.8rem;
+  }
+
+  .cta-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .cta-text h3 {
+    font-size: 1.2rem;
+  }
+
+  .cta-text p {
+    font-size: 0.9rem;
+  }
+
+  .cta-button {
+    padding: 0.7rem 1rem;
+  }
+}
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
