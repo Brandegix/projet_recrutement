@@ -695,7 +695,6 @@ const styles = {
   cancelButton: {
           backgroundColor: "#ff6b35",
       color: "#fff",
-      padding: isMobile ? "14px 25px" : "15px 30px",
       borderRadius: "25px",
       fontSize: isMobile ? "1rem" : "1.1rem",
       fontWeight: "600",
@@ -713,7 +712,6 @@ const styles = {
   submitButton: {
          backgroundColor: "#ff6b35",
       color: "#fff",
-      padding: isMobile ? "14px 25px" : "15px 30px",
       borderRadius: "25px",
       fontSize: isMobile ? "1rem" : "1.1rem",
       fontWeight: "600",
