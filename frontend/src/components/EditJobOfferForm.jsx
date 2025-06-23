@@ -173,9 +173,10 @@ const EditJobOfferForm = () => {
 
     const cancelButtonPrimaryStyle = {
         ...baseButtonStyle,
-        border: '1px solid #cbd5e1',
-        backgroundColor: '#ffffff',
-        color: '#475569',
+        background: 'linear-gradient(135deg, #ff8c42 0%, #ff6b35 100%)',
+        color: '#ffffff',
+        boxShadow: '0 4px 10px rgba(255, 107, 53, 0.3)',
+        opacity: isSaving ? 0.7 : 1,
     };
 
     const saveButtonPrimaryStyle = {
