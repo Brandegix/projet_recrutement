@@ -1528,24 +1528,34 @@ const JobSearchAndOffers = () => {
 }
 
 .cta-button {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* Center content when it takes full width */
-  gap: 0.5rem;
-  background: #ff8c00;
-  color: white;
-  border: 2px solid #ff8c00;
-  border-radius: 0.75rem;
-  font-size: 1rem;
-  font-weight: 700;
-  padding: 1rem 1.5rem; /* Add padding for better button size */
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  flex-shrink: 0;
-  width: 200px;
-  text-align: center; /* Ensure text is centered if it wraps */
-}
 
+          display: flex;
+
+          align-items: center;
+
+          gap: 0.5rem;
+
+          background: #ff8c00;
+
+          color: white;
+
+          border: 2px solid #ff8c00;
+
+          border-radius: 0.75rem;
+
+          font-size: 1rem;
+
+          font-weight: 700;
+
+          cursor: pointer;
+
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+          flex-shrink: 0;
+
+          width: 200px;
+
+        }
 .cta-button:hover {
   background: #e67e00;
   border-color: #e67e00;
