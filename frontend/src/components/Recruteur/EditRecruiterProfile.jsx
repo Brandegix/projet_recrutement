@@ -428,7 +428,7 @@ function EditRecruiterProfile() {
                     type="button"
                     onClick={() => navigate("/RecruiterProfile")}
                     style={styles.cancelButtons}
-                    className="cancel-button"
+                    className="cancel-buttons"
                   >
                     Annuler
                   </button>
@@ -440,7 +440,7 @@ function EditRecruiterProfile() {
                       ...styles.submitButtons,
                       ...(isSaving ? styles.submitButtonDisabled : {}),
                     }}
-                    className="submit-button"
+                    className="submit-buttons"
                   >
                     {isSaving ? (
                       <>
@@ -693,11 +693,11 @@ const styles = {
   },
 
   cancelButtons: {
-    padding: "13px 26px", // Increased padding
+     padding: "13px 26px", // Increased padding
     borderRadius: "10px", // Larger border-radius
-    border: "2px solid #cbd5e1", // Slightly darker border
-    backgroundColor: "#ffffff",
-    color: "#475569", // Darker text color
+    border: "none",
+    background: "linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)",
+    color: "#ffffff",
     fontSize: "1rem",
     fontWeight: "600",
     cursor: "pointer",
@@ -705,7 +705,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: "8px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+    boxShadow: "0 6px 16px rgba(255, 107, 53, 0.3)", // More prominent shadow
     "&:hover": {
       backgroundColor: "#f0f4f8", // More distinct hover
       borderColor: "#94a3b8",
@@ -934,8 +934,8 @@ const responsiveStyles = `
         padding-top: 25px !important;
     }
     
-    .cancel-button,
-    .submit-button {
+    .cancel-buttons,
+    .submit-buttons {
         width: 100% !important;
         justify-content: center !important;
         padding: 15px 20px !important;
