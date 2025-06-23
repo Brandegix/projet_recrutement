@@ -213,6 +213,9 @@ const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
 // Saved Jobs CTA Component
 const SavedJobsCTA = () => {
   return (
+   // Saved Jobs CTA Component
+const SavedJobsCTA = () => {
+  return (
     <div className="saved-jobs-cta">
       <div className="cta-content">
         <div className="cta-visual">
@@ -225,13 +228,13 @@ const SavedJobsCTA = () => {
             <div className="floating-element"></div>
           </div>
         </div>
-
+        
         <div className="cta-text">
           <h3>Vos Offres Favorites</h3>
           <p>Retrouvez facilement toutes les opportunités qui vous intéressent dans votre espace personnalisé</p>
         </div>
-
-        <button
+        
+        <button 
           className="cta-button"
           onClick={() => window.location.href = '/SavedJobOffers'}
         >
@@ -242,6 +245,7 @@ const SavedJobsCTA = () => {
     </div>
   );
 };
+
 
 // Main Component
 const JobSearchAndOffers = () => {
@@ -1420,148 +1424,127 @@ const JobSearchAndOffers = () => {
         }
 
         /* Saved Jobs CTA */
+         /* Saved Jobs CTA */
         .saved-jobs-cta {
-          background: linear-gradient(135deg, #ffaf5e, #ff8c00);
-          color: white;
-          padding: 2.5rem 1.5rem;
+          background: linear-gradient(135deg, #212529 0%, #000000 100%);
+          margin: 4rem 1rem 0;
           border-radius: 1.5rem;
-          max-width: 1200px;
-          margin: 3rem auto;
-          box-shadow: 0 15px 30px rgba(255, 140, 0, 0.2);
           overflow: hidden;
           position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
+          border: 2px solid #343a40;
         }
 
         .cta-content {
-          position: relative;
-          z-index: 2;
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 3rem 2rem;
           display: flex;
-          flex-direction: column;
           align-items: center;
-          gap: 1.5rem;
-          max-width: 700px;
+          gap: 2rem;
+          position: relative;
+          z-index: 1;
         }
 
         .cta-visual {
           position: relative;
-          width: 80px;
-          height: 80px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-bottom: 1rem;
+          flex-shrink: 0;
         }
 
         .cta-icon {
-          background: rgba(255, 255, 255, 0.2);
-          border-radius: 50%;
-          width: 70px;
-          height: 70px;
+          width: 80px;
+          height: 80px;
+          background: linear-gradient(135deg, #ff8c00, #e67e00);
+          border-radius: 1rem;
           display: flex;
           align-items: center;
           justify-content: center;
-          border: 2px solid rgba(255, 255, 255, 0.4);
-          box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.1);
-        }
-
-        .cta-icon svg {
           color: white;
-          stroke-width: 2.5px;
+          position: relative;
+          z-index: 2;
+          border: 3px solid #343a40;
         }
 
         .floating-elements {
           position: absolute;
-          width: 100%;
-          height: 100%;
           top: 0;
           left: 0;
-          pointer-events: none;
+          width: 100%;
+          height: 100%;
         }
 
         .floating-element {
           position: absolute;
-          background: rgba(255, 255, 255, 0.15);
+          width: 8px;
+          height: 8px;
+          background: rgba(255, 140, 0, 0.4);
           border-radius: 50%;
-          opacity: 0;
-          animation: float 6s infinite ease-in-out;
+          animation: float 6s ease-in-out infinite;
         }
 
         .floating-element:nth-child(1) {
-          width: 20px;
-          height: 20px;
-          top: 10%;
-          left: 15%;
+          top: -10px;
+          left: -10px;
           animation-delay: 0s;
         }
+
         .floating-element:nth-child(2) {
-          width: 30px;
-          height: 30px;
-          top: 60%;
-          right: 10%;
+          top: -5px;
+          right: -15px;
           animation-delay: 2s;
         }
+
         .floating-element:nth-child(3) {
-          width: 25px;
-          height: 25px;
-          bottom: 5%;
-          left: 40%;
+          bottom: -10px;
+          left: 50%;
           animation-delay: 4s;
         }
 
         @keyframes float {
-          0%, 100% { transform: translateY(0) scale(1); opacity: 0.15; }
-          50% { transform: translateY(-10px) scale(1.1); opacity: 0.4; }
+          0%, 100% { transform: translateY(0px) scale(1); opacity: 0.7; }
+          50% { transform: translateY(-20px) scale(1.1); opacity: 1; }
+        }
+
+        .cta-text {
+          flex: 1;
+          color: white;
         }
 
         .cta-text h3 {
-          font-size: 1.8rem;
-          margin-bottom: 0.75rem;
+          font-size: 1.75rem;
           font-weight: 700;
-          line-height: 1.3;
+          margin: 0 0 0.5rem;
         }
 
         .cta-text p {
-          font-size: 1rem;
-          line-height: 1.5;
-          margin-bottom: 1.5rem;
-          opacity: 0.9;
-          max-width: 500px;
+          font-size: 1.1rem;
+          opacity: 0.8;
+          margin: 0;
+          line-height: 1.6;
         }
 
         .cta-button {
-          background: white;
-          color: #ff8c00;
-          padding: 0.8rem 1.8rem;
-          border-radius: 2rem;
-          font-weight: 700;
-          font-size: 1rem;
-          border: none;
-          cursor: pointer;
-          transition: all 0.3s ease;
           display: flex;
           align-items: center;
-          gap: 0.75rem;
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+          gap: 0.5rem;
+          background: #ff8c00;
+          color: white;
+          border: 2px solid #ff8c00;
+          border-radius: 0.75rem;
+          font-size: 1rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          flex-shrink: 0;
+          width: 200px;
         }
 
         .cta-button:hover {
-          background: #f8f9fa;
+          background: #e67e00;
+          border-color: #e67e00;
           transform: translateY(-2px);
-          box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+          box-shadow: 0 10px 20px rgba(255, 140, 0, 0.4);
         }
 
-        .cta-button svg {
-          color: #ff8c00;
-          transition: transform 0.3s ease;
-        }
-
-        .cta-button:hover svg {
-          transform: translateX(3px);
-        }
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
