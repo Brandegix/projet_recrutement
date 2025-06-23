@@ -85,9 +85,7 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
       </div>
 
       <div className="job-card-footer">
-        <div className="salary-section">
-          <span className="salary-amount">{job.salary}</span>
-        </div>
+       
         <div className="action-buttons">
           {isApplied ? (
             <button className="applied-button" disabled>
