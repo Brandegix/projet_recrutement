@@ -211,9 +211,7 @@ const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
 };
 
 // Saved Jobs CTA Component
-const SavedJobsCTA = () => {
-  return (
-   // Saved Jobs CTA Component
+
 const SavedJobsCTA = () => {
   return (
     <div className="saved-jobs-cta">
