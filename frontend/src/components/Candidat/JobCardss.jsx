@@ -119,7 +119,7 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved, isSaving }) => {
             className={`btn btn-save ${isSaved ? 'saved' : ''}`}
             onClick={() => onSave(job.id, isSaved)}
             title={isSaved ? "Retirer des favoris" : "Ajouter aux favoris"}
-            disabled={isSaving} {/* Disable button while saving/unsaving */}
+            disabled={isSaving} 
           >
             {isSaving ? (
               <Loader2 size={16} className="spinner" /> // Show spinner when loading
