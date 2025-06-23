@@ -30,7 +30,7 @@ const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user a
         alert("Redirection vers la page de candidature."); // For demonstration
       } else if (user && user.role === 'recruiter') {
         // If the user is a recruiter, navigate them to their job offers dashboard
-        navigate('/RecruiterJobOffers);
+        navigate('/RecruiterJobOffers');
         alert("Vous êtes un recruteur. Redirection vers votre tableau de bord."); // For demonstration
       } else {
         // Fallback for logged-in users with unexpected or no role
