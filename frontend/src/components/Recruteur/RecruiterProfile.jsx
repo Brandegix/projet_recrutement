@@ -593,7 +593,7 @@ function RecruiterProfile() {
           {/* COVER IMAGE Upload Section */}
           <div style={styles.coverUploadSection}>
             <label htmlFor="coverImageUpload" style={styles.coverUploadLabel}>
-              📷 Upload Cover Image:
+               Upload Cover Image:
             </label>
             <input
               type="file"
