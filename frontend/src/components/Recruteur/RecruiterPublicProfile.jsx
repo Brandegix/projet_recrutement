@@ -129,7 +129,6 @@ function RecruiterPublicProfile() {
                 </div>
 
                 <div style={pageStyles.headerInfo}>
-                  <div style={pageStyles.companyBadge}>ENTREPRISE CERTIFIÉE</div>
                   <h1 style={pageStyles.companyName}>{profile.companyName}</h1>
                   <p style={pageStyles.companyTitle}>{profile.company_title}</p>
 
@@ -471,7 +470,7 @@ const pageStyles = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center", 
-    bottom : "20px"
+    bottom : "200px"
   },
 
   profileImageBorder: {
