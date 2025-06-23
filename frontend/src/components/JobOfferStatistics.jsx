@@ -343,8 +343,10 @@ const JobOfferStatistics = () => {
                >
               <div 
               style={modalStyle}
-               onClick={(e) => e.stopPropagation()}  
-              >
+               onClick={(e) => e.stopPropagation()} >
+               <div style={modalHeaderStyle}>
+                  <h2 style={modalTitleStyle}>{selectedOffer.title}</h2>
+                   </div>
                          <div style={modalContentStyle}>
                             <ResponsiveContainer width="100%" height={250}>
                                 <PieChart>
