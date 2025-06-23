@@ -376,7 +376,7 @@ function JobCards() {
   const windowWidth = useWindowWidth();
   const isMobile = windowWidth < 768;
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = isMobile ? 6 : 9; // Fewer jobs per page on mobile
+  const jobsPerPage = isMobile ? 3 : 3; // Fewer jobs per page on mobile
   const [filteredJobs, setFilteredJobs] = useState([]);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
