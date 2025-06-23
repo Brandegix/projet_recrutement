@@ -41,7 +41,7 @@ const JobOfferApplications = () => {
             .then(allApplications => {
                 const filteredByOffer = allApplications.filter(app => app.job_offer_id === parseInt(offerId));
                 setApplications(filteredByOffer);
-                setFilteredApplications(filteredByOffer); // Initialize filtered list
+                setFilteredApplications(filteredByOffer);
             })
             .catch(err => setError("Failed to load applications."))
             .finally(() => setIsLoading(false));
@@ -91,7 +91,6 @@ const JobOfferApplications = () => {
                 throw new Error('Failed to mark application as viewed');
             }
 
-            // Update state: mark the application as viewed locally
             setApplications(prevApps =>
                 prevApps.map(app =>
                     app.id === applicationId ? { ...app, viewed: true } : app
@@ -108,12 +107,54 @@ const JobOfferApplications = () => {
         }
     };
 
+    // Enhanced Loading Component
+    const LoadingScreen = () => (
+        <div style={jobAppStyles.loadingContainer}>
+            <div style={jobAppStyles.loadingContent}>
+                <div style={jobAppStyles.loadingSpinner}>
+                    <div style={jobAppStyles.spinnerRing}></div>
+                </div>
+                <h2 style={jobAppStyles.loadingTitle}>Chargement des candidatures</h2>
+                <p style={jobAppStyles.loadingText}>Veuillez patienter pendant que nous récupérons les données...</p>
+                <div style={jobAppStyles.loadingDots}>
+                    <span style={{...jobAppStyles.dot, animationDelay: '0s'}}></span>
+                    <span style={{...jobAppStyles.dot, animationDelay: '0.2s'}}></span>
+                    <span style={{...jobAppStyles.dot, animationDelay: '0.4s'}}></span>
+                </div>
+            </div>
+        </div>
+    );
+
     if (isLoading) {
-        return <div style={jobAppStyles.loading}>Chargement des candidatures...</div>;
+        return (
+            <>
+                <Navbar />
+                <LoadingScreen />
+                <Footer />
+            </>
+        );
     }
 
     if (error) {
-        return <div style={jobAppStyles.error}>{error}</div>;
+        return (
+            <>
+                <Navbar />
+                <div style={jobAppStyles.errorContainer}>
+                    <div style={jobAppStyles.errorContent}>
+                        <div style={jobAppStyles.errorIcon}>⚠️</div>
+                        <h2 style={jobAppStyles.errorTitle}>Erreur de chargement</h2>
+                        <p style={jobAppStyles.errorText}>{error}</p>
+                        <button 
+                            style={jobAppStyles.retryButton}
+                            onClick={() => window.location.reload()}
+                        >
+                            Réessayer
+                        </button>
+                    </div>
+                </div>
+                <Footer />
+            </>
+        );
     }
 
     return (
@@ -121,90 +162,120 @@ const JobOfferApplications = () => {
             <Navbar />
             <div style={jobAppStyles.applicationsContainer}>
                 <div style={jobAppStyles.header}>
-                    <h1 style={jobAppStyles.h1}>Candidatures pour " {offer?.title} "</h1>
+                    <div style={jobAppStyles.headerContent}>
+                        <h1 style={jobAppStyles.h1}>
+                            Candidatures pour <span style={jobAppStyles.jobTitle}>"{offer?.title}"</span>
+                        </h1>
+                        <div style={jobAppStyles.headerStats}>
+                            <span style={jobAppStyles.statsItem}>
+                                {filteredApplications.length} candidature{filteredApplications.length !== 1 ? 's' : ''}
+                            </span>
+                        </div>
+                    </div>
                     <Link
                         to="/RecruiterJobOffers"
                         style={jobAppStyles.backButtonLink}
-                        onMouseEnter={(e) => e.target.style.backgroundColor = jobAppStyles.backButtonLinkHover.backgroundColor}
-                        onMouseLeave={(e) => e.target.style.backgroundColor = jobAppStyles.backButtonLink.backgroundColor}
                     >
-                        Retour aux offres
+                        ← Retour aux offres
                     </Link>
                 </div>
 
                 <div style={jobAppStyles.searchContainer}>
-                    <input
-                        type="text"
-                        placeholder="Rechercher par nom du candidat..."
-                        value={searchName}
-                        onChange={(e) => setSearchName(e.target.value)}
-                        style={jobAppStyles.searchInput}
-                        onFocus={(e) => e.target.style.borderColor = jobAppStyles.searchInputFocus.borderColor}
-                        onBlur={(e) => e.target.style.borderColor = jobAppStyles.searchInput.borderColor}
-                    />
+                    <div style={jobAppStyles.searchWrapper}>
+                        <input
+                            type="text"
+                            placeholder="🔍 Rechercher par nom du candidat..."
+                            value={searchName}
+                            onChange={(e) => setSearchName(e.target.value)}
+                            style={jobAppStyles.searchInput}
+                        />
+                        {searchName && (
+                            <button
+                                style={jobAppStyles.clearSearch}
+                                onClick={() => setSearchName('')}
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 {filteredApplications.length === 0 ? (
-                    <p style={jobAppStyles.noApplications}>Aucune candidature pour cette offre.</p>
+                    <div style={jobAppStyles.emptyState}>
+                        <div style={jobAppStyles.emptyStateIcon}>📄</div>
+                        <h3 style={jobAppStyles.emptyStateTitle}>
+                            {searchName ? 'Aucun résultat trouvé' : 'Aucune candidature'}
+                        </h3>
+                        <p style={jobAppStyles.emptyStateText}>
+                            {searchName 
+                                ? `Aucune candidature ne correspond à "${searchName}"`
+                                : 'Cette offre n\'a encore reçu aucune candidature.'
+                            }
+                        </p>
+                        {searchName && (
+                            <button
+                                style={jobAppStyles.clearSearchButton}
+                                onClick={() => setSearchName('')}
+                            >
+                                Effacer la recherche
+                            </button>
+                        )}
+                    </div>
                 ) : (
                     <div style={jobAppStyles.applicationList}>
                         {filteredApplications.map(app => (
-                            <div
-                                key={app.id}
-                                style={jobAppStyles.applicationItem}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = jobAppStyles.applicationItemHover.transform;
-                                    e.currentTarget.style.boxShadow = jobAppStyles.applicationItemHover.boxShadow;
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = jobAppStyles.applicationItem.transform;
-                                    e.currentTarget.style.boxShadow = jobAppStyles.applicationItem.boxShadow;
-                                }}
-                            >
-                                <div style={jobAppStyles.applicantInfo}>
-                                    <div style={jobAppStyles.applicantAvatar}>
-                                        {app.candidate?.name?.charAt(0).toUpperCase() || "?"}
-                                    </div>
-                                    <div style={jobAppStyles.applicantDetails}>
-                                        <h4 style={jobAppStyles.applicantName}>{app.candidate?.name}</h4>
-                                        <div style={jobAppStyles.applicantContact}>
-                                            <div style={jobAppStyles.contactItem}>Email: {app.candidate?.email || "N/A"}</div>
-                                            <div style={jobAppStyles.contactItem}>Téléphone: {app.candidate?.phoneNumber || "N/A"}</div>
-                                            <div style={jobAppStyles.contactItem}>
-                                                CV: <a
-                                                    href={`${process.env.REACT_APP_API_URL}/uploads/cv/${app.candidate?.cv_filename}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    style={jobAppStyles.cvLink}
-                                                    onClick={() => markAsViewed(app.id)}
-                                                    onMouseEnter={(e) => e.target.style.color = jobAppStyles.cvLinkHover.color}
-                                                    onMouseLeave={(e) => e.target.style.color = jobAppStyles.cvLink.color}
-                                                >
-                                                    Voir CV
-                                                </a>
+                            <div key={app.id} style={jobAppStyles.applicationItem}>
+                                <div style={jobAppStyles.applicationHeader}>
+                                    <div style={jobAppStyles.applicantInfo}>
+                                        <div style={jobAppStyles.applicantAvatar}>
+                                            {app.candidate?.name?.charAt(0).toUpperCase() || "?"}
+                                        </div>
+                                        <div style={jobAppStyles.applicantDetails}>
+                                            <h4 style={jobAppStyles.applicantName}>{app.candidate?.name}</h4>
+                                            <div style={jobAppStyles.applicationMeta}>
+                                                <span style={jobAppStyles.applicationDate}>
+                                                    📅 Reçu le {formatDate(app.application_date)}
+                                                </span>
+                                                {app.viewed && (
+                                                    <span style={jobAppStyles.viewedTag}>
+                                                        ✓ Consulté
+                                                    </span>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div style={jobAppStyles.applicationActions}>
-                                    <div style={jobAppStyles.applicationDate}>
-                                        Reçu le {formatDate(app.application_date)}
-                                    </div>
 
+                                <div style={jobAppStyles.contactGrid}>
+                                    <div style={jobAppStyles.contactItem}>
+                                        <span style={jobAppStyles.contactLabel}>📧 Email:</span>
+                                        <span style={jobAppStyles.contactValue}>{app.candidate?.email || "N/A"}</span>
+                                    </div>
+                                    <div style={jobAppStyles.contactItem}>
+                                        <span style={jobAppStyles.contactLabel}>📱 Téléphone:</span>
+                                        <span style={jobAppStyles.contactValue}>{app.candidate?.phoneNumber || "N/A"}</span>
+                                    </div>
+                                    <div style={jobAppStyles.contactItem}>
+                                        <span style={jobAppStyles.contactLabel}>📄 CV:</span>
+                                        <a
+                                            href={`${process.env.REACT_APP_API_URL}/uploads/cv/${app.candidate?.cv_filename}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={jobAppStyles.cvLink}
+                                            onClick={() => markAsViewed(app.id)}
+                                        >
+                                            Télécharger CV
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div style={jobAppStyles.actionButtons}>
                                     <button
                                         style={jobAppStyles.contactButton}
                                         onClick={() => openChatModal(app.id)}
-                                        onMouseEnter={(e) => e.target.style.backgroundColor = jobAppStyles.contactButtonHover.backgroundColor}
-                                        onMouseLeave={(e) => e.target.style.backgroundColor = jobAppStyles.contactButton.backgroundColor}
                                     >
-                                        Contacter
+                                        💬 Contacter
                                     </button>
-
-                                    {app.viewed && (
-                                        <span style={jobAppStyles.viewedTag}>
-                                            Vu ✔
-                                        </span>
-                                    )}
                                 </div>
                             </div>
                         ))}
@@ -218,7 +289,15 @@ const JobOfferApplications = () => {
                 onRequestClose={closeChatModal}
                 style={jobAppStyles.chatModal}
             >
-                <h2 style={jobAppStyles.modalTitle}>Chat avec le candidat</h2>
+                <div style={jobAppStyles.modalHeader}>
+                    <h2 style={jobAppStyles.modalTitle}>💬 Chat avec le candidat</h2>
+                    <button
+                        onClick={closeChatModal}
+                        style={jobAppStyles.modalCloseButton}
+                    >
+                        ✕
+                    </button>
+                </div>
                 {chatApplicationId && user?.id && (
                     <ApplicationChat
                         userId={user.id}
@@ -229,8 +308,6 @@ const JobOfferApplications = () => {
                 <button
                     onClick={closeChatModal}
                     style={jobAppStyles.closeChatButton}
-                    onMouseEnter={(e) => e.target.style.backgroundColor = jobAppStyles.closeChatButtonHover.backgroundColor}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = jobAppStyles.closeChatButton.backgroundColor}
                 >
                     Fermer le chat
                 </button>
@@ -239,287 +316,531 @@ const JobOfferApplications = () => {
     );
 };
 
-// Start of jobAppStyles object (this replaces your existing jobAppStyles)
 const jobAppStyles = {
-    // --- Page Container & General Layout ---
-    applicationsContainer: {
-        fontFamily: 'Roboto, sans-serif', // More modern font
-        padding: '50px 20px', // Increased padding for more breathing room
-        backgroundColor: '#F8F9FA', // Light gray background for a premium feel
+    // Loading Screen Styles
+    loadingContainer: {
         minHeight: 'calc(100vh - 120px)',
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#fafafa',
+        padding: '20px',
     },
-    header: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '40px', // More space below header
+    loadingContent: {
+        textAlign: 'center',
+        backgroundColor: '#ffffff',
+        padding: '60px 40px',
+        borderRadius: '20px',
+        boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+        maxWidth: '400px',
         width: '100%',
-        maxWidth: '1000px',
-        flexWrap: 'wrap',
+    },
+    loadingSpinner: {
+        display: 'flex',
+        justifyContent: 'center',
+        marginBottom: '30px',
+    },
+    spinnerRing: {
+        width: '60px',
+        height: '60px',
+        border: '4px solid #f3f3f3',
+        borderTop: '4px solid #FF6B35',
+        borderRadius: '50%',
+        animation: 'spin 1s linear infinite',
+    },
+    loadingTitle: {
+        color: '#212529',
+        fontSize: '1.8em',
+        fontWeight: '700',
+        marginBottom: '15px',
+        margin: '0 0 15px 0',
+    },
+    loadingText: {
+        color: '#6c757d',
+        fontSize: '1.1em',
+        marginBottom: '30px',
+        lineHeight: '1.5',
+    },
+    loadingDots: {
+        display: 'flex',
+        justifyContent: 'center',
+        gap: '8px',
+    },
+    dot: {
+        width: '12px',
+        height: '12px',
+        backgroundColor: '#FF6B35',
+        borderRadius: '50%',
+        animation: 'bounce 1.4s ease-in-out infinite both',
+    },
+
+    // Error Screen Styles
+    errorContainer: {
+        minHeight: 'calc(100vh - 120px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#fafafa',
+        padding: '20px',
+    },
+    errorContent: {
+        textAlign: 'center',
+        backgroundColor: '#ffffff',
+        padding: '60px 40px',
+        borderRadius: '20px',
+        boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+        maxWidth: '400px',
+        width: '100%',
+        border: '2px solid #dc3545',
+    },
+    errorIcon: {
+        fontSize: '4em',
+        marginBottom: '20px',
+    },
+    errorTitle: {
+        color: '#dc3545',
+        fontSize: '1.8em',
+        fontWeight: '700',
+        marginBottom: '15px',
+    },
+    errorText: {
+        color: '#6c757d',
+        fontSize: '1.1em',
+        marginBottom: '30px',
+        lineHeight: '1.5',
+    },
+    retryButton: {
+        backgroundColor: '#FF6B35',
+        color: '#ffffff',
+        border: 'none',
+        padding: '12px 24px',
+        borderRadius: '8px',
+        fontSize: '1em',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease',
+    },
+
+    // Main Container Styles
+    applicationsContainer: {
+        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        padding: '20px',
+        backgroundColor: '#fafafa',
+        minHeight: 'calc(100vh - 120px)',
+        
+        '@media (min-width: 768px)': {
+            padding: '40px 20px',
+        },
+        '@media (min-width: 1200px)': {
+            padding: '60px 20px',
+        },
+    },
+
+    // Header Styles
+    header: {
+        maxWidth: '1200px',
+        margin: '0 auto',
+        marginBottom: '40px',
+        display: 'flex',
+        flexDirection: 'column',
         gap: '20px',
+        
+        '@media (min-width: 768px)': {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+        },
+    },
+    headerContent: {
+        flex: 1,
     },
     h1: {
-        color: '#212529', // Darker black for text
-        fontSize: '2.5em', // Slightly larger for impact
-        fontWeight: '700',
-        margin: 0,
-        flexGrow: 1,
-        letterSpacing: '-0.02em', // Subtle letter spacing for premium look
+        color: '#212529',
+        fontSize: 'clamp(1.5em, 4vw, 2.5em)',
+        fontWeight: '800',
+        margin: '0 0 15px 0',
+        lineHeight: '1.2',
     },
-
-    // --- Buttons & Links ---
-    backButtonLink: {
-        backgroundColor: '#FF6B35', // Orange
-        color: '#FFFFFF',
-        border: 'none',
-        padding: '12px 28px', // Slightly more padding
-        borderRadius: '8px',
-        cursor: 'pointer',
-        fontSize: '1em',
-        textDecoration: 'none',
-        transition: 'background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)', // Softer, more pronounced shadow
-        display: 'inline-block',
-        fontWeight: '600',
-    },
-    backButtonLinkHover: {
-        backgroundColor: '#E55A2B',
-        transform: 'translateY(-2px)',
-        boxShadow: '0 6px 15px rgba(0, 0, 0, 0.2)', // More shadow on hover
-    },
-    cvLink: {
+    jobTitle: {
         color: '#FF6B35',
-        textDecoration: 'none',
-        fontWeight: 'bold',
-        transition: 'color 0.3s ease',
-        borderBottom: '1px solid transparent', // Subtle underline effect
+        fontStyle: 'italic',
     },
-    cvLinkHover: {
-        color: '#E55A2B',
-        borderBottom: '1px solid #E55A2B', // Underline appears on hover
+    headerStats: {
+        display: 'flex',
+        gap: '20px',
+        flexWrap: 'wrap',
     },
-    contactButton: {
-        backgroundColor: '#FF6B35',
-        color: '#FFFFFF',
-        border: 'none',
-        padding: '10px 22px', // Slightly adjusted padding
-        borderRadius: '8px',
-        cursor: 'pointer',
-        fontSize: '0.95em',
-        transition: 'background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Softer shadow
+    statsItem: {
+        backgroundColor: '#ffffff',
+        padding: '8px 16px',
+        borderRadius: '20px',
+        fontSize: '0.9em',
+        color: '#6c757d',
         fontWeight: '600',
-    },
-    contactButtonHover: {
-        backgroundColor: '#E55A2B',
-        transform: 'translateY(-1px)',
-        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.15)',
-    },
-    closeChatButton: {
-        backgroundColor: '#212529', // Darker black
-        color: '#FFFFFF',
-        border: 'none',
-        padding: '12px 28px',
-        borderRadius: '8px',
-        cursor: 'pointer',
-        fontSize: '1em',
-        marginTop: '25px', // More margin
-        transition: 'background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-        fontWeight: '600',
-    },
-    closeChatButtonHover: {
-        backgroundColor: '#343A40', // Slightly lighter dark gray on hover
-        transform: 'translateY(-2px)',
-        boxShadow: '0 6px 15px rgba(0, 0, 0, 0.2)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
     },
 
-    // --- Search Bar ---
+    // Button Styles
+    backButtonLink: {
+        backgroundColor: '#212529',
+        color: '#ffffff',
+        border: 'none',
+        padding: '12px 24px',
+        borderRadius: '12px',
+        cursor: 'pointer',
+        fontSize: '1em',
+        textDecoration: 'none',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '8px',
+        fontWeight: '600',
+        transition: 'all 0.3s ease',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+        whiteSpace: 'nowrap',
+        alignSelf: 'flex-start',
+    },
+
+    // Search Styles
     searchContainer: {
-        width: '100%',
-        maxWidth: '1000px',
-        marginBottom: '30px', // More space
+        maxWidth: '1200px',
+        margin: '0 auto',
+        marginBottom: '30px',
+    },
+    searchWrapper: {
+        position: 'relative',
+        maxWidth: '600px',
+        margin: '0 auto',
     },
     searchInput: {
         width: '100%',
-        padding: '14px 20px', // Increased padding
-        borderRadius: '10px', // Slightly more rounded
-        border: '1px solid #CED4DA', // Softer border color
+        padding: '16px 24px',
+        borderRadius: '16px',
+        border: '2px solid #e9ecef',
         boxSizing: 'border-box',
-        fontSize: '1em',
-        color: '#495057', // Darker gray for text
-        boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.06)', // Deeper inset shadow
-        transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+        fontSize: '1.1em',
+        color: '#495057',
+        backgroundColor: '#ffffff',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+        transition: 'all 0.3s ease',
+        outline: 'none',
     },
-    searchInputFocus: {
-        borderColor: '#FF6B35',
-        boxShadow: '0 0 0 3px rgba(255, 107, 53, 0.25)', // More prominent focus ring
+    clearSearch: {
+        position: 'absolute',
+        right: '16px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: '#6c757d',
+        color: '#ffffff',
+        border: 'none',
+        borderRadius: '50%',
+        width: '24px',
+        height: '24px',
+        cursor: 'pointer',
+        fontSize: '12px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 
-    // --- Application List & Items ---
+    // Application List Styles
     applicationList: {
-        width: '100%',
-        maxWidth: '1000px',
+        maxWidth: '1200px',
+        margin: '0 auto',
+        display: 'grid',
+        gap: '24px',
+        
+        '@media (min-width: 768px)': {
+            gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))',
+        },
     },
     applicationItem: {
-        backgroundColor: '#FFFFFF',
-        padding: '30px', // More padding
-        borderRadius: '15px', // More rounded corners
-        boxShadow: '0 8px 20px rgba(0, 0, 0, 0.08)', // Larger, softer shadow
-        marginBottom: '25px', // More space between items
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '25px',
-        border: '1px solid #E9ECEF', // Very light border
-        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-        transform: 'translateY(0)',
+        backgroundColor: '#ffffff',
+        borderRadius: '20px',
+        padding: '24px',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+        border: '1px solid #f1f3f4',
+        transition: 'all 0.3s ease',
+        cursor: 'pointer',
+        
+        '@media (min-width: 768px)': {
+            padding: '32px',
+        },
     },
-    applicationItemHover: {
-        transform: 'translateY(-5px)', // More pronounced lift
-        boxShadow: '0 12px 25px rgba(0, 0, 0, 0.15)', // Darker, larger shadow on hover
+    applicationHeader: {
+        marginBottom: '20px',
     },
     applicantInfo: {
         display: 'flex',
         alignItems: 'center',
-        flexGrow: 1,
+        gap: '16px',
     },
     applicantAvatar: {
         backgroundColor: '#FF6B35',
-        color: '#FFFFFF', // White text for stronger contrast
-        width: '55px', // Slightly smaller avatar
-        height: '55px',
+        color: '#ffffff',
+        width: '60px',
+        height: '60px',
         borderRadius: '50%',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        fontSize: '1.2em', // **Adjusted: Smaller font size for the initial**
-        fontWeight: 'bold',
-        marginRight: '25px', // More margin
+        fontSize: '1.5em',
+        fontWeight: '700',
         flexShrink: 0,
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Subtle shadow for depth
+        boxShadow: '0 4px 12px rgba(255,107,53,0.3)',
     },
     applicantDetails: {
-        flexGrow: 1, // Allows details to fill space
+        flex: 1,
     },
     applicantName: {
-        color: '#212529', // Darker black
-        fontSize: '1.8em', // Slightly larger name
+        color: '#212529',
+        fontSize: '1.4em',
         fontWeight: '700',
-        marginBottom: '8px', // More space below name
+        margin: '0 0 8px 0',
+        
+        '@media (min-width: 768px)': {
+            fontSize: '1.6em',
+        },
     },
-    applicantContact: {
-        fontSize: '1em', // Slightly larger text
-        color: '#495057', // Darker gray
+    applicationMeta: {
         display: 'flex',
         flexWrap: 'wrap',
-        gap: '12px 25px', // Increased spacing
-    },
-    contactItem: {
-        display: 'flex', // Ensures consistent layout for each item
+        gap: '12px',
         alignItems: 'center',
     },
-    applicationActions: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-end',
-        gap: '15px', // Increased space between actions
-    },
     applicationDate: {
-        color: '#495057', // Darker gray
-        fontSize: '0.95em', // Slightly larger font
-        fontWeight: '600',
-        opacity: 0.8, // Slightly softer date text
+        color: '#6c757d',
+        fontSize: '0.9em',
+        fontWeight: '500',
     },
     viewedTag: {
-        marginLeft: '15px',
+        backgroundColor: '#d4edda',
+        color: '#155724',
+        padding: '4px 12px',
+        borderRadius: '12px',
+        fontSize: '0.8em',
+        fontWeight: '600',
+    },
+
+    // Contact Grid Styles
+    contactGrid: {
+        display: 'grid',
+        gap: '16px',
+        marginBottom: '24px',
+        
+        '@media (min-width: 480px)': {
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        },
+    },
+    contactItem: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '4px',
+    },
+    contactLabel: {
+        color: '#6c757d',
+        fontSize: '0.85em',
+        fontWeight: '600',
+    },
+    contactValue: {
+        color: '#212529',
+        fontSize: '0.95em',
+        fontWeight: '500',
+        wordBreak: 'break-word',
+    },
+    cvLink: {
         color: '#FF6B35',
-        fontWeight: 'bold',
-        fontSize: '0.9em',
-        backgroundColor: '#FFF5E5',
-        padding: '6px 12px', // Slightly more padding
-        borderRadius: '6px', // Slightly more rounded
-        boxShadow: '0 1px 3px rgba(0,0,0,0.05)', // Subtle shadow for the tag
+        textDecoration: 'none',
+        fontWeight: '600',
+        fontSize: '0.95em',
+        transition: 'color 0.3s ease',
+        borderBottom: '1px solid rgba(255,107,53,0.3)',
     },
 
-    // --- Empty State, Loading, Error ---
-    noApplications: {
-        textAlign: 'center',
-        marginTop: '60px', // More margin
-        color: '#495057',
-        fontSize: '1.3em', // Slightly larger
-        padding: '30px', // More padding
-        backgroundColor: '#FFFFFF',
-        borderRadius: '15px',
-        boxShadow: '0 5px 15px rgba(0,0,0,0.08)',
-        maxWidth: '650px', // Slightly wider
-        width: '100%',
-        fontWeight: '600',
+    // Action Buttons
+    actionButtons: {
+        display: 'flex',
+        gap: '12px',
+        justifyContent: 'flex-end',
     },
-    loading: {
-        textAlign: 'center',
-        marginTop: '60px',
-        color: '#495057',
-        fontSize: '1.3em',
-        padding: '30px',
-        backgroundColor: '#FFFFFF',
-        borderRadius: '15px',
-        boxShadow: '0 5px 15px rgba(0,0,0,0.08)',
-        maxWidth: '650px',
-        width: '100%',
+    contactButton: {
+        backgroundColor: '#FF6B35',
+        color: '#ffffff',
+        border: 'none',
+        padding: '12px 20px',
+        borderRadius: '12px',
+        cursor: 'pointer',
+        fontSize: '0.95em',
         fontWeight: '600',
-    },
-    error: {
-        textAlign: 'center',
-        marginTop: '60px',
-        color: '#FFFFFF',
-        fontSize: '1.3em',
-        backgroundColor: '#DC3545', // A standard, slightly more subdued error red
-        padding: '30px',
-        borderRadius: '15px',
-        boxShadow: '0 8px 20px rgba(0,0,0,0.15)',
-        maxWidth: '650px',
-        width: '100%',
-        fontWeight: 'bold',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        transition: 'all 0.3s ease',
+        boxShadow: '0 4px 12px rgba(255,107,53,0.3)',
     },
 
-    // --- Modal Styles ---
+    // Empty State Styles
+    emptyState: {
+        textAlign: 'center',
+        maxWidth: '500px',
+        margin: '60px auto',
+        padding: '40px 20px',
+        backgroundColor: '#ffffff',
+        borderRadius: '20px',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+    },
+    emptyStateIcon: {
+        fontSize: '4em',
+        marginBottom: '20px',
+        opacity: '0.7',
+    },
+    emptyStateTitle: {
+        color: '#212529',
+        fontSize: '1.5em',
+        fontWeight: '700',
+        marginBottom: '12px',
+    },
+    emptyStateText: {
+        color: '#6c757d',
+        fontSize: '1.1em',
+        lineHeight: '1.6',
+        marginBottom: '24px',
+    },
+    clearSearchButton: {
+        backgroundColor: '#FF6B35',
+        color: '#ffffff',
+        border: 'none',
+        padding: '12px 24px',
+        borderRadius: '12px',
+        fontSize: '1em',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease',
+    },
+
+    // Modal Styles
     chatModal: {
         overlay: {
-            backgroundColor: 'rgba(33, 37, 41, 0.8)', // Darker, slightly softer overlay
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
             zIndex: 1050,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
         },
         content: {
-            top: '50%',
-            left: '50%',
+            position: 'relative',
+            top: 'auto',
+            left: 'auto',
             right: 'auto',
             bottom: 'auto',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-            padding: '40px', // More padding
-            borderRadius: '15px',
-            maxWidth: '700px', // Wider modal for chat
-            width: '90%',
-            border: 'none', // No border for a cleaner look
-            maxHeight: '90vh', // Increased max height
-            overflow: 'auto',
-            zIndex: 1051,
-            backgroundColor: '#FFFFFF',
-            boxShadow: '0 15px 40px rgba(0, 0, 0, 0.3)', // Deeper, softer shadow
+            transform: 'none',
+            margin: '20px',
+            padding: '0',
+            borderRadius: '20px',
+            maxWidth: '800px',
+            width: '100%',
+            maxHeight: '90vh',
+            border: 'none',
+            overflow: 'hidden',
+            backgroundColor: '#ffffff',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
         }
+    },
+    modalHeader: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '24px 32px',
+        borderBottom: '1px solid #e9ecef',
+        backgroundColor: '#fafafa',
     },
     modalTitle: {
         color: '#212529',
-        fontSize: '2em', // Larger title
+        fontSize: '1.5em',
         fontWeight: '700',
-        marginBottom: '25px', // More space below title
-        borderBottom: '3px solid #FF6B35', // Thicker orange underline
-        paddingBottom: '12px',
-        letterSpacing: '-0.02em',
+        margin: 0,
+    },
+    modalCloseButton: {
+        backgroundColor: 'transparent',
+        border: 'none',
+        fontSize: '1.5em',
+        cursor: 'pointer',
+        color: '#6c757d',
+        padding: '4px',
+        borderRadius: '4px',
+        transition: 'color 0.3s ease',
+    },
+    closeChatButton: {
+        backgroundColor: '#212529',
+        color: '#ffffff',
+        border: 'none',
+        padding: '12px 24px',
+        borderRadius: '12px',
+        cursor: 'pointer',
+        fontSize: '1em',
+        margin: '24px 32px',
+        fontWeight: '600',
+        transition: 'all 0.3s ease',
+        width: 'calc(100% - 64px)',
     },
 };
-// End of jobAppStyles object
+
+// Add CSS animations
+const styleSheet = document.createElement("style");
+styleSheet.textContent = `
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes bounce {
+    0%, 80%, 100% { 
+        transform: scale(0);
+        opacity: 0.5;
+    } 
+    40% { 
+        transform: scale(1.0);
+        opacity: 1;
+    }
+}
+
+/* Responsive hover effects */
+@media (hover: hover) {
+    .job-app-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+    }
+    
+    .job-app-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    }
+    
+    .job-app-search:focus {
+        border-color: #FF6B35;
+        box-shadow: 0 0 0 3px rgba(255,107,53,0.1);
+    }
+}
+
+/* Mobile optimizations */
+@media (max-width: 767px) {
+    .job-app-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .job-app-contact-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .job-app-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .job-app-actions {
+        justify-content: center;
+    }
+}
+`;
+document.head.appendChild(styleSheet);
 
 export default JobOfferApplications;
