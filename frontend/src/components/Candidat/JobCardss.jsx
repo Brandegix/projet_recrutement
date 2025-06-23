@@ -269,23 +269,28 @@ const JobSearchAndOffers = () => {
   const jobsPerPage = 6;
 
   // Fetch jobs data
-  useEffect(() => {
-    axios.get(`${process.env.REACT_APP_API_URL}/api/je`)
-      .then(response => {
-        const updatedJobs = response.data.map(job => ({
-          ...job,
-          logo: job.logo || "https://dummyimage.com/80x80/000/fff.png&text=No+Logo"
-        }));
-        setJobs(updatedJobs);
-        setFilteredJobs(updatedJobs);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error("Erreur lors du chargement des offres :", error);
-        setError(true);
-        setLoading(false);
-      });
-  }, []);
+ useEffect(() => {
+  axios.get(`${process.env.REACT_APP_API_URL}/api/je`)
+    .then(response => {
+      const updatedJobs = response.data.map(job => ({
+        ...job,
+        logo: job.logo || "https://dummyimage.com/80x80/000/fff.png&text=No+Logo",
+        // Normalize these fields:
+        title: job.title ? job.title.toLowerCase().trim() : '',
+        location: job.location ? job.location.toLowerCase().trim() : '',
+        salary: job.salary ? job.salary.toLowerCase().trim() : '',
+        type: job.type ? job.type.toLowerCase().trim() : '',
+      }));
+      setJobs(updatedJobs);
+      setFilteredJobs(updatedJobs);
+      setLoading(false);
+    })
+    .catch(error => {
+      console.error("Erreur lors du chargement des offres :", error);
+      setError(true);
+      setLoading(false);
+    });
+}, []);
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/saved-jobs`, { withCredentials: true })
