@@ -451,8 +451,8 @@ const modalSubtitleStyle = {
 
 const modalCloseButtonStyle = {
     position: 'absolute',
-    top: '10px',
-    right: '10px',
+    bottom: 40px ,
+    left: 400px ,
     background: 'none',
     border: 'none',
     color: '#fff',
