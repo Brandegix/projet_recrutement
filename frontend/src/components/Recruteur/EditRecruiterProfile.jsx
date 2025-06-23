@@ -693,41 +693,38 @@ const styles = {
   },
 
   cancelButton: {
-    padding: "13px 26px", // Increased padding
-    borderRadius: "10px", // Larger border-radius
-    border: "2px solid #cbd5e1", // Slightly darker border
-    backgroundColor: "#ffffff",
-    color: "#475569", // Darker text color
-    fontSize: "1rem",
-    fontWeight: "600",
-    cursor: "pointer",
-    transition: "all 0.2s ease",
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-    "&:hover": {
-      backgroundColor: "#f0f4f8", // More distinct hover
-      borderColor: "#94a3b8",
-      color: "#1e293b",
-      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          backgroundColor: "#ff6b35",
+      color: "#fff",
+      padding: isMobile ? "14px 25px" : "15px 30px",
+      borderRadius: "25px",
+      fontSize: isMobile ? "1rem" : "1.1rem",
+      fontWeight: "600",
+      textDecoration: "none",
+      boxShadow: "0 6px 20px rgba(255, 107, 53, 0.3)",
+      transition: "all 0.3s ease",
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "10px",
+      minHeight: "44px", // Touch-friendly
+    
     }
   },
 
   submitButton: {
-    padding: "13px 26px", // Increased padding
-    borderRadius: "10px", // Larger border-radius
-    border: "none",
-    background: "linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)",
-    color: "#ffffff",
-    fontSize: "1rem",
-    fontWeight: "600",
-    cursor: "pointer",
-    transition: "all 0.2s ease",
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    boxShadow: "0 6px 16px rgba(255, 107, 53, 0.3)", // More prominent shadow
+         backgroundColor: "#ff6b35",
+      color: "#fff",
+      padding: isMobile ? "14px 25px" : "15px 30px",
+      borderRadius: "25px",
+      fontSize: isMobile ? "1rem" : "1.1rem",
+      fontWeight: "600",
+      textDecoration: "none",
+      boxShadow: "0 6px 20px rgba(255, 107, 53, 0.3)",
+      transition: "all 0.3s ease",
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "10px",
+      minHeight: "44px", // Touch-friendly
+    
   },
 
   submitButtonDisabled: {
