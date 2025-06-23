@@ -978,147 +978,306 @@ const JobSearchAndOffers = () => {
           gap: 1.5rem;
           margin-bottom: 3rem;
         }
+/* Job Card */
+.job-card {
+  background: white;
+  border-radius: 1rem;
+  border: 2px solid #e9ecef;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
 
-        /* Job Card */
-        .job-card {
-          background: white;
-          border-radius: 1rem;
-          border: 2px solid #e9ecef;
-          overflow: hidden;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          position: relative;
-        }
+.job-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border-color: #ff8c00;
+}
 
-        .job-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-          border-color: #ff8c00;
-        }
+.job-card-header {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #f8f9fa;
+  /* Add flex-wrap to allow elements to wrap on smaller screens */
+  flex-wrap: nowrap; /* Default to no wrap for larger screens */
+  gap: 1rem; /* Add a default gap for better spacing */
+}
 
-        .job-card-header {
-          padding: 1.5rem;
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          border-bottom: 2px solid #f8f9fa;
-        }
+.company-info {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+  min-width: 0; /* Important for flex items containing text to shrink */
+}
 
-        .company-info {
-          display: flex;
-          gap: 1rem;
-          flex: 1;
-        }
+.company-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid #e9ecef;
+}
 
-          .company-logo {
-          width: 60px;
-          height: 60px;
-          border-radius: 0.75rem;
-          overflow: hidden;
-          background: #f8f9fa;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-          border: 2px solid #e9ecef;
-        }
+.company-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-        .company-logo img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
+.job-title-info {
+  flex: 1;
+  min-width: 0; /* Ensures the text can shrink within the flex container */
+  /* If you want the title and company name to stack vertically within this container: */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Vertically center if there's extra space */
+}
 
-        .job-title-info {
-          flex: 1;
-          min-width: 0;
-        }
+.job-title {
+  font-size: 1.25rem; /* Base size for desktop */
+  font-weight: 700;
+  color: #212529;
+  margin: 0 0 0.25rem;
+  line-height: 1.3;
+  word-break: break-word; /* Allows long words to break */
+  overflow-wrap: break-word; /* Modern equivalent/alternative for word-break */
+}
 
-        .job-title {
-          font-size: 1.25rem;
-          font-weight: 700;
-          color: #212529;
-          margin: 0 0 0.25rem;
-          line-height: 1.3;
-        }
+.company-name {
+  color: #6c757d;
+  font-size: 0.95rem; /* Base size for desktop */
+  margin: 0;
+  font-weight: 500;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
 
-        .company-name {
-          color: #6c757d;
-          font-size: 0.95rem;
-          margin: 0;
-          font-weight: 500;
-        }
+.job-type-badge {
+  flex-shrink: 0; /* Prevents the badge from shrinking */
+  margin-left: 1rem; /* Add some space between job-title-info and badge */
+}
 
-        .job-type-badge {
-          flex-shrink: 0;
-        }
+.badge {
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 2px solid transparent;
+}
 
-        .badge {
-          padding: 0.375rem 0.75rem;
-          border-radius: 0.5rem;
-          font-size: 0.8rem;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          border: 2px solid transparent;
-        }
+.badge.cdi {
+  background: #212529;
+  color: white;
+}
 
-        .badge.cdi {
-          background: #212529;
-          color: white;
-        }
+.badge.cdd {
+  background: #ff8c00;
+  color: white;
+}
 
-        .badge.cdd {
-          background: #ff8c00;
-          color: white;
-        }
+.badge.freelance {
+  background: white;
+  color: #212529;
+  border-color: #212529;
+}
 
-        .badge.freelance {
-          background: white;
-          color: #212529;
-          border-color: #212529;
-        }
+.badge.stage {
+  background: #f8f9fa;
+  color: #495057;
+  border-color: #dee2e6;
+}
 
-        .badge.stage {
-          background: #f8f9fa;
-          color: #495057;
-          border-color: #dee2e6;
-        }
+.job-card-body {
+  padding: 1.5rem;
+}
 
-        .job-card-body {
-          padding: 1.5rem;
-        }
+.job-meta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+  color: #495057;
+  font-size: 0.9rem;
+}
 
-        .job-meta {
-          display: flex;
-          gap: 1rem;
-          flex-wrap: wrap;
-          margin-bottom: 1rem;
-          color: #495057;
-          font-size: 0.9rem;
-        }
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
 
-        .meta-item {
-          display: flex;
-          align-items: center;
-          gap: 0.25rem;
-        }
+.meta-item svg {
+  color: #ff8c00;
+}
 
-        .meta-item svg {
-          color: #ff8c00;
-        }
+.job-description {
+  font-size: 0.95rem;
+  color: #495057;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-        .job-description {
-          font-size: 0.95rem;
-          color: #495057;
-          line-height: 1.6;
-          margin-bottom: 1.5rem;
-          display: -webkit-box;
-          -webkit-line-clamp: 3;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
+/* --- Responsive Adjustments --- */
 
+/* For smaller desktops and large tablets (e.g., max-width: 1200px to 992px) */
+@media (max-width: 1200px) {
+  .job-title {
+    font-size: 1.15rem; /* Slightly reduce title size */
+  }
+
+  .company-name {
+    font-size: 0.9rem; /* Slightly reduce company name size */
+  }
+}
+
+/* For tablets and smaller (e.g., max-width: 992px) */
+@media (max-width: 992px) {
+  .job-card-header {
+    padding: 1.25rem;
+    /* Allow header items to wrap if they get too crowded */
+    flex-wrap: wrap;
+    align-items: center; /* Center items when they wrap */
+    justify-content: center; /* Center items horizontally */
+    text-align: center; /* Center text if elements stack */
+    gap: 0.75rem; /* Adjust gap when wrapped */
+  }
+
+  .company-info {
+    /* When wrapped, company-info might take full width or align center */
+    flex-direction: column; /* Stack logo and info vertically within company-info */
+    align-items: center; /* Center logo and text within company-info */
+    flex-basis: 100%; /* Make company-info take full width when wrapped */
+    margin-bottom: 0.5rem; /* Space between company-info and badge if badge wraps below */
+  }
+
+  .company-logo {
+    width: 50px; /* Smaller logo */
+    height: 50px;
+    margin-bottom: 0.5rem; /* Space below logo when stacked */
+  }
+
+  .job-title-info {
+    text-align: center; /* Center text within job-title-info when items wrap */
+    margin-bottom: 0.5rem; /* Space below title/company when badge wraps below */
+  }
+
+  .job-title {
+    font-size: 1.1rem; /* Further reduce title size */
+    line-height: 1.2;
+  }
+
+  .company-name {
+    font-size: 0.85rem; /* Further reduce company name size */
+  }
+
+  .job-type-badge {
+    margin-left: 0; /* Remove left margin when wrapped */
+    margin-top: 0.5rem; /* Add top margin if it wraps to new line */
+    flex-basis: 100%; /* Make badge take full width for better click target */
+    max-width: fit-content; /* Adjust badge width to its content */
+    margin: 0 auto; /* Center the badge if it's on its own line */
+  }
+
+  .job-card-body {
+    padding: 1.25rem;
+  }
+
+  .job-meta {
+    font-size: 0.85rem;
+    justify-content: center; /* Center meta items when wrapped */
+  }
+
+  .job-description {
+    font-size: 0.9rem;
+  }
+}
+
+/* For mobile devices (e.g., max-width: 768px) */
+@media (max-width: 768px) {
+  .job-card {
+    border-radius: 0.75rem;
+  }
+
+  .job-card-header {
+    padding: 1rem;
+    gap: 0.5rem;
+  }
+
+  .company-logo {
+    width: 45px; /* Even smaller logo */
+    height: 45px;
+  }
+
+  .job-title {
+    font-size: 1rem; /* Final size for title on small mobiles */
+    line-height: 1.1;
+  }
+
+  .company-name {
+    font-size: 0.8rem; /* Final size for company name on small mobiles */
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  .job-card-body {
+    padding: 1rem;
+  }
+
+  .job-meta {
+    font-size: 0.8rem;
+    gap: 0.75rem;
+  }
+
+  .job-description {
+    font-size: 0.85rem;
+  }
+}
+
+/* For very small mobile devices (e.g., max-width: 480px) */
+@media (max-width: 480px) {
+  .job-card-header {
+    padding: 0.8rem;
+  }
+
+  .company-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .job-title {
+    font-size: 0.95rem; /* Slightly smaller for tiny screens */
+  }
+
+  .company-name {
+    font-size: 0.75rem;
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .job-card-body {
+    padding: 0.8rem;
+  }
+}
         .skills-container {
           margin-top: 1rem;
         }
