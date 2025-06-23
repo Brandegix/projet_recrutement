@@ -456,7 +456,7 @@ const modalCloseButtonStyle = {
     background: 'none',
     border: 'none',
     color: '#fff',
-    fontSize: '1.2em',
+    fontSize: '1.5em',
     cursor: 'pointer',
     outline: 'none'
 };
