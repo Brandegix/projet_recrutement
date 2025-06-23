@@ -1684,7 +1684,6 @@ const JobSearchAndOffers = () => {
   margin: 0;
   line-height: 1.6;
 }
-
 .cta-button {
 
           display: flex;
@@ -1715,6 +1714,100 @@ const JobSearchAndOffers = () => {
           padding: 0 0 0 0 ;
 
         }
+.cta-button:hover {
+  background: #e67e00;
+  border-color: #e67e00;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(255, 140, 0, 0.4);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .cta-content {
+    flex-wrap: wrap; /* Allow items to wrap to the next line */
+    justify-content: center; /* Center items when they wrap */
+    text-align: center; /* Center text for wrapped content */
+    padding: 2.5rem 1.5rem;
+  }
+
+  .cta-visual {
+    margin-bottom: 1.5rem; /* Add space between visual and text when wrapped */
+  }
+
+  .cta-text h3 {
+    font-size: 1.5rem;
+  }
+
+  .cta-text p {
+    font-size: 1rem;
+  }
+
+  .cta-button {
+    width: 100%; /* Make button full width on smaller screens */
+    max-width: 300px; /* Limit max width of button for better aesthetics */
+    margin-top: 1.5rem; /* Add space above the button */
+  }
+}
+
+@media (max-width: 768px) {
+  .saved-jobs-cta {
+    margin: 3rem 0.5rem 0; /* Adjust margin for smaller screens */
+    border-radius: 1rem;
+  }
+
+  .cta-content {
+    padding: 2rem 1rem; /* Further reduce padding */
+    flex-direction: column; /* Stack items vertically */
+    gap: 1.5rem;
+  }
+
+  .cta-visual {
+    margin-bottom: 1rem;
+  }
+
+  .cta-icon {
+    width: 70px;
+    height: 70px;
+  }
+
+  .cta-text h3 {
+    font-size: 1.3rem;
+  }
+
+  .cta-text p {
+    font-size: 0.95rem;
+  }
+
+  .cta-button {
+    font-size: 0.9rem;
+    padding: 0.8rem 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .cta-content {
+    padding: 1.5rem 0.8rem;
+  }
+
+  .cta-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .cta-text h3 {
+    font-size: 1.2rem;
+  }
+
+  .cta-text p {
+    font-size: 0.9rem;
+  }
+
+  .cta-button {
+    padding: 0.7rem 1rem;
+  }
+}
+
+
 .cta-button:hover {
   background: #e67e00;
   border-color: #e67e00;
