@@ -254,61 +254,87 @@ const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user a
       }} />
 
       {/* Desktop: Horizontal layout for logo, title and badge */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <div style={{
-            width: '60px',
-            height: '60px',
-            borderRadius: '12px',
-            overflow: 'hidden',
-            border: '2px solid #333'
-          }}>
-            <img
-              src={job.logo && job.logo.startsWith("http")
-                ? job.logo
-                : "https://dummyimage.com/60x60/333/fff.png&text=" + (job.company ? job.company.charAt(0) : 'C')}
-              alt={job.logo ? "Logo de l'entreprise" : "Logo par défaut"}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover'
-              }}
-            />
-          </div>
-          <div>
-            <h3 style={{
-              color: '#ffffff',
-              fontSize: '1.3rem',
-              fontWeight: '600',
-              margin: '0 0 5px 0',
-              lineHeight: '1.3'
-            }}>
-              {job.title}
-            </h3>
-            <p style={{
-              color: '#cccccc',
-              fontSize: '1rem',
-              margin: '0',
-              fontWeight: '500'
-            }}>
-              {job.company}
-            </p>
-          </div>
-        </div>
+     <div style={{
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start',
+  marginBottom: '20px'
+}}>
+  {/* company-info */}
+  <div style={{
+    display: 'flex',
+    gap: '15px', /* Keeping your original gap, which is close to 1rem */
+    flex: '1'
+  }}>
+    {/* company-logo */}
+    <div style={{
+      width: '60px',
+      height: '60px',
+      borderRadius: '12px', /* Converted 0.75rem to 12px */
+      overflow: 'hidden',
+      background: 'transparent', /* Keeping your original theme's transparent background */
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexShrink: '0',
+      border: '2px solid #333' /* Keeping your original border color */
+    }}>
+      <img
+        src={job.logo && job.logo.startsWith("http")
+          ? job.logo
+          : `/api/placeholder/60/60?text=${job.company ? job.company.charAt(0) : 'C'}`}
+        alt={`${job.company} logo`}
+        onError={(e) => {
+          e.target.src = `https://dummyimage.com/60x60/333/fff.png&text=${job.company ? job.company.charAt(0) : 'C'}`;
+        }}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover'
+        }}
+      />
+    </div>
+    {/* job-title-info */}
+    <div style={{
+      flex: '1',
+      minWidth: '0'
+    }}>
+      {/* job-title */}
+      <h3 style={{
+        color: '#ffffff', /* Keeping your original theme's white text */
+        fontSize: '1.3rem', /* Keeping your original font size */
+        fontWeight: '600', /* Keeping your original font weight */
+        margin: '0 0 5px 0', /* Keeping your original margin */
+        lineHeight: '1.3'
+      }}>
+        {job.title}
+      </h3>
+      {/* company-name */}
+      <p style={{
+        color: '#cccccc', /* Keeping your original theme's grey text */
+        fontSize: '1rem',
+        margin: '0',
+        fontWeight: '500'
+      }}>
+        {job.company}
+      </p>
+    </div>
+  </div>
 
-        {/* Desktop: Badge at right */}
-        <span style={{
-          background: 'rgba(255, 107, 53, 0.1)',
-          color: '#ff6b35',
-          padding: '6px 15px',
-          borderRadius: '20px',
-          fontSize: '0.85rem',
-          fontWeight: '600',
-          border: '1px solid rgba(255, 107, 53, 0.3)'
-        }}>
-          {job.type}
-        </span>
-      </div>
+  {/* Desktop: Badge at right */}
+  <span style={{
+    background: 'rgba(255, 107, 53, 0.1)',
+    color: '#ff6b35',
+    padding: '6px 15px',
+    borderRadius: '20px',
+    fontSize: '0.85rem',
+    fontWeight: '600',
+    border: '1px solid rgba(255, 107, 53, 0.3)'
+  }}>
+    {job.type}
+  </span>
+</div>
+       
 
       <div style={{ marginBottom: '20px' }}>
         {/* Desktop: Left-aligned icons */}
