@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { 
-  Search, 
-  MapPin, 
-  Briefcase, 
-  Bookmark, 
+import {
+  Search,
+  MapPin,
+  Briefcase,
+  Bookmark,
   BookmarkCheck,
-  ChevronLeft, 
-  ChevronRight, 
-  MoreHorizontal, 
-  Heart, 
+  ChevronLeft,
+  ChevronRight,
+  MoreHorizontal,
+  Heart,
   ArrowRight,
   Filter,
   SlidersHorizontal,
@@ -18,12 +18,13 @@ import {
   Eye,
   Star,
   X,
-  Menu
+  Menu,
+  Loader2 // Import Loader2 for the spinning animation
 } from 'lucide-react';
 import axios from 'axios';
 
 // Enhanced Job Card Component
-const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
+const JobCard = ({ job, onApply, isApplied, onSave, isSaved, isSaving }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleViewDetails = () => {
@@ -32,7 +33,7 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
   };
 
   return (
-    <div 
+    <div
       className={`job-card ${isHovered ? 'hovered' : ''}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -70,10 +71,7 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
             <Briefcase size={16} />
             <span>{job.experience}</span>
           </div>
-          <div className="meta-item">
-            <DollarSign size={16} />
-            <span className="salary">{job.salary}</span>
-          </div>
+
         </div>
 
         <p className="job-description">
@@ -108,7 +106,7 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
               Postulé
             </button>
           ) : (
-            <button 
+            <button
               className="btn btn-primary"
               onClick={handleViewDetails}
             >
@@ -116,13 +114,18 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
               Postuler
             </button>
           )}
-          
-          <button 
+
+          <button
             className={`btn btn-save ${isSaved ? 'saved' : ''}`}
             onClick={() => onSave(job.id, isSaved)}
             title={isSaved ? "Retirer des favoris" : "Ajouter aux favoris"}
+            disabled={isSaving} {/* Disable button while saving/unsaving */}
           >
-            {isSaved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+            {isSaving ? (
+              <Loader2 size={16} className="spinner" /> // Show spinner when loading
+            ) : (
+              isSaved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />
+            )}
           </button>
         </div>
       </div>
@@ -222,13 +225,13 @@ const SavedJobsCTA = () => {
             <div className="floating-element"></div>
           </div>
         </div>
-        
+
         <div className="cta-text">
           <h3>Vos Offres Favorites</h3>
           <p>Retrouvez facilement toutes les opportunités qui vous intéressent dans votre espace personnalisé</p>
         </div>
-        
-        <button 
+
+        <button
           className="cta-button"
           onClick={() => window.location.href = '/SavedJobOffers'}
         >
@@ -250,9 +253,10 @@ const JobSearchAndOffers = () => {
   const [candidateId, setCandidateId] = useState(null);
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [savedJobs, setSavedJobs] = useState([]);
+  const [savingJobId, setSavingJobId] = useState(null); // New state to track which job is being saved/unsaved
   const [currentPage, setCurrentPage] = useState(1);
   const [candidate, setCandidate] = useState(null);
-  
+
   // Filter states
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPoste, setSelectedPoste] = useState('');
@@ -266,7 +270,7 @@ const JobSearchAndOffers = () => {
   // Fetch jobs data
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/je`)
-    .then(response => {
+      .then(response => {
         const updatedJobs = response.data.map(job => ({
           ...job,
           logo: job.logo || "https://dummyimage.com/80x80/000/fff.png&text=No+Logo"
@@ -284,7 +288,7 @@ const JobSearchAndOffers = () => {
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/saved-jobs`, { withCredentials: true })
-    .then(response => {
+      .then(response => {
         const savedJobIds = response.data.map(job => job.id);
         setSavedJobs(savedJobIds);
       })
@@ -293,31 +297,39 @@ const JobSearchAndOffers = () => {
       });
   }, [candidateId]);
 
-  const handleSavedJob = (jobId) => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
-    })
-    .then(res => {
-      if (!res.ok) throw new Error('Failed to save job');
-      return res.json();
-    })
-    .then(data => {
-      setSavedJobs(prev =>
-        prev.includes(jobId) ? prev.filter(id => id !== jobId) : [...prev, jobId]
-      );
-    })
-    .catch(error => {
-      console.error('Erreur sauvegarde de l\'offre :', error);
-      alert("Impossible de sauvegarder l'offre pour le moment.");
-    });
+
+  const handleSaveJob = async (jobId, currentlySaved) => {
+    setSavingJobId(jobId); // Set loading for this specific job
+    try {
+      if (currentlySaved) {
+        await fetch(`${process.env.REACT_APP_API_URL}/api/unsave-job`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+        });
+        setSavedJobs(prev => prev.filter(id => id !== jobId));
+      } else {
+        await fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
+        });
+        setSavedJobs(prev => [...prev, jobId]);
+      }
+    } catch (error) {
+      console.error(`Erreur lors de la ${currentlySaved ? 'suppression' : 'sauvegarde'} de l'offre :`, error);
+      alert(`Impossible de ${currentlySaved ? 'retirer' : 'sauvegarder'} l'offre pour le moment.`);
+    } finally {
+      setSavingJobId(null); // Reset loading
+    }
   };
+
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/api/current_candidate`, { credentials: 'include' })
-    .then(res => res.json())
+      .then(res => res.json())
       .then(data => {
         setCandidate(data);
         setCandidateId(data.id);
@@ -333,51 +345,6 @@ const JobSearchAndOffers = () => {
       })
       .catch(err => console.error("Erreur candidate ou applications:", err));
   }, []);
-
-  const handleSaveJob = (jobId, currentlySaved) => {
-    if (currentlySaved) {
-      handleUnsaveJob(jobId);
-    } else {
-      fetch(`${process.env.REACT_APP_API_URL}/api/save-job`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
-      })
-        .then(res => {
-          if (!res.ok) throw new Error('Failed to save job');
-          return res.json();
-        })
-        .then(() => {
-          setSavedJobs(prev => [...prev, jobId]);
-        })
-        .catch(error => {
-          console.error('Erreur sauvegarde de l\'offre :', error);
-          alert("Impossible de sauvegarder l'offre pour le moment.");
-        });
-    }
-  };
-
-  const handleUnsaveJob = (jobId) => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/unsave-job`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ job_offer_id: jobId, candidate_id: candidateId })
-    })
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to unsave job');
-        return res.json();
-      })
-      .then(() => {
-        setSavedJobs(prev => prev.filter(id => id !== jobId));
-      })
-      .catch(error => {
-        console.error("Erreur lors de la suppression de l'enregistrement :", error);
-        alert("Impossible de retirer l'offre des sauvegardés pour le moment.");
-      });
-  };
-
 
 
   const handleApply = (jobId) => {
@@ -411,26 +378,26 @@ const JobSearchAndOffers = () => {
   useEffect(() => {
     const filterJobs = () => {
       const results = jobs.filter(job => {
-        const matchesSearch = searchTerm === '' || 
+        const matchesSearch = searchTerm === '' ||
           job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
           job.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
           job.company.toLowerCase().includes(searchTerm.toLowerCase());
-        
-        const matchesPoste = selectedPoste === '' || 
+
+        const matchesPoste = selectedPoste === '' ||
           job.title.toLowerCase().includes(selectedPoste.toLowerCase());
-        
-        const matchesLieu = selectedLieu === '' || 
+
+        const matchesLieu = selectedLieu === '' ||
           job.location.toLowerCase().includes(selectedLieu.toLowerCase());
-        
-        const matchesSalaire = selectedSalaire === '' || 
+
+        const matchesSalaire = selectedSalaire === '' ||
           (job.salary && job.salary.toLowerCase().includes(selectedSalaire.toLowerCase()));
-        
-        const matchesDomaine = selectedDomaine === '' || 
+
+        const matchesDomaine = selectedDomaine === '' ||
           job.type.toLowerCase().includes(selectedDomaine.toLowerCase());
 
         return matchesSearch && matchesPoste && matchesLieu && matchesSalaire && matchesDomaine;
       });
-      
+
       setFilteredJobs(results);
       setCurrentPage(1);
     };
@@ -438,7 +405,7 @@ const JobSearchAndOffers = () => {
     filterJobs();
   }, [searchTerm, selectedPoste, selectedLieu, selectedSalaire, selectedDomaine, jobs]);
 
-  
+
   // Get unique filter options
   const filterOptions = useMemo(() => ({
     postes: [...new Set(jobs.map(job => job.title))],
@@ -527,7 +494,7 @@ const JobSearchAndOffers = () => {
                 className="search-input"
               />
               {searchTerm && (
-                <button 
+                <button
                   onClick={() => setSearchTerm('')}
                   className="clear-search"
                 >
@@ -539,7 +506,7 @@ const JobSearchAndOffers = () => {
 
           {/* Filters Toggle */}
           <div className="filters-toggle">
-            <button 
+            <button
               onClick={() => setShowFilters(!showFilters)}
               className={`filters-btn ${showFilters ? 'active' : ''}`}
             >
@@ -559,7 +526,7 @@ const JobSearchAndOffers = () => {
                 Tout effacer
               </button>
             </div>
-            
+
             <div className="filters-grid">
               <div className="filter-group">
                 <label className="filter-label">
@@ -668,6 +635,7 @@ const JobSearchAndOffers = () => {
                   isApplied={appliedJobs.includes(job.id)}
                   onSave={handleSaveJob}
                   isSaved={savedJobs.includes(job.id)}
+                  isSaving={savingJobId === job.id} // Pass loading state for this specific job
                 />
               ))}
             </div>
@@ -687,73 +655,74 @@ const JobSearchAndOffers = () => {
       <style jsx>{`
         .job-search-container {
           min-height: 100vh;
-background: linear-gradient(to right, #f8f9fa, #e9ecef);    
-border-radius: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);}
-/* Hero Section */
-.hero-section {
-  background: linear-gradient(to right, #f8f9fa, #e9ecef);
-  color: #212529;
-  padding: 3rem 1rem 4rem;
-  position: relative;
-  overflow: hidden;
-  border-radius: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
+          background: linear-gradient(to right, #f8f9fa, #e9ecef);
+          border-radius: 1rem;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        /* Hero Section */
+        .hero-section {
+          background: linear-gradient(to right, #f8f9fa, #e9ecef);
+          color: #212529;
+          padding: 3rem 1rem 4rem;
+          position: relative;
+          overflow: hidden;
+          border-radius: 1rem;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
 
-.hero-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100"><polygon fill="rgba(0,0,0,0.03)" points="0,0 1000,0 1000,60 0,100"/></svg>') no-repeat center bottom;
-  background-size: cover;
-  opacity: 0.3;
-  z-index: 0;
-}
+        .hero-section::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100"><polygon fill="rgba(0,0,0,0.03)" points="0,0 1000,0 1000,60 0,100"/></svg>') no-repeat center bottom;
+          background-size: cover;
+          opacity: 0.3;
+          z-index: 0;
+        }
 
-.hero-content {
-  max-width: 1000px;
-  margin: 0 auto;
-  text-align: center;
-  position: relative;
-  z-index: 1;
-}
+        .hero-content {
+          max-width: 1000px;
+          margin: 0 auto;
+          text-align: center;
+          position: relative;
+          z-index: 1;
+        }
 
-.hero-text h1 {
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 700;
-  color: #343a40;
-  margin-bottom: 1rem;
-}
+        .hero-text h1 {
+          font-size: clamp(2rem, 5vw, 3rem);
+          font-weight: 700;
+          color: #343a40;
+          margin-bottom: 1rem;
+        }
 
-.hero-text p {
-  font-size: clamp(1rem, 2vw, 1.25rem);
-  margin-bottom: 2rem;
-  color: #6c757d;
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
-  line-height: 1.6;
-}
+        .hero-text p {
+          font-size: clamp(1rem, 2vw, 1.25rem);
+          margin-bottom: 2rem;
+          color: #6c757d;
+          max-width: 700px;
+          margin-left: auto;
+          margin-right: auto;
+          line-height: 1.6;
+        }
 
-.hero-stats {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 2rem;
-  margin-top: 2rem;
-}
+        .hero-stats {
+          display: flex;
+          justify-content: center;
+          flex-wrap: wrap;
+          gap: 2rem;
+          margin-top: 2rem;
+        }
 
-.hero-stats > div {
-  background: #fff;
-  padding: 1rem 1.5rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  min-width: 120px;
-}
+        .hero-stats > div {
+          background: #fff;
+          padding: 1rem 1.5rem;
+          border-radius: 0.75rem;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+          min-width: 120px;
+        }
 
         .stat {
           text-align: center;
@@ -1120,37 +1089,33 @@ border-radius: 1rem;
 
         .job-meta {
           display: flex;
-          flex-wrap: wrap;
           gap: 1rem;
+          flex-wrap: wrap;
           margin-bottom: 1rem;
+          color: #495057;
+          font-size: 0.9rem;
         }
 
         .meta-item {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          color: #6c757d;
-          font-size: 0.9rem;
-          font-weight: 500;
+          gap: 0.25rem;
         }
 
         .meta-item svg {
           color: #ff8c00;
         }
 
-        .salary {
-          font-weight: 700;
-          color: #212529;
-        }
-
         .job-description {
+          font-size: 0.95rem;
           color: #495057;
           line-height: 1.6;
-          margin: 0 0 1rem;
+          margin-bottom: 1.5rem;
           display: -webkit-box;
           -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
           overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .skills-container {
@@ -1164,24 +1129,27 @@ border-radius: 1rem;
         }
 
         .skill-tag {
-          padding: 0.25rem 0.75rem;
-          background: #f8f9fa;
+          background: #e9ecef;
           color: #495057;
-          border-radius: 9999px;
+          padding: 0.3rem 0.7rem;
+          border-radius: 0.375rem;
           font-size: 0.8rem;
           font-weight: 500;
-          border: 1px solid #e9ecef;
+          white-space: nowrap;
         }
 
         .skill-tag.more {
-          background: #212529;
-          color: white;
-          border-color: #212529;
+          background: #dee2e6;
+          color: #6c757d;
         }
 
         .job-card-footer {
           padding: 1.5rem;
           border-top: 2px solid #f8f9fa;
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          gap: 0.75rem;
         }
 
         .action-buttons {
@@ -1190,91 +1158,111 @@ border-radius: 1rem;
         }
 
         .btn {
+          padding: 0.75rem 1.25rem;
+          border-radius: 0.75rem;
+          font-size: 0.95rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          padding: 0.75rem 1.25rem;
-          border-radius: 0.5rem;
-          font-size: 0.9rem;
-          font-weight: 600;
-          text-decoration: none;
-          transition: all 0.2s;
-          cursor: pointer;
-          border: 2px solid transparent;
-          flex: 1;
           justify-content: center;
+          gap: 0.5rem;
+          white-space: nowrap;
         }
 
         .btn-primary {
           background: #ff8c00;
           color: white;
-          border-color: #ff8c00;
+          border: 2px solid #ff8c00;
         }
 
         .btn-primary:hover {
           background: #e67e00;
           border-color: #e67e00;
+          box-shadow: 0 4px 12px rgba(255, 140, 0, 0.2);
           transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
+        }
+
+        .btn-primary:disabled {
+          background: #cccccc;
+          border-color: #cccccc;
+          cursor: not-allowed;
+          box-shadow: none;
         }
 
         .btn-applied {
-          background: #f8f9fa;
+          background: #e9ecef;
           color: #6c757d;
-          border-color: #e9ecef;
+          border: 2px solid #e9ecef;
           cursor: not-allowed;
         }
 
         .btn-save {
-          background: white;
-          color: #495057;
-          border-color: #dee2e6;
-          flex: 0 0 auto;
-          padding: 0.75rem;
+          background: #f8f9fa;
+          color: #6c757d;
+          border: 2px solid #dee2e6;
+          width: 3rem;
+          height: 3rem;
+          padding: 0;
+          border-radius: 50%;
+          flex-shrink: 0;
         }
 
-        .btn-save:hover {
-          background: #f8f9fa;
-          color: #ff8c00;
+        .btn-save:hover:not(:disabled) {
           border-color: #ff8c00;
+          color: #ff8c00;
+          background: #fff5e6;
         }
 
         .btn-save.saved {
-          background: #212529;
+          background: #ff8c00;
           color: white;
-          border-color: #212529;
+          border-color: #ff8c00;
+        }
+
+        .btn-save.saved:hover:not(:disabled) {
+          background: #e67e00;
+          border-color: #e67e00;
+        }
+
+        .btn-save:disabled {
+          background: #e9ecef;
+          color: #adb5bd;
+          border-color: #e9ecef;
+          cursor: not-allowed;
         }
 
         /* Pagination */
         .pagination-wrapper {
           display: flex;
           justify-content: center;
-          margin-top: 3rem;
+          margin-top: 2rem;
         }
 
         .pagination {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.75rem;
           background: white;
-          padding: 1rem;
+          padding: 0.75rem 1rem;
           border-radius: 1rem;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
           border: 2px solid #f8f9fa;
         }
 
         .pagination-btn {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          padding: 0.75rem 1rem;
           background: #f8f9fa;
           border: 2px solid #e9ecef;
-          border-radius: 0.5rem;
           color: #495057;
-          font-weight: 600;
+          padding: 0.6rem 1rem;
+          border-radius: 0.75rem;
           cursor: pointer;
           transition: all 0.2s;
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-weight: 500;
         }
 
         .pagination-btn:hover:not(:disabled) {
@@ -1285,244 +1273,91 @@ border-radius: 1rem;
         }
 
         .pagination-btn:disabled {
-          opacity: 0.5;
+          opacity: 0.6;
           cursor: not-allowed;
+          background: #f1f3f5;
+          border-color: #f1f3f5;
+        }
+
+        .pagination-btn.prev .btn-text {
+          margin-right: 0.25rem;
+        }
+
+        .pagination-btn.next .btn-text {
+          margin-left: 0.25rem;
         }
 
         .pagination-numbers {
           display: flex;
-          align-items: center;
-          gap: 0.25rem;
-          margin: 0 0.5rem;
+          gap: 0.5rem;
         }
 
         .pagination-number {
-          width: 2.5rem;
+          background: #f8f9fa;
+          border: 2px solid #e9ecef;
+          color: #495057;
+          min-width: 2.5rem;
           height: 2.5rem;
           display: flex;
           align-items: center;
           justify-content: center;
-          border-radius: 0.5rem;
-          border: 2px solid transparent;
-          background: transparent;
-          color: #6c757d;
-          font-weight: 600;
+          border-radius: 0.75rem;
           cursor: pointer;
           transition: all 0.2s;
+          font-weight: 600;
         }
 
-        .pagination-number:hover {
-          background: #f8f9fa;
-          color: #212529;
+        .pagination-number:hover:not(.active) {
+          background: #ff8c00;
+          color: white;
+          border-color: #ff8c00;
         }
 
         .pagination-number.active {
           background: #ff8c00;
           color: white;
           border-color: #ff8c00;
+          cursor: default;
+          box-shadow: 0 2px 8px rgba(255, 140, 0, 0.2);
         }
 
         .pagination-dots {
-          width: 2.5rem;
-          height: 2.5rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #adb5bd;
-        }
-
-        /* Empty State */
-        .empty-state {
-          text-align: center;
-          padding: 4rem 2rem;
           color: #6c757d;
-        }
-
-        .empty-icon {
-          margin-bottom: 1rem;
-          color: #adb5bd;
-        }
-
-        .empty-state h3 {
-          font-size: 1.5rem;
-          color: #212529;
-          margin: 0 0 0.5rem;
-          font-weight: 700;
-        }
-
-        .empty-state p {
-          font-size: 1.1rem;
-          margin: 0 0 2rem;
-          max-width: 500px;
-          margin-left: auto;
-          margin-right: auto;
-        }
-
-        /* Saved Jobs CTA */
-        .saved-jobs-cta {
-          background: linear-gradient(135deg, #212529 0%, #000000 100%);
-          margin: 4rem 1rem 0;
-          border-radius: 1.5rem;
-          overflow: hidden;
-          position: relative;
-          border: 2px solid #343a40;
-        }
-
-        .cta-content {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 3rem 2rem;
           display: flex;
-          align-items: center;
-          gap: 2rem;
-          position: relative;
-          z-index: 1;
+          align-items: flex-end;
+          padding-bottom: 0.2rem;
         }
 
-        .cta-visual {
-          position: relative;
-          flex-shrink: 0;
-        }
-
-        .cta-icon {
-          width: 80px;
-          height: 80px;
-          background: linear-gradient(135deg, #ff8c00, #e67e00);
-          border-radius: 1rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          position: relative;
-          z-index: 2;
-          border: 3px solid #343a40;
-        }
-
-        .floating-elements {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-        }
-
-        .floating-element {
-          position: absolute;
-          width: 8px;
-          height: 8px;
-          background: rgba(255, 140, 0, 0.4);
-          border-radius: 50%;
-          animation: float 6s ease-in-out infinite;
-        }
-
-        .floating-element:nth-child(1) {
-          top: -10px;
-          left: -10px;
-          animation-delay: 0s;
-        }
-
-        .floating-element:nth-child(2) {
-          top: -5px;
-          right: -15px;
-          animation-delay: 2s;
-        }
-
-        .floating-element:nth-child(3) {
-          bottom: -10px;
-          left: 50%;
-          animation-delay: 4s;
-        }
-
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) scale(1); opacity: 0.7; }
-          50% { transform: translateY(-20px) scale(1.1); opacity: 1; }
-        }
-
-        .cta-text {
-          flex: 1;
-          color: white;
-        }
-
-        .cta-text h3 {
-          font-size: 1.75rem;
-          font-weight: 700;
-          margin: 0 0 0.5rem;
-        }
-
-        .cta-text p {
-          font-size: 1.1rem;
-          opacity: 0.8;
-          margin: 0;
-          line-height: 1.6;
-        }
-
-        .cta-button {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          background: #ff8c00;
-          color: white;
-          border: 2px solid #ff8c00;
-          border-radius: 0.75rem;
-          font-size: 1rem;
-          font-weight: 700;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          flex-shrink: 0;
-          width: 200px;
-        }
-
-        .cta-button:hover {
-          background: #e67e00;
-          border-color: #e67e00;
-          transform: translateY(-2px);
-          box-shadow: 0 10px 20px rgba(255, 140, 0, 0.4);
-        }
-
-        /* Loading State */
-        .loading-container {
+        /* Loading and Error States */
+        .loading-container, .error-container {
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          min-height: 50vh;
+          min-height: 60vh;
+          text-align: center;
           padding: 2rem;
+          background: #f8f9fa;
+          border-radius: 1rem;
+          margin: 2rem auto;
+          max-width: 800px;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
 
         .loading-spinner {
-          margin-bottom: 1rem;
-        }
-
-        .spinner {
-          width: 48px;
-          height: 48px;
-          border: 4px solid #e9ecef;
-          border-top: 4px solid #ff8c00;
+          width: 60px;
+          height: 60px;
+          border: 6px solid #e9ecef;
+          border-top-color: #ff8c00;
           border-radius: 50%;
           animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+          margin-bottom: 1.5rem;
         }
 
         .loading-text {
-          color: #6c757d;
-          font-size: 1.1rem;
-          margin: 0;
+          font-size: 1.25rem;
+          color: #495057;
           font-weight: 500;
-        }
-
-        /* Error State */
-        .error-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          min-height: 50vh;
-          padding: 2rem;
-          text-align: center;
         }
 
         .error-icon {
@@ -1531,275 +1366,337 @@ border-radius: 1rem;
         }
 
         .error-container h2 {
-          color: #212529;
-          font-size: 1.75rem;
-          margin: 0 0 0.5rem;
-          font-weight: 700;
+          color: #dc3545;
+          margin-bottom: 0.75rem;
         }
 
         .error-container p {
           color: #6c757d;
-          font-size: 1.1rem;
-          margin: 0 0 2rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .spinner {
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 3rem 1rem;
+          text-align: center;
+          background: white;
+          border-radius: 1rem;
+          border: 2px dashed #e9ecef;
+          color: #6c757d;
+          max-width: 600px;
+          margin: 3rem auto;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .empty-icon {
+          margin-bottom: 1.5rem;
+          color: #adb5bd;
+        }
+
+        .empty-state h3 {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: #343a40;
+          margin-bottom: 0.75rem;
+        }
+
+        .empty-state p {
+          font-size: 1rem;
+          margin-bottom: 2rem;
+          max-width: 400px;
+        }
+
+        /* Saved Jobs CTA */
+        .saved-jobs-cta {
+          background: linear-gradient(135deg, #ffaf5e, #ff8c00);
+          color: white;
+          padding: 2.5rem 1.5rem;
+          border-radius: 1.5rem;
+          max-width: 1200px;
+          margin: 3rem auto;
+          box-shadow: 0 15px 30px rgba(255, 140, 0, 0.2);
+          overflow: hidden;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+        }
+
+        .cta-content {
+          position: relative;
+          z-index: 2;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1.5rem;
+          max-width: 700px;
+        }
+
+        .cta-visual {
+          position: relative;
+          width: 80px;
+          height: 80px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1rem;
+        }
+
+        .cta-icon {
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 50%;
+          width: 70px;
+          height: 70px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid rgba(255, 255, 255, 0.4);
+          box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-icon svg {
+          color: white;
+          stroke-width: 2.5px;
+        }
+
+        .floating-elements {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          pointer-events: none;
+        }
+
+        .floating-element {
+          position: absolute;
+          background: rgba(255, 255, 255, 0.15);
+          border-radius: 50%;
+          opacity: 0;
+          animation: float 6s infinite ease-in-out;
+        }
+
+        .floating-element:nth-child(1) {
+          width: 20px;
+          height: 20px;
+          top: 10%;
+          left: 15%;
+          animation-delay: 0s;
+        }
+        .floating-element:nth-child(2) {
+          width: 30px;
+          height: 30px;
+          top: 60%;
+          right: 10%;
+          animation-delay: 2s;
+        }
+        .floating-element:nth-child(3) {
+          width: 25px;
+          height: 25px;
+          bottom: 5%;
+          left: 40%;
+          animation-delay: 4s;
+        }
+
+        @keyframes float {
+          0%, 100% { transform: translateY(0) scale(1); opacity: 0.15; }
+          50% { transform: translateY(-10px) scale(1.1); opacity: 0.4; }
+        }
+
+        .cta-text h3 {
+          font-size: 1.8rem;
+          margin-bottom: 0.75rem;
+          font-weight: 700;
+          line-height: 1.3;
+        }
+
+        .cta-text p {
+          font-size: 1rem;
+          line-height: 1.5;
+          margin-bottom: 1.5rem;
+          opacity: 0.9;
           max-width: 500px;
         }
 
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-          .hero-stats {
-            gap: 2rem;
-          }
-          
-          .jobs-grid {
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-          }
-          
-          .filters-grid {
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          }
+        .cta-button {
+          background: white;
+          color: #ff8c00;
+          padding: 0.8rem 1.8rem;
+          border-radius: 2rem;
+          font-weight: 700;
+          font-size: 1rem;
+          border: none;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
 
+        .cta-button:hover {
+          background: #f8f9fa;
+          transform: translateY(-2px);
+          box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .cta-button svg {
+          color: #ff8c00;
+          transition: transform 0.3s ease;
+        }
+
+        .cta-button:hover svg {
+          transform: translateX(3px);
+        }
+
+        /* Responsive adjustments */
         @media (max-width: 768px) {
           .hero-section {
-            padding: 3rem 1rem 4rem;
+            padding-top: 2rem;
+            padding-bottom: 3rem;
           }
-          
-          .hero-stats {
-            flex-direction: column;
-            gap: 1.5rem;
-          }
-          
-          .search-section {
-            margin: -2rem 1rem 0;
-            border-radius: 1rem;
-          }
-          
-          .search-container {
-            padding: 1.5rem;
-          }
-          
-          .jobs-grid {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-          }
-          
-          .job-card-header {
-            padding: 1rem;
-          }
-          
-          .job-card-body {
-            padding: 1rem;
-          }
-          
-          .job-card-footer {
-            padding: 1rem;
-          }
-          
-          .company-info {
-            gap: 0.75rem;
-          }
-          
-          .company-logo {
-            width: 50px;
-            height: 50px;
-          }
-          
-          .job-title {
-            font-size: 1.1rem;
-          }
-          
-          .job-meta {
-            flex-direction: column;
-            gap: 0.5rem;
-          }
-          
-          .meta-item {
-            font-size: 0.85rem;
-          }
-          
-          .filters-grid {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-          }
-          
-          .cta-content {
-            flex-direction: column;
-            text-align: center;
-            padding: 2rem 1.5rem;
-          }
-          
-          .cta-text h3 {
-            font-size: 1.5rem;
-          }
-          
-          .pagination {
-            flex-wrap: wrap;
-            gap: 0.25rem;
-          }
-          
-          .pagination-btn .btn-text {
-            display: none;
-          }
-          
-          .results-section {
-            padding: 2rem 1rem;
-          }
-        }
 
-        @media (max-width: 480px) {
-          .hero-section {
-            padding: 2rem 1rem 3rem;
-          }
-          
-          .search-input {
-            font-size: 1rem;
-            padding: 1rem 1rem 1rem 3rem;
-          }
-          
-          .search-icon {
-            left: 1rem;
-          }
-          
-          .clear-search {
-            right: 0.75rem;
-          }
-          
-          .job-card-header {
-            flex-direction: column;
-            gap: 1rem;
-            align-items: flex-start;
-          }
-          
-          .job-type-badge {
-            align-self: flex-start;
-          }
-          
-          .action-buttons {
-            flex-direction: column;
-          }
-          
-          .btn-save {
-            flex: 1;
-            justify-content: center;
-          }
-          
-          .company-info {
-            width: 100%;
-          }
-          
-          .job-title {
-            font-size: 1rem;
-          }
-          
-          .company-name {
-            font-size: 0.9rem;
-          }
-          
-          .pagination-numbers {
-            order: -1;
-            margin: 0;
-          }
-          
-          .pagination {
-            flex-direction: column;
-            gap: 1rem;
-          }
-        }
-
-        @media (max-width: 360px) {
-          .search-container {
-            padding: 1rem;
-          }
-          
           .hero-text h1 {
             font-size: 2rem;
           }
-          
+
           .hero-text p {
             font-size: 1rem;
           }
-          
-          .job-card-header,
-          .job-card-body,
-          .job-card-footer {
-            padding: 0.75rem;
+
+          .hero-stats {
+            flex-direction: column;
+            gap: 1rem;
           }
-          
-          .btn {
-            padding: 0.625rem 1rem;
-            font-size: 0.85rem;
+
+          .search-section {
+            margin: -2rem 0.5rem 0;
+            padding: 1.5rem;
           }
-          
+
+          .search-container {
+            padding: 1rem;
+          }
+
+          .search-input {
+            padding: 1rem 1rem 1rem 3rem;
+            font-size: 1rem;
+          }
+
+          .search-icon {
+            left: 1rem;
+          }
+
+          .filters-btn {
+            width: 100%;
+            justify-content: center;
+          }
+
           .filters-panel.show {
             padding: 1rem;
           }
-        }
 
-        /* High DPI displays */
-        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-          .company-logo img {
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
+          .filters-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
           }
-        }
 
-        /* Landscape orientation adjustments */
-        @media (max-height: 500px) and (orientation: landscape) {
-          .hero-section {
-            padding: 2rem 1rem 3rem;
+          .results-section {
+            padding: 2rem 0.5rem;
+          }
+
+          .jobs-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+
+          .job-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+          }
+
+          .job-type-badge {
+            align-self: flex-end;
+          }
+
+          .job-card-footer {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.5rem;
+          }
+
+          .action-buttons {
+            width: 100%;
+            flex-direction: column;
+            gap: 0.5rem;
+          }
+
+          .btn {
+            width: 100%;
+          }
+
+          .btn-save {
+            width: 100%;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1.25rem;
+            height: auto;
+          }
+
+          .pagination {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+          }
+
+          .pagination-btn {
+            padding: 0.5rem 0.75rem;
+          }
+
+          .pagination-numbers {
+            flex-basis: 100%;
+            justify-content: center;
+            order: 3; /* Move numbers below buttons on small screens */
+            margin-top: 0.5rem;
+          }
+
+          .pagination-number {
+            min-width: 2rem;
+            height: 2rem;
           }
           
-          .hero-stats {
-            flex-direction: row;
-            gap: 1.5rem;
-          }
-        }
-
-        /* Dark mode friendly adjustments */
-        @media (prefers-color-scheme: dark) {
-          .job-search-container {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-          }
-          
-          .search-section {
-            background: #ffffff;
-            border-color: #e9ecef;
-          }
-          
-          .job-card {
-            background: #ffffff;
-            border-color: #e9ecef;
-          }
-        }
-
-        /* Print styles */
-        @media print {
-          .hero-section,
-          .search-section,
           .saved-jobs-cta {
-            display: none;
+            padding: 2rem 1rem;
+            margin: 2rem auto;
           }
-          
-          .job-card {
-            break-inside: avoid;
-            box-shadow: none;
-            border: 2px solid #000;
+
+          .cta-text h3 {
+            font-size: 1.5rem;
           }
-          
-          .pagination-wrapper {
-            display: none;
+
+          .cta-text p {
+            font-size: 0.9rem;
           }
-          
-          .btn-primary {
-            background: #000 !important;
-            color: #fff !important;
+
+          .cta-button {
+            width: 100%;
+            justify-content: center;
           }
-          
-          .btn-save.saved {
-            background: #000 !important;
-            color: #fff !important;
-          }
-      
         }
       `}</style>
     </div>
