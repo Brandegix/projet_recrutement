@@ -1065,7 +1065,6 @@ const JobSearchAndOffers = () => {
 }
 
 .badge {
-  padding: 0.375rem 0.75rem;
   border-radius: 0.5rem;
   font-size: 0.8rem;
   font-weight: 600;
