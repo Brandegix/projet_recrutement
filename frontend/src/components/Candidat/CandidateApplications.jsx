@@ -613,7 +613,7 @@ const CandidateApplications = () => {
                     <div style={styles.modalHeader}>
                         <h2 style={styles.modalTitle}>Conversation avec le recruteur</h2>
                         <button onClick={closeChatModal} style={styles.closeButton}>
-                            <IoClose size={isMobile ? 18 : 20} />
+                            
                         </button>
                     </div>
                     <div style={styles.modalBody}>
