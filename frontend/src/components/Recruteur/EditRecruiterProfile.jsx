@@ -1,130 +1,142 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import Navbar from "../Navbara"
-import Footer from "../Footer"
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../Navbara";
+import Footer from "../Footer";
 
 function EditRecruiterProfile() {
   const [profile, setProfile] = useState({
     companyName: "",
     email: "",
-    description: "",
+    description: "", // Initialize as empty string
     phoneNumber: "",
     address: "",
     name: "",
     creationDate: "",
     public_profile: false,
-  })
+  });
 
-  const [isLoading, setIsLoading] = useState(true)
-  const [isSaving, setIsSaving] = useState(false)
-  const [errors, setErrors] = useState({})
-  const [successMessage, setSuccessMessage] = useState("")
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        setIsLoading(true)
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/profile`, {
-          credentials: "include",
-        })
+        setIsLoading(true);
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}/api/recruiter/profile`,
+          {
+            credentials: "include",
+          }
+        );
         if (res.ok) {
-          const data = await res.json()
-          setProfile(data)
+          const data = await res.json();
+          // Ensure description is a string, even if it comes as null from API
+          setProfile({
+            ...data,
+            description: data.description || "", // IMPORTANT: Convert null to empty string here
+            public_profile: data.public_profile || false, // Also handle boolean for safety
+          });
         } else {
-          setErrors({ general: "Erreur lors du chargement du profil" })
+          setErrors({ general: "Erreur lors du chargement du profil" });
         }
       } catch (error) {
-        setErrors({ general: "Erreur de connexion" })
+        setErrors({ general: "Erreur de connexion" });
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchProfile()
-  }, [])
+    fetchProfile();
+  }, []);
 
   const validateForm = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     if (!profile.name.trim()) {
-      newErrors.name = "Le nom est requis"
+      newErrors.name = "Le nom est requis";
     }
 
     if (!profile.email.trim()) {
-      newErrors.email = "L'email est requis"
+      newErrors.email = "L'email est requis";
     } else if (!/\S+@\S+\.\S+/.test(profile.email)) {
-      newErrors.email = "Format d'email invalide"
+      newErrors.email = "Format d'email invalide";
     }
 
     if (!profile.companyName.trim()) {
-      newErrors.companyName = "Le nom de l'entreprise est requis"
+      newErrors.companyName = "Le nom de l'entreprise est requis";
     }
 
-    if (profile.phoneNumber && !/^[\d\s\-+$$$$]+$/.test(profile.phoneNumber)) {
-      newErrors.phoneNumber = "Format de téléphone invalide"
+    // This regex also needs the `^` and `$` anchors for full string match
+    if (profile.phoneNumber && !/^[\d\s\-+]+$/.test(profile.phoneNumber)) {
+      newErrors.phoneNumber = "Format de téléphone invalide";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value, type, checked } = e.target;
     setProfile({
       ...profile,
-      [name]: value,
-    })
+      [name]: type === "checkbox" ? checked : value,
+    });
 
     // Clear error for this field when user starts typing
     if (errors[name]) {
       setErrors({
         ...errors,
         [name]: "",
-      })
+      });
     }
-  }
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!validateForm()) {
-      return
+      return;
     }
 
     try {
-      setIsSaving(true)
-      setErrors({})
+      setIsSaving(true);
+      setErrors({});
 
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/recruiter/update_profile`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(profile),
-      })
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/recruiter/update_profile`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(profile),
+        }
+      );
 
       if (res.ok) {
-        const updatedProfile = await res.json()
-        setProfile(updatedProfile)
-        setSuccessMessage("Profil mis à jour avec succès !")
+        const updatedProfile = await res.json();
+        setProfile(updatedProfile);
+        setSuccessMessage("Profil mis à jour avec succès !");
 
         // Navigate after showing success message
         setTimeout(() => {
-          navigate("/RecruiterProfile")
-        }, 1500)
+          navigate("/RecruiterProfile");
+        }, 1500);
       } else {
-        const errorData = await res.json()
-        setErrors({ general: errorData.message || "Erreur lors de la mise à jour" })
+        const errorData = await res.json();
+        setErrors({ general: errorData.message || "Erreur lors de la mise à jour" });
       }
     } catch (error) {
-      setErrors({ general: "Erreur de connexion" })
+      setErrors({ general: "Erreur de connexion" });
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   if (isLoading) {
     return (
@@ -143,7 +155,7 @@ function EditRecruiterProfile() {
           <Footer />
         </div>
       </>
-    )
+    );
   }
 
   return (
@@ -157,7 +169,13 @@ function EditRecruiterProfile() {
             {/* Header Section */}
             <div style={styles.header}>
               <div style={styles.headerIcon}>
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
                   <path
                     d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z"
                     fill="#ff6b35"
@@ -174,7 +192,13 @@ function EditRecruiterProfile() {
             {/* Success Message */}
             {successMessage && (
               <div style={styles.successMessage} className="success-message">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
                   <path
                     d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
                     stroke="#10b981"
@@ -190,7 +214,13 @@ function EditRecruiterProfile() {
             {/* General Error */}
             {errors.general && (
               <div style={styles.errorMessage} className="error-message">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
                   <path
                     d="M12 9V13M12 17H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
                     stroke="#ef4444"
@@ -319,14 +349,15 @@ function EditRecruiterProfile() {
                   <textarea
                     id="description"
                     name="description"
-                    value={profile.description}
+                    value={profile.description} // This is the line 329
                     onChange={handleChange}
                     placeholder="Décrivez votre entreprise, ses activités, sa culture..."
                     rows={5}
                     style={styles.textarea}
                     className="form-textarea"
                   />
-                  <div style={styles.charCount}>{profile.description.length}/500 caractères</div>
+                  {/* The fix is also applied here: ensuring profile.description is a string */}
+                  <div style={styles.charCount}>{(profile.description || "").length}/500 caractères</div>
                 </div>
               </div>
 
@@ -341,12 +372,7 @@ function EditRecruiterProfile() {
                       id="public_profile"
                       name="public_profile"
                       checked={profile.public_profile}
-                      onChange={(e) =>
-                        setProfile({
-                          ...profile,
-                          public_profile: e.target.checked,
-                        })
-                      }
+                      onChange={handleChange} // Use general handleChange
                       style={styles.checkbox}
                     />
                     <label htmlFor="public_profile" style={styles.checkboxLabel}>
@@ -386,7 +412,13 @@ function EditRecruiterProfile() {
                     </>
                   ) : (
                     <>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
                         <path
                           d="M19 21H5C4.44772 21 4 20.5523 4 20V4C4 3.44772 4.44772 3 5 3H16L20 7V20C20 20.5523 19.5523 21 19 21Z"
                           stroke="currentColor"
@@ -421,7 +453,7 @@ function EditRecruiterProfile() {
         <Footer />
       </div>
     </>
-  )
+  );
 }
 
 const styles = {
@@ -721,7 +753,7 @@ const styles = {
     color: "#6b7280",
     fontWeight: "500",
   },
-}
+};
 
 const responsiveStyles = `
 @keyframes spin {
@@ -858,6 +890,6 @@ const responsiveStyles = `
 .error-message {
     animation: fadeIn 0.3s ease-out !important;
 }
-`
+`;
 
-export default EditRecruiterProfile
+export default EditRecruiterProfile;
