@@ -1554,6 +1554,7 @@ const JobSearchAndOffers = () => {
           flex-shrink: 0;
 
           width: 200px;
+          padding: 0 0 0 0 ;
 
         }
 .cta-button:hover {
