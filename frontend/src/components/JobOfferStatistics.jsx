@@ -337,14 +337,15 @@ const JobOfferStatistics = () => {
 
             {/* Modal */}
             {selectedOffer && (
-                <div style={modalOverlayStyle}>
-                    <div style={modalStyle}>
-                        <div style={modalHeaderStyle}>
-                            <button onClick={closeGraphModal} style={modalCloseButtonStyle}>
-                                X
-                            </button>
-                        </div>
-                        <div style={modalContentStyle}>
+            <div 
+            style={modalOverlayStyle}
+             onClick={closeGraphModal}  
+               >
+              <div 
+              style={modalStyle}
+               onClick={(e) => e.stopPropagation()}  
+              >
+                         <div style={modalContentStyle}>
                             <ResponsiveContainer width="100%" height={250}>
                                 <PieChart>
                                     <Pie
@@ -417,7 +418,8 @@ const modalOverlayStyle = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1000
+    zIndex: 1000,
+    cursor: 'pointer'  
 };
 
 const modalStyle = {
@@ -426,7 +428,8 @@ const modalStyle = {
     boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
     maxWidth: '500px',
     width: '90%',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    cursor: 'default'
 };
 
 const modalHeaderStyle = {
@@ -463,8 +466,8 @@ const modalCloseButtonStyle = {
 };
 
 const modalContentStyle = {
-    padding: '20px',
-    marginTop: '20px', // Added margin at the top
+   padding: '30px',  
+    marginTop: '0'    
 };
 
 export default JobOfferStatistics;
