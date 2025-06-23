@@ -340,7 +340,6 @@ const JobOfferStatistics = () => {
                 <div style={modalOverlayStyle}>
                     <div style={modalStyle}>
                         <div style={modalHeaderStyle}>
-                            <h2 style={modalTitleStyle}>{selectedOffer.title}</h2>
                             <button onClick={closeGraphModal} style={modalCloseButtonStyle}>
                                 X
                             </button>
@@ -433,9 +432,11 @@ const modalStyle = {
 const modalHeaderStyle = {
     background: '#ff9800',
     color: '#fff',
-    padding: '20px',
+    padding: '10px',
     borderBottom: '1px solid #f57c00',
-    position: 'relative'
+    position: 'relative',
+    height: '40px' 
+
 };
 
 const modalTitleStyle = {
