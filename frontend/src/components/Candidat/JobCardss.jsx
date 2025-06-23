@@ -977,55 +977,59 @@ const JobSearchAndOffers = () => {
           grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
           gap: 1.5rem;
           margin-bottom: 3rem;
- /* Job Card */
-        .job-card {
-          background: white;
-          border-radius: 1rem;
-          border: 2px solid #e9ecef;
-          overflow: hidden;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          position: relative;
-        }
 
-        .job-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-          border-color: #ff8c00;
-        }
+/* Job Card */
+.job-card {
+  background: white;
+  border-radius: 1rem;
+  border: 2px solid #e9ecef;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
 
-        .job-card-header {
-          padding: 1.5rem;
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          border-bottom: 2px solid #f8f9fa;
-        }
+.job-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border-color: #ff8c00;
+}
 
-        .company-info {
-          display: flex;
-          gap: 1rem;
-          flex: 1;
-        }
+.job-card-header {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #f8f9fa;
+  /* Add flex-wrap to allow elements to wrap on smaller screens */
+  flex-wrap: nowrap; /* Default to no wrap for larger screens */
+  gap: 1rem; /* Add a default gap for better spacing */
+}
 
-          .company-logo {
-          width: 60px;
-          height: 60px;
-          border-radius: 0.75rem;
-          overflow: hidden;
-          background: #f8f9fa;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-          border: 2px solid #e9ecef;
-        }
+.company-info {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+  min-width: 0; /* Important for flex items containing text to shrink */
+}
 
-        .company-logo img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
+.company-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid #e9ecef;
+}
 
+.company-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
 .job-title-info {
   flex: 1;
@@ -1056,40 +1060,42 @@ const JobSearchAndOffers = () => {
 }
 
 .job-type-badge {
-          flex-shrink: 0;
-        }
+  flex-shrink: 0; /* Prevents the badge from shrinking */
+  margin-left: 1rem; /* Add some space between job-title-info and badge */
+}
 
-        .badge {
-          padding: 0.375rem 0.75rem;
-          border-radius: 0.5rem;
-          font-size: 0.8rem;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          border: 2px solid transparent;
-        }
+.badge {
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 2px solid transparent;
+}
 
-        .badge.cdi {
-          background: #212529;
-          color: white;
-        }
+.badge.cdi {
+  background: #212529;
+  color: white;
+}
 
-        .badge.cdd {
-          background: #ff8c00;
-          color: white;
-        }
+.badge.cdd {
+  background: #ff8c00;
+  color: white;
+}
 
-        .badge.freelance {
-          background: white;
-          color: #212529;
-          border-color: #212529;
-        }
+.badge.freelance {
+  background: white;
+  color: #212529;
+  border-color: #212529;
+}
 
-        .badge.stage {
-          background: #f8f9fa;
-          color: #495057;
-          border-color: #dee2e6;
-        }
+.badge.stage {
+  background: #f8f9fa;
+  color: #495057;
+  border-color: #dee2e6;
+}
+
 .job-card-body {
   padding: 1.5rem;
 }
