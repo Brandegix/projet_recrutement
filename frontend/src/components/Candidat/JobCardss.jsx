@@ -1060,41 +1060,40 @@ const JobSearchAndOffers = () => {
 }
 
 .job-type-badge {
-  flex-shrink: 0; /* Prevents the badge from shrinking */
-  margin-left: 1rem; /* Add some space between job-title-info and badge */
-}
+          flex-shrink: 0;
+        }
 
-.badge {
-  border-radius: 0.5rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border: 2px solid transparent;
-}
+        .badge {
+          padding: 0.375rem 0.75rem;
+          border-radius: 0.5rem;
+          font-size: 0.8rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          border: 2px solid transparent;
+        }
 
-.badge.cdi {
-  background: #212529;
-  color: white;
-}
+        .badge.cdi {
+          background: #212529;
+          color: white;
+        }
 
-.badge.cdd {
-  background: #ff8c00;
-  color: white;
-}
+        .badge.cdd {
+          background: #ff8c00;
+          color: white;
+        }
 
-.badge.freelance {
-  background: white;
-  color: #212529;
-  border-color: #212529;
-}
+        .badge.freelance {
+          background: white;
+          color: #212529;
+          border-color: #212529;
+        }
 
-.badge.stage {
-  background: #f8f9fa;
-  color: #495057;
-  border-color: #dee2e6;
-}
-
+        .badge.stage {
+          background: #f8f9fa;
+          color: #495057;
+          border-color: #dee2e6;
+        }
 .job-card-body {
   padding: 1.5rem;
 }
