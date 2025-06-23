@@ -6,26 +6,45 @@ import axios from 'axios';
 // Custom hook for responsive design
 function useWindowWidth() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  
+
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  
+
   return windowWidth;
 }
 
-const JobCard = ({ job }) => {
+// --- Modified JobCard Component ---
+const JobCard = ({ job, isLoggedIn, user }) => { // Accept isLoggedIn and user as props
   const navigate = useNavigate();
   const windowWidth = useWindowWidth();
   const isMobile = windowWidth < 768; // Mobile breakpoint
-  
+
   const handleApplyClick = () => {
-    navigate('/login/candidat');
+    if (isLoggedIn) {
+      if (user && user.role === 'candidate') {
+        // If the user is a candidate, navigate to their applications or a specific job application page
+        navigate('/Offres'); // Or a more specific path like `/apply/${job.id}`
+        alert("Redirection vers la page de candidature."); // For demonstration
+      } else if (user && user.role === 'recruiter') {
+        // If the user is a recruiter, navigate them to their job offers dashboard
+        navigate('/RecruiterJobOffers);
+        alert("Vous êtes un recruteur. Redirection vers votre tableau de bord."); // For demonstration
+      } else {
+        // Fallback for logged-in users with unexpected or no role
+        navigate('/'); // Or a general logged-in user dashboard
+        alert("Redirection vers le tableau de bord."); // For demonstration
+      }
+    } else {
+      // If not logged in, redirect to the login page for candidates
+      navigate('/ChoixRole2'); // Assuming '/ChoixRole2' is your login page
+      alert("Veuillez vous connecter pour postuler."); // For demonstration
+    }
   };
 
-  // MOBILE CARD LAYOUT
+  // MOBILE CARD LAYOUT (unchanged visually, only logic for handleApplyClick updated)
   if (isMobile) {
     return (
       <div style={{
@@ -39,17 +58,17 @@ const JobCard = ({ job }) => {
         position: 'relative',
         overflow: 'hidden'
       }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'translateY(-5px)';
-        e.currentTarget.style.boxShadow = '0 20px 40px rgba(255, 107, 53, 0.1)';
-        e.currentTarget.style.borderColor = '#ff6b35';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.boxShadow = 'none';
-        e.currentTarget.style.borderColor = '#333';
-      }}>
-        
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-5px)';
+          e.currentTarget.style.boxShadow = '0 20px 40px rgba(255, 107, 53, 0.1)';
+          e.currentTarget.style.borderColor = '#ff6b35';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = 'none';
+          e.currentTarget.style.borderColor = '#333';
+        }}>
+
         {/* Gradient accent line */}
         <div style={{
           position: 'absolute',
@@ -59,7 +78,7 @@ const JobCard = ({ job }) => {
           height: '3px',
           background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)'
         }} />
-        
+
         {/* Company Logo - Mobile: Centered at top */}
         <div style={{
           display: 'flex',
@@ -86,7 +105,7 @@ const JobCard = ({ job }) => {
             />
           </div>
         </div>
-        
+
         {/* Job Title and Company - Mobile: Centered */}
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <h3 style={{
@@ -106,7 +125,7 @@ const JobCard = ({ job }) => {
           }}>
             {job.company}
           </p>
-          
+
           {/* Job Type Badge - Mobile: Centered */}
           <span style={{
             background: 'rgba(255, 107, 53, 0.1)',
@@ -134,7 +153,7 @@ const JobCard = ({ job }) => {
               <span>{job.experience}</span>
             </div>
           </div>
-          
+
           {/* Mobile: Centered text */}
           <p style={{
             color: '#aaaaaa',
@@ -149,7 +168,7 @@ const JobCard = ({ job }) => {
           }}>
             {job.description}
           </p>
-          
+
           {/* Skills - Mobile: Centered */}
           {job.skills && job.skills.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '15px', justifyContent: 'center' }}>
@@ -171,7 +190,7 @@ const JobCard = ({ job }) => {
 
         {/* Mobile: Centered full-width button */}
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <button 
+          <button
             onClick={handleApplyClick}
             style={{
               background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
@@ -202,7 +221,7 @@ const JobCard = ({ job }) => {
     );
   }
 
-  // DESKTOP CARD LAYOUT
+  // DESKTOP CARD LAYOUT (unchanged visually, only logic for handleApplyClick updated)
   return (
     <div style={{
       background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
@@ -215,17 +234,17 @@ const JobCard = ({ job }) => {
       position: 'relative',
       overflow: 'hidden'
     }}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.transform = 'translateY(-5px)';
-      e.currentTarget.style.boxShadow = '0 20px 40px rgba(255, 107, 53, 0.1)';
-      e.currentTarget.style.borderColor = '#ff6b35';
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.transform = 'translateY(0)';
-      e.currentTarget.style.boxShadow = 'none';
-      e.currentTarget.style.borderColor = '#333';
-    }}>
-      
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-5px)';
+        e.currentTarget.style.boxShadow = '0 20px 40px rgba(255, 107, 53, 0.1)';
+        e.currentTarget.style.borderColor = '#ff6b35';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.boxShadow = 'none';
+        e.currentTarget.style.borderColor = '#333';
+      }}>
+
       {/* Gradient accent line */}
       <div style={{
         position: 'absolute',
@@ -235,7 +254,7 @@ const JobCard = ({ job }) => {
         height: '3px',
         background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)'
       }} />
-      
+
       {/* Desktop: Horizontal layout for logo, title and badge */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
@@ -278,7 +297,7 @@ const JobCard = ({ job }) => {
             </p>
           </div>
         </div>
-        
+
         {/* Desktop: Badge at right */}
         <span style={{
           background: 'rgba(255, 107, 53, 0.1)',
@@ -305,7 +324,7 @@ const JobCard = ({ job }) => {
             <span>{job.experience}</span>
           </div>
         </div>
-        
+
         {/* Desktop: Left-aligned description */}
         <p style={{
           color: '#aaaaaa',
@@ -319,7 +338,7 @@ const JobCard = ({ job }) => {
         }}>
           {job.description}
         </p>
-        
+
         {/* Skills - Desktop: Left aligned */}
         {job.skills && job.skills.length > 0 && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '15px' }}>
@@ -341,9 +360,9 @@ const JobCard = ({ job }) => {
 
       {/* Desktop: Salary on left, button on right */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-       
-        
-        <button 
+
+
+        <button
           onClick={handleApplyClick}
           style={{
             background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
@@ -372,32 +391,69 @@ const JobCard = ({ job }) => {
   );
 };
 
+// --- Modified JobCards Component ---
 function JobCards() {
+  const navigate = useNavigate(); // Add navigate here if not already present
   const windowWidth = useWindowWidth();
   const isMobile = windowWidth < 768;
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = isMobile ? 3 : 3; // Fewer jobs per page on mobile
+  const jobsPerPage = isMobile ? 3 : 3;
   const [filteredJobs, setFilteredJobs] = useState([]);
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const indexOfLastJob = currentPage * jobsPerPage;
-  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-  const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
-  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  // --- Authentication States ---
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true); // New state for auth check loading
 
   const [selectedPoste, setSelectedPoste] = useState('');
   const [selectedLieu, setSelectedLieu] = useState('');
   const [selectedSalaire, setSelectedSalaire] = useState('');
   const [selectedDomaine, setSelectedDomaine] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  
+
+  // --- Auth Check Logic (Copied from Navbar) ---
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/session`, {
+          credentials: 'include',
+        });
+
+        if (!res.ok) {
+          // If not OK, it means no active session or an error
+          setIsLoggedIn(false);
+          setUser(null);
+          // throw new Error('Not logged in'); // Don't throw, just set state
+        } else {
+          const data = await res.json();
+          if (data && data.isLoggedIn) {
+            setIsLoggedIn(true);
+            setUser(data.user); // data.user should contain { id, name, role }
+          } else {
+            setIsLoggedIn(false);
+            setUser(null);
+          }
+        }
+      } catch (error) {
+        console.error("Authentication check error:", error);
+        setIsLoggedIn(false);
+        setUser(null);
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
+
+    checkAuthStatus();
+  }, []); // Run once on component mount
+
+  // --- Job Fetching Logic ---
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/je`)
-    .then(response => {
+      .then(response => {
         const updatedJobs = response.data.map(job => ({
           ...job,
           logo: job.logo && job.logo.startsWith("http")
@@ -419,7 +475,7 @@ function JobCards() {
     const results = jobs.filter(job =>
       (selectedPoste === '' || job.title.toLowerCase().includes(selectedPoste.toLowerCase())) &&
       (selectedLieu === '' || job.location.toLowerCase().includes(selectedLieu.toLowerCase())) &&
-      (selectedSalaire === '' || job.salary.toLowerCase().includes(selectedSalaire.toLowerCase())) &&
+      (selectedSalaire === '' || (job.salary && job.salary.toLowerCase().includes(selectedSalaire.toLowerCase()))) && // Check for job.salary existence
       (selectedDomaine === '' || job.type.toLowerCase().includes(selectedDomaine.toLowerCase())) &&
       (
         searchTerm === '' ||
@@ -432,10 +488,23 @@ function JobCards() {
     setCurrentPage(1);
   };
 
-  if (loading) return <p>Chargement des offres...</p>;
-  if (error) return <p>Erreur de chargement des offres. Vérifiez le backend.</p>;
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const indexOfLastJob = currentPage * jobsPerPage;
+  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+  const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
-  // Responsive search and pagination styles
+  // Display loading for both jobs and auth check
+  if (loading || isCheckingAuth) {
+    return <p style={{ textAlign: 'center', color: '#fff', fontSize: '1.2rem', padding: '50px' }}>
+      Chargement des offres et vérification de l'authentification...
+    </p>;
+  }
+  if (error) return <p style={{ textAlign: 'center', color: '#ff6b35', fontSize: '1.2rem', padding: '50px' }}>
+    Erreur de chargement des offres. Veuillez réessayer plus tard.
+  </p>;
+
+  // Responsive search and pagination styles (unchanged)
   const searchSectionStyle = {
     background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
     border: '1px solid #333',
@@ -443,7 +512,7 @@ function JobCards() {
     padding: isMobile ? '20px 15px' : '30px',
     marginBottom: isMobile ? '25px' : '40px'
   };
-  
+
   const paginationStyle = {
     display: 'flex',
     alignItems: 'center',
@@ -503,8 +572,8 @@ function JobCards() {
         {/* Filters */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: isMobile 
-            ? 'repeat(auto-fit, minmax(140px, 1fr))' 
+          gridTemplateColumns: isMobile
+            ? 'repeat(auto-fit, minmax(140px, 1fr))'
             : 'repeat(auto-fit, minmax(200px, 1fr))',
           gap: isMobile ? '15px' : '20px',
           marginBottom: '20px'
@@ -519,8 +588,8 @@ function JobCards() {
             }}>
               Poste
             </label>
-            <select 
-              value={selectedPoste} 
+            <select
+              value={selectedPoste}
               onChange={(e) => setSelectedPoste(e.target.value)}
               style={{
                 width: '100%',
@@ -550,8 +619,8 @@ function JobCards() {
             }}>
               Lieu
             </label>
-            <select 
-              value={selectedLieu} 
+            <select
+              value={selectedLieu}
               onChange={(e) => setSelectedLieu(e.target.value)}
               style={{
                 width: '100%',
@@ -581,8 +650,8 @@ function JobCards() {
             }}>
               Salaire
             </label>
-            <select 
-              value={selectedSalaire} 
+            <select
+              value={selectedSalaire}
               onChange={(e) => setSelectedSalaire(e.target.value)}
               style={{
                 width: '100%',
@@ -596,7 +665,7 @@ function JobCards() {
               }}
             >
               <option value="">Tous les salaires</option>
-              {[...new Set(jobs.map(job => job.salary))].map((salaire, index) => (
+              {[...new Set(jobs.map(job => job.salary).filter(Boolean))].map((salaire, index) => ( // Filter out undefined/null salaries
                 <option key={index} value={salaire}>{salaire}</option>
               ))}
             </select>
@@ -612,8 +681,8 @@ function JobCards() {
             }}>
               Type
             </label>
-            <select 
-              value={selectedDomaine} 
+            <select
+              value={selectedDomaine}
               onChange={(e) => setSelectedDomaine(e.target.value)}
               style={{
                 width: '100%',
@@ -635,7 +704,7 @@ function JobCards() {
         </div>
 
         <div style={{ textAlign: 'center' }}>
-          <button 
+          <button
             onClick={handleSearch}
             style={{
               background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
@@ -682,13 +751,18 @@ function JobCards() {
         ) : (
           <div style={{
             display: 'grid',
-            gridTemplateColumns: isMobile 
-              ? '1fr' 
+            gridTemplateColumns: isMobile
+              ? '1fr'
               : 'repeat(auto-fill, minmax(300px, 1fr))',
             gap: isMobile ? '15px' : '25px'
           }}>
             {currentJobs.map((job) => (
-              <JobCard key={job.id} job={job} />
+              <JobCard
+                key={job.id}
+                job={job}
+                isLoggedIn={isLoggedIn} // Pass isLoggedIn prop
+                user={user}         // Pass user prop
+              />
             ))}
           </div>
         )}
@@ -739,9 +813,9 @@ function JobCards() {
           </button>
 
           {/* Page Numbers */}
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
             gap: '4px',
             order: isMobile ? '0' : '1',
             width: isMobile ? '100%' : 'auto',
@@ -806,15 +880,15 @@ function JobCards() {
                       fontSize: '0.9rem',
                       fontWeight: '600',
                       border: 'none',
-                      backgroundColor: currentPage === page 
-                        ? '#ff6b35' 
+                      backgroundColor: currentPage === page
+                        ? '#ff6b35'
                         : 'rgba(255, 255, 255, 0.05)',
                       color: currentPage === page ? '#ffffff' : '#cccccc',
                       borderRadius: '10px',
                       cursor: 'pointer',
                       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                      boxShadow: currentPage === page 
-                        ? '0 4px 12px rgba(255, 107, 53, 0.4)' 
+                      boxShadow: currentPage === page
+                        ? '0 4px 12px rgba(255, 107, 53, 0.4)'
                         : '0 2px 4px rgba(0, 0, 0, 0.2)',
                       transform: 'translateY(0)',
                       display: 'flex',
@@ -874,7 +948,7 @@ function JobCards() {
             }}
             onMouseLeave={(e) => {
               if (currentPage !== totalPages) {
-                e.target.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
+                e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
                 e.target.style.transform = 'translateY(0)';
                 e.target.style.boxShadow = '0 2px 8px rgba(255, 107, 53, 0.15)';
               }
