@@ -977,59 +977,55 @@ const JobSearchAndOffers = () => {
           grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
           gap: 1.5rem;
           margin-bottom: 3rem;
+ /* Job Card */
+        .job-card {
+          background: white;
+          border-radius: 1rem;
+          border: 2px solid #e9ecef;
+          overflow: hidden;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
         }
-/* Job Card */
-.job-card {
-  background: white;
-  border-radius: 1rem;
-  border: 2px solid #e9ecef;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-}
 
-.job-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  border-color: #ff8c00;
-}
+        .job-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+          border-color: #ff8c00;
+        }
 
-.job-card-header {
-  padding: 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  border-bottom: 2px solid #f8f9fa;
-  /* Add flex-wrap to allow elements to wrap on smaller screens */
-  flex-wrap: nowrap; /* Default to no wrap for larger screens */
-  gap: 1rem; /* Add a default gap for better spacing */
-}
+        .job-card-header {
+          padding: 1.5rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          border-bottom: 2px solid #f8f9fa;
+        }
 
-.company-info {
-  display: flex;
-  gap: 1rem;
-  flex: 1;
-  min-width: 0; /* Important for flex items containing text to shrink */
-}
+        .company-info {
+          display: flex;
+          gap: 1rem;
+          flex: 1;
+        }
 
-.company-logo {
-  width: 60px;
-  height: 60px;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  background: #f8f9fa;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 2px solid #e9ecef;
-}
+          .company-logo {
+          width: 60px;
+          height: 60px;
+          border-radius: 0.75rem;
+          overflow: hidden;
+          background: #f8f9fa;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          border: 2px solid #e9ecef;
+        }
 
-.company-logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+        .company-logo img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
 
 .job-title-info {
   flex: 1;
