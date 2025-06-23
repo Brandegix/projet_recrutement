@@ -397,9 +397,7 @@ const EditJobOfferForm = () => {
                                 onClick={() => navigate('/RecruiterJobOffers')}
                                 style={cancelButtonPrimaryStyle}
                             >
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
-                                    <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="currentColor"/>
-                                </svg>
+                                
                                 Annuler
                             </button>
                             <button
@@ -418,9 +416,7 @@ const EditJobOfferForm = () => {
                                     </>
                                 ) : (
                                     <>
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
-                                            <path d="M17 3H7C5.9 3 5 3.9 5 5V19C5 20.1 5.9 21 7 21H17C18.1 21 19 20.1 19 19V5C19 3.9 18.1 3 17 3ZM17 19H7V5H17V19ZM16 10H8V8H16V10Z" fill="currentColor"/>
-                                        </svg>
+                                       
                                         Enregistrer
                                     </>
                                 )}
