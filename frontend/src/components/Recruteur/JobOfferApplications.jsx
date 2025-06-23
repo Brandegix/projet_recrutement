@@ -295,7 +295,7 @@ const JobOfferApplications = () => {
                         onClick={closeChatModal}
                         style={jobAppStyles.modalCloseButton}
                     >
-                        ✕
+                       
                     </button>
                 </div>
                 {chatApplicationId && user?.id && (
