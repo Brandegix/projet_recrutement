@@ -427,7 +427,7 @@ function EditRecruiterProfile() {
                   <button
                     type="button"
                     onClick={() => navigate("/RecruiterProfile")}
-                    style={styles.cancelButton}
+                    style={styles.cancelButtons}
                     className="cancel-button"
                   >
                     Annuler
@@ -437,7 +437,7 @@ function EditRecruiterProfile() {
                     type="submit"
                     disabled={isSaving}
                     style={{
-                      ...styles.submitButton,
+                      ...styles.submitButtons,
                       ...(isSaving ? styles.submitButtonDisabled : {}),
                     }}
                     className="submit-button"
@@ -478,7 +478,7 @@ function EditRecruiterProfile() {
                             strokeLinejoin="round"
                           />
                         </svg>
-                        Enregistrer les modifications
+                        Enregistrer
                       </>
                     )}
                   </button>
@@ -692,7 +692,7 @@ const styles = {
     marginTop: "40px",
   },
 
-  cancelButton: {
+  cancelButtons: {
     padding: "13px 26px", // Increased padding
     borderRadius: "10px", // Larger border-radius
     border: "2px solid #cbd5e1", // Slightly darker border
@@ -714,7 +714,7 @@ const styles = {
     }
   },
 
-  submitButton: {
+  submitButtons: {
     padding: "13px 26px", // Increased padding
     borderRadius: "10px", // Larger border-radius
     border: "none",
