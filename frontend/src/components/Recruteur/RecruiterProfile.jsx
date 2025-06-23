@@ -583,7 +583,7 @@ function RecruiterProfile() {
 
           {/* About Section */}
           <div style={styles.aboutSection}>
-            <h3 style={styles.sectionTitle}>📋 À propos de l'entreprise</h3>
+            <h3 style={styles.sectionTitle}> À propos de l'entreprise</h3>
             <p style={styles.aboutText}>
               {profile.description ||
                 "Vous n'avez pas encore ajouté de description d'entreprise. Cliquez sur 'Modifier le profil' pour en ajouter une."}
@@ -621,7 +621,7 @@ function RecruiterProfile() {
                 }
               }}
             >
-              <h4 style={styles.cardTitle}>📞 Informations de contact</h4>
+              <h4 style={styles.cardTitle}> Informations de contact</h4>
               <div style={styles.profileDetail}>
                 <span style={styles.profileDetailLabel}>Email:</span>
                 <span style={styles.profileDetailValue}>{profile.email}</span>
@@ -659,7 +659,7 @@ function RecruiterProfile() {
                 }
               }}
             >
-              <h4 style={styles.cardTitle}>📊 Statistiques</h4>
+              <h4 style={styles.cardTitle}> Statistiques</h4>
               <div style={styles.profileDetail}>
                 <span style={styles.profileDetailLabel}>Offres publiées:</span>
                 <span style={styles.profileDetailValue}>{jobStats?.jobCount ?? "Chargement..."}</span>
@@ -677,7 +677,7 @@ function RecruiterProfile() {
 
           {/* Domains Section */}
           <div style={styles.domainsSection}>
-            <h4 style={styles.sectionTitle}>🏢 Domaines d'activité</h4>
+            <h4 style={styles.sectionTitle}> Domaines d'activité</h4>
             <div style={styles.domainsList}>
               {domains.length > 0 ? (
                 domains.map((domain, i) => (
@@ -774,7 +774,7 @@ function RecruiterProfile() {
                 }
               }}
             >
-              💾 Sauvegarder les domaines
+              Sauvegarder les domaines
             </button>
           </div>
 
@@ -798,7 +798,7 @@ function RecruiterProfile() {
                 }
               }}
             >
-              💼 Voir mes offres d'emploi
+              Voir mes offres d'emploi
             </Link>
           </div>
         </div>
