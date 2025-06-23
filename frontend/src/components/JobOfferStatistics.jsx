@@ -342,7 +342,7 @@ const JobOfferStatistics = () => {
                         <div style={modalHeaderStyle}>
                             <h2 style={modalTitleStyle}>{selectedOffer.title}</h2>
                             <button onClick={closeGraphModal} style={modalCloseButtonStyle}>
-                                Fermer
+                                X
                             </button>
                         </div>
                         <div style={modalContentStyle}>
