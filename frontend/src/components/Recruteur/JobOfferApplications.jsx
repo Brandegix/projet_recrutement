@@ -303,12 +303,7 @@ const JobOfferApplications = () => {
                         />
                     </div>
                 )}
-                <button
-                    onClick={closeChatModal}
-                    style={jobAppStyles.closeChatButton}
-                >
-                    Fermer
-                </button>
+               
             </Modal>
         </>
     );
