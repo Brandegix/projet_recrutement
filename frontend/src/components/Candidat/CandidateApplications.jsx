@@ -612,9 +612,7 @@ const CandidateApplications = () => {
                 >
                     <div style={styles.modalHeader}>
                         <h2 style={styles.modalTitle}>Conversation avec le recruteur</h2>
-                        <button onClick={closeChatModal} style={styles.closeButton}>
-                            
-                        </button>
+                        
                     </div>
                     <div style={styles.modalBody}>
                         {selectedApplicationId && candidate?.id && (
