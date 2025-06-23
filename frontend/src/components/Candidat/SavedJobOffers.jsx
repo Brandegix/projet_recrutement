@@ -96,7 +96,7 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
           ) : (
                      <div style={{ display: 'flex', justifyContent: 'center' }}>
            <button
-             onClick={handleViewDetail}
+             onClick={handleViewDetails}
              style={{
                background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
                color: '#ffffff',
