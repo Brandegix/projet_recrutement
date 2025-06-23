@@ -94,9 +94,34 @@ const JobCard = ({ job, onApply, isApplied, onSave, isSaved }) => {
               ✓ Déjà postulé
             </button>
           ) : (
-            <button className="apply-button" onClick={handleViewDetails}>
-              Postuler maintenant
-            </button>
+                     <div style={{ display: 'flex', justifyContent: 'center' }}>
+           <button
+             onClick={handleViewDetail}
+             style={{
+               background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
+               color: '#ffffff',
+               border: 'none',
+               padding: '15px 0',
+               borderRadius: '25px',
+               fontSize: '1rem',
+               fontWeight: '600',
+               cursor: 'pointer',
+               transition: 'all 0.3s ease',
+               width: '100%',
+               maxWidth: '280px'
+             }}
+             onMouseEnter={(e) => {
+               e.currentTarget.style.transform = 'translateY(-2px)';
+               e.currentTarget.style.boxShadow = '0 10px 20px rgba(255, 107, 53, 0.3)';
+             }}
+             onMouseLeave={(e) => {
+               e.currentTarget.style.transform = 'translateY(0)';
+               e.currentTarget.style.boxShadow = 'none';
+             }}
+           >
+             Postuler
+           </button>
+         </div>
           )}
         </div>
       </div>
