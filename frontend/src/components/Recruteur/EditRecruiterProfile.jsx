@@ -9,7 +9,7 @@ function EditRecruiterProfile() {
   const [profile, setProfile] = useState({
     companyName: "",
     email: "",
-    description: "", // Initialize as empty string
+    description: "",
     phoneNumber: "",
     address: "",
     name: "",
@@ -36,11 +36,10 @@ function EditRecruiterProfile() {
         );
         if (res.ok) {
           const data = await res.json();
-          // Ensure description is a string, even if it comes as null from API
           setProfile({
             ...data,
-            description: data.description || "", // IMPORTANT: Convert null to empty string here
-            public_profile: data.public_profile || false, // Also handle boolean for safety
+            description: data.description || "",
+            public_profile: data.public_profile || false,
           });
         } else {
           setErrors({ general: "Erreur lors du chargement du profil" });
@@ -72,7 +71,6 @@ function EditRecruiterProfile() {
       newErrors.companyName = "Le nom de l'entreprise est requis";
     }
 
-    // This regex also needs the `^` and `$` anchors for full string match
     if (profile.phoneNumber && !/^[\d\s\-+]+$/.test(profile.phoneNumber)) {
       newErrors.phoneNumber = "Format de téléphone invalide";
     }
@@ -88,7 +86,6 @@ function EditRecruiterProfile() {
       [name]: type === "checkbox" ? checked : value,
     });
 
-    // Clear error for this field when user starts typing
     if (errors[name]) {
       setErrors({
         ...errors,
@@ -123,7 +120,6 @@ function EditRecruiterProfile() {
         setProfile(updatedProfile);
         setSuccessMessage("Profil mis à jour avec succès !");
 
-        // Navigate after showing success message
         setTimeout(() => {
           navigate("/RecruiterProfile");
         }, 1500);
@@ -165,71 +161,81 @@ function EditRecruiterProfile() {
         <Navbar />
 
         <div style={styles.mainContent} className="main-content">
+          {/* Background decorative elements */}
+          <div style={styles.backgroundDecor} className="bg-decor"></div>
+          
           <div style={styles.formContainer} className="form-container">
             {/* Header Section */}
             <div style={styles.header}>
-              <div style={styles.headerIcon}>
-                <svg
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z"
-                    fill="#ff6b35"
-                  />
-                  <path d="M12 14C7.58172 14 4 17.5817 4 22H20C20 17.5817 16.4183 14 12 14Z" fill="#ff6b35" />
-                </svg>
+              <div style={styles.headerPattern}></div>
+              <div style={styles.headerContent}>
+                <div style={styles.headerIcon}>
+                  <svg
+                    width="40"
+                    height="40"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z"
+                      fill="white"
+                    />
+                    <path d="M12 14C7.58172 14 4 17.5817 4 22H20C20 17.5817 16.4183 14 12 14Z" fill="white" />
+                  </svg>
+                </div>
+                <h1 style={styles.title} className="title">
+                  Modifier votre profil
+                </h1>
+                <p style={styles.subtitle}>Mettez à jour vos informations professionnelles</p>
               </div>
-              <h1 style={styles.title} className="title">
-                Modifier votre profil
-              </h1>
-              <p style={styles.subtitle}>Mettez à jour vos informations professionnelles</p>
             </div>
 
             {/* Success Message */}
             {successMessage && (
               <div style={styles.successMessage} className="success-message">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-                    stroke="#10b981"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                {successMessage}
+                <div style={styles.messageIcon}>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+                <span>{successMessage}</span>
               </div>
             )}
 
             {/* General Error */}
             {errors.general && (
               <div style={styles.errorMessage} className="error-message">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M12 9V13M12 17H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-                    stroke="#ef4444"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                {errors.general}
+                <div style={styles.messageIcon}>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 9V13M12 17H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+                <span>{errors.general}</span>
               </div>
             )}
 
@@ -237,26 +243,37 @@ function EditRecruiterProfile() {
             <form onSubmit={handleSubmit} style={styles.form} className="profile-form">
               {/* Personal Information Section */}
               <div style={styles.section}>
-                <h3 style={styles.sectionTitle}>Informations personnelles</h3>
+                <div style={styles.sectionHeader}>
+                  <div style={styles.sectionIcon}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="#FF6B35" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="#FF6B35" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h3 style={styles.sectionTitle}>Informations personnelles</h3>
+                </div>
 
                 <div style={styles.formGrid} className="form-grid">
                   <div style={styles.inputGroup} className="input-group">
                     <label htmlFor="name" style={styles.label}>
                       Nom complet *
                     </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={profile.name}
-                      onChange={handleChange}
-                      placeholder="Votre nom complet"
-                      style={{
-                        ...styles.input,
-                        ...(errors.name ? styles.inputError : {}),
-                      }}
-                      className="form-input"
-                    />
+                    <div style={styles.inputWrapper}>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={profile.name}
+                        onChange={handleChange}
+                        placeholder="Votre nom complet"
+                        style={{
+                          ...styles.input,
+                          ...(errors.name ? styles.inputError : {}),
+                        }}
+                        className="form-input"
+                      />
+                      <div style={styles.inputBorder}></div>
+                    </div>
                     {errors.name && <span style={styles.fieldError}>{errors.name}</span>}
                   </div>
 
@@ -264,19 +281,22 @@ function EditRecruiterProfile() {
                     <label htmlFor="email" style={styles.label}>
                       Adresse email *
                     </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={profile.email}
-                      onChange={handleChange}
-                      placeholder="votre.email@exemple.com"
-                      style={{
-                        ...styles.input,
-                        ...(errors.email ? styles.inputError : {}),
-                      }}
-                      className="form-input"
-                    />
+                    <div style={styles.inputWrapper}>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={profile.email}
+                        onChange={handleChange}
+                        placeholder="votre.email@exemple.com"
+                        style={{
+                          ...styles.input,
+                          ...(errors.email ? styles.inputError : {}),
+                        }}
+                        className="form-input"
+                      />
+                      <div style={styles.inputBorder}></div>
+                    </div>
                     {errors.email && <span style={styles.fieldError}>{errors.email}</span>}
                   </div>
                 </div>
@@ -285,44 +305,60 @@ function EditRecruiterProfile() {
                   <label htmlFor="phoneNumber" style={styles.label}>
                     Numéro de téléphone
                   </label>
-                  <input
-                    type="tel"
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    value={profile.phoneNumber}
-                    onChange={handleChange}
-                    placeholder="+33 1 23 45 67 89"
-                    style={{
-                      ...styles.input,
-                      ...(errors.phoneNumber ? styles.inputError : {}),
-                    }}
-                    className="form-input"
-                  />
+                  <div style={styles.inputWrapper}>
+                    <input
+                      type="tel"
+                      id="phoneNumber"
+                      name="phoneNumber"
+                      value={profile.phoneNumber}
+                      onChange={handleChange}
+                      placeholder="+33 1 23 45 67 89"
+                      style={{
+                        ...styles.input,
+                        ...(errors.phoneNumber ? styles.inputError : {}),
+                      }}
+                      className="form-input"
+                    />
+                    <div style={styles.inputBorder}></div>
+                  </div>
                   {errors.phoneNumber && <span style={styles.fieldError}>{errors.phoneNumber}</span>}
                 </div>
               </div>
 
               {/* Company Information Section */}
               <div style={styles.section}>
-                <h3 style={styles.sectionTitle}>Informations de l'entreprise</h3>
+                <div style={styles.sectionHeader}>
+                  <div style={styles.sectionIcon}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 21H21" stroke="#FF6B35" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M5 21V7L13 2L21 7V21" stroke="#FF6B35" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M9 9V21" stroke="#FF6B35" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M17 9V21" stroke="#FF6B35" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h3 style={styles.sectionTitle}>Informations de l'entreprise</h3>
+                </div>
 
                 <div style={styles.inputGroup} className="input-group">
                   <label htmlFor="companyName" style={styles.label}>
                     Nom de l'entreprise *
                   </label>
-                  <input
-                    type="text"
-                    id="companyName"
-                    name="companyName"
-                    value={profile.companyName}
-                    onChange={handleChange}
-                    placeholder="Nom de votre entreprise"
-                    style={{
-                      ...styles.input,
-                      ...(errors.companyName ? styles.inputError : {}),
-                    }}
-                    className="form-input"
-                  />
+                  <div style={styles.inputWrapper}>
+                    <input
+                      type="text"
+                      id="companyName"
+                      name="companyName"
+                      value={profile.companyName}
+                      onChange={handleChange}
+                      placeholder="Nom de votre entreprise"
+                      style={{
+                        ...styles.input,
+                        ...(errors.companyName ? styles.inputError : {}),
+                      }}
+                      className="form-input"
+                    />
+                    <div style={styles.inputBorder}></div>
+                  </div>
                   {errors.companyName && <span style={styles.fieldError}>{errors.companyName}</span>}
                 </div>
 
@@ -330,51 +366,72 @@ function EditRecruiterProfile() {
                   <label htmlFor="address" style={styles.label}>
                     Adresse de l'entreprise
                   </label>
-                  <input
-                    type="text"
-                    id="address"
-                    name="address"
-                    value={profile.address}
-                    onChange={handleChange}
-                    placeholder="Adresse complète"
-                    style={styles.input}
-                    className="form-input"
-                  />
+                  <div style={styles.inputWrapper}>
+                    <input
+                      type="text"
+                      id="address"
+                      name="address"
+                      value={profile.address}
+                      onChange={handleChange}
+                      placeholder="Adresse complète"
+                      style={styles.input}
+                      className="form-input"
+                    />
+                    <div style={styles.inputBorder}></div>
+                  </div>
                 </div>
 
                 <div style={styles.inputGroup} className="input-group">
                   <label htmlFor="description" style={styles.label}>
                     Description de l'entreprise
                   </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    value={profile.description} // This is the line 329
-                    onChange={handleChange}
-                    placeholder="Décrivez votre entreprise, ses activités, sa culture..."
-                    rows={5}
-                    style={styles.textarea}
-                    className="form-textarea"
-                  />
-                  {/* The fix is also applied here: ensuring profile.description is a string */}
+                  <div style={styles.textareaWrapper}>
+                    <textarea
+                      id="description"
+                      name="description"
+                      value={profile.description}
+                      onChange={handleChange}
+                      placeholder="Décrivez votre entreprise, ses activités, sa culture..."
+                      rows={5}
+                      style={styles.textarea}
+                      className="form-textarea"
+                    />
+                    <div style={styles.inputBorder}></div>
+                  </div>
                   <div style={styles.charCount}>{(profile.description || "").length}/500 caractères</div>
                 </div>
               </div>
 
               {/* Privacy Settings Section */}
               <div style={styles.section}>
-                <h3 style={styles.sectionTitle}>Paramètres de confidentialité</h3>
+                <div style={styles.sectionHeader}>
+                  <div style={styles.sectionIcon}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" stroke="#FF6B35" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h3 style={styles.sectionTitle}>Paramètres de confidentialité</h3>
+                </div>
 
                 <div style={styles.checkboxGroup} className="checkbox-group">
                   <div style={styles.checkboxContainer}>
-                    <input
-                      type="checkbox"
-                      id="public_profile"
-                      name="public_profile"
-                      checked={profile.public_profile}
-                      onChange={handleChange} // Use general handleChange
-                      style={styles.checkbox}
-                    />
+                    <div style={styles.customCheckbox}>
+                      <input
+                        type="checkbox"
+                        id="public_profile"
+                        name="public_profile"
+                        checked={profile.public_profile}
+                        onChange={handleChange}
+                        style={styles.hiddenCheckbox}
+                      />
+                      <div style={styles.checkboxVisual}>
+                        {profile.public_profile && (
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 6L9 17L4 12" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        )}
+                      </div>
+                    </div>
                     <label htmlFor="public_profile" style={styles.checkboxLabel}>
                       <span style={styles.checkboxText}>Rendre mon profil public</span>
                       <span style={styles.checkboxDescription}>
@@ -393,6 +450,9 @@ function EditRecruiterProfile() {
                   style={styles.cancelButton}
                   className="cancel-button"
                 >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                   Annuler
                 </button>
 
@@ -458,106 +518,194 @@ function EditRecruiterProfile() {
 
 const styles = {
   container: {
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#0a0a0a",
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
+    position: "relative",
   },
 
   mainContent: {
     flex: 1,
-    padding: "40px 20px",
+    padding: "60px 20px",
     display: "flex",
     justifyContent: "center",
     alignItems: "flex-start",
+    position: "relative",
+  },
+
+  backgroundDecor: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: "300px",
+    background: "linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(255, 140, 66, 0.05) 100%)",
+    zIndex: 0,
   },
 
   formContainer: {
     backgroundColor: "#ffffff",
-    borderRadius: "16px",
-    boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
-    maxWidth: "800px",
+    borderRadius: "24px",
+    boxShadow: "0 25px 50px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 107, 53, 0.1)",
+    maxWidth: "900px",
     width: "100%",
     overflow: "hidden",
-    border: "1px solid #e2e8f0",
+    position: "relative",
+    zIndex: 1,
+    border: "1px solid rgba(255, 107, 53, 0.1)",
   },
 
   header: {
-    background: "linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)",
-    padding: "40px",
+    background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
+    padding: "50px 40px",
     textAlign: "center",
     color: "white",
+    position: "relative",
+    overflow: "hidden",
+  },
+
+  headerPattern: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: `
+      radial-gradient(circle at 20% 50%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(255, 140, 66, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(255, 107, 53, 0.05) 0%, transparent 50%)
+    `,
+  },
+
+  headerContent: {
+    position: "relative",
+    zIndex: 1,
   },
 
   headerIcon: {
-    marginBottom: "16px",
+    marginBottom: "20px",
     display: "flex",
     justifyContent: "center",
+    alignItems: "center",
+    width: "80px",
+    height: "80px",
+    background: "linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%)",
+    borderRadius: "20px",
+    margin: "0 auto 20px",
+    boxShadow: "0 10px 30px rgba(255, 107, 53, 0.3)",
   },
 
   title: {
-    fontSize: "clamp(1.8rem, 4vw, 2.5rem)",
+    fontSize: "clamp(2rem, 5vw, 3rem)",
     fontWeight: "800",
-    margin: "0 0 8px 0",
+    margin: "0 0 12px 0",
     letterSpacing: "-0.02em",
+    background: "linear-gradient(135deg, #ffffff 0%, #f1f1f1 100%)",
+    backgroundClip: "text",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
   },
 
   subtitle: {
-    fontSize: "1.1rem",
+    fontSize: "1.2rem",
     margin: 0,
-    opacity: 0.9,
+    opacity: 0.8,
     fontWeight: "400",
+    color: "#e5e5e5",
   },
 
   form: {
-    padding: "40px",
+    padding: "50px 40px",
+    background: "linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)",
   },
 
   section: {
-    marginBottom: "40px",
-    paddingBottom: "30px",
-    borderBottom: "1px solid #e2e8f0",
+    marginBottom: "50px",
+    paddingBottom: "40px",
+    borderBottom: "2px solid #f5f5f5",
+    position: "relative",
+  },
+
+  sectionHeader: {
+    display: "flex",
+    alignItems: "center",
+    gap: "16px",
+    marginBottom: "32px",
+  },
+
+  sectionIcon: {
+    width: "48px",
+    height: "48px",
+    backgroundColor: "#fff5f0",
+    borderRadius: "12px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: "2px solid #ffe5d6",
   },
 
   sectionTitle: {
-    fontSize: "1.3rem",
+    fontSize: "1.5rem",
     fontWeight: "700",
-    color: "#1e293b",
-    marginBottom: "24px",
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
+    color: "#1a1a1a",
+    margin: 0,
   },
 
   formGrid: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
-    gap: "24px",
-    marginBottom: "24px",
+    gap: "32px",
+    marginBottom: "32px",
   },
 
   inputGroup: {
     display: "flex",
     flexDirection: "column",
-    gap: "8px",
+    gap: "12px",
   },
 
   label: {
-    fontSize: "0.95rem",
+    fontSize: "1rem",
     fontWeight: "600",
-    color: "#374151",
-    marginBottom: "4px",
+    color: "#2d2d2d",
+    marginBottom: "8px",
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+  },
+
+  inputWrapper: {
+    position: "relative",
+  },
+
+  textareaWrapper: {
+    position: "relative",
   },
 
   input: {
-    padding: "14px 16px",
-    borderRadius: "8px",
-    border: "2px solid #e2e8f0",
+    padding: "18px 20px",
+    borderRadius: "12px",
+    border: "2px solid #e5e5e5",
     fontSize: "1rem",
-    transition: "all 0.2s ease",
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
     backgroundColor: "#ffffff",
     outline: "none",
     fontFamily: "inherit",
+    width: "100%",
+    boxSizing: "border-box",
+  },
+
+  inputBorder: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: "2px",
+    background: "linear-gradient(90deg, #FF6B35 0%, #FF8C42 100%)",
+    transform: "scaleX(0)",
+    transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    borderRadius: "0 0 12px 12px",
   },
 
   inputError: {
@@ -566,100 +714,125 @@ const styles = {
   },
 
   textarea: {
-    padding: "14px 16px",
-    borderRadius: "8px",
-    border: "2px solid #e2e8f0",
+    padding: "18px 20px",
+    borderRadius: "12px",
+    border: "2px solid #e5e5e5",
     fontSize: "1rem",
-    transition: "all 0.2s ease",
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
     backgroundColor: "#ffffff",
     outline: "none",
     fontFamily: "inherit",
     resize: "vertical",
-    minHeight: "120px",
+    minHeight: "140px",
+    width: "100%",
+    boxSizing: "border-box",
   },
 
   charCount: {
-    fontSize: "0.85rem",
+    fontSize: "0.9rem",
     color: "#6b7280",
     textAlign: "right",
-    marginTop: "4px",
+    marginTop: "8px",
+    fontWeight: "500",
   },
 
   fieldError: {
-    fontSize: "0.85rem",
+    fontSize: "0.9rem",
     color: "#ef4444",
-    marginTop: "4px",
+    marginTop: "6px",
     display: "flex",
     alignItems: "center",
-    gap: "4px",
+    gap: "6px",
+    fontWeight: "500",
   },
 
   checkboxGroup: {
     display: "flex",
     flexDirection: "column",
-    gap: "16px",
+    gap: "20px",
   },
 
   checkboxContainer: {
     display: "flex",
     alignItems: "flex-start",
-    gap: "12px",
-    padding: "16px",
-    backgroundColor: "#f8fafc",
-    borderRadius: "8px",
-    border: "1px solid #e2e8f0",
+    gap: "16px",
+    padding: "24px",
+    backgroundColor: "#fafafa",
+    borderRadius: "16px",
+    border: "2px solid #f0f0f0",
+    transition: "all 0.3s ease",
+    cursor: "pointer",
   },
 
-  checkbox: {
-    width: "18px",
-    height: "18px",
+  customCheckbox: {
+    position: "relative",
     marginTop: "2px",
-    accentColor: "#ff6b35",
+  },
+
+  hiddenCheckbox: {
+    position: "absolute",
+    opacity: 0,
+    cursor: "pointer",
+    height: 0,
+    width: 0,
+  },
+
+  checkboxVisual: {
+    width: "24px",
+    height: "24px",
+    backgroundColor: "#ffffff",
+    border: "2px solid #e5e5e5",
+    borderRadius: "6px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    transition: "all 0.3s ease",
   },
 
   checkboxLabel: {
     display: "flex",
     flexDirection: "column",
-    gap: "4px",
+    gap: "6px",
     cursor: "pointer",
     flex: 1,
   },
 
   checkboxText: {
-    fontSize: "1rem",
+    fontSize: "1.1rem",
     fontWeight: "600",
-    color: "#1e293b",
+    color: "#1a1a1a",
   },
 
   checkboxDescription: {
-    fontSize: "0.9rem",
+    fontSize: "0.95rem",
     color: "#6b7280",
-    lineHeight: "1.4",
+    lineHeight: "1.5",
   },
 
   actionButtons: {
     display: "flex",
-    gap: "16px",
+    gap: "20px",
     justifyContent: "flex-end",
-    paddingTop: "30px",
-    borderTop: "1px solid #e2e8f0",
-    marginTop: "40px",
+    paddingTop: "40px",
+    borderTop: "2px solid #f5f5f5",
+    marginTop: "50px",
   },
 
   cancelButton: {
-    padding: "12px 24px",
-    borderRadius: "8px",
-    border: "2px solid #e2e8f0",
+    padding: "16px 32px",
+    borderRadius: "12px",
+    border: "2px solid #e5e5e5",
     backgroundColor: "#ffffff",
     color: "#6b7280",
     fontSize: "1rem",
     fontWeight: "600",
     cursor: "pointer",
-    transition: "all 0.2s ease",
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
     display: "flex",
     alignItems: "center",
-    gap: "8px",
-  },
+    gap: "10px",
+   },
+ 
 
   submitButton: {
     padding: "12px 24px",
