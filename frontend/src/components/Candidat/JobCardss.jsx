@@ -237,7 +237,6 @@ const SavedJobsCTA = () => {
           onClick={() => window.location.href = '/SavedJobOffers'}
         >
           <span>Consulter mes favoris</span>
-          <ArrowRight size={16} />
         </button>
       </div>
     </div>
@@ -1539,7 +1538,7 @@ const JobSearchAndOffers = () => {
 
           color: white;
 
-          border: 2px solid #ff8c00;
+          border: none;
 
           border-radius: 0.75rem;
 
