@@ -186,6 +186,8 @@ const EditJobOfferForm = () => {
         boxShadow: '0 4px 10px rgba(255, 107, 53, 0.3)',
         opacity: isSaving ? 0.7 : 1,
         cursor: isSaving ? 'not-allowed' : 'pointer',
+        justifyContent: "center", // Add this line
+    textAlign: "center", // Add this line
     };
 
     const messageStyle = {
@@ -396,7 +398,7 @@ const EditJobOfferForm = () => {
                             <button
                                 type="button"
                                 onClick={() => navigate('/RecruiterJobOffers')}
-                                style={cancelButtonPrimaryStyle}
+                                style={saveButtonPrimaryStyle}
                             >
                                 
                                 Annuler
