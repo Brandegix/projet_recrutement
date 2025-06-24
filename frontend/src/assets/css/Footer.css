@@ -1,88 +1,106 @@
-.casajobs-footer {
-  background-color: #111;
-  color: #fff;
-  padding: 60px 20px 30px;
-  font-family: 'Inter', sans-serif;
-}
+/* Option 1: Basic size and alignment improvements */
 .footer-logo {
-  max-width: 180px;
+  max-width: 120px; /* Reduced from 180px */
+  height: auto;
+  margin-bottom: 20px;
+  display: block;
+  filter: brightness(0) invert(1);
+}
+
+/* Option 2: Responsive logo sizing */
+.footer-logo-responsive {
+  max-width: 150px;
+  height: auto;
+  margin-bottom: 20px;
+  display: block;
+  filter: brightness(0) invert(1);
+}
+
+@media (max-width: 768px) {
+  .footer-logo-responsive {
+    max-width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-logo-responsive {
+    max-width: 80px;
+  }
+}
+
+/* Option 3: Logo with fixed height for consistency */
+.footer-logo-fixed-height {
+  height: 40px; /* Fixed height */
+  width: auto; /* Let width adjust automatically */
+  max-width: 180px; /* Prevent it from getting too wide */
+  margin-bottom: 20px;
+  display: block;
+  filter: brightness(0) invert(1);
+  object-fit: contain; /* Maintain aspect ratio */
+}
+
+/* Option 4: Center the logo if it's the main footer element */
+.footer-logo-centered {
+  max-width: 140px;
+  height: auto;
+  margin: 0 auto 25px auto; /* Center horizontally */
+  display: block;
+  filter: brightness(0) invert(1);
+}
+
+/* Option 5: Logo with subtle styling effects */
+.footer-logo-enhanced {
+  max-width: 130px;
+  height: auto;
+  margin-bottom: 20px;
+  display: block;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+}
+
+.footer-logo-enhanced:hover {
+  opacity: 1;
+}
+
+/* Option 6: For very wide logos - constrain height */
+.footer-logo-wide {
+  max-height: 50px; /* Limit height for wide logos */
+  width: auto;
+  max-width: 200px;
+  margin-bottom: 20px;
+  display: block;
+  filter: brightness(0) invert(1);
+  object-fit: contain;
+}
+
+/* Option 7: Logo as part of a flex container for better alignment */
+.casajobs-footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* or center/flex-end */
+  margin-bottom: 30px;
+}
+
+.footer-logo-flex {
+  max-width: 140px;
   height: auto;
   margin-bottom: 15px;
-  display: block;
-  filter: brightness(0) invert(1); /* Optional: makes dark logos white-ish */
+  filter: brightness(0) invert(1);
 }
 
-
-.casajobs-footer-wrapper {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  max-width: 1200px;
-  margin: 0 auto;
-  gap: 40px;
-}
-
-.casajobs-footer-section {
-  flex: 1;
-  min-width: 250px;
-}
-
-/* About */
-.casajobs-footer-about h2 {
-  color: #ff5a00;
-  font-size: 26px;
-  margin-bottom: 15px;
-}
-
-.casajobs-footer-about p {
-  color: #ccc;
-  line-height: 1.6;
-}
-
-/* Links */
-.casajobs-footer-links h3 {
-  font-size: 20px;
-  margin-bottom: 12px;
-  color: #fff;
-}
-
-.casajobs-footer-links ul {
-  list-style: none;
-  padding: 0;
-}
-
-.casajobs-footer-links li {
-  margin-bottom: 10px;
-}
-
-.casajobs-footer-links a {
-  color: #ccc;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.casajobs-footer-links a:hover {
-  color: #ff5a00;
-}
-
-/* Contact */
-.casajobs-footer-contact h3 {
-  font-size: 20px;
-  margin-bottom: 12px;
-  color: #fff;
-}
-
-.casajobs-footer-contact p {
-  color: #ccc;
-  margin-bottom: 8px;
-}
-
-/* Bottom */
-.casajobs-footer-bottom {
-  border-top: 1px solid #333;
-  margin-top: 40px;
-  padding-top: 20px;
+/* If you want the logo in the header of the footer */
+.casajobs-footer-header {
   text-align: center;
-  color: #888;
-  font-size: 14px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 20px;
+}
+
+.footer-logo-header {
+  max-width: 160px;
+  height: auto;
+  margin: 0 auto 15px auto;
+  display: block;
+  filter: brightness(0) invert(1);
 }
