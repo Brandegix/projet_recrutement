@@ -84,7 +84,7 @@ const Footer = () => {
         <div className="casajobs-footer-section casajobs-footer-contact">
           <h3>Contact</h3>
           <p>Email : contact@casajobs.ma</p>
-          <p>Téléphone : +212 6 00 00 00 00</p>
+          <p>Téléphone : +212 666-557106</p>
           <p>Adresse : Casablanca, Maroc</p>
           
           {/* Show user-specific contact info when logged in */}
