@@ -692,6 +692,9 @@ const styles = {
     border: "none",
     background: "linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)",
     color: "#ffffff",
+    justifyContent: "center", // Add this line
+    textAlign: "center", // Add this line
+
     fontSize: "1rem",
     fontWeight: "600",
     cursor: "pointer",
