@@ -1231,7 +1231,7 @@ const JobSearchAndOffers = () => {
     background: #f8f9fa;
     color: #6c757d;
     border: 2px solid #dee2e6;
-    width: 3rem;
+    width: 20px !important;
     height: 3rem;
     padding: 0;
     border-radius: 50%;
