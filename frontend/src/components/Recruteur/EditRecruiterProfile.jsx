@@ -687,7 +687,7 @@ const styles = {
   },
 
   submitButtons: {
-    padding: "13px 26px", // Increased padding
+   
     borderRadius: "10px", // Larger border-radius
     border: "none",
     background: "linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)",
