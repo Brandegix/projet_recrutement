@@ -269,7 +269,7 @@ const ContactUs = () => {
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.boxShadow = 'none';
                 }}>
-                  {method.action}
+                 
                 </button>
               </div>
             ))}
