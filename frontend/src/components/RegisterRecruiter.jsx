@@ -940,6 +940,7 @@ const RegisterRecruteur = () => {
           position: absolute;
           right: 1rem;
           top: 50%;
+          width : 50px !important;
           transform: translateY(-50%);
           background: none;
           border: none;
