@@ -15,7 +15,7 @@ const contactMethods = [
   {
     title: 'Téléphone',
     icon: <Phone className="w-8 h-8" />,
-    details: ['+212 5 22 22 22 22', 'Lun-Ven: 9h-18h'],
+    details: ['+212 666-557106', 'Lun-Ven: 9h-18h'],
    
     color: '#ff6b35'
   },
