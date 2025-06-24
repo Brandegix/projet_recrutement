@@ -322,7 +322,7 @@ function RegisterCandidate() {
                       placeholder="Votre identifiant"
                       className={`form-input ${!validations.username && formData.username ? 'input-invalid' : ''} ${validations.username && formData.username ? 'input-valid' : ''}`}
                     />
-                    <div className="input-border"></div>
+                   
                   </div>
                   {!validations.username && formData.username && (
                     <p className="input-error">L'identifiant doit contenir au moins 3 caractères</p>
@@ -346,7 +346,7 @@ function RegisterCandidate() {
                       placeholder="votre@email.com"
                       className={`form-input ${!validations.email && formData.email ? 'input-invalid' : ''} ${validations.email && formData.email ? 'input-valid' : ''}`}
                     />
-                    <div className="input-border"></div>
+                   
                   </div>
                   {!validations.email && formData.email && (
                     <p className="input-error">Veuillez entrer une adresse email valide</p>
@@ -371,7 +371,7 @@ function RegisterCandidate() {
                       placeholder="••••••••"
                       className={`form-input ${!validations.password && formData.password ? 'input-invalid' : ''} ${validations.password && formData.password ? 'input-valid' : ''}`}
                     />
-                    <div className="input-border"></div>
+                    
                   </div>
                   {!validations.password && formData.password && (
                     <p className="input-error">Le mot de passe doit contenir au moins 6 caractères</p>
@@ -412,7 +412,7 @@ function RegisterCandidate() {
                       placeholder="Votre nom complet"
                       className={`form-input ${!validations.name && formData.name ? 'input-invalid' : ''} ${validations.name && formData.name ? 'input-valid' : ''}`}
                     />
-                    <div className="input-border"></div>
+                   
                   </div>
                   {!validations.name && formData.name && (
                     <p className="input-error">Le nom doit contenir au moins 3 caractères</p>
@@ -438,7 +438,7 @@ function RegisterCandidate() {
                       placeholder="0123456789"
                       className={`form-input ${!validations.phoneNumber && formData.phoneNumber ? 'input-invalid' : ''} ${validations.phoneNumber && formData.phoneNumber ? 'input-valid' : ''}`}
                     />
-                    <div className="input-border"></div>
+                    
                   </div>
                   {!validations.phoneNumber && formData.phoneNumber && (
                     <p className="input-error">Le numéro de téléphone doit contenir 10 chiffres</p>
