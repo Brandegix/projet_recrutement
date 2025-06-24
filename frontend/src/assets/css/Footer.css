@@ -11,7 +11,7 @@
   height: auto;
   margin-bottom: 20px; /* Increased from 15px for better spacing */
   display: block;
-  filter: brightness(0) invert(1);
+  
   border-radius: 4px; /* Added for JPEG logos */
 }
 
