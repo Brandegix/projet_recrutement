@@ -827,28 +827,25 @@ const pageStyles = {
     margin: "0 auto 40px auto",
   },
 
-  newsletterForm: {
+   newsletterForm: {
     display: "flex",
     maxWidth: "500px",
     margin: "0 auto",
-    gap: "15px", // Increased gap to visually separate input and button
-    // Remove borderRadius, border, and overflow from newsletterForm
-    // borderRadius: "50px", // REMOVE THIS
-    // border: "2px solid #404040", // REMOVE THIS
-    // overflow: "hidden", // REMOVE THIS
-    backgroundColor: "transparent", // Make the form background transparent
+    gap: "0",
+    borderRadius: "50px",
+    border: "2px solid #404040",
+    overflow: "hidden",
+    backgroundColor: "#1a1a1a",
     transition: "all 0.3s ease",
     flexWrap: "wrap",
-    alignItems: "center", // Vertically align items if they have different heights
   },
 
   newsletterInput: {
     flex: 1,
     minWidth: "250px",
     padding: "18px 25px",
-    border: "2px solid #404040", // Add border to the input itself
-    borderRadius: "50px", // Add border-radius to the input for rounded ends
-    backgroundColor: "#1a1a1a", // Keep background on input
+    border: "none",
+    backgroundColor: "transparent",
     color: "#fff",
     fontSize: "1rem",
     fontWeight: "500",
@@ -860,7 +857,6 @@ const pageStyles = {
     backgroundColor: "#ff6b35",
     color: "#fff",
     border: "none",
-    borderRadius: "50px", // Add border-radius to the button for rounded ends
     fontWeight: "700",
     fontSize: "1rem",
     fontFamily: "inherit",
@@ -870,6 +866,7 @@ const pageStyles = {
     letterSpacing: "1px",
     minWidth: "120px",
   },
+
   newsletterFeatures: {
     display: "flex",
     justifyContent: "center",
