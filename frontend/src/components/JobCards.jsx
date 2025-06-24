@@ -667,6 +667,8 @@ function JobCards() {
             <label style={{
               display: 'block',
               color: '#cccccc',
+              background: '#ff6b35',
+
               fontSize: '0.9rem',
               fontWeight: '600',
               marginBottom: '8px'
@@ -693,67 +695,8 @@ function JobCards() {
             </select>
           </div>
 
-          <div>
-            <label style={{
-              display: 'block',
-              color: '#cccccc',
-              fontSize: '0.9rem',
-              fontWeight: '600',
-              marginBottom: '8px'
-            }}>
-              Lieu
-            </label>
-            <select
-              value={selectedLieu}
-              onChange={(e) => setSelectedLieu(e.target.value)}
-              style={{
-                width: '100%',
-                padding: isMobile ? '10px 12px' : '12px 15px',
-                borderRadius: '12px',
-                border: '1px solid #444',
-                background: '#ff6b35',
-                color: '#ffffff',
-                fontSize: '0.95rem',
-                outline: 'none'
-              }}
-            >
-              <option value="">Toutes les villes</option>
-              {filterOptions.lieux.map((lieu, index) => (
-                <option key={index} value={lieu}>{lieu}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label style={{
-              display: 'block',
-              color: '#cccccc',
-              fontSize: '0.9rem',
-              fontWeight: '600',
-              marginBottom: '8px'
-            }}>
-              Salaire
-            </label>
-            <select
-              value={selectedSalaire}
-              onChange={(e) => setSelectedSalaire(e.target.value)}
-              style={{
-                width: '100%',
-                padding: isMobile ? '10px 12px' : '12px 15px',
-                borderRadius: '12px',
-                border: '1px solid #444',
-                background: 'rgba(255, 255, 255, 0.05)',
-                color: '#ffffff',
-                fontSize: '0.95rem',
-                outline: 'none' }}
-             >
-               <option value="">Tous les salaires</option>
-               {[...new Set(jobs.map(job => job.salary).filter(Boolean))].map((salaire, index) => (
-                 <option key={index} value={salaire}>{salaire}</option>
-               ))}
-             </select>
-           </div>
- 
+        
+         
            <div>
              <label style={{
                display: 'block',
@@ -772,7 +715,7 @@ function JobCards() {
                  padding: isMobile ? '10px 12px' : '12px 15px',
                  borderRadius: '12px',
                  border: '1px solid #444',
-                 background: 'rgba(255, 255, 255, 0.05)',
+                background: '#ff6b35',
                  color: '#ffffff',
                  fontSize: '0.95rem',
                  outline: 'none'
