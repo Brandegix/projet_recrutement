@@ -548,218 +548,205 @@ function JobCards() {
     marginBottom: isMobile ? '25px' : '40px'
   };
  
-   // --- UPDATED PAGINATION CONTAINER STYLE ---
-   const paginationContainerStyle = {
-     display: 'flex',
-     alignItems: 'center',
-     justifyContent: 'center', // Initial justify content
-     gap: isMobile ? '6px' : '10px',
-     marginTop: isMobile ? '30px' : '40px',
-     padding: isMobile ? '15px' : '20px',
-     background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
-     borderRadius: '16px',
-     boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-     border: '1px solid #333',
-     flexWrap: isMobile ? 'wrap' : 'nowrap',
-   };
- 
-   // Base style for all pagination buttons
-   const paginationButtonBase = {
-     display: 'flex',
-     alignItems: 'center',
-     justifyContent: 'center',
-     border: '1px solid transparent', // Prevent layout shift on hover
-     borderRadius: '12px', // Consistent border-radius for all buttons
-     fontSize: isMobile ? '0.85rem' : '0.95rem',
-     fontWeight: '600',
-     cursor: 'pointer',
-     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-     height: isMobile ? '36px' : '44px', // Standard height for all buttons
-     boxSizing: 'border-box',
-     textDecoration: 'none', // For anchor tags if used instead of buttons
-   };
- 
-   // --- UPDATED STYLE FOR PREV/NEXT BUTTONS (ARROWS) ---
-   const prevNextButtonStyle = (isDisabled) => ({
-     ...paginationButtonBase,
-     padding: isMobile ? '0 12px' : '0 18px',
-     // Always white color for the arrow icon
-     color: 'white',
-     // Background changes based on disabled state
-     backgroundColor: isDisabled ? '#6c757d' : '#ff6b35', // Grey for blocked, orange for active
-     borderColor: isDisabled ? '#6c757d' : '#ff6b35', // Match border color
-     boxShadow: isDisabled ? 'none' : '0 2px 8px rgba(255, 107, 53, 0.15)',
-     opacity: isDisabled ? 0.7 : 1, // Slight dim for disabled
-     cursor: isDisabled ? 'not-allowed' : 'pointer',
-     '&:hover': isDisabled ? {} : { // Hover effects for non-disabled state
-       backgroundColor: '#ff8c42', // Slightly lighter orange on hover
-       borderColor: '#ff8c42',
-       transform: 'translateY(-2px)',
-       boxShadow: '0 4px 12px rgba(255, 107, 53, 0.3)',
-     }
-   });
- 
-   // Style for individual page number buttons
-   const pageNumberButtonStyle = (isActive) => ({
-     ...paginationButtonBase,
-     width: isMobile ? '36px' : '44px', // Fixed width matching height
-     padding: '0', // No horizontal padding for number buttons, width/height handle size
-     backgroundColor: isActive ? '#ff6b35' : 'rgba(255, 255, 255, 0.05)',
-     color: isActive ? '#ffffff' : '#cccccc',
-     boxShadow: isActive ? '0 4px 12px rgba(255, 107, 53, 0.3)' : 'none',
-     '&:not(:active):hover': isActive ? {} : { // Hover for inactive pages
-       backgroundColor: 'rgba(255, 107, 53, 0.15)',
-       color: '#ff8c42',
-       transform: 'translateY(-2px)',
-       boxShadow: '0 4px 10px rgba(255, 107, 53, 0.25)',
-     },
-   });
- 
-   // Style for ellipsis
-   const ellipsisStyle = {
-     display: 'flex',
-     alignItems: 'center',
-     justifyContent: 'center',
-     width: isMobile ? '36px' : '44px',
-     height: isMobile ? '36px' : '44px',
-     color: '#666',
-     fontSize: '1rem'
-   };
- 
-   return (
-     <>
-       {/* Search Section (unchanged) */}
-       <div style={searchSectionStyle}>
-         <div style={{ position: 'relative', marginBottom: '25px' }}>
-           <FaSearch style={{
-             position: 'absolute',
-             left: '20px',
-             top: '50%',
-             transform: 'translateY(-50%)',
-             color: '#ff6b35',
-             fontSize: '1.1rem'
-           }} />
-           <input
-             type="text"
-             placeholder="Rechercher une offre d'emploi..."
-             value={searchTerm}
-             onChange={(e) => setSearchTerm(e.target.value)}
-             style={{
-               width: '100%',
-               padding: '15px 20px 15px 50px',
-               borderRadius: '25px',
-               border: '1px solid #444',
-               background: 'rgba(255, 255, 255, 0.05)',
-               color: '#ffffff',
-               fontSize: isMobile ? '0.9rem' : '1rem',
-               outline: 'none',
-               transition: 'all 0.3s ease',
-               boxSizing: 'border-box'
-             }}
-             onFocus={(e) => {
-               e.target.style.borderColor = '#ff6b35';
-               e.target.style.boxShadow = '0 0 0 3px rgba(255, 107, 53, 0.1)';
-             }}
-             onBlur={(e) => {
-               e.target.style.borderColor = '#444';
-               e.target.style.boxShadow = 'none';
-             }}
-           />
-         </div>
- 
-         <div style={{
-           display: 'grid',
-           gridTemplateColumns: isMobile
-             ? 'repeat(auto-fit, minmax(140px, 1fr))'
-             : 'repeat(auto-fit, minmax(200px, 1fr))',
-           gap: isMobile ? '15px' : '20px',
-           marginBottom: '20px'
-         }}>
-           <div>
-             <label style={{
-               display: 'block',
-               color: '#cccccc',
-               fontSize: '0.9rem',
-               fontWeight: '600',
-               marginBottom: '8px'
-             }}>
-               Poste
-             </label>
-             <select
-               value={selectedPoste}
-               onChange={(e) => setSelectedPoste(e.target.value)}
-               style={{
-                 width: '100%',
-                 padding: isMobile ? '10px 12px' : '12px 15px',
-                 borderRadius: '12px',
-                 border: '1px solid #444',
-                 background: 'rgba(255, 255, 255, 0.05)',
-                 color: '#ffffff',
-                 fontSize: '0.95rem',
-                 outline: 'none'
-               }}
-             >
-               <option value="">Tous les postes</option>
-               {[...new Set(jobs.map(job => job.title))].map((poste, index) => (
-                 <option key={index} value={poste}>{poste}</option>
-               ))}
-             </select>
-           </div>
- 
-           <div>
-             <label style={{
-               display: 'block',
-               color: '#cccccc',
-               fontSize: '0.9rem',
-               fontWeight: '600',
-               marginBottom: '8px'
-             }}>
-               Lieu
-             </label>
-             <select
-               value={selectedLieu}
-               onChange={(e) => setSelectedLieu(e.target.value)}
-               style={{
-                 width: '100%',
-                 padding: isMobile ? '10px 12px' : '12px 15px',
-                 borderRadius: '12px',
-                 border: '1px solid #444',
-                 background: 'rgba(255, 255, 255, 0.05)',
-                 color: '#ffffff',
-                 fontSize: '0.95rem',
-                 outline: 'none'
-               }}
-             >
-               <option value="">Toutes les villes</option>
-               {[...new Set(jobs.map(job => job.location))].map((lieu, index) => (
-                 <option key={index} value={lieu}>{lieu}</option>
-               ))}
-             </select>
-           </div>
- 
-           <div>
-             <label style={{
-               display: 'block',
-               color: '#cccccc',
-               fontSize: '0.9rem',
-               fontWeight: '600',
-               marginBottom: '8px'
-             }}>
-               Salaire
-             </label>
-             <select
-               value={selectedSalaire}
-               onChange={(e) => setSelectedSalaire(e.target.value)}
-               style={{
-                 width: '100%',
-                 padding: isMobile ? '10px 12px' : '12px 15px',
-                 borderRadius: '12px',
-                 border: '1px solid #444',
-                 background: 'rgba(255, 255, 255, 0.05)',
-                 color: '#ffffff',
-                 fontSize: '0.95rem',
-                 outline: 'none'
-               }}
+  // --- UPDATED PAGINATION CONTAINER STYLE ---
+  const paginationContainerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center', // Initial justify content
+    gap: isMobile ? '6px' : '10px',
+    marginTop: isMobile ? '30px' : '40px',
+    padding: isMobile ? '15px' : '20px',
+    background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
+    borderRadius: '16px',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+    border: '1px solid #333',
+    flexWrap: isMobile ? 'wrap' : 'nowrap',
+  };
+
+  // Base style for all pagination buttons
+  const paginationButtonBase = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    border: '1px solid transparent', // Prevent layout shift on hover
+    borderRadius: '12px', // Consistent border-radius for all buttons
+    fontSize: isMobile ? '0.85rem' : '0.95rem',
+    fontWeight: '600',
+    cursor: 'pointer',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    height: isMobile ? '36px' : '44px', // Standard height for all buttons
+    boxSizing: 'border-box',
+    textDecoration: 'none', // For anchor tags if used instead of buttons
+  };
+
+  // --- UPDATED STYLE FOR PREV/NEXT BUTTONS (ARROWS) ---
+  const prevNextButtonStyle = (isDisabled) => ({
+    ...paginationButtonBase,
+    padding: isMobile ? '0 12px' : '0 18px',
+    // Always white color for the arrow icon
+    color: 'white',
+    // Background changes based on disabled state
+    backgroundColor: isDisabled ? '#6c757d' : '#ff6b35', // Grey for blocked, orange for active
+    borderColor: isDisabled ? '#6c757d' : '#ff6b35', // Match border color
+    boxShadow: isDisabled ? 'none' : '0 2px 8px rgba(255, 107, 53, 0.15)',
+    opacity: isDisabled ? 0.7 : 1, // Slight dim for disabled
+    cursor: isDisabled ? 'not-allowed' : 'pointer',
+  });
+
+  // Style for individual page number buttons
+  const pageNumberButtonStyle = (isActive) => ({
+    ...paginationButtonBase,
+    width: isMobile ? '36px' : '44px', // Fixed width matching height
+    padding: '0', // No horizontal padding for number buttons, width/height handle size
+    backgroundColor: isActive ? '#ff6b35' : 'rgba(255, 255, 255, 0.05)',
+    color: isActive ? '#ffffff' : '#cccccc',
+    boxShadow: isActive ? '0 4px 12px rgba(255, 107, 53, 0.3)' : 'none',
+  });
+
+  // Style for ellipsis
+  const ellipsisStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: isMobile ? '36px' : '44px',
+    height: isMobile ? '36px' : '44px',
+    color: '#666',
+    fontSize: '1rem'
+  };
+
+  return (
+    <>
+      {/* Search Section */}
+      <div style={searchSectionStyle}>
+        <div style={{ position: 'relative', marginBottom: '25px' }}>
+          <FaSearch style={{
+            position: 'absolute',
+            left: '20px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            color: '#ff6b35',
+            fontSize: '1.1rem'
+          }} />
+          <input
+            type="text"
+            placeholder="Rechercher une offre d'emploi..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '15px 20px 15px 50px',
+              borderRadius: '25px',
+              border: '1px solid #444',
+              background: 'rgba(255, 255, 255, 0.05)',
+              color: '#ffffff',
+              fontSize: isMobile ? '0.9rem' : '1rem',
+              outline: 'none',
+              transition: 'all 0.3s ease',
+              boxSizing: 'border-box'
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#ff6b35';
+              e.target.style.boxShadow = '0 0 0 3px rgba(255, 107, 53, 0.1)';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = '#444';
+              e.target.style.boxShadow = 'none';
+            }}
+          />
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile
+            ? 'repeat(auto-fit, minmax(140px, 1fr))'
+            : 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: isMobile ? '15px' : '20px',
+          marginBottom: '20px'
+        }}>
+          <div>
+            <label style={{
+              display: 'block',
+              color: '#cccccc',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              marginBottom: '8px'
+            }}>
+              Poste
+            </label>
+            <select
+              value={selectedPoste}
+              onChange={(e) => setSelectedPoste(e.target.value)}
+              style={{
+                width: '100%',
+                padding: isMobile ? '10px 12px' : '12px 15px',
+                borderRadius: '12px',
+                border: '1px solid #444',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: '#ffffff',
+                fontSize: '0.95rem',
+                outline: 'none'
+              }}
+            >
+              <option value="">Tous les postes</option>
+              {filterOptions.postes.map((poste, index) => (
+                <option key={index} value={poste}>{poste}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label style={{
+              display: 'block',
+              color: '#cccccc',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              marginBottom: '8px'
+            }}>
+              Lieu
+            </label>
+            <select
+              value={selectedLieu}
+              onChange={(e) => setSelectedLieu(e.target.value)}
+              style={{
+                width: '100%',
+                padding: isMobile ? '10px 12px' : '12px 15px',
+                borderRadius: '12px',
+                border: '1px solid #444',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: '#ffffff',
+                fontSize: '0.95rem',
+                outline: 'none'
+              }}
+            >
+              <option value="">Toutes les villes</option>
+              {filterOptions.lieux.map((lieu, index) => (
+                <option key={index} value={lieu}>{lieu}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label style={{
+              display: 'block',
+              color: '#cccccc',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              marginBottom: '8px'
+            }}>
+              Salaire
+            </label>
+            <select
+              value={selectedSalaire}
+              onChange={(e) => setSelectedSalaire(e.target.value)}
+              style={{
+                width: '100%',
+                padding: isMobile ? '10px 12px' : '12px 15px',
+                borderRadius: '12px',
+                border: '1px solid #444',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: '#ffffff',
+                fontSize: '0.95rem',
+                outline: 'none' }}
              >
                <option value="">Tous les salaires</option>
                {[...new Set(jobs.map(job => job.salary).filter(Boolean))].map((salaire, index) => (
