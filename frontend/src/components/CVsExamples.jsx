@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, Star, X } from 'lucide-react'; // X for close icon. User was not used.
+import { useNavigate } from 'react-router-dom'; // Moved to the top
 // Using a placeholder image URL for robustness in different environments.
 // If you have a local image, ensure its path is correctly resolved by your bundler.
 const candidatImage = 'https://placehold.co/100x100/000000/FFFFFF?text=User';
-import { useNavigate } from 'react-router-dom';
+
 
 /**
  * Custom Modal Component for displaying messages.
