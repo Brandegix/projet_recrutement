@@ -827,36 +827,40 @@ const pageStyles = {
     margin: "0 auto 40px auto",
   },
 
-   newsletterForm: {
-    display: "flex",
+  newsletterForm: {
+    display: "flex", // Keeps them side-by-side
     maxWidth: "500px",
     margin: "0 auto",
-    gap: "0",
-    borderRadius: "50px",
-    border: "2px solid #404040",
-    overflow: "hidden",
-    backgroundColor: "#1a1a1a",
+    // No gap here, we want them to touch
+    // The main border and background will go on the input and button directly
+    backgroundColor: "transparent", // Form container remains transparent
     transition: "all 0.3s ease",
-    flexWrap: "wrap",
+    flexWrap: "wrap", // For responsiveness, stacks on smaller screens
   },
 
   newsletterInput: {
-    flex: 1,
-    minWidth: "250px",
+    flex: 1, // Allows the input to grow and take available space
+    minWidth: "250px", // Ensures it doesn't get too small
     padding: "18px 25px",
-    border: "none",
-    backgroundColor: "transparent",
+    border: "2px solid #404040", // Border on the input
+    // Only round the left side of the input
+    borderRadius: "50px 0 0 50px",
+    backgroundColor: "#1a1a1a",
     color: "#fff",
     fontSize: "1rem",
     fontWeight: "500",
     outline: "none",
+    // Remove the right border so it blends with the button
+    borderRight: "none",
   },
 
   newsletterButton: {
     padding: "18px 30px",
     backgroundColor: "#ff6b35",
     color: "#fff",
-    border: "none",
+    border: "2px solid #ff6b35", // Button gets its own border, matching its background
+    // Only round the right side of the button
+    borderRadius: "0 50px 50px 0",
     fontWeight: "700",
     fontSize: "1rem",
     fontFamily: "inherit",
@@ -864,7 +868,7 @@ const pageStyles = {
     transition: "all 0.3s ease",
     textTransform: "uppercase",
     letterSpacing: "1px",
-    minWidth: "120px",
+    minWidth: "120px", // Ensure button has a minimum width
   },
 
   newsletterFeatures: {
