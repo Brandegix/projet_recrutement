@@ -576,7 +576,7 @@ function RecruiterProfile() {
                   e.target.style.transform = "translateY(0)"
                 }}
               >
-                ✏️ Modifier le profil
+                Modifier le profil
               </Link>
             </div>
           </div>
@@ -749,7 +749,7 @@ function RecruiterProfile() {
                   }
                 }}
               >
-                ➕ Ajouter
+                 Ajouter
               </button>
             </div>
 
