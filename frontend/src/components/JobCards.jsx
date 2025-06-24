@@ -800,36 +800,7 @@ function JobCards() {
            </div>
          </div>
  
-         <div style={{ textAlign: 'center' }}>
-           <button
-             onClick={handleSearch}
-             style={{
-               background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
-               color: '#ffffff',
-               border: 'none',
-               padding: isMobile ? '10px 25px' : '12px 30px',
-               borderRadius: '25px',
-               fontSize: isMobile ? '0.95rem' : '1rem',
-               fontWeight: '600',
-               cursor: 'pointer',
-               transition: 'all 0.3s ease',
-               display: 'inline-flex',
-               alignItems: 'center',
-               gap: '10px'
-             }}
-             onMouseEnter={(e) => {
-               e.currentTarget.style.transform = 'translateY(-2px)';
-               e.currentTarget.style.boxShadow = '0 10px 25px rgba(255, 107, 53, 0.3)';
-             }}
-             onMouseLeave={(e) => {
-               e.currentTarget.style.transform = 'translateY(0)';
-               e.currentTarget.style.boxShadow = 'none';
-             }}
-           >
-             <FaFilter />
-             Rechercher
-           </button>
-         </div>
+         
        </div>
  
        {/* Job Cards Display (unchanged) */}
