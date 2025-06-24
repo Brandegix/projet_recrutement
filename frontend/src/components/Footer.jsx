@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../assets/css/Footer.css';
+import logo from '../assets/ourlogo.jpeg'; // adjust the path if needed
+
 
 const Footer = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -39,11 +41,12 @@ const Footer = () => {
     <footer className="casajobs-footer">
       <div className="casajobs-footer-wrapper">
         <div className="casajobs-footer-section casajobs-footer-about">
-          <h2>CasaJobs.ma</h2>
-          <p>
-            La plateforme marocaine dédiée à la recherche d'emploi et de talents. Rejoignez-nous pour trouver les meilleures opportunités ou les meilleurs profils.
-          </p>
-        </div>
+  <img src={logo} alt="CasaJobs Logo" className="footer-logo" />
+  <p>
+    La plateforme marocaine dédiée à la recherche d'emploi et de talents. Rejoignez-nous pour trouver les meilleures opportunités ou les meilleurs profils.
+  </p>
+</div>
+
         
         <div className="casajobs-footer-section casajobs-footer-links">
           <h3>Liens utiles</h3>
