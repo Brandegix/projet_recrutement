@@ -9,21 +9,21 @@ const contactMethods = [
     title: 'Support Email',
     icon: <Mail className="w-8 h-8" />,
     details: ['support@casajobs.ma', 'Réponse sous 24h'],
-    action: 'Envoyer un email',
+    
     color: '#ff6b35'
   },
   {
     title: 'Téléphone',
     icon: <Phone className="w-8 h-8" />,
     details: ['+212 5 22 22 22 22', 'Lun-Ven: 9h-18h'],
-    action: 'Appeler maintenant',
+   
     color: '#ff6b35'
   },
   {
     title: 'Visitez-nous',
     icon: <MapPin className="w-8 h-8" />,
     details: ['12 Avenue Hassan II', 'Casablanca, Maroc'],
-    action: 'Voir sur la carte',
+    
     color: '#ff6b35'
   }
 ];
