@@ -43,23 +43,7 @@ const CustomModal = ({ message, onClose }) => {
         border: '1px solid #333', // Subtle border
         textAlign: 'center' // Center text inside the modal
       }}>
-        {/* Close button (X icon) positioned at the top right corner */}
-        <button
-          onClick={onClose} // Triggers the onClose function passed from parent
-          style={{
-            position: 'absolute',
-            top: '15px',
-            right: '15px',
-            background: 'none',
-            border: 'none',
-            color: '#cccccc', // Light gray color for the icon
-            cursor: 'pointer', // Indicates interactivity
-            fontSize: '1.5rem',
-            padding: '5px'
-          }}
-        >
-          <X size={24} /> {/* Lucide React 'X' icon */}
-        </button>
+       
         {/* The main message displayed in the modal */}
         <p style={{
           color: '#ffffff', // White text for readability
