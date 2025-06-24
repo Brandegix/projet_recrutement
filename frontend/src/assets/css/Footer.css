@@ -4,6 +4,11 @@
   padding: 60px 20px 30px;
   font-family: 'Inter', sans-serif;
 }
+.footer-logo {
+  width: 150px;
+  height: auto;
+  margin-bottom: 10px;
+}
 
 .casajobs-footer-wrapper {
   display: flex;
