@@ -1234,7 +1234,6 @@ const JobSearchAndOffers = () => {
     width: 20px !important;
     height: 3rem;
     padding: 0;
-    border-radius: 50%;
     flex-shrink: 0;
   }
 
