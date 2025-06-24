@@ -1,106 +1,117 @@
-/* Option 1: Basic size and alignment improvements */
+/* Optimized logo styling for your CasaJobs footer */
 .footer-logo {
-  max-width: 120px; /* Reduced from 180px */
+  max-width: 120px; /* Reduced from your original 180px */
   height: auto;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   display: block;
   filter: brightness(0) invert(1);
+  border-radius: 8px; /* Adds subtle rounded corners for JPEG logos */
 }
 
-/* Option 2: Responsive logo sizing */
-.footer-logo-responsive {
-  max-width: 150px;
-  height: auto;
-  margin-bottom: 20px;
-  display: block;
-  filter: brightness(0) invert(1);
+/* Enhanced About section to better accommodate the logo */
+.casajobs-footer-about {
+  display: flex;
+  flex-direction: column;
 }
 
+.casajobs-footer-about h2 {
+  color: #ff5a00;
+  font-size: 26px;
+  margin-bottom: 15px;
+  order: -1; /* If you want to add a title above the logo */
+}
+
+.casajobs-footer-about p {
+  color: #ccc;
+  line-height: 1.6;
+  margin-top: 5px; /* Adjust spacing after logo */
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
-  .footer-logo-responsive {
+  .footer-logo {
     max-width: 100px;
+    margin-bottom: 12px;
+  }
+  
+  .casajobs-footer-about {
+    text-align: center; /* Center logo on mobile */
+    margin-bottom: 30px;
+  }
+  
+  .footer-logo {
+    margin: 0 auto 12px auto; /* Center the logo on mobile */
   }
 }
 
 @media (max-width: 480px) {
-  .footer-logo-responsive {
+  .footer-logo {
     max-width: 80px;
+    margin-bottom: 10px;
   }
 }
 
-/* Option 3: Logo with fixed height for consistency */
-.footer-logo-fixed-height {
-  height: 40px; /* Fixed height */
-  width: auto; /* Let width adjust automatically */
-  max-width: 180px; /* Prevent it from getting too wide */
-  margin-bottom: 20px;
-  display: block;
-  filter: brightness(0) invert(1);
-  object-fit: contain; /* Maintain aspect ratio */
-}
-
-/* Option 4: Center the logo if it's the main footer element */
+/* Alternative: If you want the logo centered in the about section */
 .footer-logo-centered {
-  max-width: 140px;
-  height: auto;
-  margin: 0 auto 25px auto; /* Center horizontally */
-  display: block;
-  filter: brightness(0) invert(1);
-}
-
-/* Option 5: Logo with subtle styling effects */
-.footer-logo-enhanced {
-  max-width: 130px;
-  height: auto;
-  margin-bottom: 20px;
-  display: block;
-  filter: brightness(0) invert(1);
-  opacity: 0.9;
-  transition: opacity 0.3s ease;
-}
-
-.footer-logo-enhanced:hover {
-  opacity: 1;
-}
-
-/* Option 6: For very wide logos - constrain height */
-.footer-logo-wide {
-  max-height: 50px; /* Limit height for wide logos */
-  width: auto;
-  max-width: 200px;
-  margin-bottom: 20px;
-  display: block;
-  filter: brightness(0) invert(1);
-  object-fit: contain;
-}
-
-/* Option 7: Logo as part of a flex container for better alignment */
-.casajobs-footer-brand {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* or center/flex-end */
-  margin-bottom: 30px;
-}
-
-.footer-logo-flex {
-  max-width: 140px;
-  height: auto;
-  margin-bottom: 15px;
-  filter: brightness(0) invert(1);
-}
-
-/* If you want the logo in the header of the footer */
-.casajobs-footer-header {
-  text-align: center;
-  margin-bottom: 40px;
-  border-bottom: 1px solid #333;
-  padding-bottom: 20px;
-}
-
-.footer-logo-header {
-  max-width: 160px;
+  max-width: 120px;
   height: auto;
   margin: 0 auto 15px auto;
   display: block;
   filter: brightness(0) invert(1);
+  border-radius: 8px;
+}
+
+/* Alternative: Fixed height approach for consistent sizing */
+.footer-logo-fixed {
+  height: 45px; /* Fixed height */
+  width: auto;
+  max-width: 150px;
+  margin-bottom: 15px;
+  display: block;
+  filter: brightness(0) invert(1);
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+/* Style for the user info section to maintain visual balance */
+.footer-user-info {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #333;
+  font-size: 14px;
+}
+
+.footer-user-info p {
+  margin-bottom: 5px;
+  color: #aaa;
+}
+
+/* Bottom section enhancements */
+.footer-bottom-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.footer-user-status {
+  font-size: 13px;
+}
+
+.status-connected {
+  color: #4CAF50;
+}
+
+.status-guest {
+  color: #888;
+}
+
+.status-guest a {
+  color: #ff5a00;
+  text-decoration: none;
+}
+
+.status-guest a:hover {
+  text-decoration: underline;
 }
