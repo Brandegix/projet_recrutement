@@ -5,10 +5,13 @@
   font-family: 'Inter', sans-serif;
 }
 .footer-logo {
-  width: 150px;
+  max-width: 180px;
   height: auto;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  display: block;
+  filter: brightness(0) invert(1); /* Optional: makes dark logos white-ish */
 }
+
 
 .casajobs-footer-wrapper {
   display: flex;
