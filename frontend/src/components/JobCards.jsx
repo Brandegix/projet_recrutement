@@ -711,7 +711,7 @@ function JobCards() {
                 padding: isMobile ? '10px 12px' : '12px 15px',
                 borderRadius: '12px',
                 border: '1px solid #444',
-                background: 'rgba(246, 199, 148, 0.8)',
+                background: '#ff6b35',
                 color: '#ffffff',
                 fontSize: '0.95rem',
                 outline: 'none'
