@@ -248,29 +248,7 @@ const ContactUs = () => {
                   ))}
                 </ul>
                 
-                <button style={{
-                  background: 'linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)',
-                  color: '#ffffff',
-                  border: 'none',
-                  padding: '12px 25px',
-                  borderRadius: '25px',
-                  fontSize: '0.95rem',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  width: '100%',
-                  height: '60px',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 10px 20px rgba(255, 107, 53, 0.3)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}>
-                 
-                </button>
+                
               </div>
             ))}
           </div>
