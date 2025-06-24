@@ -53,7 +53,6 @@
 .casajobs-footer-about p {
   color: #ccc;
   line-height: 1.6;
-  margin-right: 100px;
 }
 
 /* Links */
@@ -61,15 +60,18 @@
   font-size: 20px;
   margin-bottom: 12px;
   color: #fff;
+  margin-left: 50px;
 }
 
 .casajobs-footer-links ul {
   list-style: none;
   padding: 0;
+  margin-left: 50px;
 }
 
 .casajobs-footer-links li {
   margin-bottom: 10px;
+  margin-left: 50px;
 }
 
 .casajobs-footer-links a {
