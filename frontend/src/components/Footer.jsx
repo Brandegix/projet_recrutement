@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../assets/css/Footer.css';
-import logo from '../assets/ourlogo1.jpeg'; // adjust the path if needed
+import logo from '../assets/ourlogo.png'; // adjust the path if needed
 
 
 const Footer = () => {
