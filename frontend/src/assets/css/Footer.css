@@ -1,117 +1,88 @@
-/* Optimized logo styling for your CasaJobs footer */
+.casajobs-footer {
+  background-color: #111;
+  color: #fff;
+  padding: 60px 20px 30px;
+  font-family: 'Inter', sans-serif;
+}
 .footer-logo {
-  max-width: 120px; /* Reduced from your original 180px */
+  max-width: 180px;
   height: auto;
   margin-bottom: 15px;
   display: block;
-  filter: brightness(0) invert(1);
-  border-radius: 8px; /* Adds subtle rounded corners for JPEG logos */
+  filter: brightness(0) invert(1); /* Optional: makes dark logos white-ish */
 }
 
-/* Enhanced About section to better accommodate the logo */
-.casajobs-footer-about {
+
+.casajobs-footer-wrapper {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 40px;
 }
 
+.casajobs-footer-section {
+  flex: 1;
+  min-width: 250px;
+}
+
+/* About */
 .casajobs-footer-about h2 {
   color: #ff5a00;
   font-size: 26px;
   margin-bottom: 15px;
-  order: -1; /* If you want to add a title above the logo */
 }
 
 .casajobs-footer-about p {
   color: #ccc;
   line-height: 1.6;
-  margin-top: 5px; /* Adjust spacing after logo */
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .footer-logo {
-    max-width: 100px;
-    margin-bottom: 12px;
-  }
-  
-  .casajobs-footer-about {
-    text-align: center; /* Center logo on mobile */
-    margin-bottom: 30px;
-  }
-  
-  .footer-logo {
-    margin: 0 auto 12px auto; /* Center the logo on mobile */
-  }
+/* Links */
+.casajobs-footer-links h3 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  color: #fff;
 }
 
-@media (max-width: 480px) {
-  .footer-logo {
-    max-width: 80px;
-    margin-bottom: 10px;
-  }
+.casajobs-footer-links ul {
+  list-style: none;
+  padding: 0;
 }
 
-/* Alternative: If you want the logo centered in the about section */
-.footer-logo-centered {
-  max-width: 120px;
-  height: auto;
-  margin: 0 auto 15px auto;
-  display: block;
-  filter: brightness(0) invert(1);
-  border-radius: 8px;
+.casajobs-footer-links li {
+  margin-bottom: 10px;
 }
 
-/* Alternative: Fixed height approach for consistent sizing */
-.footer-logo-fixed {
-  height: 45px; /* Fixed height */
-  width: auto;
-  max-width: 150px;
-  margin-bottom: 15px;
-  display: block;
-  filter: brightness(0) invert(1);
-  border-radius: 8px;
-  object-fit: contain;
-}
-
-/* Style for the user info section to maintain visual balance */
-.footer-user-info {
-  margin-top: 15px;
-  padding-top: 10px;
-  border-top: 1px solid #333;
-  font-size: 14px;
-}
-
-.footer-user-info p {
-  margin-bottom: 5px;
-  color: #aaa;
-}
-
-/* Bottom section enhancements */
-.footer-bottom-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.footer-user-status {
-  font-size: 13px;
-}
-
-.status-connected {
-  color: #4CAF50;
-}
-
-.status-guest {
-  color: #888;
-}
-
-.status-guest a {
-  color: #ff5a00;
+.casajobs-footer-links a {
+  color: #ccc;
   text-decoration: none;
+  transition: color 0.3s ease;
 }
 
-.status-guest a:hover {
-  text-decoration: underline;
+.casajobs-footer-links a:hover {
+  color: #ff5a00;
+}
+
+/* Contact */
+.casajobs-footer-contact h3 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  color: #fff;
+}
+
+.casajobs-footer-contact p {
+  color: #ccc;
+  margin-bottom: 8px;
+}
+
+/* Bottom */
+.casajobs-footer-bottom {
+  border-top: 1px solid #333;
+  margin-top: 40px;
+  padding-top: 20px;
+  text-align: center;
+  color: #888;
+  font-size: 14px;
 }
