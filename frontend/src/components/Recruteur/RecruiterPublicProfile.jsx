@@ -829,9 +829,11 @@ const pageStyles = {
 
  // Replace your existing newsletterButton style with this:
 
+// Replace your existing newsletterButton style with this:
+
 newsletterButton: {
   all: "unset", // Reset all inherited styles
-  padding: "18px 30px",
+  padding: "16px 30px", // Reduced from 18px to 16px to match input height
   backgroundColor: "#ff6b35",
   color: "#fff",
   border: "2px solid #ff6b35",
@@ -849,6 +851,7 @@ newsletterButton: {
   justifyContent: "center",
   boxSizing: "border-box",
   outline: "none",
+  height: "56px", // Set explicit height to match input (18px padding + 2px border + line-height)
   // Remove the connected look and make it standalone
   marginLeft: "10px", // Add some spacing from the input
 },
@@ -879,7 +882,6 @@ newsletterForm: {
   flexWrap: "wrap",
   alignItems: "stretch", // Ensure both elements have same height
 },
-
   newsletterFeatures: {
     display: "flex",
     justifyContent: "center",
