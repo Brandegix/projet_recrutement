@@ -594,7 +594,7 @@ const RegisterRecruteur = () => {
           <div className="form-footer">
             <p>
               Déjà inscrit ?{" "}
-              <a href="/login/recruteur" className="login-link">
+              <a href="/LoginRecruteur" className="login-link">
                 Se connecter
               </a>
             </p>
@@ -1111,10 +1111,13 @@ const RegisterRecruteur = () => {
         .button-content {
           display: flex;
           align-items: center;
-          justify-content: center;
+          
+         justifyContent: "center", // Add this line
+    textAlign: "center", // Add this line
           gap: 0.75rem;
           position: relative;
           z-index: 2;
+          background: '#ff6b35',
         }
 
         .button-icon {
