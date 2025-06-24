@@ -1071,7 +1071,8 @@ const RegisterRecruteur = () => {
         /* Submit button styles */
         .submit-button {
           width: 100%;
-          padding: 1.25rem 2rem;
+         justifyContent: "center", // Add this line
+    textAlign: "center", // Add this line
           background: linear-gradient(135deg, #6b7280, #4b5563);
           color: white;
           border: none;
