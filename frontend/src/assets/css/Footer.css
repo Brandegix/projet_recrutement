@@ -4,14 +4,30 @@
   padding: 60px 20px 30px;
   font-family: 'Inter', sans-serif;
 }
+
+/* IMPROVED LOGO STYLING */
 .footer-logo {
-  max-width: 180px;
+  max-width: 120px; /* Reduced from 180px for better fit */
   height: auto;
-  margin-bottom: 15px;
+  margin-bottom: 20px; /* Increased from 15px for better spacing */
   display: block;
-  filter: brightness(0) invert(1); /* Optional: makes dark logos white-ish */
+  filter: brightness(0) invert(1);
+  border-radius: 4px; /* Added for JPEG logos */
 }
 
+/* Responsive logo sizing */
+@media (max-width: 768px) {
+  .footer-logo {
+    max-width: 100px;
+    margin: 0 auto 15px auto; /* Center on mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-logo {
+    max-width: 80px;
+  }
+}
 
 .casajobs-footer-wrapper {
   display: flex;
