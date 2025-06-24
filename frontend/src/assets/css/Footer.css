@@ -7,7 +7,7 @@
 
 /* IMPROVED LOGO STYLING */
 .footer-logo {
-  max-width: 120px; /* Reduced from 180px for better fit */
+  max-width: 100px; /* Reduced from 180px for better fit */
   height: auto;
   margin-bottom: 20px; /* Increased from 15px for better spacing */
   display: block;
