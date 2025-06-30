@@ -310,7 +310,7 @@ function RegisterCandidate() {
                   <label className="input-label">
                     <FaUser className="input-icon" /> 
                     Identifiant
-                    {validations.username && formData.username && <FaCheckCircle className="validation-icon" />}
+                   
                   </label>
                   
             <input
@@ -323,7 +323,7 @@ function RegisterCandidate() {
                       placeholder="Votre identifiant"
                       className={`form-input ${!validations.username && formData.username ? 'input-invalid' : ''} ${validations.username && formData.username ? 'input-valid' : ''}`}
                     />
-                   
+                    {validations.username && formData.username && <FaCheckCircle className="validation-icon" />}
                   </div>
                   {!validations.username && formData.username && (
                     <p className="input-error">L'identifiant doit contenir au moins 3 caractères</p>
