@@ -306,12 +306,13 @@ function RegisterCandidate() {
               </h3>
           <div className="form-row">
                 <div className="input-group">
+                  <div className="input-container">
                   <label className="input-label">
                     <FaUser className="input-icon" /> 
                     Identifiant
                     {validations.username && formData.username && <FaCheckCircle className="validation-icon" />}
                   </label>
-                  <div className="input-container">
+                  
             <input
               type="text"
               name="username"
