@@ -2569,11 +2569,8 @@ def create_job_offer():
         
         logo_file = request.files.get('logo')
         if logo_file and logo_file.filename:
-            # Validate file type
-            allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
-            file_extension = logo_file.filename.rsplit('.', 1)[-1].lower()
-            
-            if file_extension not in allowed_extensions:
+            # Use the same validation as recruiter profile
+            if not allowed_file1(logo_file.filename):
                 return jsonify({
                     'error': 'Invalid file type. Only PNG, JPG, JPEG, and GIF files are allowed.'
                 }), 400
@@ -2589,17 +2586,12 @@ def create_job_offer():
                 }), 400
             
             try:
-                # Upload to Cloudinary
+                # Upload to Cloudinary using same logic as recruiter profile
                 upload_result = cloudinary.uploader.upload(
                     logo_file,
-                    folder="job_offers/logos",  # Organize in folders
-                    public_id=f"job_logo_{recruiter_id}_{int(time.time())}",  # Unique ID
-                    transformation=[
-                        {'width': 300, 'height': 300, 'crop': 'limit'},  # Resize large images
-                        {'quality': 'auto'},  # Optimize quality
-                        {'fetch_format': 'auto'}  # Auto format optimization
-                    ],
-                    allowed_formats=['png', 'jpg', 'jpeg', 'gif']
+                    folder=f"job_offers/logos",
+                    public_id=f"job_logo_{recruiter_id}_{int(datetime.now().timestamp())}",
+                    overwrite=True
                 )
                 
                 logo_url = upload_result.get('secure_url')
