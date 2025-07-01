@@ -83,7 +83,16 @@ function JobOfferForm() {
                 credentials: 'include',
             });
 
-            const result = await response.json();
+            let result;
+const contentType = response.headers.get("content-type");
+
+if (contentType && contentType.includes("application/json")) {
+    result = await response.json();
+} else {
+    const text = await response.text(); // fallback for HTML or plain error
+    throw new Error(text); // or handle differently if you want
+}
+
 
             if (response.ok) {
                 alert("Offre d'emploi publiée avec succès !");
