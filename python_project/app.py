@@ -2866,7 +2866,7 @@ def get_job_offers_with_logos():
             "salary": offer.JobOffer.salary,
             "type": offer.JobOffer.type,
             "recruiter_id": offer.JobOffer.recruiter_id,
-            "logo": f"{request.host_url}uploads/profile_images/{offer.profile_image}"
+            "logo": offer.JobOffer.logo  # Use the stored logo URL here
         } for offer in offers]
 
         return jsonify(offers_list)
