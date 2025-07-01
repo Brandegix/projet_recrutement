@@ -11,19 +11,19 @@ function JobOfferForm() {
     const [description, setDescription] = useState("");
     const [skills, setSkills] = useState("");
     const [salary, setSalary] = useState("");
+    const [company, setCompany] = useState("");
     const [type, setType] = useState("");
     const [logo, setLogo] = useState(null);
     const navigate = useNavigate();
 
     const recruiterId = localStorage.getItem("userId");
-    const companyName = localStorage.getItem("companyName");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         const formData = new FormData();
         formData.append('title', title);
-        formData.append('company', companyName);
+        formData.append('company', company);
         formData.append('location', location);
         formData.append('experience', experience);
         formData.append('description', description);
@@ -167,6 +167,16 @@ function JobOfferForm() {
                         </div>
                     </div>
 
+                    <div className="input-group full-width">
+                         <label> Entreprise</label>
+                            <input
+                                type="text"
+                                value={company}
+                                onChange={(e) => setCompany(e.target.value)}
+                                placeholder="ex: 8 000 MAD"
+                                required
+                            />
+                         </div>
                     <div className="input-group full-width">
                         <label>Description du Poste</label>
                         <textarea
