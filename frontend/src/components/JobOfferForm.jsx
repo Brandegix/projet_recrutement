@@ -173,7 +173,7 @@ function JobOfferForm() {
                                 type="text"
                                 value={company}
                                 onChange={(e) => setCompany(e.target.value)}
-                                placeholder="ex: 8 000 MAD"
+                                placeholder="ex: BrandeGix"
                                 required
                             />
                          </div>
