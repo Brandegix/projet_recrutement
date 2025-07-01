@@ -2526,7 +2526,7 @@ def create_job_offer():
     salary = request.form.get('salary')
     type = request.form.get('type')
     recruiter_id = session.get('user_id')  # ✅ Get recruiter ID from session
-
+    company=request.form.get('company')
     # ✅ Fetch recruiter details from the database
     recruiter = Recruiter.query.filter_by(id=recruiter_id).first()
     # ✅ Example field: recruiter.is_subscribed (boolean)
@@ -2540,7 +2540,6 @@ def create_job_offer():
         ), 403
 
 
-    company = recruiter.companyName  # ✅ Automatically set company name from recruiter
 
     # ✅ Handle logo upload
     logo = request.files.get('logo')
