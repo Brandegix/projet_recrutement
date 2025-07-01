@@ -2518,57 +2518,134 @@ def get_job_offerss1():
 @app.route('/api/job_offers', methods=['POST'])
 @recruiter_required
 def create_job_offer():
-    title = request.form.get('title')
-    location = request.form.get('location')
-    experience = request.form.get('experience')
-    description = request.form.get('description')
-    skills = request.form.get('skills')
-    salary = request.form.get('salary')
-    type = request.form.get('type')
-    recruiter_id = session.get('user_id')  # ✅ Get recruiter ID from session
-    company=request.form.get('company')
-    # ✅ Fetch recruiter details from the database
-    recruiter = Recruiter.query.filter_by(id=recruiter_id).first()
-    # ✅ Example field: recruiter.is_subscribed (boolean)
-
-    if not recruiter or not recruiter.subscription_active:
-     return render_template('error_general.html',
-            error_code='403',
-            error_title="Abonnement inactif",
-            error_message="Votre abonnement n'est pas actif.",
-            error_details="Veuillez contacter l'administrateur pour activer votre abonnement."
-        ), 403
-
-
-
-    # ✅ Handle logo upload
-    logo = request.files.get('logo')
-    logo_filename = secure_filename(logo.filename) if logo else 'ccc.jpg'
-    if logo:
-        os.makedirs('path_to_save_directory', exist_ok=True)
-        logo.save(os.path.join('path_to_save_directory', logo_filename))
-
-    # ✅ Create job offer with fetched company name
-    job_offer = JobOffer(
-        title=title,
-        company=company,  # ✅ Use recruiter’s company name
-        location=location,
-        experience=experience,
-        description=description,
-        skills=skills,
-        salary=salary,
-        type=type,
-        recruiter_id=recruiter_id,
-        logo=logo_filename,
-    )
-
     try:
+        # Get form data
+        title = request.form.get('title')
+        location = request.form.get('location')
+        experience = request.form.get('experience')
+        description = request.form.get('description')
+        skills = request.form.get('skills')
+        salary = request.form.get('salary')
+        type = request.form.get('type')
+        company = request.form.get('company')
+        recruiter_id = session.get('user_id')
+
+        # Validate required fields
+        required_fields = {
+            'title': title,
+            'location': location,
+            'experience': experience,
+            'description': description,
+            'skills': skills,
+            'salary': salary,
+            'type': type,
+            'company': company
+        }
+        
+        missing_fields = [field for field, value in required_fields.items() if not value]
+        if missing_fields:
+            return jsonify({
+                'error': f'Missing required fields: {", ".join(missing_fields)}'
+            }), 400
+
+        # Fetch recruiter details from the database
+        recruiter = Recruiter.query.filter_by(id=recruiter_id).first()
+        
+        if not recruiter:
+            return jsonify({'error': 'Recruiter not found'}), 404
+            
+        # Check subscription status
+        if not recruiter.subscription_active:
+            return render_template('error_general.html',
+                error_code='403',
+                error_title="Abonnement inactif",
+                error_message="Votre abonnement n'est pas actif.",
+                error_details="Veuillez contacter l'administrateur pour activer votre abonnement."
+            ), 403
+
+        # Handle logo upload to Cloudinary
+        logo_url = None
+        logo_public_id = None
+        
+        logo_file = request.files.get('logo')
+        if logo_file and logo_file.filename:
+            # Validate file type
+            allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
+            file_extension = logo_file.filename.rsplit('.', 1)[-1].lower()
+            
+            if file_extension not in allowed_extensions:
+                return jsonify({
+                    'error': 'Invalid file type. Only PNG, JPG, JPEG, and GIF files are allowed.'
+                }), 400
+            
+            # Check file size (5MB limit)
+            logo_file.seek(0, os.SEEK_END)
+            file_size = logo_file.tell()
+            logo_file.seek(0)  # Reset file pointer
+            
+            if file_size > 5 * 1024 * 1024:  # 5MB
+                return jsonify({
+                    'error': 'File size too large. Maximum size is 5MB.'
+                }), 400
+            
+            try:
+                # Upload to Cloudinary
+                upload_result = cloudinary.uploader.upload(
+                    logo_file,
+                    folder="job_offers/logos",  # Organize in folders
+                    public_id=f"job_logo_{recruiter_id}_{int(time.time())}",  # Unique ID
+                    transformation=[
+                        {'width': 300, 'height': 300, 'crop': 'limit'},  # Resize large images
+                        {'quality': 'auto'},  # Optimize quality
+                        {'fetch_format': 'auto'}  # Auto format optimization
+                    ],
+                    allowed_formats=['png', 'jpg', 'jpeg', 'gif']
+                )
+                
+                logo_url = upload_result.get('secure_url')
+                logo_public_id = upload_result.get('public_id')
+                
+            except Exception as e:
+                return jsonify({
+                    'error': f'Failed to upload logo: {str(e)}'
+                }), 500
+        else:
+            # Use default logo or company's default logo
+            logo_url = 'https://res.cloudinary.com/your_cloud_name/image/upload/v1/default_job_logo.png'
+            logo_public_id = 'default_job_logo'
+
+        # Create job offer
+        job_offer = JobOffer(
+            title=title,
+            company=company,
+            location=location,
+            experience=experience,
+            description=description,
+            skills=skills,
+            salary=salary,
+            type=type,
+            recruiter_id=recruiter_id,
+            logo=logo_url,  # Store the Cloudinary URL
+            logo_public_id=logo_public_id  # Store public_id for future deletion if needed
+        )
+
+        # Save to database
         db.session.add(job_offer)
         db.session.commit()
+        
+        # Notify matching candidates (if this function exists)
+        try:
+            notify_matching_candidates(job_offer)
+        except Exception as e:
+            # Log the error but don't fail the job creation
+            print(f"Failed to notify candidates: {str(e)}")
 
-        notify_matching_candidates(job_offer)
+        return jsonify({
+            'message': 'Job offer created successfully',
+            'job_offer_id': job_offer.id,
+            'logo_url': logo_url
+        }), 201
 
-        return jsonify({'message': 'Job offer created successfully'}), 201
     except Exception as e:
         db.session.rollback()
         return render_template('error_general.html',
@@ -2577,7 +2654,6 @@ def create_job_offer():
             error_message="Une erreur est survenue lors de la création de l'offre.",
             error_details=str(e)
         ), 500
-
 #-----------------------Start notification matching function
 
 def notify_matching_candidates(job_offer):
