@@ -16,6 +16,7 @@ function JobOfferForm() {
     const [type, setType] = useState("");
     const [logo, setLogo] = useState(null);
     const [logoPreview, setLogoPreview] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
     const recruiterId = localStorage.getItem("userId");
@@ -59,6 +60,7 @@ function JobOfferForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true); // Start loading
 
         const formData = new FormData();
         formData.append('title', title);
@@ -96,6 +98,8 @@ function JobOfferForm() {
             
         } catch (error) {
             alert("Erreur lors de la publication de l'offre : " + error.message);
+        } finally {
+            setIsLoading(false); // Stop loading
         }
     };
 
@@ -104,6 +108,55 @@ function JobOfferForm() {
             <Navbar />
             <SEO title="Publier offre" /> 
             <div className="job-offer-form-container">
+                {/* Loading Overlay */}
+                {isLoading && (
+                    <div style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 9999
+                    }}>
+                        <div style={{
+                            backgroundColor: 'white',
+                            padding: '30px',
+                            borderRadius: '10px',
+                            textAlign: 'center',
+                            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+                        }}>
+                            <div style={{
+                                width: '40px',
+                                height: '40px',
+                                border: '4px solid #f3f3f3',
+                                borderTop: '4px solid #007bff',
+                                borderRadius: '50%',
+                                animation: 'spin 1s linear infinite',
+                                margin: '0 auto 15px'
+                            }}></div>
+                            <p style={{ 
+                                margin: 0, 
+                                fontSize: '16px', 
+                                color: '#333',
+                                fontWeight: '500'
+                            }}>
+                                Publication de l'offre en cours...
+                            </p>
+                            <p style={{ 
+                                margin: '8px 0 0 0', 
+                                fontSize: '14px', 
+                                color: '#666'
+                            }}>
+                                Veuillez patienter
+                            </p>
+                        </div>
+                    </div>
+                )}
+
                 <div className="form-header">
                     <h1>Publier une Nouvelle Offre d'Emploi</h1>
                     <p>Créez une offre d'emploi attractive pour trouver les candidats parfaits</p>
@@ -296,11 +349,34 @@ function JobOfferForm() {
                             className="submit-button" 
                             onClick={() => navigate("/RecruiterJobOffers")} 
                             type="button"
+                            disabled={isLoading}
                         >
                             Annuler
                         </button>
-                        <button className="submit-button" type="submit">
-                            Publier 
+                        <button 
+                            className="submit-button" 
+                            type="submit"
+                            disabled={isLoading}
+                            style={{
+                                opacity: isLoading ? 0.7 : 1,
+                                cursor: isLoading ? 'not-allowed' : 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            {isLoading && (
+                                <div style={{
+                                    width: '16px',
+                                    height: '16px',
+                                    border: '2px solid #ffffff',
+                                    borderTop: '2px solid transparent',
+                                    borderRadius: '50%',
+                                    animation: 'spin 1s linear infinite'
+                                }}></div>
+                            )}
+                            {isLoading ? 'Publication en cours...' : 'Publier'}
                         </button>
                     </div>
                 </form>
