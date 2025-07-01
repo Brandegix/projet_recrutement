@@ -4,6 +4,7 @@ import "../assets/css/JobOfferForm.css";
 import Navbar from "../components/Navbara";
 import Footer from "../components/Footer";
 import SEO from "./SEO";
+
 function JobOfferForm() {
     const [title, setTitle] = useState("");
     const [location, setLocation] = useState("");
@@ -14,9 +15,47 @@ function JobOfferForm() {
     const [company, setCompany] = useState("");
     const [type, setType] = useState("");
     const [logo, setLogo] = useState(null);
+    const [logoPreview, setLogoPreview] = useState(null);
     const navigate = useNavigate();
 
     const recruiterId = localStorage.getItem("userId");
+
+    const handleLogoChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Veuillez sélectionner un fichier image valide (JPEG, PNG, GIF)');
+                return;
+            }
+            
+            // Validate file size (e.g., max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('La taille du fichier ne doit pas dépasser 5MB');
+                return;
+            }
+            
+            setLogo(file);
+            
+            // Create preview URL
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setLogoPreview(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const removeLogo = () => {
+        setLogo(null);
+        setLogoPreview(null);
+        // Reset the file input
+        const fileInput = document.getElementById('logo-input');
+        if (fileInput) {
+            fileInput.value = '';
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -60,19 +99,10 @@ function JobOfferForm() {
         }
     };
 
-
-
- 
-   
-
-  
-
     return (
         <>
             <Navbar />
-            <SEO
-        title="Publier offre"
-       /> 
+            <SEO title="Publier offre" /> 
             <div className="job-offer-form-container">
                 <div className="form-header">
                     <h1>Publier une Nouvelle Offre d'Emploi</h1>
@@ -80,16 +110,15 @@ function JobOfferForm() {
                 </div>
 
                 <form 
-    onSubmit={handleSubmit} 
-    className="job-form"
-    style={{
-        maxWidth: "1000px",  // Increase form width
-        width: "90%",  // Ensure responsiveness
-        margin: "auto",  // Keep it centered
-        padding: "20px",  // Add spacing
-    }}
->
-
+                    onSubmit={handleSubmit} 
+                    className="job-form"
+                    style={{
+                        maxWidth: "1000px",
+                        width: "90%",
+                        margin: "auto",
+                        padding: "20px",
+                    }}
+                >
                     <div className="form-row">
                         <div className="input-group">
                             <label>Titre du Poste</label>
@@ -156,7 +185,7 @@ function JobOfferForm() {
                         </div>
 
                         <div className="input-group">
-                            <label> Salaire</label>
+                            <label>Salaire</label>
                             <input
                                 type="text"
                                 value={salary}
@@ -168,15 +197,89 @@ function JobOfferForm() {
                     </div>
 
                     <div className="input-group full-width">
-                         <label> Entreprise</label>
-                            <input
-                                type="text"
-                                value={company}
-                                onChange={(e) => setCompany(e.target.value)}
-                                placeholder="ex: BrandeGix"
-                                required
-                            />
-                         </div>
+                        <label>Entreprise</label>
+                        <input
+                            type="text"
+                            value={company}
+                            onChange={(e) => setCompany(e.target.value)}
+                            placeholder="ex: BrandeGix"
+                            required
+                        />
+                    </div>
+
+                    {/* Logo Upload Section */}
+                    <div className="input-group full-width">
+                        <label>Logo de l'Entreprise</label>
+                        <div className="logo-upload-container" style={{
+                            border: '2px dashed #ddd',
+                            borderRadius: '8px',
+                            padding: '20px',
+                            textAlign: 'center',
+                            backgroundColor: '#fafafa'
+                        }}>
+                            {!logoPreview ? (
+                                <div>
+                                    <input
+                                        type="file"
+                                        id="logo-input"
+                                        accept="image/*"
+                                        onChange={handleLogoChange}
+                                        style={{ display: 'none' }}
+                                    />
+                                    <label 
+                                        htmlFor="logo-input" 
+                                        style={{
+                                            cursor: 'pointer',
+                                            color: '#007bff',
+                                            fontSize: '16px',
+                                            display: 'block'
+                                        }}
+                                    >
+                                        📁 Cliquez pour sélectionner un logo
+                                    </label>
+                                    <p style={{ 
+                                        margin: '10px 0 0 0', 
+                                        fontSize: '12px', 
+                                        color: '#666' 
+                                    }}>
+                                        Formats acceptés: JPEG, PNG, GIF (Max: 5MB)
+                                    </p>
+                                </div>
+                            ) : (
+                                <div>
+                                    <img 
+                                        src={logoPreview} 
+                                        alt="Logo preview" 
+                                        style={{
+                                            maxWidth: '150px',
+                                            maxHeight: '150px',
+                                            objectFit: 'contain',
+                                            border: '1px solid #ddd',
+                                            borderRadius: '4px'
+                                        }}
+                                    />
+                                    <div style={{ marginTop: '10px' }}>
+                                        <button
+                                            type="button"
+                                            onClick={removeLogo}
+                                            style={{
+                                                background: '#dc3545',
+                                                color: 'white',
+                                                border: 'none',
+                                                padding: '5px 15px',
+                                                borderRadius: '4px',
+                                                cursor: 'pointer',
+                                                fontSize: '12px'
+                                            }}
+                                        >
+                                            Supprimer
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
                     <div className="input-group full-width">
                         <label>Description du Poste</label>
                         <textarea
@@ -188,12 +291,12 @@ function JobOfferForm() {
                         />
                     </div>
 
-                   
-
-                    
-
                     <div className="form-actions">
-                        <button className="submit-button" onClick={() => navigate("/RecruiterJobOffers")} type="submit">
+                        <button 
+                            className="submit-button" 
+                            onClick={() => navigate("/RecruiterJobOffers")} 
+                            type="button"
+                        >
                             Annuler
                         </button>
                         <button className="submit-button" type="submit">
