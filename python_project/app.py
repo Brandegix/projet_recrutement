@@ -2565,7 +2565,6 @@ def create_job_offer():
 
         # Handle logo upload to Cloudinary
         logo_url = None
-        logo_public_id = None
         
         logo_file = request.files.get('logo')
         if logo_file and logo_file.filename:
@@ -2595,7 +2594,6 @@ def create_job_offer():
                 )
                 
                 logo_url = upload_result.get('secure_url')
-                logo_public_id = upload_result.get('public_id')
                 
             except Exception as e:
                 return jsonify({
@@ -2604,7 +2602,6 @@ def create_job_offer():
         else:
             # Use default logo or company's default logo
             logo_url = 'https://res.cloudinary.com/your_cloud_name/image/upload/v1/default_job_logo.png'
-            logo_public_id = 'default_job_logo'
 
         # Create job offer
         job_offer = JobOffer(
@@ -2618,7 +2615,6 @@ def create_job_offer():
             type=type,
             recruiter_id=recruiter_id,
             logo=logo_url,  # Store the Cloudinary URL
-            logo_public_id=logo_public_id  # Store public_id for future deletion if needed
         )
 
         # Save to database
