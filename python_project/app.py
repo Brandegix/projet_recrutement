@@ -107,7 +107,7 @@ socketio = SocketIO(
 )
 
 # Configuration de la base de données MySQL
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:eaxVNigTTdXWhTgQXGyaOUGFPiKBqBnj@caboose.proxy.rlwy.net:57687/railway'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:EEfWKIejjBDptpqMELKCYLFdSJOgwoBg@interchange.proxy.rlwy.net:16489/railway'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     'pool_recycle': 299,
