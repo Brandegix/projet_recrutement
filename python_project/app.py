@@ -118,13 +118,13 @@ Session(app)
 from flask_mail import Mail, Message
 import json
 # Add mail config
-app.config['MAIL_SERVER'] = 'cpl104.main-hosting.eu'
+app.config['MAIL_SERVER'] = 'mail.internationalmaritimestraining.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USERNAME'] = 'payments@internationalmaritimetraining.com'
+app.config['MAIL_USERNAME'] = 'certifications@internationalmaritimestraining.com'
 app.config['MAIL_PASSWORD'] = '1992MEHDi@@'
-app.config['MAIL_DEFAULT_SENDER'] = 'payments@internationalmaritimetraining.com'
+app.config['MAIL_DEFAULT_SENDER'] = 'certifications@internationalmaritimestraining.com'
 
 mail=Mail(app)
 # Initialisation des extensions
