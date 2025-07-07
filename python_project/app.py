@@ -123,7 +123,7 @@ app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USERNAME'] = 'certifications@internationalmaritimestraining.com'
-app.config['MAIL_PASSWORD'] = '1992MEHDi@@'
+app.config['MAIL_PASSWORD'] = 'qhva souh bmlh pqkc'
 app.config['MAIL_DEFAULT_SENDER'] = 'certifications@internationalmaritimestraining.com'
 
 mail=Mail(app)
