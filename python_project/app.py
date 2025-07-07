@@ -408,17 +408,13 @@ def recruiter_required(f):
 
 def create_admin(username, email, password):
     """Creates an admin user inside Flask's application context."""
-    with app.app_context():  # Ensure this runs inside the Flask context
-        admin = Admin(
-            username=username, 
-            email=email, 
-            password_hash=generate_password_hash(password)
-        )
+   with app.app_context():
+    admin = Admin(username='mehdi', email='admin@gmail.com')
+    admin.set_password('1234567')
 
-        db.session.add(admin)
-        db.session.commit()
-
-        print(f"Admin account for {username} created successfully!")
+    db.session.add(admin)
+    db.session.commit()
+    print("Admin user inserted successfully.")
 
 
 #create_admin("admin", "oaboussafi@gmail.com", "adminpass123")
