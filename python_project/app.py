@@ -119,7 +119,7 @@ from flask_mail import Mail, Message
 import json
 # Add mail config
 app.config['MAIL_SERVER'] = 'mail1.netim.hosting'  # or your mail server
-app.config['MAIL_PORT'] = 465
+app.config['MAIL_PORT'] = 993
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'support@casajobs.ma'
 app.config['MAIL_PASSWORD'] = 'Qwerty@@22'  # Not your Gmail password, but a generated app password
