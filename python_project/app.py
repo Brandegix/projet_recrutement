@@ -118,12 +118,13 @@ Session(app)
 from flask_mail import Mail, Message
 import json
 # Add mail config
-app.config['MAIL_SERVER'] = 'cpl104.main-hosting.eu'  # or your mail server
-app.config['MAIL_PORT'] = 993
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'payments@internationalmaritimestraining.com'
-app.config['MAIL_PASSWORD'] = '1992MEHDi@@'  # Not your Gmail password, but a generated app password
-app.config['MAIL_DEFAULT_SENDER'] = 'payments@internationalmaritimestraining.com'
+app.config['MAIL_SERVER'] = 'cpl104.main-hosting.eu'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USERNAME'] = 'payments@internationalmaritimetraining.com'
+app.config['MAIL_PASSWORD'] = '1992MEHDi@@'
+app.config['MAIL_DEFAULT_SENDER'] = 'payments@internationalmaritimetraining.com'
 
 mail=Mail(app)
 # Initialisation des extensions
