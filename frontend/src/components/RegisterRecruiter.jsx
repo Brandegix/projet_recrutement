@@ -578,7 +578,7 @@ const RegisterRecruteur = () => {
                 {loading ? (
                   <>
                     <div className="loading-spinner" />
-                    <span>Inscription en cours...</span>
+                    <span>en cours...</span>
                   </>
                 ) : (
                   <>
