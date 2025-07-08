@@ -421,7 +421,7 @@ def create_admin(username, email, password):
         print(f"Admin account for {username} created successfully!")
 
 
-#create_admin("admin", "oaboussafi@gmail.com", "adminpass123")
+create_admin("admin", "admin1@gmail.com", "admin123")
  # newsletter
 @app.route('/api/newsletter/subscribe', methods=['POST'])
 def subscribe_to_newsletter():
