@@ -1139,6 +1139,7 @@ const RegisterRecruteur = () => {
           border-top: 2px solid white;
           border-radius: 50%;
           animation: spin 1s linear infinite;
+          padding-top:-83px;
         }
 
         @keyframes spin {
