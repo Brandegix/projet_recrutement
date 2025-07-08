@@ -408,16 +408,22 @@ def recruiter_required(f):
 
 def create_admin(username, email, password):
     """Creates an admin user inside Flask's application context."""
-    with app.app_context():  # Ensure this runs inside the Flask context
+    with app.app_context():
+        # Vérifier si un admin avec ce nom existe déjà
+        existing_admin = Admin.query.filter_by(username=username).first()
+        
+        if existing_admin:
+            print(f"Admin '{username}' already exists. Skipping creation.")
+            return
+
+        # Créer un nouvel admin uniquement s'il n'existe pas
         admin = Admin(
             username=username, 
             email=email, 
             password_hash=generate_password_hash(password)
         )
-
         db.session.add(admin)
         db.session.commit()
-
         print(f"Admin account for {username} created successfully!")
 
 
