@@ -118,13 +118,13 @@ Session(app)
 from flask_mail import Mail, Message
 import json
 # Add mail config
-app.config['MAIL_SERVER'] = 'mail.internationalmaritimestraining.com'
+app.config['MAIL_SERVER'] = 'cpl104.main-hosting.eu'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USERNAME'] = 'certifications@internationalmaritimestraining.com'
-app.config['MAIL_PASSWORD'] = 'qhva souh bmlh pqkc'
-app.config['MAIL_DEFAULT_SENDER'] = 'certifications@internationalmaritimestraining.com'
+app.config['MAIL_USERNAME'] = 'payments@internationalmaritimetraining.com'
+app.config['MAIL_PASSWORD'] = '1992MEHDi@@'
+app.config['MAIL_DEFAULT_SENDER'] = 'payments@internationalmaritimetraining.com'
 
 mail=Mail(app)
 # Initialisation des extensions
@@ -408,13 +408,17 @@ def recruiter_required(f):
 
 def create_admin(username, email, password):
     """Creates an admin user inside Flask's application context."""
-   with app.app_context():
-    admin = Admin(username='mehdi', email='admin@gmail.com')
-    admin.set_password('1234567')
+    with app.app_context():  # Ensure this runs inside the Flask context
+        admin = Admin(
+            username=username, 
+            email=email, 
+            password_hash=generate_password_hash(password)
+        )
 
-    db.session.add(admin)
-    db.session.commit()
-    print("Admin user inserted successfully.")
+        db.session.add(admin)
+        db.session.commit()
+
+        print(f"Admin account for {username} created successfully!")
 
 
 #create_admin("admin", "oaboussafi@gmail.com", "adminpass123")
