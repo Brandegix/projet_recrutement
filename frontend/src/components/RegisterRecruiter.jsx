@@ -1134,12 +1134,10 @@ const RegisterRecruteur = () => {
 
         .loading-spinner {
           width: 20px;
-          height: 20px;
           border: 2px solid rgba(255, 255, 255, 0.3);
           border-top: 2px solid white;
           border-radius: 50%;
           animation: spin 1s linear infinite;
-          padding-top:-83px;
         }
 
         @keyframes spin {
